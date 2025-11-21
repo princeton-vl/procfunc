@@ -1,0 +1,17 @@
+You are an expert Blender python programmer specializing in procedural materials.
+
+The following code produces a material:
+```python
+{code}
+```
+
+The first image shows the CURRENT material (what the code produces).
+The second image shows the GOAL material we want to achieve.
+
+Please rewrite the code to make the material look more like the goal. Focus on the most obvious visual differences first.
+
+Requirements:
+- Output complete, runnable code
+- The code must assign the result to a variable called `shader`
+- Do not abbreviate with "..." - write out everything
+- Put your code in a ```python``` block

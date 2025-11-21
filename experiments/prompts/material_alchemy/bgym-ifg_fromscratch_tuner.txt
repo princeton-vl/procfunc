@@ -1,0 +1,28 @@
+# This file was derived from ~2025-11-06 version of blendergym/system/prompting/material.py
+#    it emulates the use_vision=True target_description=None edit_style="rewrite_code" case
+#    note: any #-commented lines are removed automatically
+#
+Your task is to implement a procedural material to match a goal image.
+
+We've provided some reference code to help you with this task:
+```python
+$REFERENCE_CODE
+```
+
+You will access these functions by calling `nw.new_node(Nodes.PrincipledBSDF, inputs={...}, attrs={..}` or `nw.new_nodes(Nodes.Math, inputs={...}, attrs={'OPERATION': 'ADD'})` etc etc. Check the reference carefully whenever you use a function! 
+Only use nw.new_node to create your material, not any other way of accessing blender.
+Do not add any additional imports.
+
+Your current WIP code is as shown:
+```python
+$BLENDER_CODE
+```
+
+The image on the left shows a render based on your current WIP code, but we want to fix it to look like the goal material (shown on the right):
+$LEFT_RIGHT_IMAGE
+ 
+Please describe the difference between the two materials, and edit the code above to reflect this desired change. 
+Pay special attention to the base color of the materials, as well as the precise shapes and properties of any lines or details.
+Do not be shy of reworking the material somewhat to achieve your goals.
+
+MAKE SURE YOUR CODE IS RUNNABLE. DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.

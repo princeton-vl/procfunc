@@ -1,0 +1,15 @@
+# This file was derived from ~2025-11-06 version of blendergym/system/prompting/material.py
+#    it emulates the use_vision=True target_description=None edit_style="rewrite_code" case
+#    note: any #-commented lines are removed automatically
+#
+The following Blender code was used to produce a material:
+```python
+$BLENDER_CODE
+```
+The final material is assigned to the object `material_obj`, a sphere, and produces the rendering on the left below:
+$LEFT_RIGHT_IMAGE
+ 
+The desired material is shown in the image on the right. Please describe the difference between the two materials, and edit the code above to reflect this desired change. Pay special attention to the base color of the materials.
+
+MAKE SURE YOUR CODE IS RUNNABLE. MAKE SURE TO ASSIGN THE FINAL MATERIAL TO `material_obj` (through `apply(material_obj)`) AS THE LAST LINE OF YOUR CODE.
+DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.

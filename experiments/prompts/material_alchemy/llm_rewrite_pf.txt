@@ -1,0 +1,15 @@
+# Prompt for run_llm_inference.py with procfunc backend
+# Images are appended separately: first=current render, second=goal render
+#
+The following code uses a new `procfunc` API to produce a material in Blender:
+```python
+{code}
+```
+
+The first image shows the current render from this code. The second image shows the desired goal material.
+
+Please describe the difference between the two materials, and edit the code above to reflect this desired change. Pay special attention to the base color of the materials.
+
+- MAKE SURE YOUR CODE IS RUNNABLE. You do not need to add your material to an object, it will be auto-rendered so long as you assign it to `shader` at the end of the file
+- Only use functions inside `pf.nodes`, not any other way of accessing blender. These functions have a similar interface to standard blender nodes.
+- DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.

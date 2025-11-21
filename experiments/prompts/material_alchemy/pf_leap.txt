@@ -1,0 +1,19 @@
+# This file is closely based on the ~2025-11-06 version of blendergym/system/prompting/material.py,
+#    but it is minimally modified to make clear we are using `procfunc`. 
+#    it emulates the use_vision=True target_description=None edit_style="rewrite_code" case
+#    note: any #-commented lines are removed automatically
+#
+
+The following code uses a new `procfunc` API to produce a material in Blender:
+```python
+$BLENDER_CODE
+```
+
+The image on the left show and compared it to our desired goal material (shown on the right):
+$LEFT_RIGHT_IMAGE
+ 
+Please describe the difference between the two materials, and edit the code above to reflect this desired change. Pay special attention to the base color of the materials.
+
+- MAKE SURE YOUR CODE IS RUNNABLE. You do not need to add your material to an object, it will be auto-rendered so long as you assign it to `shader` at the end of the file
+- Only use functions insides `pf.nodes`, not any other way of accessing blender. These functions have a similar interface to standard blender nodes. 
+- DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.

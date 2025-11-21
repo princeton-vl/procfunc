@@ -1,0 +1,29 @@
+# This file is closely based on the ~2025-11-06 version of blendergym/system/prompting/material.py,
+#    but it is minimally modified to make clear we are using `procfunc`. 
+#    it emulates the use_vision=True target_description=None edit_style="rewrite_code" case
+#    note: any #-commented lines are removed automatically
+#
+Your task is to implement a procedural material in blender using a new `import procfunc as pf` interface. 
+
+We've provided some reference code to help you with this task:
+```python
+$REFERENCE_CODE
+```
+You will access these functions by calling `pf.nodes.shader.bsdf_principled(...)` or `pf.nodes.math.vector_add(...)` etc etc. Check the reference carefully whenever you use a function! 
+Only use functions inside of `pf.nodes` to create your material, not any other way of accessing blender.
+Do not add any additional imports
+
+Your current WIP code is as shown:
+```python
+$BLENDER_CODE
+```
+
+The image on the left shows a render based on your current WIP code, but we want to fix it to look like the goal material (shown on the right):
+$LEFT_RIGHT_IMAGE
+ 
+Please describe the difference between the two materials, and edit the code above to reflect this desired change.
+Pay special attention to the base color of the materials, as well as the precise shapes and properties of any lines or details.
+Do not be shy of reworking the material somewhat to achieve your goals.
+
+MAKE SURE YOUR CODE IS RUNNABLE. You do not need to add your material to an object, it will be auto-rendered so long as you assign it to `shader` at the end of the file
+DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.
