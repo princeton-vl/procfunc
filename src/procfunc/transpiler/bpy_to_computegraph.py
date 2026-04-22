@@ -2,7 +2,17 @@ import inspect
 import logging
 from collections import namedtuple
 from dataclasses import dataclass, field
-from typing import Any, Callable, Literal, NamedTuple, TypeVar, Union, get_args, get_origin, get_type_hints
+from typing import (
+    Any,
+    Callable,
+    Literal,
+    NamedTuple,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+    get_type_hints,
+)
 
 import bpy
 import idprop.types
@@ -33,7 +43,14 @@ SUBCOMPONENT_TYPES = (
     bpy.types.Image,
     bpy.types.Texture,
 )
-MODE_ATTRS = ["mode", "data_type", "operation", "rotation_type", "feature", "distribute_method"]
+MODE_ATTRS = [
+    "mode",
+    "data_type",
+    "operation",
+    "rotation_type",
+    "feature",
+    "distribute_method",
+]
 IGNORE_ATTRS = ["color_mapping", "texture_mapping", "active_item", "capture_items"]
 
 
@@ -573,7 +590,8 @@ def parse_standard_node(
     attr_defaults = _bpy_node_defaults(node_tree, node, list(attrs.keys()))
     is_named_attr = node.bl_idname == "GeometryNodeInputNamedAttribute"
     attrs = {
-        k: v for k, v in attrs.items()
+        k: v
+        for k, v in attrs.items()
         if v != attr_defaults[k] or (k == "data_type" and is_named_attr)
     }
 
@@ -1284,7 +1302,9 @@ def parse_object(
             )
         case "named":
             node_curr = cg.ConstantNode(
-                value=cg.LiteralConstant(f"pf.MeshObject(bpy.data.objects[{obj.name!r}])")
+                value=cg.LiteralConstant(
+                    f"pf.MeshObject(bpy.data.objects[{obj.name!r}])"
+                )
             )
         case _:
             raise ValueError(f"Invalid object mode: {object_mode}")
@@ -1295,11 +1315,17 @@ def parse_object(
     if include_set_material:
         for mat in obj.material_slots:
             mat_graph = parse_material(mat.material, memo)
-            mat_kwargs = {"vector": coord} if "vector" in mat_graph.inputs.obj().keys() else {}
-            mat_call = cg.SubgraphCallNode(subgraph=mat_graph, args=(), kwargs=mat_kwargs)
+            mat_kwargs = (
+                {"vector": coord} if "vector" in mat_graph.inputs.obj().keys() else {}
+            )
+            mat_call = cg.SubgraphCallNode(
+                subgraph=mat_graph, args=(), kwargs=mat_kwargs
+            )
 
             node_curr = cg.FunctionCallNode(
-                pf.ops.object.set_material, args=(node_curr,), kwargs={"material": mat_call}
+                pf.ops.object.set_material,
+                args=(node_curr,),
+                kwargs={"material": mat_call},
             )
 
     for mod in obj.modifiers:

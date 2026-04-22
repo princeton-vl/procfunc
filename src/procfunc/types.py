@@ -219,9 +219,7 @@ class MeshObject(Object):
                 f"MeshObject {obj.name} had children {obj.children}, but this is not allowed for {self.__class__.__name__}"
             )
         if obj.parent is not None:
-            logger.warning(
-                f"MeshObject {obj.name} had a parent {obj.parent}"
-            )
+            logger.warning(f"MeshObject {obj.name} had a parent {obj.parent}")
 
 
 class CurveObject(Object):

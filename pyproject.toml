@@ -23,7 +23,7 @@ Repository = "https://github.com/princeton-vl/procfunc"
 dev = [
     "pytest",
     "pytest-xdist",
-    "ruff",
+    "ruff>=0.15,<0.16",
     "ty"
 ]
 docs = [

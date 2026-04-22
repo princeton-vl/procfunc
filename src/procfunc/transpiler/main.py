@@ -93,7 +93,12 @@ def parse_target(
         # case pf.Scene:
         #    return parse_scene(bpy.context.scene, memo)
         case bpy.types.Object():
-            return parse_object(target, memo, object_mode=object_mode, include_set_material=include_set_material)
+            return parse_object(
+                target,
+                memo,
+                object_mode=object_mode,
+                include_set_material=include_set_material,
+            )
         case bpy.types.Material():
             return parse_material(target, memo)
         case bpy.types.NodeTree():
@@ -132,7 +137,13 @@ def transpile_targets(
     memo = ParseMemo()
 
     result_graphs = [
-        parse_target(target, memo, object_mode=object_mode, include_set_material=include_set_material) for target in targets
+        parse_target(
+            target,
+            memo,
+            object_mode=object_mode,
+            include_set_material=include_set_material,
+        )
+        for target in targets
     ]
 
     for tfunc in transforms:
@@ -210,7 +221,9 @@ def _targets_from_args(
     for target in args.objects:
         if target == "ACTIVE":
             if bpy.context.active_object is None:
-                raise ValueError("--objects ACTIVE specified but no active object in scene")
+                raise ValueError(
+                    "--objects ACTIVE specified but no active object in scene"
+                )
             targets.append([bpy.context.active_object])
         else:
             targets.append(_find_target_str(target, bpy.data.objects))
@@ -279,7 +292,6 @@ def main():
             inject_into_python_file(python.splitlines(), Path(module_path), target_name)
         case _:
             raise ValueError(f"Invalid output type: {args.output}")
-
 
 
 if __name__ == "__main__":

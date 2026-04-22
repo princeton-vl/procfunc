@@ -350,7 +350,9 @@ def to_mesh_object(
         if mode == "throw":
             raise
         if mode == "warn":
-            logger.warning(f"to_mesh_object produced no mesh geometry, returning empty mesh: {e}")
+            logger.warning(
+                f"to_mesh_object produced no mesh geometry, returning empty mesh: {e}"
+            )
         return mesh_single_vertex()
 
     assert isinstance(obj_result, pt.MeshObject)
