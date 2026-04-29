@@ -1,0 +1,18 @@
+# Prompt for run_llm_inference.py with bgym/infinigen backend (paramedit)
+# Images: first=current render, second=goal render
+#
+The following Blender code was used to produce a procedural 3D model:
+```python
+{code}
+```
+
+Your job is to edit the PARAMETERS of the code to make the render more like the goal 3D model. Only edit the parameters, not the structure or args.
+
+Answer the following questions:
+1) What is the SINGLE most visually obvious difference between the two 3D models shown below?
+2) Look at the code. Which fields/variables which are set to numerical values are most likely responsible for the obvious visual difference in your answer to question 1?
+3) Copy the code above (COPY ALL OF IT) and replace the assignments of such fields/variables accordingly!
+
+- MAKE SURE YOUR CODE IS RUNNABLE. MAKE SURE TO ASSIGN THE FINAL GEOMETRY TO `geometry_obj` AS THE LAST LINE OF YOUR CODE.
+- DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.
+- Return your code in a ```python code block.

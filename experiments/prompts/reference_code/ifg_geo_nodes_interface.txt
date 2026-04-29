@@ -1,0 +1,3112 @@
+nw.new_node(
+	Nodes.AlignEulerToVector, 
+	inputs={
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Factor': float (default 1.0), 
+		'Vector': tuple (default (0.0, 0.0, 1.0))
+	}, 
+	attrs={
+		'axis': 'X'|'Y'|'Z' (default 'X'), 
+		'pivot_axis': 'AUTO'|'X'|'Y'|'Z' (default 'AUTO')
+	})
+
+	.outputs = {
+		'Rotation': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Boolean, 
+	inputs={
+		
+	}, 
+	attrs={
+		'boolean': bool (default False)
+	})
+
+	.outputs = {
+		'Boolean': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.BooleanMath, 
+	inputs={
+		'Boolean': bool (default False), 
+		'Boolean': bool (default False)
+	}, 
+	attrs={
+		'operation': 'AND'|'OR'|'NOT'|'NAND'|'NOR'|'XNOR'|'XOR'|'IMPLY'|'NIMPLY' (default 'AND')
+	})
+
+	.outputs = {
+		'Boolean': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.Compare, 
+	inputs={
+		'A': float (default 0.0), 
+		'B': float (default 0.0), 
+		'A': int (default 0), 
+		'B': int (default 0), 
+		'A': tuple (default (0.0, 0.0, 0.0)), 
+		'B': tuple (default (0.0, 0.0, 0.0)), 
+		'A': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'B': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'A': str (default ), 
+		'B': str (default ), 
+		'C': float (default 0.9), 
+		'Angle': float (default 0.0873), 
+		'Epsilon': float (default 0.001)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'BOOLEAN'|'VECTOR'|'STRING'|'RGBA'|'OBJECT'|'IMAGE'|'GEOMETRY'|'COLLECTION'|'TEXTURE'|'MATERIAL' (default 'FLOAT'), 
+		'mode': 'ELEMENT'|'LENGTH'|'AVERAGE'|'DOT_PRODUCT'|'DIRECTION' (default 'ELEMENT'), 
+		'operation': 'LESS_THAN'|'LESS_EQUAL'|'GREATER_THAN'|'GREATER_EQUAL'|'EQUAL'|'NOT_EQUAL'|'BRIGHTER'|'DARKER' (default 'GREATER_THAN')
+	})
+
+	.outputs = {
+		'Result': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.FloatToInt, 
+	inputs={
+		'Float': float (default 0.0)
+	}, 
+	attrs={
+		'rounding_mode': 'ROUND'|'FLOOR'|'CEILING'|'TRUNCATE' (default 'ROUND')
+	})
+
+	.outputs = {
+		'Integer': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.InputColor, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Integer, 
+	inputs={
+		
+	}, 
+	attrs={
+		'integer': int (default 0)
+	})
+
+	.outputs = {
+		'Integer': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.RandomValue, 
+	inputs={
+		'Min': tuple (default (0.0, 0.0, 0.0)), 
+		'Max': tuple (default (1.0, 1.0, 1.0)), 
+		'Min': float (default 0.0), 
+		'Max': float (default 1.0), 
+		'Min': int (default 0), 
+		'Max': int (default 100), 
+		'Probability': float (default 0.5), 
+		'ID': int (default 0), 
+		'Seed': int (default 0)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT')
+	})
+
+	.outputs = {
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.RotateEuler, 
+	inputs={
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Rotate By': tuple (default (0.0, 0.0, 0.0)), 
+		'Axis': tuple (default (0.0, 0.0, 1.0)), 
+		'Angle': float (default 0.0)
+	}, 
+	attrs={
+		'space': 'OBJECT'|'LOCAL' (default 'OBJECT')
+	})
+
+	.outputs = {
+		'Rotation': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Vector, 
+	inputs={
+		
+	}, 
+	attrs={
+		'vector': Vector (default Vector((0.0, 0.0, 0.0)))
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.AccumulateField, 
+	inputs={
+		'Value': tuple (default (1.0, 1.0, 1.0)), 
+		'Value': float (default 1.0), 
+		'Value': int (default 1), 
+		'Group ID': int (default 0)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Leading': tuple (default (0.0, 0.0, 0.0)), 
+		'Leading': float (default 0.0), 
+		'Leading': int (default 0), 
+		'Trailing': tuple (default (0.0, 0.0, 0.0)), 
+		'Trailing': float (default 0.0), 
+		'Trailing': int (default 0), 
+		'Total': tuple (default (0.0, 0.0, 0.0)), 
+		'Total': float (default 0.0), 
+		'Total': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.AttributeStatistic, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Attribute': float (default 0.0), 
+		'Attribute': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Mean': float (default 0.0), 
+		'Median': float (default 0.0), 
+		'Sum': float (default 0.0), 
+		'Min': float (default 0.0), 
+		'Max': float (default 0.0), 
+		'Range': float (default 0.0), 
+		'Standard Deviation': float (default 0.0), 
+		'Variance': float (default 0.0), 
+		'Mean': tuple (default (0.0, 0.0, 0.0)), 
+		'Median': tuple (default (0.0, 0.0, 0.0)), 
+		'Sum': tuple (default (0.0, 0.0, 0.0)), 
+		'Min': tuple (default (0.0, 0.0, 0.0)), 
+		'Max': tuple (default (0.0, 0.0, 0.0)), 
+		'Range': tuple (default (0.0, 0.0, 0.0)), 
+		'Standard Deviation': tuple (default (0.0, 0.0, 0.0)), 
+		'Variance': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.BezierSegment, 
+	inputs={
+		'Resolution': int (default 16), 
+		'Start': tuple (default (-1.0, 0.0, 0.0)), 
+		'Start Handle': tuple (default (-0.5, 0.5, 0.0)), 
+		'End Handle': tuple (default (0.0, 0.0, 0.0)), 
+		'End': tuple (default (1.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'mode': 'POSITION'|'OFFSET' (default 'POSITION')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.BlurAttribute, 
+	inputs={
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Iterations': int (default 1), 
+		'Weight': float (default 1.0)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.BoundingBox, 
+	inputs={
+		'Geometry': NodeSocketGeometry
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Bounding Box': NodeSocketGeometry, 
+		'Min': tuple (default (0.0, 0.0, 0.0)), 
+		'Max': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CaptureAttribute, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': float (default 0.0), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Value': int (default 0)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry, 
+		'Attribute': tuple (default (0.0, 0.0, 0.0)), 
+		'Attribute': float (default 0.0), 
+		'Attribute': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Attribute': bool (default False), 
+		'Attribute': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.CollectionInfo, 
+	inputs={
+		'Collection': NodeSocketCollection, 
+		'Separate Children': bool (default False), 
+		'Reset Children': bool (default False)
+	}, 
+	attrs={
+		'transform_space': 'ORIGINAL'|'RELATIVE' (default 'ORIGINAL')
+	})
+
+	.outputs = {
+		'Instances': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.ConvexHull, 
+	inputs={
+		'Geometry': NodeSocketGeometry
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Convex Hull': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.CurveBezierSegment, 
+	inputs={
+		'Resolution': int (default 16), 
+		'Start': tuple (default (-1.0, 0.0, 0.0)), 
+		'Start Handle': tuple (default (-0.5, 0.5, 0.0)), 
+		'End Handle': tuple (default (0.0, 0.0, 0.0)), 
+		'End': tuple (default (1.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'mode': 'POSITION'|'OFFSET' (default 'POSITION')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.CurveCircle, 
+	inputs={
+		'Resolution': int (default 32), 
+		'Point 1': tuple (default (-1.0, 0.0, 0.0)), 
+		'Point 2': tuple (default (0.0, 1.0, 0.0)), 
+		'Point 3': tuple (default (1.0, 0.0, 0.0)), 
+		'Radius': float (default 1.0)
+	}, 
+	attrs={
+		'mode': 'POINTS'|'RADIUS' (default 'RADIUS')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry, 
+		'Center': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CurveLength, 
+	inputs={
+		'Curve': NodeSocketGeometry
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Length': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.CurveLine, 
+	inputs={
+		'Start': tuple (default (0.0, 0.0, 0.0)), 
+		'End': tuple (default (0.0, 0.0, 1.0)), 
+		'Direction': tuple (default (0.0, 0.0, 1.0)), 
+		'Length': float (default 1.0)
+	}, 
+	attrs={
+		'mode': 'POINTS'|'DIRECTION' (default 'POINTS')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.CurveSplineType, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		'spline_type': 'CATMULL_ROM'|'POLY'|'BEZIER'|'NURBS' (default 'POLY')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.CurveTangent, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Tangent': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CurveToMesh, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Profile Curve': NodeSocketGeometry, 
+		'Fill Caps': bool (default False)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.CurveToPoints, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Count': int (default 10), 
+		'Length': float (default 0.1)
+	}, 
+	attrs={
+		'mode': 'EVALUATED'|'COUNT'|'LENGTH' (default 'COUNT')
+	})
+
+	.outputs = {
+		'Points': NodeSocketGeometry, 
+		'Tangent': tuple (default (0.0, 0.0, 0.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CurveofPoint, 
+	inputs={
+		'Point Index': int (default 0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curve Index': int (default 0), 
+		'Index in Curve': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.DeleteGeom, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		'domain': 'POINT'|'EDGE'|'FACE'|'CURVE'|'INSTANCE' (default 'POINT'), 
+		'mode': 'ALL'|'EDGE_FACE'|'ONLY_FACE' (default 'ALL')
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.DeleteGeometry, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		'domain': 'POINT'|'EDGE'|'FACE'|'CURVE'|'INSTANCE' (default 'POINT'), 
+		'mode': 'ALL'|'EDGE_FACE'|'ONLY_FACE' (default 'ALL')
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.DistributePointsOnFaces, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Distance Min': float (default 0.0), 
+		'Density Max': float (default 10.0), 
+		'Density': float (default 10.0), 
+		'Density Factor': float (default 1.0), 
+		'Seed': int (default 0)
+	}, 
+	attrs={
+		'distribute_method': 'RANDOM'|'POISSON' (default 'RANDOM'), 
+		'use_legacy_normal': bool (default False)
+	})
+
+	.outputs = {
+		'Points': NodeSocketGeometry, 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.DomainSize, 
+	inputs={
+		'Geometry': NodeSocketGeometry
+	}, 
+	attrs={
+		'component': 'MESH'|'POINTCLOUD'|'CURVE'|'INSTANCES' (default 'MESH')
+	})
+
+	.outputs = {
+		'Point Count': int (default 0), 
+		'Edge Count': int (default 0), 
+		'Face Count': int (default 0), 
+		'Face Corner Count': int (default 0), 
+		'Spline Count': int (default 0), 
+		'Instance Count': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.DualMesh, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Keep Boundaries': bool (default False)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Dual Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.DuplicateElements, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Amount': int (default 1)
+	}, 
+	attrs={
+		'domain': 'POINT'|'EDGE'|'FACE'|'SPLINE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry, 
+		'Duplicate Index': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.EdgeNeighbors, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Face Count': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.EdgePathToCurve, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Start Vertices': bool (default True), 
+		'Next Vertex Index': int (default -1)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curves': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.EndpointSelection, 
+	inputs={
+		'Start Size': int (default 1), 
+		'End Size': int (default 1)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Selection': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.EvaluateonDomain, 
+	inputs={
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.ExtrudeMesh, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Offset': tuple (default (0.0, 0.0, 0.0)), 
+		'Offset Scale': float (default 1.0), 
+		'Individual': bool (default True)
+	}, 
+	attrs={
+		'mode': 'VERTICES'|'EDGES'|'FACES' (default 'FACES')
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'Top': bool (default False), 
+		'Side': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.FaceNeighbors, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Vertex Count': int (default 0), 
+		'Face Count': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.FieldAtIndex, 
+	inputs={
+		'Index': int (default 0), 
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.FillCurve, 
+	inputs={
+		'Curve': NodeSocketGeometry
+	}, 
+	attrs={
+		'mode': 'TRIANGLES'|'NGONS' (default 'TRIANGLES')
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.FilletCurve, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Count': int (default 1), 
+		'Radius': float (default 0.25), 
+		'Limit Radius': bool (default False)
+	}, 
+	attrs={
+		'mode': 'BEZIER'|'POLY' (default 'BEZIER')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.FlipFaces, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.IcoSphere, 
+	inputs={
+		'Radius': float (default 1.0), 
+		'Subdivisions': int (default 1)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'UV Map': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.ImageInfo, 
+	inputs={
+		'Image': NodeSocketImage, 
+		'Frame': int (default 0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Width': int (default 0), 
+		'Height': int (default 0), 
+		'Has Alpha': bool (default False), 
+		'Frame Count': int (default 0), 
+		'FPS': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.ImageTexture, 
+	inputs={
+		'Image': NodeSocketImage, 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Frame': int (default 0)
+	}, 
+	attrs={
+		'extension': 'REPEAT'|'EXTEND'|'CLIP'|'MIRROR' (default 'REPEAT'), 
+		'interpolation': 'Linear'|'Closest'|'Cubic' (default 'Linear')
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Alpha': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Index, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Index': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.InputEdgeAngle, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Unsigned Angle': float (default 0.0), 
+		'Signed Angle': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.InputEdgeVertices, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Vertex Index 1': int (default 0), 
+		'Vertex Index 2': int (default 0), 
+		'Position 1': tuple (default (0.0, 0.0, 0.0)), 
+		'Position 2': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.InputID, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'ID': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.InputMeshFaceArea, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Area': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.InputNormal, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.InputPosition, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Position': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.InstanceOnPoints, 
+	inputs={
+		'Points': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Instance': NodeSocketGeometry, 
+		'Pick Instance': bool (default False), 
+		'Instance Index': int (default 0), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': tuple (default (1.0, 1.0, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Instances': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.InterpolateCurves, 
+	inputs={
+		'Guide Curves': NodeSocketGeometry, 
+		'Guide Up': tuple (default (0.0, 0.0, 0.0)), 
+		'Guide Group ID': int (default 0), 
+		'Points': NodeSocketGeometry, 
+		'Point Up': tuple (default (0.0, 0.0, 0.0)), 
+		'Point Group ID': int (default 0), 
+		'Max Neighbors': int (default 4)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curves': NodeSocketGeometry, 
+		'Closest Index': int (default 0), 
+		'Closest Weight': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.IsViewport, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Is Viewport': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.JoinGeometry, 
+	inputs={
+		'Geometry': NodeSocketGeometry
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.MaterialIndex, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Material Index': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.MergeByDistance, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Distance': float (default 0.001)
+	}, 
+	attrs={
+		'mode': 'ALL'|'CONNECTED' (default 'ALL')
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.MeshBoolean, 
+	inputs={
+		'Mesh 1': NodeSocketGeometry, 
+		'Mesh 2': NodeSocketGeometry, 
+		'Self Intersection': bool (default False), 
+		'Hole Tolerant': bool (default False)
+	}, 
+	attrs={
+		'operation': 'INTERSECT'|'UNION'|'DIFFERENCE' (default 'DIFFERENCE')
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'Intersecting Edges': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.MeshCircle, 
+	inputs={
+		'Vertices': int (default 32), 
+		'Radius': float (default 1.0)
+	}, 
+	attrs={
+		'fill_type': 'NONE'|'NGON'|'TRIANGLE_FAN' (default 'NONE')
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.MeshCube, 
+	inputs={
+		'Size': tuple (default (1.0, 1.0, 1.0)), 
+		'Vertices X': int (default 2), 
+		'Vertices Y': int (default 2), 
+		'Vertices Z': int (default 2)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'UV Map': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MeshGrid, 
+	inputs={
+		'Size X': float (default 1.0), 
+		'Size Y': float (default 1.0), 
+		'Vertices X': int (default 3), 
+		'Vertices Y': int (default 3)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'UV Map': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MeshIcoSphere, 
+	inputs={
+		'Radius': float (default 1.0), 
+		'Subdivisions': int (default 1)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'UV Map': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MeshIsland, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Island Index': int (default 0), 
+		'Island Count': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.MeshLine, 
+	inputs={
+		'Count': int (default 10), 
+		'Resolution': float (default 1.0), 
+		'Start Location': tuple (default (0.0, 0.0, 0.0)), 
+		'Offset': tuple (default (0.0, 0.0, 1.0))
+	}, 
+	attrs={
+		'count_mode': 'TOTAL'|'RESOLUTION' (default 'TOTAL'), 
+		'mode': 'OFFSET'|'END_POINTS' (default 'OFFSET')
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.MeshToCurve, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.MeshToPoints, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Radius': float (default 0.05)
+	}, 
+	attrs={
+		'mode': 'VERTICES'|'EDGES'|'FACES'|'CORNERS' (default 'VERTICES')
+	})
+
+	.outputs = {
+		'Points': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.MeshUVSphere, 
+	inputs={
+		'Segments': int (default 32), 
+		'Rings': int (default 16), 
+		'Radius': float (default 1.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'UV Map': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.NamedAttribute, 
+	inputs={
+		'Name': str (default )
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT')
+	})
+
+	.outputs = {
+		'Attribute': tuple (default (0.0, 0.0, 0.0)), 
+		'Attribute': float (default 0.0), 
+		'Attribute': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Attribute': bool (default False), 
+		'Attribute': int (default 0), 
+		'Exists': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.ObjectInfo, 
+	inputs={
+		'Object': NodeSocketObject, 
+		'As Instance': bool (default False)
+	}, 
+	attrs={
+		'transform_space': 'ORIGINAL'|'RELATIVE' (default 'ORIGINAL')
+	})
+
+	.outputs = {
+		'Location': tuple (default (0.0, 0.0, 0.0)), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': tuple (default (0.0, 0.0, 0.0)), 
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.OffsetPointinCurve, 
+	inputs={
+		'Point Index': int (default 0), 
+		'Offset': int (default 0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Is Valid Offset': bool (default False), 
+		'Point Index': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.PointsToVertices, 
+	inputs={
+		'Points': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.PointsToVolume, 
+	inputs={
+		'Points': NodeSocketGeometry, 
+		'Density': float (default 1.0), 
+		'Voxel Size': float (default 0.3), 
+		'Voxel Amount': float (default 64.0), 
+		'Radius': float (default 0.5)
+	}, 
+	attrs={
+		'resolution_mode': 'VOXEL_AMOUNT'|'VOXEL_SIZE' (default 'VOXEL_AMOUNT')
+	})
+
+	.outputs = {
+		'Volume': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.PointsofCurve, 
+	inputs={
+		'Curve Index': int (default 0), 
+		'Weights': float (default 0.0), 
+		'Sort Index': int (default 0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Point Index': int (default 0), 
+		'Total': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.Proximity, 
+	inputs={
+		'Target': NodeSocketGeometry, 
+		'Source Position': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'target_element': 'POINTS'|'EDGES'|'FACES' (default 'FACES')
+	})
+
+	.outputs = {
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Distance': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.QuadraticBezier, 
+	inputs={
+		'Resolution': int (default 16), 
+		'Start': tuple (default (-1.0, 0.0, 0.0)), 
+		'Middle': tuple (default (0.0, 2.0, 0.0)), 
+		'End': tuple (default (1.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.Radius, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Radius': float (default 1.0)
+	}
+
+nw.new_node(
+	Nodes.Raycast, 
+	inputs={
+		'Target Geometry': NodeSocketGeometry, 
+		'Attribute': tuple (default (0.0, 0.0, 0.0)), 
+		'Attribute': float (default 0.0), 
+		'Attribute': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Attribute': bool (default False), 
+		'Attribute': int (default 0), 
+		'Source Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Ray Direction': tuple (default (0.0, 0.0, -1.0)), 
+		'Ray Length': float (default 100.0)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'mapping': 'INTERPOLATED'|'NEAREST' (default None)
+	})
+
+	.outputs = {
+		'Is Hit': bool (default False), 
+		'Hit Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Hit Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Hit Distance': float (default 0.0), 
+		'Attribute': tuple (default (0.0, 0.0, 0.0)), 
+		'Attribute': float (default 0.0), 
+		'Attribute': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Attribute': bool (default False), 
+		'Attribute': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.RealizeInstances, 
+	inputs={
+		'Geometry': NodeSocketGeometry
+	}, 
+	attrs={
+		'legacy_behavior': bool (default False)
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.ResampleCurve, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Count': int (default 10), 
+		'Length': float (default 0.1)
+	}, 
+	attrs={
+		'mode': 'EVALUATED'|'COUNT'|'LENGTH' (default 'COUNT')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.ReverseCurve, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.RotateInstances, 
+	inputs={
+		'Instances': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Pivot Point': tuple (default (0.0, 0.0, 0.0)), 
+		'Local Space': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Instances': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SampleCurve, 
+	inputs={
+		'Curves': NodeSocketGeometry, 
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Factor': float (default 0.0), 
+		'Length': float (default 0.0), 
+		'Curve Index': int (default 0)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'mode': 'FACTOR'|'LENGTH' (default 'FACTOR'), 
+		'use_all_curves': bool (default False)
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Tangent': tuple (default (0.0, 0.0, 0.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.SampleIndex, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Index': int (default 0)
+	}, 
+	attrs={
+		'clamp': bool (default False), 
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.SampleNearest, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Sample Position': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER' (default 'POINT')
+	})
+
+	.outputs = {
+		'Index': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.SampleNearestSurface, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Sample Position': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.SampleUVSurface, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Source UV Map': tuple (default (0.0, 0.0, 0.0)), 
+		'Sample UV': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Value': int (default 0), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Is Valid': bool (default False)
+	}
+
+nw.new_node(
+	Nodes.ScaleElements, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Scale': float (default 1.0), 
+		'Center': tuple (default (0.0, 0.0, 0.0)), 
+		'Axis': tuple (default (1.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'domain': 'FACE'|'EDGE' (default 'FACE'), 
+		'scale_mode': 'UNIFORM'|'SINGLE_AXIS' (default 'UNIFORM')
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.ScaleInstances, 
+	inputs={
+		'Instances': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Scale': tuple (default (1.0, 1.0, 1.0)), 
+		'Center': tuple (default (0.0, 0.0, 0.0)), 
+		'Local Space': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Instances': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SeparateComponents, 
+	inputs={
+		'Geometry': NodeSocketGeometry
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry, 
+		'Curve': NodeSocketGeometry, 
+		'Point Cloud': NodeSocketGeometry, 
+		'Volume': NodeSocketGeometry, 
+		'Instances': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SeparateGeometry, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		'domain': 'POINT'|'EDGE'|'FACE'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Selection': NodeSocketGeometry, 
+		'Inverted': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetCurveRadius, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Radius': float (default 0.005)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetCurveTilt, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Tilt': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetHandlePositions, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Offset': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'mode': 'LEFT'|'RIGHT' (default 'LEFT')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetHandleType, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		'handle_type': 'FREE'|'AUTO'|'VECTOR'|'ALIGN' (default 'AUTO'), 
+		'mode': 'LEFT'|'RIGHT' (default {'RIGHT', 'LEFT'})
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetID, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'ID': int (default 0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetMaterial, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Material': NodeSocketMaterial
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetMaterialIndex, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Material Index': int (default 0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetPointRadius, 
+	inputs={
+		'Points': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Radius': float (default 0.05)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Points': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetPosition, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Offset': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetShadeSmooth, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Shade Smooth': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SetSplineResolution, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Resolution': int (default 12)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.ShortestEdgePath, 
+	inputs={
+		'End Vertex': bool (default False), 
+		'Edge Cost': float (default 1.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Next Vertex Index': int (default 0), 
+		'Total Cost': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.SplineLength, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Length': float (default 0.0), 
+		'Point Count': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.SplineParameter, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Factor': float (default 0.0), 
+		'Length': float (default 0.0), 
+		'Index': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.SplineResolution, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Resolution': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.SplineType, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		'spline_type': 'CATMULL_ROM'|'POLY'|'BEZIER'|'NURBS' (default 'POLY')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SplitEdges, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Selection': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.StoreNamedAttribute, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Name': str (default ), 
+		'Value': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': float (default 0.0), 
+		'Value': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Value': bool (default False), 
+		'Value': int (default 0)
+	}, 
+	attrs={
+		'data_type': 'FLOAT'|'INT'|'FLOAT_VECTOR'|'FLOAT_COLOR'|'BYTE_COLOR'|'STRING'|'BOOLEAN'|'FLOAT2'|'INT8'|'INT32_2D' (default 'FLOAT'), 
+		'domain': 'POINT'|'EDGE'|'FACE'|'CORNER'|'CURVE'|'INSTANCE' (default 'POINT')
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SubdivideCurve, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Cuts': int (default 1)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SubdivideMesh, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Level': int (default 1)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.SubdivisionSurface, 
+	inputs={
+		'Mesh': NodeSocketGeometry, 
+		'Level': int (default 1), 
+		'Edge Crease': float (default 0.0), 
+		'Vertex Crease': float (default 0.0)
+	}, 
+	attrs={
+		'boundary_smooth': 'PRESERVE_CORNERS'|'ALL' (default 'ALL'), 
+		'uv_smooth': 'NONE'|'PRESERVE_CORNERS'|'PRESERVE_CORNERS_AND_JUNCTIONS'|'PRESERVE_CORNERS_JUNCTIONS_AND_CONCAVE'|'PRESERVE_BOUNDARIES'|'SMOOTH_ALL' (default 'PRESERVE_BOUNDARIES')
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.Switch, 
+	inputs={
+		'Switch': bool (default False), 
+		'Switch': bool (default False), 
+		'False': float (default 0.0), 
+		'True': float (default 0.0), 
+		'False': int (default 0), 
+		'True': int (default 0), 
+		'False': bool (default False), 
+		'True': bool (default True), 
+		'False': tuple (default (0.0, 0.0, 0.0)), 
+		'True': tuple (default (0.0, 0.0, 0.0)), 
+		'False': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'True': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'False': str (default ), 
+		'True': str (default ), 
+		'False': NodeSocketGeometry, 
+		'True': NodeSocketGeometry, 
+		'False': NodeSocketObject, 
+		'True': NodeSocketObject, 
+		'False': NodeSocketCollection, 
+		'True': NodeSocketCollection, 
+		'False': NodeSocketTexture, 
+		'True': NodeSocketTexture, 
+		'False': NodeSocketMaterial, 
+		'True': NodeSocketMaterial, 
+		'False': NodeSocketImage, 
+		'True': NodeSocketImage
+	}, 
+	attrs={
+		'input_type': 'FLOAT'|'INT'|'BOOLEAN'|'VECTOR'|'STRING'|'RGBA'|'OBJECT'|'IMAGE'|'GEOMETRY'|'COLLECTION'|'TEXTURE'|'MATERIAL' (default 'GEOMETRY')
+	})
+
+	.outputs = {
+		'Output': float (default 0.0), 
+		'Output': int (default 0), 
+		'Output': bool (default False), 
+		'Output': tuple (default (0.0, 0.0, 0.0)), 
+		'Output': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Output': str (default ), 
+		'Output': NodeSocketGeometry, 
+		'Output': NodeSocketObject, 
+		'Output': NodeSocketCollection, 
+		'Output': NodeSocketTexture, 
+		'Output': NodeSocketMaterial, 
+		'Output': NodeSocketImage
+	}
+
+
+nw.new_node(
+	Nodes.Transform, 
+	inputs={
+		'Geometry': NodeSocketGeometry, 
+		'Translation': tuple (default (0.0, 0.0, 0.0)), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': tuple (default (1.0, 1.0, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Geometry': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.TranslateInstances, 
+	inputs={
+		'Instances': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Translation': tuple (default (0.0, 0.0, 0.0)), 
+		'Local Space': bool (default True)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Instances': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.TrimCurve, 
+	inputs={
+		'Curve': NodeSocketGeometry, 
+		'Selection': bool (default True), 
+		'Start': float (default 0.0), 
+		'End': float (default 1.0), 
+		'Start': float (default 0.0), 
+		'End': float (default 1.0)
+	}, 
+	attrs={
+		'mode': 'FACTOR'|'LENGTH' (default 'FACTOR')
+	})
+
+	.outputs = {
+		'Curve': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.VertexNeighbors, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Vertex Count': int (default 0), 
+		'Face Count': int (default 0)
+	}
+
+nw.new_node(
+	Nodes.VolumeToMesh, 
+	inputs={
+		'Volume': NodeSocketGeometry, 
+		'Voxel Size': float (default 0.3), 
+		'Voxel Amount': float (default 64.0), 
+		'Threshold': float (default 0.1), 
+		'Adaptivity': float (default 0.0)
+	}, 
+	attrs={
+		'resolution_mode': 'GRID'|'VOXEL_AMOUNT'|'VOXEL_SIZE' (default 'GRID')
+	})
+
+	.outputs = {
+		'Mesh': NodeSocketGeometry
+	}
+
+nw.new_node(
+	Nodes.AmbientOcclusion, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Distance': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'inside': bool (default False), 
+		'only_local': bool (default False), 
+		'samples': int (default 16)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'AO': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Attribute, 
+	inputs={
+		
+	}, 
+	attrs={
+		'attribute_name': str (default ''), 
+		'attribute_type': 'GEOMETRY'|'OBJECT'|'INSTANCER'|'VIEW_LAYER' (default 'GEOMETRY')
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0), 
+		'Alpha': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Background, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Strength': float (default 1.0), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Background': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.BlackBody, 
+	inputs={
+		'Temperature': float (default 1500.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.BrickTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Color1': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Color2': tuple (default (0.2, 0.2, 0.2, 1.0)), 
+		'Mortar': tuple (default (0.0, 0.0, 0.0, 1.0)), 
+		'Scale': float (default 5.0), 
+		'Mortar Size': float (default 0.02), 
+		'Mortar Smooth': float (default 0.1), 
+		'Bias': float (default 0.0), 
+		'Brick Width': float (default 0.5), 
+		'Row Height': float (default 0.25)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'offset': float (default 0.5), 
+		'offset_frequency': int (default 2), 
+		'squash': float (default 1.0), 
+		'squash_frequency': int (default 2), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Bump, 
+	inputs={
+		'Strength': float (default 1.0), 
+		'Distance': float (default 1.0), 
+		'Height': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'invert': bool (default False)
+	})
+
+	.outputs = {
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CheckerTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Color1': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Color2': tuple (default (0.2, 0.2, 0.2, 1.0)), 
+		'Scale': float (default 5.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Clamp, 
+	inputs={
+		'Value': float (default 1.0), 
+		'Min': float (default 0.0), 
+		'Max': float (default 1.0)
+	}, 
+	attrs={
+		'clamp_type': 'MINMAX'|'RANGE' (default 'MINMAX')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.ColorRamp, 
+	inputs={
+		'Fac': float (default 0.5)
+	}, 
+	attrs={
+		'color_ramp': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Alpha': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.CombineColor, 
+	inputs={
+		'Red': float (default 0.0), 
+		'Green': float (default 0.0), 
+		'Blue': float (default 0.0)
+	}, 
+	attrs={
+		'mode': 'RGB'|'HSV'|'HSL' (default 'RGB')
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CombineHSV, 
+	inputs={
+		'H': float (default 0.0), 
+		'S': float (default 0.0), 
+		'V': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CombineRGB, 
+	inputs={
+		'R': float (default 0.0), 
+		'G': float (default 0.0), 
+		'B': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Image': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CombineXYZ, 
+	inputs={
+		'X': float (default 0.0), 
+		'Y': float (default 0.0), 
+		'Z': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CurvesInfo, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Is Strand': float (default 0.0), 
+		'Intercept': float (default 0.0), 
+		'Length': float (default 0.0), 
+		'Thickness': float (default 0.0), 
+		'Tangent Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Random': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.DiffuseBSDF, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Roughness': float (default 0.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.Displacement, 
+	inputs={
+		'Height': float (default 0.0), 
+		'Midlevel': float (default 0.5), 
+		'Scale': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'space': 'OBJECT'|'WORLD' (default 'OBJECT')
+	})
+
+	.outputs = {
+		'Displacement': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Emission, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Strength': float (default 1.0), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Emission': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.EnvironmentTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'image': NoneType (default None), 
+		'image_user': NoneType (default None), 
+		'interpolation': 'Linear'|'Closest'|'Cubic'|'Smart' (default 'Linear'), 
+		'projection': 'EQUIRECTANGULAR'|'MIRROR_BALL' (default 'EQUIRECTANGULAR'), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.FloatCurve, 
+	inputs={
+		'Factor': float (default 1.0), 
+		'Value': float (default 1.0)
+	}, 
+	attrs={
+		'mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Fresnel, 
+	inputs={
+		'IOR': float (default 1.45), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.GlassBSDF, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Roughness': float (default 0.0), 
+		'IOR': float (default 1.45), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'SHARP'|'BECKMANN'|'GGX'|'MULTI_GGX' (default 'BECKMANN')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.GlossyBSDF, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Roughness': float (default 0.5), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'SHARP'|'BECKMANN'|'GGX'|'ASHIKHMIN_SHIRLEY'|'MULTI_GGX' (default 'GGX')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.GradientTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'gradient_type': 'LINEAR'|'QUADRATIC'|'EASING'|'DIAGONAL'|'SPHERICAL'|'QUADRATIC_SPHERE'|'RADIAL' (default 'LINEAR'), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.HueSaturationValue, 
+	inputs={
+		'Hue': float (default 0.5), 
+		'Saturation': float (default 1.0), 
+		'Value': float (default 1.0), 
+		'Fac': float (default 1.0), 
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Invert, 
+	inputs={
+		'Fac': float (default 1.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.LayerWeight, 
+	inputs={
+		'Blend': float (default 0.5), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Fresnel': float (default 0.0), 
+		'Facing': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.LightOutput, 
+	inputs={
+		'Surface': NodeSocketShader
+	}, 
+	attrs={
+		'is_active_output': bool (default True), 
+		'target': 'ALL'|'EEVEE'|'CYCLES' (default 'ALL')
+	})
+
+	.outputs = {
+		
+	}
+
+nw.new_node(
+	Nodes.LightPath, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Is Camera Ray': float (default 0.0), 
+		'Is Shadow Ray': float (default 0.0), 
+		'Is Diffuse Ray': float (default 0.0), 
+		'Is Glossy Ray': float (default 0.0), 
+		'Is Singular Ray': float (default 0.0), 
+		'Is Reflection Ray': float (default 0.0), 
+		'Is Transmission Ray': float (default 0.0), 
+		'Ray Length': float (default 0.0), 
+		'Ray Depth': float (default 0.0), 
+		'Diffuse Depth': float (default 0.0), 
+		'Glossy Depth': float (default 0.0), 
+		'Transparent Depth': float (default 0.0), 
+		'Transmission Depth': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.MagicTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': float (default 5.0), 
+		'Distortion': float (default 1.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'texture_mapping': NoneType (default None), 
+		'turbulence_depth': int (default 2)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.MapRange, 
+	inputs={
+		'Value': float (default 1.0), 
+		'From Min': float (default 0.0), 
+		'From Max': float (default 1.0), 
+		'To Min': float (default 0.0), 
+		'To Max': float (default 1.0), 
+		'Steps': float (default 4.0), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'From Min': tuple (default (0.0, 0.0, 0.0)), 
+		'From Max': tuple (default (1.0, 1.0, 1.0)), 
+		'To Min': tuple (default (0.0, 0.0, 0.0)), 
+		'To Max': tuple (default (1.0, 1.0, 1.0)), 
+		'Steps': tuple (default (4.0, 4.0, 4.0))
+	}, 
+	attrs={
+		'clamp': bool (default True), 
+		'data_type': 'FLOAT'|'FLOAT_VECTOR' (default 'FLOAT'), 
+		'interpolation_type': 'LINEAR'|'STEPPED'|'SMOOTHSTEP'|'SMOOTHERSTEP' (default 'LINEAR')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0), 
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Mapping, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Location': tuple (default (0.0, 0.0, 0.0)), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': tuple (default (1.0, 1.0, 1.0))
+	}, 
+	attrs={
+		'vector_type': 'POINT'|'TEXTURE'|'VECTOR'|'NORMAL' (default 'POINT')
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MaterialOutput, 
+	inputs={
+		'Surface': NodeSocketShader, 
+		'Volume': NodeSocketShader, 
+		'Displacement': tuple (default (0.0, 0.0, 0.0)), 
+		'Thickness': float (default 0.0)
+	}, 
+	attrs={
+		'is_active_output': bool (default True), 
+		'target': 'ALL'|'EEVEE'|'CYCLES' (default 'ALL')
+	})
+
+	.outputs = {
+		
+	}
+
+nw.new_node(
+	Nodes.Math, 
+	inputs={
+		'Value': float (default 0.5), 
+		'Value': float (default 0.5), 
+		'Value': float (default 0.5)
+	}, 
+	attrs={
+		'operation': 'ADD'|'SUBTRACT'|'MULTIPLY'|'DIVIDE'|'MULTIPLY_ADD'|'POWER'|'LOGARITHM'|'SQRT'|'INVERSE_SQRT'|'ABSOLUTE'|'EXPONENT'|'MINIMUM'|'MAXIMUM'|'LESS_THAN'|'GREATER_THAN'|'SIGN'|'COMPARE'|'SMOOTH_MIN'|'SMOOTH_MAX'|'ROUND'|'FLOOR'|'CEIL'|'TRUNC'|'FRACT'|'MODULO'|'WRAP'|'SNAP'|'PINGPONG'|'SINE'|'COSINE'|'TANGENT'|'ARCSINE'|'ARCCOSINE'|'ARCTANGENT'|'ARCTAN2'|'SINH'|'COSH'|'TANH'|'RADIANS'|'DEGREES' (default 'ADD'), 
+		'use_clamp': bool (default False)
+	})
+
+	.outputs = {
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Mix, 
+	inputs={
+		'Factor': float (default 0.5), 
+		'Factor': tuple (default (0.5, 0.5, 0.5)), 
+		'A': float (default 0.0), 
+		'B': float (default 0.0), 
+		'A': tuple (default (0.0, 0.0, 0.0)), 
+		'B': tuple (default (0.0, 0.0, 0.0)), 
+		'A': tuple (default (0.5, 0.5, 0.5, 1.0)), 
+		'B': tuple (default (0.5, 0.5, 0.5, 1.0))
+	}, 
+	attrs={
+		'blend_type': 'MIX'|'DARKEN'|'MULTIPLY'|'BURN'|'LIGHTEN'|'SCREEN'|'DODGE'|'ADD'|'OVERLAY'|'SOFT_LIGHT'|'LINEAR_LIGHT'|'DIFFERENCE'|'EXCLUSION'|'SUBTRACT'|'DIVIDE'|'HUE'|'SATURATION'|'COLOR'|'VALUE' (default 'MIX'), 
+		'clamp_factor': bool (default True), 
+		'clamp_result': bool (default False), 
+		'data_type': 'FLOAT'|'VECTOR'|'RGBA' (default 'FLOAT'), 
+		'factor_mode': 'UNIFORM'|'NON_UNIFORM' (default 'UNIFORM')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0), 
+		'Result': tuple (default (0.0, 0.0, 0.0)), 
+		'Result': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MixRGB, 
+	inputs={
+		'Factor': float (default 0.5), 
+		'Factor': tuple (default (0.5, 0.5, 0.5)), 
+		'A': float (default 0.0), 
+		'B': float (default 0.0), 
+		'A': tuple (default (0.0, 0.0, 0.0)), 
+		'B': tuple (default (0.0, 0.0, 0.0)), 
+		'A': tuple (default (0.5, 0.5, 0.5, 1.0)), 
+		'B': tuple (default (0.5, 0.5, 0.5, 1.0))
+	}, 
+	attrs={
+		'blend_type': 'MIX'|'DARKEN'|'MULTIPLY'|'BURN'|'LIGHTEN'|'SCREEN'|'DODGE'|'ADD'|'OVERLAY'|'SOFT_LIGHT'|'LINEAR_LIGHT'|'DIFFERENCE'|'EXCLUSION'|'SUBTRACT'|'DIVIDE'|'HUE'|'SATURATION'|'COLOR'|'VALUE' (default 'MIX'), 
+		'clamp_factor': bool (default True), 
+		'clamp_result': bool (default False), 
+		'data_type': 'FLOAT'|'VECTOR'|'RGBA' (default 'RGBA'), 
+		'factor_mode': 'UNIFORM'|'NON_UNIFORM' (default 'UNIFORM')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0), 
+		'Result': tuple (default (0.0, 0.0, 0.0)), 
+		'Result': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MixShader, 
+	inputs={
+		'Fac': float (default 0.5), 
+		'Shader': NodeSocketShader, 
+		'Shader': NodeSocketShader
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Shader': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.NewGeometry, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Tangent': tuple (default (0.0, 0.0, 0.0)), 
+		'True Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Incoming': tuple (default (0.0, 0.0, 0.0)), 
+		'Parametric': tuple (default (0.0, 0.0, 0.0)), 
+		'Backfacing': float (default 0.0), 
+		'Pointiness': float (default 0.0), 
+		'Random Per Island': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.NoiseTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0), 
+		'Scale': float (default 5.0), 
+		'Detail': float (default 2.0), 
+		'Roughness': float (default 0.5), 
+		'Distortion': float (default 0.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'noise_dimensions': '1D'|'2D'|'3D'|'4D' (default '3D'), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Fac': float (default 0.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.ObjectInfo_Shader, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Location': tuple (default (0.0, 0.0, 0.0)), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Alpha': float (default 0.0), 
+		'Object Index': float (default 0.0), 
+		'Material Index': float (default 0.0), 
+		'Random': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.PrincipledBSDF, 
+	inputs={
+		'Base Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Subsurface': float (default 0.0), 
+		'Subsurface Radius': tuple (default (1.0, 0.2, 0.1)), 
+		'Subsurface Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Subsurface IOR': float (default 1.4), 
+		'Subsurface Anisotropy': float (default 0.0), 
+		'Metallic': float (default 0.0), 
+		'Specular': float (default 0.5), 
+		'Specular Tint': float (default 0.0), 
+		'Roughness': float (default 0.5), 
+		'Anisotropic': float (default 0.0), 
+		'Anisotropic Rotation': float (default 0.0), 
+		'Sheen': float (default 0.0), 
+		'Sheen Tint': float (default 0.5), 
+		'Clearcoat': float (default 0.0), 
+		'Clearcoat Roughness': float (default 0.03), 
+		'IOR': float (default 1.45), 
+		'Transmission': float (default 0.0), 
+		'Transmission Roughness': float (default 0.0), 
+		'Emission': tuple (default (0.0, 0.0, 0.0, 1.0)), 
+		'Emission Strength': float (default 1.0), 
+		'Alpha': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Clearcoat Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Tangent': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'GGX'|'MULTI_GGX' (default 'GGX'), 
+		'subsurface_method': 'BURLEY'|'RANDOM_WALK_FIXED_RADIUS'|'RANDOM_WALK' (default 'RANDOM_WALK')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.PrincipledHairBSDF, 
+	inputs={
+		'Color': tuple (default (0.0175, 0.0058, 0.0021, 1.0)), 
+		'Melanin': float (default 0.8), 
+		'Melanin Redness': float (default 1.0), 
+		'Tint': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Absorption Coefficient': tuple (default (0.2455, 0.52, 1.365)), 
+		'Roughness': float (default 0.3), 
+		'Radial Roughness': float (default 0.3), 
+		'Coat': float (default 0.0), 
+		'IOR': float (default 1.55), 
+		'Offset': float (default 0.0349), 
+		'Random Color': float (default 0.0), 
+		'Random Roughness': float (default 0.0), 
+		'Random': float (default 0.0), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'parametrization': 'ABSORPTION'|'MELANIN'|'COLOR' (default 'COLOR')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.PrincipledVolume, 
+	inputs={
+		'Color': tuple (default (0.5, 0.5, 0.5, 1.0)), 
+		'Color Attribute': str (default ), 
+		'Density': float (default 1.0), 
+		'Density Attribute': str (default density), 
+		'Anisotropy': float (default 0.0), 
+		'Absorption Color': tuple (default (0.0, 0.0, 0.0, 1.0)), 
+		'Emission Strength': float (default 0.0), 
+		'Emission Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Blackbody Intensity': float (default 0.0), 
+		'Blackbody Tint': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Temperature': float (default 1000.0), 
+		'Temperature Attribute': str (default temperature), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Volume': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.RGB, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.5, 0.5, 0.5, 1.0))
+	}
+
+nw.new_node(
+	Nodes.RGBCurve, 
+	inputs={
+		'Fac': float (default 1.0), 
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0))
+	}, 
+	attrs={
+		'mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.RefractionBSDF, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Roughness': float (default 0.0), 
+		'IOR': float (default 1.45), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'SHARP'|'BECKMANN'|'GGX' (default 'BECKMANN')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.SeparateColor, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0))
+	}, 
+	attrs={
+		'mode': 'RGB'|'HSV'|'HSL' (default 'RGB')
+	})
+
+	.outputs = {
+		'Red': float (default 0.0), 
+		'Green': float (default 0.0), 
+		'Blue': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.SeparateRGB, 
+	inputs={
+		'Image': tuple (default (0.8, 0.8, 0.8, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'R': float (default 0.0), 
+		'G': float (default 0.0), 
+		'B': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.SeparateXYZ, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'X': float (default 0.0), 
+		'Y': float (default 0.0), 
+		'Z': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.ShaderImageTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'extension': 'REPEAT'|'EXTEND'|'CLIP'|'MIRROR' (default 'REPEAT'), 
+		'image': NoneType (default None), 
+		'image_user': NoneType (default None), 
+		'interpolation': 'Linear'|'Closest'|'Cubic'|'Smart' (default 'Linear'), 
+		'projection': 'FLAT'|'BOX'|'SPHERE'|'TUBE' (default 'FLAT'), 
+		'projection_blend': float (default 0.0), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Alpha': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.ShaderNodeNormalMap, 
+	inputs={
+		'Strength': float (default 1.0), 
+		'Color': tuple (default (0.5, 0.5, 1.0, 1.0))
+	}, 
+	attrs={
+		'space': 'TANGENT'|'OBJECT'|'WORLD'|'BLENDER_OBJECT'|'BLENDER_WORLD' (default 'TANGENT'), 
+		'uv_map': str (default '')
+	})
+
+	.outputs = {
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.SkyTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'air_density': float (default 1.0), 
+		'altitude': float (default 0.0), 
+		'color_mapping': NoneType (default None), 
+		'dust_density': float (default 1.0), 
+		'ground_albedo': float (default 0.30000001192092896), 
+		'ozone_density': float (default 1.0), 
+		'sky_type': 'PREETHAM'|'HOSEK_WILKIE'|'NISHITA' (default 'NISHITA'), 
+		'sun_direction': Vector (default Vector((0.0, 0.0, 1.0))), 
+		'sun_disc': bool (default True), 
+		'sun_elevation': float (default 0.2617993950843811), 
+		'sun_intensity': float (default 1.0), 
+		'sun_rotation': float (default 0.0), 
+		'sun_size': float (default 0.009512044489383698), 
+		'texture_mapping': NoneType (default None), 
+		'turbidity': float (default 2.200000047683716)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.TextureCoord, 
+	inputs={
+		
+	}, 
+	attrs={
+		'from_instancer': bool (default False), 
+		'object': NoneType (default None)
+	})
+
+	.outputs = {
+		'Generated': tuple (default (0.0, 0.0, 0.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'UV': tuple (default (0.0, 0.0, 0.0)), 
+		'Object': tuple (default (0.0, 0.0, 0.0)), 
+		'Camera': tuple (default (0.0, 0.0, 0.0)), 
+		'Window': tuple (default (0.0, 0.0, 0.0)), 
+		'Reflection': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.TranslucentBSDF, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.TransparentBSDF, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.UVMap, 
+	inputs={
+		
+	}, 
+	attrs={
+		'from_instancer': bool (default False), 
+		'uv_map': str (default '')
+	})
+
+	.outputs = {
+		'UV': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Value, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.VectorCurve, 
+	inputs={
+		'Fac': float (default 1.0), 
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.VectorMath, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': float (default 1.0)
+	}, 
+	attrs={
+		'operation': 'ADD'|'SUBTRACT'|'MULTIPLY'|'DIVIDE'|'MULTIPLY_ADD'|'CROSS_PRODUCT'|'PROJECT'|'REFLECT'|'REFRACT'|'FACEFORWARD'|'DOT_PRODUCT'|'DISTANCE'|'LENGTH'|'SCALE'|'NORMALIZE'|'ABSOLUTE'|'MINIMUM'|'MAXIMUM'|'FLOOR'|'CEIL'|'FRACTION'|'MODULO'|'WRAP'|'SNAP'|'SINE'|'COSINE'|'TANGENT' (default 'ADD')
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.VectorRotate, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Center': tuple (default (0.0, 0.0, 0.0)), 
+		'Axis': tuple (default (0.0, 0.0, 1.0)), 
+		'Angle': float (default 0.0), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'invert': bool (default False), 
+		'rotation_type': 'AXIS_ANGLE'|'X_AXIS'|'Y_AXIS'|'Z_AXIS'|'EULER_XYZ' (default 'AXIS_ANGLE')
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.VoronoiTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0), 
+		'Scale': float (default 5.0), 
+		'Smoothness': float (default 1.0), 
+		'Exponent': float (default 0.5), 
+		'Randomness': float (default 1.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'distance': 'EUCLIDEAN'|'MANHATTAN'|'CHEBYCHEV'|'MINKOWSKI' (default 'EUCLIDEAN'), 
+		'feature': 'F1'|'F2'|'SMOOTH_F1'|'DISTANCE_TO_EDGE'|'N_SPHERE_RADIUS' (default 'F1'), 
+		'texture_mapping': NoneType (default None), 
+		'voronoi_dimensions': '1D'|'2D'|'3D'|'4D' (default '3D')
+	})
+
+	.outputs = {
+		'Distance': float (default 0.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0), 
+		'Radius': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.WaveTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': float (default 5.0), 
+		'Distortion': float (default 0.0), 
+		'Detail': float (default 2.0), 
+		'Detail Scale': float (default 1.0), 
+		'Detail Roughness': float (default 0.5), 
+		'Phase Offset': float (default 0.0)
+	}, 
+	attrs={
+		'bands_direction': 'X'|'Y'|'Z'|'DIAGONAL' (default 'X'), 
+		'color_mapping': NoneType (default None), 
+		'rings_direction': 'X'|'Y'|'Z'|'SPHERICAL' (default 'X'), 
+		'texture_mapping': NoneType (default None), 
+		'wave_profile': 'SIN'|'SAW'|'TRI' (default 'SIN'), 
+		'wave_type': 'BANDS'|'RINGS' (default 'BANDS')
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.WhiteNoiseTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0)
+	}, 
+	attrs={
+		'noise_dimensions': '1D'|'2D'|'3D'|'4D' (default '3D')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.WorldOutput, 
+	inputs={
+		'Surface': NodeSocketShader, 
+		'Volume': NodeSocketShader
+	}, 
+	attrs={
+		'is_active_output': bool (default True), 
+		'target': 'ALL'|'EEVEE'|'CYCLES' (default 'ALL')
+	})
+
+	.outputs = {
+		
+	}

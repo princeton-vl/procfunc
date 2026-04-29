@@ -1,0 +1,16 @@
+# Prompt for run_llm_inference.py with procfunc backend (fromscratch)
+# Images: only goal render is provided
+#
+The following code uses the `procfunc` API to produce a material in Blender:
+```python
+{code}
+```
+
+The image shows the desired goal material. Please edit the code above to produce a material that matches this goal.
+
+Pay special attention to the base color of the materials, as well as any patterns, textures, or details.
+
+- MAKE SURE YOUR CODE IS RUNNABLE. You do not need to add your material to an object, it will be auto-rendered so long as you assign it to `shader` at the end of the file
+- Only use functions inside `pf.nodes`, not any other way of accessing blender. These functions have a similar interface to standard blender nodes.
+- DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.
+- Return your code in a ```python code block.

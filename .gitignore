@@ -1,0 +1,17 @@
+__pycache__
+*egg-info
+dist/
+build/
+docs/*.rst
+
+experiments/Blender.app
+experiments/blender
+experiments/blender_3_6
+experiments/bench_data
+experiments/bench_data.zip
+experiments/blendergym
+experiments/outputs
+experiments/credentials
+
+*.blend
+*.blend1

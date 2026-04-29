@@ -1,0 +1,16 @@
+# Prompt for run_llm_inference.py with bgym/infinigen backend (fromscratch)
+# Images: only goal render is provided
+#
+The following Blender code was used to produce a material:
+```python
+{code}
+```
+The final material is assigned to the object `material_obj`, a sphere.
+
+The image shows the desired goal material. Please edit the code above to produce a material that matches this goal.
+
+Pay special attention to the base color of the materials, as well as any patterns, textures, or details.
+
+MAKE SURE YOUR CODE IS RUNNABLE. MAKE SURE TO ASSIGN THE FINAL MATERIAL TO `material_obj` (through `apply(material_obj)`) AS THE LAST LINE OF YOUR CODE.
+DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.
+Return your code in a ```python code block.

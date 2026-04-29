@@ -1,0 +1,23 @@
+# Runtime dependencies for BlenderGym's Infinigen v1.2.5 fork,
+# extracted from blendergym/infinigen/pyproject.toml with bpy removed.
+einops
+flow_vis
+frozendict
+geomdl
+gin_config>=0.5.0
+imageio
+matplotlib
+numpy
+opencv-python
+psutil
+scikit-image
+scikit-learn
+scipy
+submitit
+tqdm
+trimesh
+pandas
+landlab>=2.6.0
+pycparser
+pyrender
+vnoise

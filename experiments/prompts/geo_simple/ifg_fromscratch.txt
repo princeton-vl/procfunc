@@ -1,0 +1,16 @@
+# Prompt for run_llm_inference.py with bgym/infinigen backend (fromscratch)
+# Images: only goal render is provided
+#
+The following Blender code was used to produce a procedural 3D model:
+```python
+{code}
+```
+The final geometry is assigned to the object `geometry_obj`.
+
+The image shows the desired goal 3D model. Please edit the code above to produce geometry that matches this goal.
+
+Pay special attention to the overall shape, proportions, and any geometric details.
+
+MAKE SURE YOUR CODE IS RUNNABLE. MAKE SURE TO ASSIGN THE FINAL GEOMETRY TO `geometry_obj` AS THE LAST LINE OF YOUR CODE.
+DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.
+Return your code in a ```python code block.
