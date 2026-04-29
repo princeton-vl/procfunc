@@ -1,0 +1,1127 @@
+nw.new_node(
+	Nodes.AmbientOcclusion, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Distance': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'inside': bool (default False), 
+		'only_local': bool (default False), 
+		'samples': int (default 16)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'AO': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Attribute, 
+	inputs={
+		
+	}, 
+	attrs={
+		'attribute_name': str (default ''), 
+		'attribute_type': 'GEOMETRY'|'OBJECT'|'INSTANCER'|'VIEW_LAYER' (default 'GEOMETRY')
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0), 
+		'Alpha': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Background, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Strength': float (default 1.0), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Background': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.BlackBody, 
+	inputs={
+		'Temperature': float (default 1500.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.BrickTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Color1': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Color2': tuple (default (0.2, 0.2, 0.2, 1.0)), 
+		'Mortar': tuple (default (0.0, 0.0, 0.0, 1.0)), 
+		'Scale': float (default 5.0), 
+		'Mortar Size': float (default 0.02), 
+		'Mortar Smooth': float (default 0.1), 
+		'Bias': float (default 0.0), 
+		'Brick Width': float (default 0.5), 
+		'Row Height': float (default 0.25)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'offset': float (default 0.5), 
+		'offset_frequency': int (default 2), 
+		'squash': float (default 1.0), 
+		'squash_frequency': int (default 2), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Bump, 
+	inputs={
+		'Strength': float (default 1.0), 
+		'Distance': float (default 1.0), 
+		'Height': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'invert': bool (default False)
+	})
+
+	.outputs = {
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CheckerTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Color1': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Color2': tuple (default (0.2, 0.2, 0.2, 1.0)), 
+		'Scale': float (default 5.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Clamp, 
+	inputs={
+		'Value': float (default 1.0), 
+		'Min': float (default 0.0), 
+		'Max': float (default 1.0)
+	}, 
+	attrs={
+		'clamp_type': 'MINMAX'|'RANGE' (default 'MINMAX')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.ColorRamp, 
+	inputs={
+		'Fac': float (default 0.5)
+	}, 
+	attrs={
+		'color_ramp': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Alpha': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.CombineColor, 
+	inputs={
+		'Red': float (default 0.0), 
+		'Green': float (default 0.0), 
+		'Blue': float (default 0.0)
+	}, 
+	attrs={
+		'mode': 'RGB'|'HSV'|'HSL' (default 'RGB')
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CombineHSV, 
+	inputs={
+		'H': float (default 0.0), 
+		'S': float (default 0.0), 
+		'V': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CombineRGB, 
+	inputs={
+		'R': float (default 0.0), 
+		'G': float (default 0.0), 
+		'B': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Image': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CombineXYZ, 
+	inputs={
+		'X': float (default 0.0), 
+		'Y': float (default 0.0), 
+		'Z': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.CurvesInfo, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Is Strand': float (default 0.0), 
+		'Intercept': float (default 0.0), 
+		'Length': float (default 0.0), 
+		'Thickness': float (default 0.0), 
+		'Tangent Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Random': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.DiffuseBSDF, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Roughness': float (default 0.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.Displacement, 
+	inputs={
+		'Height': float (default 0.0), 
+		'Midlevel': float (default 0.5), 
+		'Scale': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'space': 'OBJECT'|'WORLD' (default 'OBJECT')
+	})
+
+	.outputs = {
+		'Displacement': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Emission, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Strength': float (default 1.0), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Emission': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.EnvironmentTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'image': NoneType (default None), 
+		'image_user': NoneType (default None), 
+		'interpolation': 'Linear'|'Closest'|'Cubic'|'Smart' (default 'Linear'), 
+		'projection': 'EQUIRECTANGULAR'|'MIRROR_BALL' (default 'EQUIRECTANGULAR'), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.FloatCurve, 
+	inputs={
+		'Factor': float (default 1.0), 
+		'Value': float (default 1.0)
+	}, 
+	attrs={
+		'mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Fresnel, 
+	inputs={
+		'IOR': float (default 1.45), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.GlassBSDF, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Roughness': float (default 0.0), 
+		'IOR': float (default 1.45), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'SHARP'|'BECKMANN'|'GGX'|'MULTI_GGX' (default 'BECKMANN')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.GlossyBSDF, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Roughness': float (default 0.5), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'SHARP'|'BECKMANN'|'GGX'|'ASHIKHMIN_SHIRLEY'|'MULTI_GGX' (default 'GGX')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.GradientTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'gradient_type': 'LINEAR'|'QUADRATIC'|'EASING'|'DIAGONAL'|'SPHERICAL'|'QUADRATIC_SPHERE'|'RADIAL' (default 'LINEAR'), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.HueSaturationValue, 
+	inputs={
+		'Hue': float (default 0.5), 
+		'Saturation': float (default 1.0), 
+		'Value': float (default 1.0), 
+		'Fac': float (default 1.0), 
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Invert, 
+	inputs={
+		'Fac': float (default 1.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.LayerWeight, 
+	inputs={
+		'Blend': float (default 0.5), 
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Fresnel': float (default 0.0), 
+		'Facing': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.LightOutput, 
+	inputs={
+		'Surface': NodeSocketShader
+	}, 
+	attrs={
+		'is_active_output': bool (default True), 
+		'target': 'ALL'|'EEVEE'|'CYCLES' (default 'ALL')
+	})
+
+	.outputs = {
+		
+	}
+
+nw.new_node(
+	Nodes.LightPath, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Is Camera Ray': float (default 0.0), 
+		'Is Shadow Ray': float (default 0.0), 
+		'Is Diffuse Ray': float (default 0.0), 
+		'Is Glossy Ray': float (default 0.0), 
+		'Is Singular Ray': float (default 0.0), 
+		'Is Reflection Ray': float (default 0.0), 
+		'Is Transmission Ray': float (default 0.0), 
+		'Ray Length': float (default 0.0), 
+		'Ray Depth': float (default 0.0), 
+		'Diffuse Depth': float (default 0.0), 
+		'Glossy Depth': float (default 0.0), 
+		'Transparent Depth': float (default 0.0), 
+		'Transmission Depth': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.MagicTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': float (default 5.0), 
+		'Distortion': float (default 1.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'texture_mapping': NoneType (default None), 
+		'turbulence_depth': int (default 2)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.MapRange, 
+	inputs={
+		'Value': float (default 1.0), 
+		'From Min': float (default 0.0), 
+		'From Max': float (default 1.0), 
+		'To Min': float (default 0.0), 
+		'To Max': float (default 1.0), 
+		'Steps': float (default 4.0), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'From Min': tuple (default (0.0, 0.0, 0.0)), 
+		'From Max': tuple (default (1.0, 1.0, 1.0)), 
+		'To Min': tuple (default (0.0, 0.0, 0.0)), 
+		'To Max': tuple (default (1.0, 1.0, 1.0)), 
+		'Steps': tuple (default (4.0, 4.0, 4.0))
+	}, 
+	attrs={
+		'clamp': bool (default True), 
+		'data_type': 'FLOAT'|'FLOAT_VECTOR' (default 'FLOAT'), 
+		'interpolation_type': 'LINEAR'|'STEPPED'|'SMOOTHSTEP'|'SMOOTHERSTEP' (default 'LINEAR')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0), 
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Mapping, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Location': tuple (default (0.0, 0.0, 0.0)), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': tuple (default (1.0, 1.0, 1.0))
+	}, 
+	attrs={
+		'vector_type': 'POINT'|'TEXTURE'|'VECTOR'|'NORMAL' (default 'POINT')
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MaterialOutput, 
+	inputs={
+		'Surface': NodeSocketShader, 
+		'Volume': NodeSocketShader, 
+		'Displacement': tuple (default (0.0, 0.0, 0.0)), 
+		'Thickness': float (default 0.0)
+	}, 
+	attrs={
+		'is_active_output': bool (default True), 
+		'target': 'ALL'|'EEVEE'|'CYCLES' (default 'ALL')
+	})
+
+	.outputs = {
+		
+	}
+
+nw.new_node(
+	Nodes.Math, 
+	inputs={
+		'Value': float (default 0.5), 
+		'Value': float (default 0.5), 
+		'Value': float (default 0.5)
+	}, 
+	attrs={
+		'operation': 'ADD'|'SUBTRACT'|'MULTIPLY'|'DIVIDE'|'MULTIPLY_ADD'|'POWER'|'LOGARITHM'|'SQRT'|'INVERSE_SQRT'|'ABSOLUTE'|'EXPONENT'|'MINIMUM'|'MAXIMUM'|'LESS_THAN'|'GREATER_THAN'|'SIGN'|'COMPARE'|'SMOOTH_MIN'|'SMOOTH_MAX'|'ROUND'|'FLOOR'|'CEIL'|'TRUNC'|'FRACT'|'MODULO'|'WRAP'|'SNAP'|'PINGPONG'|'SINE'|'COSINE'|'TANGENT'|'ARCSINE'|'ARCCOSINE'|'ARCTANGENT'|'ARCTAN2'|'SINH'|'COSH'|'TANH'|'RADIANS'|'DEGREES' (default 'ADD'), 
+		'use_clamp': bool (default False)
+	})
+
+	.outputs = {
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.Mix, 
+	inputs={
+		'Factor': float (default 0.5), 
+		'Factor': tuple (default (0.5, 0.5, 0.5)), 
+		'A': float (default 0.0), 
+		'B': float (default 0.0), 
+		'A': tuple (default (0.0, 0.0, 0.0)), 
+		'B': tuple (default (0.0, 0.0, 0.0)), 
+		'A': tuple (default (0.5, 0.5, 0.5, 1.0)), 
+		'B': tuple (default (0.5, 0.5, 0.5, 1.0))
+	}, 
+	attrs={
+		'blend_type': 'MIX'|'DARKEN'|'MULTIPLY'|'BURN'|'LIGHTEN'|'SCREEN'|'DODGE'|'ADD'|'OVERLAY'|'SOFT_LIGHT'|'LINEAR_LIGHT'|'DIFFERENCE'|'EXCLUSION'|'SUBTRACT'|'DIVIDE'|'HUE'|'SATURATION'|'COLOR'|'VALUE' (default 'MIX'), 
+		'clamp_factor': bool (default True), 
+		'clamp_result': bool (default False), 
+		'data_type': 'FLOAT'|'VECTOR'|'RGBA' (default 'FLOAT'), 
+		'factor_mode': 'UNIFORM'|'NON_UNIFORM' (default 'UNIFORM')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0), 
+		'Result': tuple (default (0.0, 0.0, 0.0)), 
+		'Result': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MixRGB, 
+	inputs={
+		'Factor': float (default 0.5), 
+		'Factor': tuple (default (0.5, 0.5, 0.5)), 
+		'A': float (default 0.0), 
+		'B': float (default 0.0), 
+		'A': tuple (default (0.0, 0.0, 0.0)), 
+		'B': tuple (default (0.0, 0.0, 0.0)), 
+		'A': tuple (default (0.5, 0.5, 0.5, 1.0)), 
+		'B': tuple (default (0.5, 0.5, 0.5, 1.0))
+	}, 
+	attrs={
+		'blend_type': 'MIX'|'DARKEN'|'MULTIPLY'|'BURN'|'LIGHTEN'|'SCREEN'|'DODGE'|'ADD'|'OVERLAY'|'SOFT_LIGHT'|'LINEAR_LIGHT'|'DIFFERENCE'|'EXCLUSION'|'SUBTRACT'|'DIVIDE'|'HUE'|'SATURATION'|'COLOR'|'VALUE' (default 'MIX'), 
+		'clamp_factor': bool (default True), 
+		'clamp_result': bool (default False), 
+		'data_type': 'FLOAT'|'VECTOR'|'RGBA' (default 'RGBA'), 
+		'factor_mode': 'UNIFORM'|'NON_UNIFORM' (default 'UNIFORM')
+	})
+
+	.outputs = {
+		'Result': float (default 0.0), 
+		'Result': tuple (default (0.0, 0.0, 0.0)), 
+		'Result': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.MixShader, 
+	inputs={
+		'Fac': float (default 0.5), 
+		'Shader': NodeSocketShader, 
+		'Shader': NodeSocketShader
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Shader': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.NewGeometry, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Tangent': tuple (default (0.0, 0.0, 0.0)), 
+		'True Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Incoming': tuple (default (0.0, 0.0, 0.0)), 
+		'Parametric': tuple (default (0.0, 0.0, 0.0)), 
+		'Backfacing': float (default 0.0), 
+		'Pointiness': float (default 0.0), 
+		'Random Per Island': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.NoiseTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0), 
+		'Scale': float (default 5.0), 
+		'Detail': float (default 2.0), 
+		'Roughness': float (default 0.5), 
+		'Distortion': float (default 0.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'noise_dimensions': '1D'|'2D'|'3D'|'4D' (default '3D'), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Fac': float (default 0.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.ObjectInfo_Shader, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Location': tuple (default (0.0, 0.0, 0.0)), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Alpha': float (default 0.0), 
+		'Object Index': float (default 0.0), 
+		'Material Index': float (default 0.0), 
+		'Random': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.PrincipledBSDF, 
+	inputs={
+		'Base Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Subsurface': float (default 0.0), 
+		'Subsurface Radius': tuple (default (1.0, 0.2, 0.1)), 
+		'Subsurface Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Subsurface IOR': float (default 1.4), 
+		'Subsurface Anisotropy': float (default 0.0), 
+		'Metallic': float (default 0.0), 
+		'Specular': float (default 0.5), 
+		'Specular Tint': float (default 0.0), 
+		'Roughness': float (default 0.5), 
+		'Anisotropic': float (default 0.0), 
+		'Anisotropic Rotation': float (default 0.0), 
+		'Sheen': float (default 0.0), 
+		'Sheen Tint': float (default 0.5), 
+		'Clearcoat': float (default 0.0), 
+		'Clearcoat Roughness': float (default 0.03), 
+		'IOR': float (default 1.45), 
+		'Transmission': float (default 0.0), 
+		'Transmission Roughness': float (default 0.0), 
+		'Emission': tuple (default (0.0, 0.0, 0.0, 1.0)), 
+		'Emission Strength': float (default 1.0), 
+		'Alpha': float (default 1.0), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Clearcoat Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Tangent': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'GGX'|'MULTI_GGX' (default 'GGX'), 
+		'subsurface_method': 'BURLEY'|'RANDOM_WALK_FIXED_RADIUS'|'RANDOM_WALK' (default 'RANDOM_WALK')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.PrincipledHairBSDF, 
+	inputs={
+		'Color': tuple (default (0.0175, 0.0058, 0.0021, 1.0)), 
+		'Melanin': float (default 0.8), 
+		'Melanin Redness': float (default 1.0), 
+		'Tint': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Absorption Coefficient': tuple (default (0.2455, 0.52, 1.365)), 
+		'Roughness': float (default 0.3), 
+		'Radial Roughness': float (default 0.3), 
+		'Coat': float (default 0.0), 
+		'IOR': float (default 1.55), 
+		'Offset': float (default 0.0349), 
+		'Random Color': float (default 0.0), 
+		'Random Roughness': float (default 0.0), 
+		'Random': float (default 0.0), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'parametrization': 'ABSORPTION'|'MELANIN'|'COLOR' (default 'COLOR')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.PrincipledVolume, 
+	inputs={
+		'Color': tuple (default (0.5, 0.5, 0.5, 1.0)), 
+		'Color Attribute': str (default ), 
+		'Density': float (default 1.0), 
+		'Density Attribute': str (default density), 
+		'Anisotropy': float (default 0.0), 
+		'Absorption Color': tuple (default (0.0, 0.0, 0.0, 1.0)), 
+		'Emission Strength': float (default 0.0), 
+		'Emission Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Blackbody Intensity': float (default 0.0), 
+		'Blackbody Tint': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Temperature': float (default 1000.0), 
+		'Temperature Attribute': str (default temperature), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Volume': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.RGB, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.5, 0.5, 0.5, 1.0))
+	}
+
+nw.new_node(
+	Nodes.RGBCurve, 
+	inputs={
+		'Fac': float (default 1.0), 
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0))
+	}, 
+	attrs={
+		'mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.RefractionBSDF, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Roughness': float (default 0.0), 
+		'IOR': float (default 1.45), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		'distribution': 'SHARP'|'BECKMANN'|'GGX' (default 'BECKMANN')
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.SeparateColor, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0))
+	}, 
+	attrs={
+		'mode': 'RGB'|'HSV'|'HSL' (default 'RGB')
+	})
+
+	.outputs = {
+		'Red': float (default 0.0), 
+		'Green': float (default 0.0), 
+		'Blue': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.SeparateRGB, 
+	inputs={
+		'Image': tuple (default (0.8, 0.8, 0.8, 1.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'R': float (default 0.0), 
+		'G': float (default 0.0), 
+		'B': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.SeparateXYZ, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'X': float (default 0.0), 
+		'Y': float (default 0.0), 
+		'Z': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.ShaderImageTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'extension': 'REPEAT'|'EXTEND'|'CLIP'|'MIRROR' (default 'REPEAT'), 
+		'image': NoneType (default None), 
+		'image_user': NoneType (default None), 
+		'interpolation': 'Linear'|'Closest'|'Cubic'|'Smart' (default 'Linear'), 
+		'projection': 'FLAT'|'BOX'|'SPHERE'|'TUBE' (default 'FLAT'), 
+		'projection_blend': float (default 0.0), 
+		'texture_mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Alpha': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.ShaderNodeNormalMap, 
+	inputs={
+		'Strength': float (default 1.0), 
+		'Color': tuple (default (0.5, 0.5, 1.0, 1.0))
+	}, 
+	attrs={
+		'space': 'TANGENT'|'OBJECT'|'WORLD'|'BLENDER_OBJECT'|'BLENDER_WORLD' (default 'TANGENT'), 
+		'uv_map': str (default '')
+	})
+
+	.outputs = {
+		'Normal': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.SkyTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'air_density': float (default 1.0), 
+		'altitude': float (default 0.0), 
+		'color_mapping': NoneType (default None), 
+		'dust_density': float (default 1.0), 
+		'ground_albedo': float (default 0.30000001192092896), 
+		'ozone_density': float (default 1.0), 
+		'sky_type': 'PREETHAM'|'HOSEK_WILKIE'|'NISHITA' (default 'NISHITA'), 
+		'sun_direction': Vector (default Vector((0.0, 0.0, 1.0))), 
+		'sun_disc': bool (default True), 
+		'sun_elevation': float (default 0.2617993950843811), 
+		'sun_intensity': float (default 1.0), 
+		'sun_rotation': float (default 0.0), 
+		'sun_size': float (default 0.009512044489383698), 
+		'texture_mapping': NoneType (default None), 
+		'turbidity': float (default 2.200000047683716)
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.TextureCoord, 
+	inputs={
+		
+	}, 
+	attrs={
+		'from_instancer': bool (default False), 
+		'object': NoneType (default None)
+	})
+
+	.outputs = {
+		'Generated': tuple (default (0.0, 0.0, 0.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'UV': tuple (default (0.0, 0.0, 0.0)), 
+		'Object': tuple (default (0.0, 0.0, 0.0)), 
+		'Camera': tuple (default (0.0, 0.0, 0.0)), 
+		'Window': tuple (default (0.0, 0.0, 0.0)), 
+		'Reflection': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.TranslucentBSDF, 
+	inputs={
+		'Color': tuple (default (0.8, 0.8, 0.8, 1.0)), 
+		'Normal': tuple (default (0.0, 0.0, 0.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.TransparentBSDF, 
+	inputs={
+		'Color': tuple (default (1.0, 1.0, 1.0, 1.0)), 
+		'Weight': float (default 0.0)
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'BSDF': NodeSocketShader
+	}
+
+nw.new_node(
+	Nodes.UVMap, 
+	inputs={
+		
+	}, 
+	attrs={
+		'from_instancer': bool (default False), 
+		'uv_map': str (default '')
+	})
+
+	.outputs = {
+		'UV': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.Value, 
+	inputs={
+		
+	}, 
+	attrs={
+		
+	})
+
+	.outputs = {
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.VectorCurve, 
+	inputs={
+		'Fac': float (default 1.0), 
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'mapping': NoneType (default None)
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.VectorMath, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': float (default 1.0)
+	}, 
+	attrs={
+		'operation': 'ADD'|'SUBTRACT'|'MULTIPLY'|'DIVIDE'|'MULTIPLY_ADD'|'CROSS_PRODUCT'|'PROJECT'|'REFLECT'|'REFRACT'|'FACEFORWARD'|'DOT_PRODUCT'|'DISTANCE'|'LENGTH'|'SCALE'|'NORMALIZE'|'ABSOLUTE'|'MINIMUM'|'MAXIMUM'|'FLOOR'|'CEIL'|'FRACTION'|'MODULO'|'WRAP'|'SNAP'|'SINE'|'COSINE'|'TANGENT' (default 'ADD')
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Value': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.VectorRotate, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Center': tuple (default (0.0, 0.0, 0.0)), 
+		'Axis': tuple (default (0.0, 0.0, 1.0)), 
+		'Angle': float (default 0.0), 
+		'Rotation': tuple (default (0.0, 0.0, 0.0))
+	}, 
+	attrs={
+		'invert': bool (default False), 
+		'rotation_type': 'AXIS_ANGLE'|'X_AXIS'|'Y_AXIS'|'Z_AXIS'|'EULER_XYZ' (default 'AXIS_ANGLE')
+	})
+
+	.outputs = {
+		'Vector': tuple (default (0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.VoronoiTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0), 
+		'Scale': float (default 5.0), 
+		'Smoothness': float (default 1.0), 
+		'Exponent': float (default 0.5), 
+		'Randomness': float (default 1.0)
+	}, 
+	attrs={
+		'color_mapping': NoneType (default None), 
+		'distance': 'EUCLIDEAN'|'MANHATTAN'|'CHEBYCHEV'|'MINKOWSKI' (default 'EUCLIDEAN'), 
+		'feature': 'F1'|'F2'|'SMOOTH_F1'|'DISTANCE_TO_EDGE'|'N_SPHERE_RADIUS' (default 'F1'), 
+		'texture_mapping': NoneType (default None), 
+		'voronoi_dimensions': '1D'|'2D'|'3D'|'4D' (default '3D')
+	})
+
+	.outputs = {
+		'Distance': float (default 0.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Position': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0), 
+		'Radius': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.WaveTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'Scale': float (default 5.0), 
+		'Distortion': float (default 0.0), 
+		'Detail': float (default 2.0), 
+		'Detail Scale': float (default 1.0), 
+		'Detail Roughness': float (default 0.5), 
+		'Phase Offset': float (default 0.0)
+	}, 
+	attrs={
+		'bands_direction': 'X'|'Y'|'Z'|'DIAGONAL' (default 'X'), 
+		'color_mapping': NoneType (default None), 
+		'rings_direction': 'X'|'Y'|'Z'|'SPHERICAL' (default 'X'), 
+		'texture_mapping': NoneType (default None), 
+		'wave_profile': 'SIN'|'SAW'|'TRI' (default 'SIN'), 
+		'wave_type': 'BANDS'|'RINGS' (default 'BANDS')
+	})
+
+	.outputs = {
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0)), 
+		'Fac': float (default 0.0)
+	}
+
+nw.new_node(
+	Nodes.WhiteNoiseTexture, 
+	inputs={
+		'Vector': tuple (default (0.0, 0.0, 0.0)), 
+		'W': float (default 0.0)
+	}, 
+	attrs={
+		'noise_dimensions': '1D'|'2D'|'3D'|'4D' (default '3D')
+	})
+
+	.outputs = {
+		'Value': float (default 0.0), 
+		'Color': tuple (default (0.0, 0.0, 0.0, 0.0))
+	}
+
+nw.new_node(
+	Nodes.WorldOutput, 
+	inputs={
+		'Surface': NodeSocketShader, 
+		'Volume': NodeSocketShader
+	}, 
+	attrs={
+		'is_active_output': bool (default True), 
+		'target': 'ALL'|'EEVEE'|'CYCLES' (default 'ALL')
+	})
+
+	.outputs = {
+		
+	}

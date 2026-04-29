@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "procfunc"
+version = "0.30.0"
+description = "A framework for compositional procedural generation"
+readme = "README.md"
+license = "BSD-3-Clause"
+requires-python = ">=3.11"
+dependencies = [
+    "bpy==4.2.0",
+    "numpy<2",
+    "pandas",
+]
+
+[project.urls]
+Homepage = "https://github.com/princeton-vl/procfunc"
+Repository = "https://github.com/princeton-vl/procfunc"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-xdist",
+    "ruff>=0.15,<0.16",
+    "ty"
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+procfunc = ["**/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+
+[tool.ruff]
+exclude = ["examples", "experiments"]
+
+[tool.ruff.lint]
+
+select = [
+    "E",
+    "I",
+    "F",
+    "S102", # no exec(),
+    "TID251", # custom banned imports
+    "TID252", # relative imports only allowed for siblings
+
+]
+ignore = [
+    "E501", # over-length lines, formatter should handle it
+    "E741", # ambigous variable name
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ty.rules]
+unresolved-import = "ignore"
+unresolved-attribute = "ignore"

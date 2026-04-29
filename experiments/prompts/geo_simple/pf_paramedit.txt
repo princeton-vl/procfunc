@@ -1,0 +1,19 @@
+# Prompt for run_llm_inference.py with procfunc backend (paramedit)
+# Images: first=current render, second=goal render
+#
+The following code uses the `procfunc` API to produce a procedural 3D model in Blender:
+```python
+{code}
+```
+
+Your job is to edit the PARAMETERS of the code to make the render more like the goal 3D model. Only edit the parameters, not the structure or args.
+
+Answer the following questions:
+1) What is the SINGLE most visually obvious difference between the two 3D models shown below?
+2) Look at the code. Which fields/variables which are set to numerical values are most likely responsible for the obvious visual difference in your answer to question 1?
+3) Copy the code above (COPY ALL OF IT) and replace the assignments of such fields/variables accordingly!
+
+- MAKE SURE YOUR CODE IS RUNNABLE. You do not need to add your geometry to a scene, it will be auto-rendered so long as you assign it to `geometry` at the end of the file
+- Only use functions inside `pf.nodes`, not any other way of accessing blender. These functions have a similar interface to standard blender geometry nodes.
+- DO NOT BE BRIEF IN YOUR CODE. DO NOT ABBREVIATE YOUR CODE WITH "..." -- TYPE OUT EVERYTHING.
+- Return your code in a ```python code block.

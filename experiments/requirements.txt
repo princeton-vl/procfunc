@@ -1,0 +1,19 @@
+# for blendergym/generate_benchdata.py
+tqdm
+huggingface
+huggingface_hub
+
+# for data prep scripts
+imageio
+matplotlib
+
+# for run_llm_inference.py
+backoff
+google-genai
+google-api-core
+openai
+pillow
+
+# for evaluate_results.py
+torch
+transformers
