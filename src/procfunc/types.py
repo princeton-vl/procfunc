@@ -116,40 +116,24 @@ class BlenderAsset(Asset, Generic[T]):
         _global_usage_table.counts[id(self._item)] += 1
 
     def invalidate(self):
-        self._item = None
         self._dependencies = []
         _global_usage_table.counts[id(self._item)] = INVALIDATED_USAGE_ID
 
     def __del__(self):
-        # return
 
-        if self._item is None:
-            return
         return  # TODO
-        item_id = id(self._item)
-        count = _global_usage_table.counts.get(item_id, 0)
 
-        count -= 1
 
-        # new bad ref counter
-        if count < 0:
             raise ValueError(
-                f"Asset ref {id(self)} reached negative ref count for item {self._item.name}"
             )
 
-        _global_usage_table.counts[item_id] = count
 
-        if count == 0:
-            try:
                 bpy_col = _bpy_data_col_for_asset(self._item)
-                if self._item.name in bpy_col:
-                    bpy_col.remove(self._item, do_unlink=True)
             except ReferenceError:
                 logger.warning(
                     f"{self.__class__.__name__} __del__ failed - item already deleted"
                 )
 
-            del _global_usage_table.counts[item_id]
 
         self._item = None
 '''
