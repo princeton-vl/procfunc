@@ -236,7 +236,7 @@ def assign_default_value(
             | bni.NodeDataType.MATERIAL
             | bni.NodeDataType.COLLECTION
         ):
-            if isinstance(input_val, (t.MeshObject, t.Material, t.Collection)):
+            if isinstance(input_val, (t.Object, t.Material, t.Collection)):
                 target_socket.default_value = input_val.item()
             else:
                 target_socket.default_value = input_val
