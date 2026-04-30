@@ -52,6 +52,7 @@ def special_case_float_curve(
             f"handle_type={handle_type!r} is not yet supported, only 'AUTO' is implemented"
         )
     use_clip = attrs.pop("use_clip", True)
+    bl_node.mapping.use_clip = use_clip
 
     if points is None:
         return

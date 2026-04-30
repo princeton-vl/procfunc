@@ -59,6 +59,7 @@ def accumulate_field(
             [NodeDataType.INT, NodeDataType.FLOAT],
             ["Value"],
         )
+    res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeAccumulateField",
         inputs={"Group ID": group_id, "Value": value},
         attrs={
@@ -506,6 +507,7 @@ def curve_line(
 def curve_line_from_direction(
     start: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     direction: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 1),
+    length: nt.SocketOrVal[float] = 1.0,
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a CurveLineFromDirection Geometry Node.
@@ -685,8 +687,14 @@ def curve_to_points(
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/operations/curve_to_points.html
     """
+    inputs = {"Curve": curve}
+    if mode == "COUNT":
+        inputs["Count"] = count
+    elif mode == "LENGTH":
+        inputs["Length"] = length
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeCurveToPoints",
+        inputs=inputs,
         attrs={"mode": mode},
     )
     return CurveToPointsResult(
@@ -861,11 +869,13 @@ def distribute_points_on_faces(
         "Mesh": mesh,
         "Selection": selection,
         "Seed": seed,
+    }
     if density is not None:
         inputs["Density"] = density
 
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeDistributePointsOnFaces",
+        inputs=inputs,
         attrs={
             "distribute_method": "RANDOM",
             "use_legacy_normal": use_legacy_normal,
@@ -1687,6 +1697,7 @@ def input_named_attribute(
     node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeInputNamedAttribute",
         inputs={"Name": name},
+        attrs={"data_type": data_type},
     )
     return InputNamedAttributeResult(
         node._output_socket("attribute"), node._output_socket("exists")
@@ -2716,6 +2727,7 @@ def raycast(
 
 
 def realize_instances(
+    geometry: nt.ProcNode[nt.Geometry] | nt.ProcNode[nt.Instances],
     selection: nt.SocketOrVal[bool] = True,
     realize_all: nt.SocketOrVal[bool] = True,
     depth: nt.SocketOrVal[int] = 0,
@@ -2906,7 +2918,10 @@ def sample_curve(
         "Factor": factor,
         "Value": value,
     }
+    if not use_all_curves:
+        inputs["Curve Index"] = curve_index
     res = nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeSampleCurve",
         inputs=inputs,
         attrs={
             "mode": mode,
@@ -3302,6 +3317,7 @@ def set_curve_normal(
     curve: nt.ProcNode[pt.CurveObject],
     selection: nt.SocketOrVal[bool] = True,
     mode: Literal["MINIMUM_TWIST", "Z_UP", "FREE"] = "MINIMUM_TWIST",
+    normal: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 1),
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a SetCurveNormal Geometry Node.
@@ -3310,6 +3326,7 @@ def set_curve_normal(
     """
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSetCurveNormal",
+        inputs={"Curve": curve, "Selection": selection, "Normal": normal},
         attrs={"mode": mode},
     )
 

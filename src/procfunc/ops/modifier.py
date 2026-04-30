@@ -6,59 +6,124 @@ from procfunc.tracer import primitive
 from ._util import modify
 
 
+@primitive(mutates=["mutates_obj"])
 def subdivide_surface(
+    mutates_obj: t.MeshObject,
     levels: int = 2,
+    subdivision_type: Literal["CATMULL_CLARK", "SIMPLE"] = "CATMULL_CLARK",
+    boundary_smooth: Literal["PRE_CLIP", "PRESERVE_CORNERS", "ALL"] = "ALL",
+    uv_smooth: Literal[
+        "NONE",
+        "PRESERVE_CORNERS",
+        "PRESERVE_CORNERS_AND_JUNCTIONS",
+        "PRESERVE_CORNERS_AND_JUNCTIONS_3_POINTS",
+        "PRESERVE_BOUNDARIES",
+        "ALL",
+    ] = "PRESERVE_BOUNDARIES",
+    use_creases: bool = True,
+    quality: int = 3,
     _skip_apply: bool = False,
+):
     """
     Apply subdivision surface modifier.
 
     We disallow render_levels since this function is automatically executed & fully "applied"
     """
+    return modify(
+        mutates_obj,
         "SUBSURF",
         levels=levels,
         render_levels=levels,
+        subdivision_type=subdivision_type,
+        boundary_smooth=boundary_smooth,
+        uv_smooth=uv_smooth,
+        use_creases=use_creases,
+        quality=quality,
         _skip_apply=_skip_apply,
+    )
 
 
+@primitive(mutates=["mutates_obj"])
 def solidify(
+    mutates_obj: t.MeshObject,
     thickness: float = 0.01,
+    offset: float = -1.0,
+    solidify_mode: Literal["EXTRUDE", "NON_MANIFOLD"] = "EXTRUDE",
+    use_even_offset: bool = False,
+    use_quality_normals: bool = False,
+    thickness_clamp: float = 0.0,
+    use_rim: bool = True,
+    use_rim_only: bool = False,
+    use_flip_normals: bool = False,
+    material_offset: int = 0,
+    material_offset_rim: int = 0,
+    nonmanifold_thickness_mode: Literal["FIXED", "EVEN", "CONSTRAINTS"] = "CONSTRAINTS",
+    nonmanifold_boundary_mode: Literal["NONE", "ROUND", "FLAT"] = "NONE",
+    nonmanifold_merge_threshold: float = 0.0001,
+):
     """Apply solidify modifier."""
+    return modify(
+        mutates_obj,
         "SOLIDIFY",
         thickness=thickness,
         offset=offset,
+        solidify_mode=solidify_mode,
+        use_even_offset=use_even_offset,
+        use_quality_normals=use_quality_normals,
+        thickness_clamp=thickness_clamp,
+        use_rim=use_rim,
+        use_rim_only=use_rim_only,
+        use_flip_normals=use_flip_normals,
+        material_offset=material_offset,
+        material_offset_rim=material_offset_rim,
+        nonmanifold_thickness_mode=nonmanifold_thickness_mode,
+        nonmanifold_boundary_mode=nonmanifold_boundary_mode,
+        nonmanifold_merge_threshold=nonmanifold_merge_threshold,
+    )
 
 
+@primitive(mutates=["mutates_obj"])
 def bevel(
+    mutates_obj: t.MeshObject,
     width: float = 0.01,
     segments: int = 1,
+):
     """Apply bevel modifier."""
     return modify(mutates_obj, "BEVEL", width=width, segments=segments)
 
 
+@primitive(mutates=["mutates_obj"])
 def _boolean(
+    mutates_obj: t.MeshObject,
     target: t.MeshObject | t.Collection,
     operation: Literal["DIFFERENCE", "INTERSECT", "UNION"],
     threshold: float = 1e-6,
     fast: bool = True,
     hole_tolerant: bool = False,
     self_intersect: bool = False,
+):
     if isinstance(target, t.Collection):
         target_kwargs = {
             "collection": target,
             "operand_type": "COLLECTION",
+        }
     elif isinstance(target, t.MeshObject):
         target_kwargs = {
             "object": target,
             "operand_type": "OBJECT",
+        }
     else:
         raise ValueError(f"Invalid target type: {type(target)}")
 
+    return modify(
+        mutates_obj,
         "BOOLEAN",
         operation=operation,
         solver="FAST" if fast else "EXACT",
         use_hole_tolerant=hole_tolerant,
         use_self=self_intersect,
         **target_kwargs,
+    )
 
 
 @primitive(mutates=["mutates_obj"])
@@ -72,11 +137,14 @@ def boolean_difference(
 ):
     """Apply boolean difference modifier."""
     return _boolean(
+        mutates_obj,
         target,
         operation="DIFFERENCE",
+        threshold=threshold,
         fast=fast,
         hole_tolerant=hole_tolerant,
         self_intersect=self_intersect,
+    )
 
 
 @primitive(mutates=["mutates_obj"])
@@ -93,9 +161,11 @@ def boolean_intersect(
         mutates_obj,
         target,
         operation="INTERSECT",
+        threshold=threshold,
         fast=fast,
         hole_tolerant=hole_tolerant,
         self_intersect=self_intersect,
+    )
 
 
 @primitive(mutates=["mutates_obj"])
@@ -112,6 +182,7 @@ def boolean_union(
         mutates_obj,
         target,
         operation="UNION",
+        threshold=threshold,
         fast=fast,
         hole_tolerant=hole_tolerant,
         self_intersect=self_intersect,
@@ -131,6 +202,7 @@ def mirror(
 
     TODO: May also be applicable to t.CurveObject
     """
+    return modify(
         mutates_obj,
         "MIRROR",
         use_axis=use_axis,
@@ -145,6 +217,8 @@ def mirror(
 def array(
     mutates_obj: t.MeshObject,
     count: int = 2,
+    relative_offset_displace: Tuple[float, float, float] | None = None,
+    constant_offset_displace: Tuple[float, float, float] | None = None,
     merge_threshold: float = 0.0,
 ):
     """Apply array modifier."""
@@ -152,7 +226,18 @@ def array(
         raise ValueError(
             "Cannot specify both relative_offset_displace and constant_offset_displace"
         )
+    kwargs = {}
+    if relative_offset_displace is not None:
+        kwargs = {
+            "relative_offset_displace": relative_offset_displace,
+            "use_relative_offset": True,
+            "use_constant_offset": False,
         }
+    if constant_offset_displace is not None:
+        kwargs = {
+            "constant_offset_displace": constant_offset_displace,
+            "use_constant_offset": True,
+            "use_relative_offset": False,
         }
     return modify(
         mutates_obj,
@@ -160,6 +245,7 @@ def array(
         count=count,
         merge_threshold=merge_threshold,
         use_merge_vertices=merge_threshold > 0,
+        **kwargs,
     )
 
 
@@ -237,6 +323,8 @@ def triangulate(
 def remesh_voxel(
     mutates_obj: t.MeshObject,
     voxel_size: float = 0.1,
+    adaptivity: float = 0.0,
+    use_smooth_shade: bool = False,
 ):
     """
     Apply remesh modifier.
@@ -245,35 +333,79 @@ def remesh_voxel(
     """
     return modify(
         mutates_obj,
+        "REMESH",
+        mode="VOXEL",
+        voxel_size=voxel_size,
+        adaptivity=adaptivity,
+        use_smooth_shade=use_smooth_shade,
     )
 
 
 @primitive(mutates=["mutates_obj"])
+def remesh_blocks(
     mutates_obj: t.MeshObject,
-):
-    return modify(
-        mutates_obj,
-        threshold=threshold,
-    )
-
-
-@primitive(mutates=["mutates_obj"])
-    mutates_obj: t.MeshObject,
+    octree_depth: int = 4,
+    scale: float = 0.9,
+    use_remove_disconnected: bool = True,
     threshold: float = 1.0,
+    use_smooth_shade: bool = False,
 ):
+    """Apply remesh modifier with BLOCKS mode."""
     return modify(
         mutates_obj,
+        "REMESH",
+        mode="BLOCKS",
+        octree_depth=octree_depth,
+        scale=scale,
+        use_remove_disconnected=use_remove_disconnected,
         threshold=threshold,
+        use_smooth_shade=use_smooth_shade,
     )
 
 
 @primitive(mutates=["mutates_obj"])
+def remesh_smooth(
     mutates_obj: t.MeshObject,
+    octree_depth: int = 4,
+    scale: float = 0.9,
+    use_remove_disconnected: bool = True,
     threshold: float = 1.0,
+    use_smooth_shade: bool = False,
 ):
+    """Apply remesh modifier with SMOOTH mode."""
     return modify(
         mutates_obj,
+        "REMESH",
+        mode="SMOOTH",
+        octree_depth=octree_depth,
+        scale=scale,
+        use_remove_disconnected=use_remove_disconnected,
         threshold=threshold,
+        use_smooth_shade=use_smooth_shade,
+    )
+
+
+@primitive(mutates=["mutates_obj"])
+def remesh_sharp(
+    mutates_obj: t.MeshObject,
+    octree_depth: int = 4,
+    scale: float = 0.9,
+    sharpness: float = 1.0,
+    use_remove_disconnected: bool = True,
+    threshold: float = 1.0,
+    use_smooth_shade: bool = False,
+):
+    """Apply remesh modifier with SHARP mode."""
+    return modify(
+        mutates_obj,
+        "REMESH",
+        mode="SHARP",
+        octree_depth=octree_depth,
+        scale=scale,
+        sharpness=sharpness,
+        use_remove_disconnected=use_remove_disconnected,
+        threshold=threshold,
+        use_smooth_shade=use_smooth_shade,
     )
 
 
@@ -349,10 +481,19 @@ def edge_split(
 
 
 @primitive(mutates=["mutates_obj"])
+def curve_deform(
     mutates_obj: t.MeshObject,
+    curve_object: t.CurveObject,
+    deform_axis: Literal[
+        "POS_X", "POS_Y", "POS_Z", "NEG_X", "NEG_Y", "NEG_Z"
+    ] = "POS_Y",
 ):
+    """Apply curve deform modifier to bend mesh along a curve."""
     return modify(
         mutates_obj,
+        "CURVE",
+        object=curve_object,
+        deform_axis=deform_axis,
     )
 
 
@@ -376,11 +517,17 @@ def displacement(
     mutates_obj: t.MeshObject,
     texture: t.Texture | None = None,
     strength: float = 1.0,
+    mid_level: float = 0.5,
     direction: Literal[
         "X", "Y", "Z", "NORMAL", "CUSTOM_NORMAL", "RGB_TO_XYZ"
     ] = "NORMAL",
     space: Literal["LOCAL", "GLOBAL"] = "LOCAL",
     texture_coords: Literal["LOCAL", "GLOBAL", "OBJECT", "UV"] = "LOCAL",
+    texture_coords_object: t.Object | None = None,
+    uv_layer: str = "",
+    vertex_group: str = "",
+    invert_vertex_group: bool = False,
+    texture_coords_bone: str = "",
 ):
     """Apply displacement modifier."""
     kwargs = {}
@@ -392,6 +539,14 @@ def displacement(
         "DISPLACE",
         texture=texture,
         strength=strength,
+        mid_level=mid_level,
+        direction=direction,
+        space=space,
+        texture_coords=texture_coords,
+        uv_layer=uv_layer,
+        vertex_group=vertex_group,
+        invert_vertex_group=invert_vertex_group,
+        texture_coords_bone=texture_coords_bone,
         **kwargs,
     )
 
@@ -426,6 +581,7 @@ __all__ = [
     "array",
     "bevel",
     "boolean_difference",
+    "curve_deform",
     "boolean_intersect",
     "boolean_union",
     "corrective_smooth",

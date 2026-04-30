@@ -134,6 +134,7 @@ def bpy_nocollide_data_name(
         return name
 
     for i in range(retries):
+        newname = f"{name}_{len(bpy_data) + i}"
         if newname not in bpy_data:
             return newname
     else:

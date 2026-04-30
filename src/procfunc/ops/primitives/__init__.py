@@ -5,6 +5,8 @@ from .camera import (
 from .curve import (
     curve_bezier,
     curve_circle,
+    curve_line,
+    curve_splines,
 )
 from .light import (
     area_lamp,
