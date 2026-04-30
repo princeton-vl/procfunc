@@ -196,6 +196,59 @@ def test_node_function_meshobject_geometry_input():
     assert result.item().type == "MESH"
 
 
+def test_object_info_accepts_curve_object():
+    """object_info should accept any Object subclass (e.g. CurveObject), not only MeshObject.
+
+    Regression test: assign_default_value previously only auto-unwrapped MeshObject,
+    causing CurveObject to be passed as a wrapper to NodeSocketObject.default_value
+    and raising "expected a Object type, not CurveObject"."""
+
+    curve = pf.nodes.to_curve_object(
+        geometry=pf.nodes.geo.curve_circle(radius=1.0, resolution=8)
+    )
+    assert isinstance(curve, pf.CurveObject)
+
+    geo = pf.nodes.geo.object_info(curve).geometry
+    result = pf.nodes.to_curve_object(geometry=geo)
+
+    assert result is not None
+    assert result.item().type == "CURVE"
+
+
+def test_set_material_unwraps_material_wrapper():
+    """assign_default_value should unwrap a pf.Material via .item() when assigning
+    to a NodeSocketMaterial, so that bpy receives a bpy.types.Material."""
+
+    bsdf = pf.nodes.shader.principled_bsdf(
+        base_color=(0.1, 0.5, 0.8, 1.0), roughness=0.4
+    )
+    material = pf.Material(surface=bsdf)
+    assert isinstance(material, pf.Material)
+
+    cube = pf.nodes.geo.mesh_cube(size=(1, 1, 1)).mesh
+    cube_with_mat = pf.nodes.geo.set_material(geometry=cube, material=material)
+    obj = pf.nodes.to_mesh_object(geometry=cube_with_mat)
+
+    assert obj is not None
+    assert obj.item().type == "MESH"
+
+
+def test_collection_info_unwraps_collection_wrapper():
+    """assign_default_value should unwrap a pf.Collection via .item() when assigning
+    to a NodeSocketCollection, so that bpy receives a bpy.types.Collection."""
+
+    cube_obj = pf.nodes.to_mesh_object(pf.nodes.geo.mesh_cube(size=(1, 1, 1)).mesh)
+    col = pf.Collection([cube_obj], name="test_unwrap_collection")
+    assert isinstance(col, pf.Collection)
+
+    instances = pf.nodes.geo.collection_info(collection=col)
+    realized = pf.nodes.geo.realize_instances(instances)
+    result = pf.nodes.to_mesh_object(geometry=realized)
+
+    assert result is not None
+    assert result.item().type == "MESH"
+
+
 def test_to_object_basic():
     cube = pf.nodes.geo.mesh_cube(size=(2, 2, 2))
     obj = pf.nodes.to_mesh_object(geometry=cube.mesh)
