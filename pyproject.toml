@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "procfunc"
-version = "0.30.0"
+version = "0.30.1"
 description = "Function-Oriented Abstractions for Procedural 3D Generation in Python"
 readme = "README.md"
 license = "BSD-3-Clause"
