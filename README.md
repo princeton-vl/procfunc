@@ -50,7 +50,15 @@ You can also open and edit the blender geonodes prior to transpiling in order to
 
 If you find procfunc useful, please cite our paper:
 ```
-TODO TODO BIBTEX
+@misc{raistrick2026procfunc,
+      title={ProcFunc: Function-Oriented Abstractions for Procedural 3D Generation in Python}, 
+      author={Alexander Raistrick and Karhan Kayan and Jack Nugent and David Yan and Lingjie Mei and Meenal Parakh and Hongyu Wen and Dylan Li and Yiming Zuo and Erich Liang and Jia Deng},
+      year={2026},
+      eprint={2604.26943},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2604.26943}, 
+}
 ```
 
 ### Experiments
