@@ -227,15 +227,10 @@ def polygon_normals(obj: t.MeshObject) -> np.ndarray:
 
 
 def polygon_areas(obj: t.MeshObject) -> np.ndarray:
-    arr = np.zeros(len(obj.item().data.polygons))
     obj.item().data.polygons.foreach_get("area", arr)
-    return arr.reshape(-1)
 
 
-def polygon_loop_totals(obj: t.MeshObject) -> np.ndarray:
     arr = np.zeros(len(obj.item().data.polygons))
-    obj.item().data.polygons.foreach_get("loop_total", arr)
-    return arr.reshape(-1)
 
 
 def polygon_vertex_indices(
@@ -298,8 +293,6 @@ def write_uv_coords(obj: t.MeshObject, uv: np.ndarray, layer: int | None = None)
     uv_layer.data.foreach_set("uv", uv.reshape(-1))
 
 
-def uv_coords_new(obj: t.MeshObject, name: str, do_init: bool = True):
-    obj.item().data.uv_layers.new(name=name, do_init=do_init)
 
 
 def bbox_corners(
@@ -340,61 +333,29 @@ def bbox_min_max(
     return bbox.min(axis=0), bbox.max(axis=0)
 
 
-def edge_lengths(obj: t.MeshObject) -> np.ndarray:
     cos = vertex_positions(obj)[edge_indices(obj).reshape(-1)].reshape(-1, 2, 3)
-    return np.linalg.norm(cos[:, 1] - cos[:, 0], axis=-1)
 
 
-def edge_centers(obj: t.MeshObject) -> np.ndarray:
     cos = vertex_positions(obj)[edge_indices(obj).reshape(-1)].reshape(-1, 2, 3)
-    return (cos[:, 1] + cos[:, 0]) / 2
 
 
-def edge_directions(obj: t.MeshObject) -> np.ndarray:
     cos = vertex_positions(obj)[edge_indices(obj).reshape(-1)].reshape(-1, 2, 3)
-    diff = cos[:, 1] - cos[:, 0]
-    norms = np.linalg.norm(diff, axis=-1, keepdims=True)
-    norms = np.where(norms == 0, 1.0, norms)
-    return diff / norms
 
 
-def loop_starts(obj: t.MeshObject) -> np.ndarray:
-    arr = np.zeros(len(obj.item().data.polygons), dtype=int)
-    obj.item().data.polygons.foreach_get("loop_start", arr)
-    return arr
 
 
-def loop_totals(obj: t.MeshObject) -> np.ndarray:
-    arr = np.zeros(len(obj.item().data.polygons), dtype=int)
-    obj.item().data.polygons.foreach_get("loop_total", arr)
-    return arr
 
 
-def loop_edge_indices(obj: t.MeshObject) -> np.ndarray:
-    arr = np.zeros(len(obj.item().data.loops), dtype=int)
-    obj.item().data.loops.foreach_get("edge_index", arr)
+
+
     return arr.reshape(-1)
 
 
-def loop_vertex_indices(obj: t.MeshObject) -> np.ndarray:
-    arr = np.zeros(len(obj.item().data.loops), dtype=int)
-    obj.item().data.loops.foreach_get("vertex_index", arr)
-    return arr.reshape(-1)
-
-
-def material_index(obj: t.MeshObject) -> np.ndarray:
-    arr = np.zeros(len(obj.item().data.polygons), dtype=int)
-    obj.item().data.polygons.foreach_get("material_index", arr)
-    return arr
 
 
 def write_material_index(
     obj: t.MeshObject, index: int, face_mask: np.ndarray | None = None
 ) -> None:
-    if face_mask is None:
-        face_mask = np.ones(len(obj.item().data.polygons), dtype=bool)
-    arr = np.where(face_mask, index, material_index(obj))
-    obj.item().data.polygons.foreach_set("material_index", arr)
 
 
 __all__ = [
@@ -411,16 +372,6 @@ __all__ = [
     "polygon_areas",
     "uv_coords",
     "write_uv_coords",
-    "uv_coords_new",
     "bbox_corners",
     "bbox_min_max",
-    "edge_lengths",
-    "edge_centers",
-    "edge_directions",
-    "loop_starts",
-    "loop_totals",
-    "loop_edge_indices",
-    "loop_vertex_indices",
-    "material_index",
-    "write_material_index",
 ]

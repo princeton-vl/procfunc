@@ -1292,7 +1292,6 @@ def float_curve(
     factor: nt.SocketOrVal[float] = 1.0,
     value: nt.SocketOrVal[float] = 1.0,
     curve: np.ndarray | None = None,
-    handle_type: str = "AUTO",
     use_clip: bool = True,
 ) -> nt.ProcNode[float]:
     """
@@ -1303,7 +1302,6 @@ def float_curve(
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeFloatCurve",
         inputs={"Factor": factor, "Value": value},
-        attrs={"mapping": curve, "handle_type": handle_type, "use_clip": use_clip},
     )
 
 
