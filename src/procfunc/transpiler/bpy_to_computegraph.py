@@ -1124,9 +1124,13 @@ def parse_geo_modifier(
         if soc.in_out != "INPUT":
             continue
         if soc.identifier not in id_to_node:
-            raise ValueError(
-                f"Socket {soc.identifier=} {soc.name=} not found in {id_to_node.keys()}"
+            # Interface declares this input but nothing inside the nodetree reads it
+            # (e.g. NodeGroupInput's Geometry output is unlinked). Skip — the subgraph
+            # has no placeholder for it, so passing a kwarg would be a type error.
+            logger.debug(
+                f"Skipping unused modifier input {soc.name=} {soc.identifier=}"
             )
+            continue
         parsed_name = id_to_node[soc.identifier].metadata.get("varname", None)
         assert parsed_name is not None, id_to_node[soc.identifier]
         inputs[parsed_name] = _parse_geomod_input(mod, name, node_curr, memo)
