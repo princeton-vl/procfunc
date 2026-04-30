@@ -20,6 +20,8 @@ def _ensure_uv_layer(obj: bpy.types.Object, uv_name: str) -> None:
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def cube_project(
     mutates_obj: t.MeshObject,
+    vertex_mask: np.ndarray | None = None,
+    edge_mask: np.ndarray | None = None,
     face_mask: np.ndarray | None = None,
     uv_name: str = "UVMap",
     cube_size: float = 1.0,
@@ -33,12 +35,17 @@ def cube_project(
     Based on bpy.ops.uv.cube_project
 
     Args:
+        vertex_mask: Boolean array selecting vertices to project.
+        edge_mask: Boolean array selecting edges to project.
+        face_mask: Boolean array selecting faces to project.
         uv_name: Name of the UV layer to create/replace.
     """
     _ensure_uv_layer(mutates_obj.item(), uv_name)
     execute_mesh_op(
         bpy.ops.uv.cube_project,
         mutates_obj,
+        vertex_mask=vertex_mask,
+        edge_mask=edge_mask,
         face_mask=face_mask,
         cube_size=cube_size,
         correct_aspect=correct_aspect,
@@ -50,6 +57,8 @@ def cube_project(
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def cylinder_project(
     mutates_obj: t.MeshObject,
+    vertex_mask: np.ndarray | None = None,
+    edge_mask: np.ndarray | None = None,
     face_mask: np.ndarray | None = None,
     uv_name: str = "UVMap",
     direction: Literal[
@@ -69,12 +78,17 @@ def cylinder_project(
     Based on bpy.ops.uv.cylinder_project
 
     Args:
+        vertex_mask: Boolean array selecting vertices to project.
+        edge_mask: Boolean array selecting edges to project.
+        face_mask: Boolean array selecting faces to project.
         uv_name: Name of the UV layer to create/replace.
     """
     _ensure_uv_layer(mutates_obj.item(), uv_name)
     execute_mesh_op(
         bpy.ops.uv.cylinder_project,
         mutates_obj,
+        vertex_mask=vertex_mask,
+        edge_mask=edge_mask,
         face_mask=face_mask,
         direction=direction,
         align=align,
@@ -90,6 +104,8 @@ def cylinder_project(
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def project_from_view(
     mutates_obj: t.MeshObject,
+    vertex_mask: np.ndarray | None = None,
+    edge_mask: np.ndarray | None = None,
     face_mask: np.ndarray | None = None,
     uv_name: str = "UVMap",
     orthographic: bool = False,
@@ -104,12 +120,17 @@ def project_from_view(
     Based on bpy.ops.uv.project_from_view
 
     Args:
+        vertex_mask: Boolean array selecting vertices to project.
+        edge_mask: Boolean array selecting edges to project.
+        face_mask: Boolean array selecting faces to project.
         uv_name: Name of the UV layer to create/replace.
     """
     _ensure_uv_layer(mutates_obj.item(), uv_name)
     execute_mesh_op(
         bpy.ops.uv.project_from_view,
         mutates_obj,
+        vertex_mask=vertex_mask,
+        edge_mask=edge_mask,
         face_mask=face_mask,
         orthographic=orthographic,
         camera_bounds=camera_bounds,
@@ -122,6 +143,8 @@ def project_from_view(
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def smart_project(
     mutates_obj: t.MeshObject,
+    vertex_mask: np.ndarray | None = None,
+    edge_mask: np.ndarray | None = None,
     face_mask: np.ndarray | None = None,
     uv_name: str = "UVMap",
     angle_limit: float = 1.15192,
@@ -140,12 +163,17 @@ def smart_project(
     Based on bpy.ops.uv.smart_project
 
     Args:
+        vertex_mask: Boolean array selecting vertices to project.
+        edge_mask: Boolean array selecting edges to project.
+        face_mask: Boolean array selecting faces to project.
         uv_name: Name of the UV layer to create/replace.
     """
     _ensure_uv_layer(mutates_obj.item(), uv_name)
     execute_mesh_op(
         bpy.ops.uv.smart_project,
         mutates_obj,
+        vertex_mask=vertex_mask,
+        edge_mask=edge_mask,
         face_mask=face_mask,
         angle_limit=angle_limit,
         margin_method=margin_method,
@@ -160,6 +188,8 @@ def smart_project(
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def sphere_project(
     mutates_obj: t.MeshObject,
+    vertex_mask: np.ndarray | None = None,
+    edge_mask: np.ndarray | None = None,
     face_mask: np.ndarray | None = None,
     uv_name: str = "UVMap",
     direction: Literal[
@@ -178,12 +208,17 @@ def sphere_project(
     Based on bpy.ops.uv.sphere_project
 
     Args:
+        vertex_mask: Boolean array selecting vertices to project.
+        edge_mask: Boolean array selecting edges to project.
+        face_mask: Boolean array selecting faces to project.
         uv_name: Name of the UV layer to create/replace.
     """
     _ensure_uv_layer(mutates_obj.item(), uv_name)
     execute_mesh_op(
         bpy.ops.uv.sphere_project,
         mutates_obj,
+        vertex_mask=vertex_mask,
+        edge_mask=edge_mask,
         face_mask=face_mask,
         direction=direction,
         align=align,
@@ -198,6 +233,8 @@ def sphere_project(
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def unwrap(
     mutates_obj: t.MeshObject,
+    vertex_mask: np.ndarray | None = None,
+    edge_mask: np.ndarray | None = None,
     face_mask: np.ndarray | None = None,
     uv_name: str = "UVMap",
     method: Literal["ANGLE_BASED", "CONFORMAL"] = "ANGLE_BASED",
@@ -213,12 +250,17 @@ def unwrap(
     Based on bpy.ops.uv.unwrap
 
     Args:
+        vertex_mask: Boolean array selecting vertices to unwrap.
+        edge_mask: Boolean array selecting edges to unwrap.
+        face_mask: Boolean array selecting faces to unwrap.
         uv_name: Name of the UV layer to create/replace.
     """
     _ensure_uv_layer(mutates_obj.item(), uv_name)
     execute_mesh_op(
         bpy.ops.uv.unwrap,
         mutates_obj,
+        vertex_mask=vertex_mask,
+        edge_mask=edge_mask,
         face_mask=face_mask,
         method=method,
         fill_holes=fill_holes,

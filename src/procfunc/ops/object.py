@@ -44,6 +44,9 @@ def set_material(
     Args:
         mutates_obj: Blender object to assign material to
         material: Material to assign. If None, constructs one from surface/displacement/volume.
+        surface: Shader to assign to the surface.
+        displacement: Vector to assign to the displacement.
+        volume: Shader to assign to the volume.
         selection: Boolean array with length equal to number of faces.
                   If provided, assigns material only to selected faces.
     """
@@ -90,6 +93,7 @@ def set_material(
     else:
         index_arr = np.full(len(obj_bpy.data.polygons), 0, dtype=np.int32)
 
+    index_arr[selection] = target_slot.slot_index
     write_attribute(
         mutates_obj, index_arr, "material_index", domain="FACE", overwrite=True
     )
