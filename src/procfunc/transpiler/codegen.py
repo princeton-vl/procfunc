@@ -685,6 +685,22 @@ def _codegen_for_graph(
     )
 
 
+_NODES_FLAT_NAMES: dict[int, str] | None = None
+
+
+def _get_nodes_flat_names() -> dict[int, str]:
+    global _NODES_FLAT_NAMES
+    if _NODES_FLAT_NAMES is None:
+        from procfunc import nodes
+
+        _NODES_FLAT_NAMES = {}
+        for name in dir(nodes):
+            obj = getattr(nodes, name)
+            if callable(obj) and not name.startswith("_"):
+                _NODES_FLAT_NAMES[id(obj)] = name
+    return _NODES_FLAT_NAMES
+
+
 def _resolve_func(func: Any) -> tuple[str | None, str]:
     """
     Returns:
@@ -700,7 +716,12 @@ def _resolve_func(func: Any) -> tuple[str | None, str]:
         raise NotImplementedError(f"Unsupported function: {func}")
     elif module == "builtins":
         return None, func.__name__
-    elif module.startswith("procfunc."):
+
+    flat_names = _get_nodes_flat_names()
+    if id(func) in flat_names:
+        return "import procfunc as pf", f"pf.nodes.{flat_names[id(func)]}"
+
+    if module.startswith("procfunc."):
         callsite = "pf." + module[len("procfunc.") :] + "." + func.__name__
         importstring = "import procfunc as pf"
         return importstring, callsite

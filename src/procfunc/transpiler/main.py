@@ -151,7 +151,7 @@ def transpile_targets(
             logger.debug(f"Applying transform {tfunc} to {result_graphs=}")
         result_graphs = tfunc(result_graphs)
 
-    vec = cg.FunctionCallNode(pf.nodes.shader.coord, (), {})
+    vec = cg.FunctionCallNode(pf.nodes.coord, (), {})
     vec = cg.GetAttributeNode(vec, "generated")
 
     result_calls = []

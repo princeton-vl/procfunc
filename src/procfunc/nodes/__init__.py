@@ -36,6 +36,38 @@ NODES_MANIFEST_PATH = module_path() / "nodes" / "manifest.json"
 assert NODES_MANIFEST_PATH.exists(), f"Manifest not found at {NODES_MANIFEST_PATH}"
 NODES_MANIFEST = _read_json(NODES_MANIFEST_PATH)
 
+
+# Flat re-exports of node functions: pf.nodes.add instead of pf.nodes.math.add.
+# Compositor stays namespaced (different bpy class hierarchy). The 6 collision
+# pairs (greater_than/less_than, object_info) keep type-prefixed names.
+_COLLISION_ALIASES = {
+    ("math", "greater_than"): "math_greater_than",
+    ("math", "less_than"): "math_less_than",
+    ("func", "greater_than"): "func_greater_than",
+    ("func", "less_than"): "func_less_than",
+    ("geo", "object_info"): "geo_object_info",
+    ("shader", "object_info"): "shader_object_info",
+}
+_FLAT_EXPORTS: list[str] = []
+for _mod_name, _mod in [
+    ("math", math),
+    ("func", func),
+    ("geo", geo),
+    ("shader", shader),
+]:
+    for _attr in dir(_mod):
+        if _attr.startswith("_"):
+            continue
+        _obj = getattr(_mod, _attr)
+        if not callable(_obj):
+            continue
+        _flat = _COLLISION_ALIASES.get((_mod_name, _attr), _attr)
+        if _flat in globals() and _flat not in _FLAT_EXPORTS:
+            # Already a public name (submodule, type, helper) — skip.
+            continue
+        globals()[_flat] = _obj
+        _FLAT_EXPORTS.append(_flat)
+
 __all__ = [
     # Node category submodules
     "compositor",
@@ -63,4 +95,4 @@ __all__ = [
     "to_objects_multi",
     # User-facing decorator for custom node functions
     "node_function",
-]
+] + _FLAT_EXPORTS

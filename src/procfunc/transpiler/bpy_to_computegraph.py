@@ -56,9 +56,7 @@ IGNORE_ATTRS = ["color_mapping", "texture_mapping", "active_item", "capture_item
 def handle_specialcase_math(_node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
     if cg_node.kwargs.pop("use_clamp", False):
         # our math funcs wont support inline clamp, so we add an extra node when needed
-        cg_node = cg.FunctionCallNode(
-            func=pf.nodes.math.clamp, args=(cg_node,), kwargs={}
-        )
+        cg_node = cg.FunctionCallNode(func=pf.nodes.clamp, args=(cg_node,), kwargs={})
     return cg_node
 
 
@@ -85,15 +83,15 @@ def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> 
     match node.rotation_type:
         case "X_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.func.combine_xyz, args=(angle, 0, 0), kwargs={}
+                pf.nodes.combine_xyz, args=(angle, 0, 0), kwargs={}
             )
         case "Y_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.func.combine_xyz, args=(0, angle, 0), kwargs={}
+                pf.nodes.combine_xyz, args=(0, angle, 0), kwargs={}
             )
         case "Z_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.func.combine_xyz, args=(0, 0, angle), kwargs={}
+                pf.nodes.combine_xyz, args=(0, 0, angle), kwargs={}
             )
         case "EULER_XYZ" | "AXIS_ANGLE":
             pass
@@ -290,7 +288,7 @@ def _create_link_impl_node(
             # WARN: creates multiple constants without memoizing
             default_value = _repr_default_value(inp_vec.default_value, inp_vec.type)
             source = cg.FunctionCallNode(
-                func=pf.nodes.func.constant,
+                func=pf.nodes.constant,
                 args=(default_value,),
                 kwargs={},
             )
@@ -1311,7 +1309,7 @@ def parse_object(
         case _:
             raise ValueError(f"Invalid object mode: {object_mode}")
 
-    coord = cg.FunctionCallNode(pf.nodes.shader.coord, args=(), kwargs={})
+    coord = cg.FunctionCallNode(pf.nodes.coord, args=(), kwargs={})
     coord = cg.GetAttributeNode(source=coord, attribute_name="generated")
 
     if include_set_material:

@@ -38,7 +38,7 @@ def _math(
     """
     Uses a Math Shader Node.
 
-    Procfunc does NOT support the inline clamp option - use pf.nodes.math.clamp() on the output instead.
+    Procfunc does NOT support the inline clamp option - use pf.nodes.clamp() on the output instead.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/math.html
     """

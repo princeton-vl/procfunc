@@ -95,7 +95,7 @@ def _preprocess_procnode_call_kwargs(kwargs: dict[str, Any]) -> dict[str, Any]:
             case nt.ProcNode():
                 result[k] = v.item()
             case pf.MeshObject() | pf.CurveObject():
-                result[k] = pf.nodes.geo.object_info(v).geometry.item()
+                result[k] = pf.nodes.geo_object_info(v).geometry.item()
             case dict():
                 result[k] = _preprocess_procnode_call_kwargs(v)
             case _:
