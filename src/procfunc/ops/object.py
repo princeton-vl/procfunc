@@ -70,7 +70,6 @@ def set_material(
                 operator=bpy.ops.object.material_slot_remove,
                 objs=mutates_obj,
             )
-            # TODO remove mutates_obj.dependencies
 
     orig_slots = len(obj_bpy.material_slots)
     execute_object_op(
