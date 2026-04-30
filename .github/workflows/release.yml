@@ -5,16 +5,6 @@ on:
     types: [published]
 
 jobs:
-  testpypi:
-    runs-on: ubuntu-latest
-    environment: release-testpypi
-    permissions:
-      id-token: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - run: uv build
-      - run: uv publish --publish-url https://test.pypi.org/legacy/ --trusted-publishing always
 
   pypi:
     runs-on: ubuntu-latest
