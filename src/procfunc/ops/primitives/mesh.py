@@ -49,7 +49,6 @@ def mesh_from_numpy(
 
 
 def mesh_line(
-    points: list[Vector] | np.ndarray,
 ) -> t.MeshObject:
     idxs = np.arange(len(points))
     edges = np.stack([idxs[:-1], idxs[1:]], axis=-1)
