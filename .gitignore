@@ -3,6 +3,7 @@ __pycache__
 dist/
 build/
 docs/*.rst
+.claude
 
 experiments/Blender.app
 experiments/blender
