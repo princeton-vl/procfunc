@@ -35,7 +35,7 @@ docs = [
 where = ["src"]
 
 [tool.setuptools.package-data]
-procfunc = ["**/*.json"]
+procfunc = ["nodes/manifest.json", "ops/manifest.json"]
 
 [tool.pytest.ini_options]
 testpaths = "tests"
