@@ -69,6 +69,10 @@ def special_case_float_curve(
         if i < len(curve.points):
             curve.points[i].location = (x, y)
 
+    # Without update(), Blender keeps the default identity LUT and ignores
+    # the points we just assigned during geo/shader node evaluation.
+    bl_node.mapping.update()
+
 
 def special_case_rgb_curves(
     bl_node: bpy.types.Node,
@@ -88,6 +92,8 @@ def special_case_rgb_curves(
         for i, (x, y) in enumerate(curve_np):
             bl_curve.points[i].location = (x, y)
 
+    bl_node.mapping.update()
+
 
 def special_case_vector_curves(
     bl_node: bpy.types.Node,
@@ -106,6 +112,8 @@ def special_case_vector_curves(
 
         for i, (x, y) in enumerate(curve_np):
             bl_curve.points[i].location = (x, y)
+
+    bl_node.mapping.update()
 
 
 def special_case_file_output(
