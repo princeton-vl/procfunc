@@ -40,6 +40,8 @@ __all__ = [
     "replace_ids",
     "colors_to_hsv_definition",
     "distribution_to_mode",
+    "extract_materials_from_graph",
+    "extract_materials_from_graphs",
     "outlier_distribution",
     "infer_distribution_hypercube",
     "infer_nodegroup_distributions",

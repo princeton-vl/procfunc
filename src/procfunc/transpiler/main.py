@@ -12,7 +12,6 @@ from procfunc import compute_graph as cg
 from procfunc import transforms as tr
 from procfunc.nodes import NODE_OPERATOR_TABLE
 from procfunc.util import pytree
-from procfunc.util.teardown import skip_teardown_on_exit
 
 from .bpy_to_computegraph import (
     ParseMemo,
@@ -48,25 +47,78 @@ RETURN_TYPES = {
 }
 
 
-def get_parser():
-    parser = argparse.ArgumentParser()
+# CLI ``--transforms`` choice -> dotted ``procfunc.transforms`` function it wraps.
+# Sphinx renders these as cross-references on the CLI docs page.
+TRANSPILE_TRANSFORM_REFS: dict[str, str] = {
+    "colors_to_hsv_definition": "procfunc.transforms.colors_to_hsv_definition",
+    "infer_distribution_hypercube": "procfunc.transforms.infer_distribution_hypercube",
+    "infer_nodegroup_distributions": "procfunc.transforms.infer_nodegroup_distributions",
+    "extract_materials": "procfunc.transforms.extract_materials_from_graphs",
+}
 
-    parser.add_argument("input", type=Path)
 
-    parser.add_argument("--materials", type=str, default=[], nargs="+")
-    parser.add_argument("--objects", type=str, default=[], nargs="+")
-    parser.add_argument("--node_trees", type=str, default=[], nargs="+")
+def add_transpile_arguments(parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
+    parser.add_argument(
+        "input", type=Path, help="Path to the input .blend file to transpile."
+    )
 
-    parser.add_argument("--output", type=Path, default=None)
-    parser.add_argument("--transforms", type=str, default=[], nargs="+")
+    parser.add_argument(
+        "--materials",
+        type=str,
+        default=[],
+        nargs="+",
+        help="Names (or 'prefix*' globs) of materials in the blend to transpile.",
+    )
+    parser.add_argument(
+        "--objects",
+        type=str,
+        default=[],
+        nargs="+",
+        help=(
+            "Names (or 'prefix*' globs) of objects to transpile. "
+            "Pass the literal 'ACTIVE' to use the blend's currently active object."
+        ),
+    )
+    parser.add_argument(
+        "--node_trees",
+        type=str,
+        default=[],
+        nargs="+",
+        help="Names (or 'prefix*' globs) of node groups to transpile.",
+    )
+
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Output destination: a .py path to write to, 'print' to print to stdout, or omit to discard.",
+    )
+    parser.add_argument(
+        "--transforms",
+        type=str,
+        default=[],
+        nargs="+",
+        choices=list(TRANSPILE_TRANSFORM_REFS.keys()),
+        help="Optional graph transforms to apply before codegen. See the CLI docs page for what each maps to.",
+    )
 
     parser.add_argument(
         "--object_mode",
         type=str,
         choices=["monkey", "active", "named"],
         default="monkey",
+        help=(
+            "How transpiled object code obtains its starting mesh. "
+            "'monkey': start from pf.ops.primitives.mesh_monkey() (Suzanne placeholder). "
+            "'active': start from bpy.context.active_object at runtime. "
+            "'named': start from bpy.data.objects[<name>] using the source object's name."
+        ),
     )
-    parser.add_argument("--no_version_comments", action="store_true")
+    parser.add_argument(
+        "--no_version_comments",
+        action="store_true",
+        help="Omit the procfunc-version header comment from generated code.",
+    )
 
     parser.add_argument(
         "-d",
@@ -75,12 +127,28 @@ def get_parser():
         dest="loglevel",
         const=logging.DEBUG,
         default=logging.INFO,
+        help="Enable debug logging.",
     )
 
-    parser.add_argument("--add_line_comments", action="store_true")
-    parser.add_argument("--include_object_materials", action="store_true")
+    parser.add_argument(
+        "--add_line_comments",
+        action="store_true",
+        help="Annotate generated code with comments tracing back to source nodes.",
+    )
+    parser.add_argument(
+        "--include_object_materials",
+        type=int,
+        choices=[0, 1],
+        default=1,
+        help="Whether to emit set_material calls in transpiled object code (default: 1).",
+    )
 
     return parser
+
+
+def get_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="procfunc transpile")
+    return add_transpile_arguments(parser)
 
 
 def parse_target(
@@ -246,11 +314,12 @@ _transforms_map = {
     # "infer_distribution_polytope": lambda graphs: graphs + [tr.infer_distribution_polytope(graphs)],
 }
 
+assert set(_transforms_map.keys()) == set(TRANSPILE_TRANSFORM_REFS.keys()), (
+    "Update TRANSPILE_TRANSFORM_REFS to match _transforms_map"
+)
 
-def main():
-    parser = get_parser()
-    args = parser.parse_args()
 
+def run(args: argparse.Namespace):
     for name in logging.root.manager.loggerDict:
         logging.getLogger(name).setLevel(args.loglevel)
 
@@ -292,8 +361,3 @@ def main():
             inject_into_python_file(python.splitlines(), Path(module_path), target_name)
         case _:
             raise ValueError(f"Invalid output type: {args.output}")
-
-
-if __name__ == "__main__":
-    with skip_teardown_on_exit():
-        main()

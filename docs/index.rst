@@ -18,6 +18,7 @@ Public API
    transforms
    transpiler
    types
+   cli
 
 Index
 -----

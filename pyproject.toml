@@ -19,6 +19,9 @@ dependencies = [
 Homepage = "https://github.com/princeton-vl/procfunc"
 Repository = "https://github.com/princeton-vl/procfunc"
 
+[project.scripts]
+procfunc = "procfunc.cli:cli"
+
 [project.optional-dependencies]
 dev = [
     "pytest",
@@ -29,6 +32,7 @@ dev = [
 docs = [
     "sphinx",
     "sphinx-rtd-theme",
+    "sphinx-argparse",
 ]
 
 [tool.setuptools.packages.find]

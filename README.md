@@ -39,7 +39,7 @@ Please create Github Issues for any bugs or  unclear interfaces!
 Convert a Blender geometry node tree into procfunc Python code by downloading our example blend and executing the transpiler:
 ```bash
 wget https://raw.githubusercontent.com/princeton-vl/procfunc/main/examples/transpile_simple_chair/simple_chair.blend
-uv run python -m procfunc.transpiler.main simple_chair.blend --node_trees simple_chair --output transpiled_code.py
+uv run procfunc transpile simple_chair.blend --node_trees simple_chair --output transpiled_code.py
 ```
 
 See the expected output in [`examples/transpile_simple_chair/transpiled_code.py`](examples/transpile_simple_chair/transpiled_code.py).

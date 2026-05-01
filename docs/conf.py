@@ -16,6 +16,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "sphinxarg.ext",
 ]
 
 intersphinx_mapping = {
@@ -64,6 +65,15 @@ DOC_PACKAGES = {
     "transpiler": ("procfunc.transpiler", "pf.transpiler"),
     "types": ("procfunc.types", "pf.types"),
 }
+
+# Command-line entry points rendered with sphinx-argparse on a dedicated
+# ``cli`` page. Each entry is ``(script name, parser module, parser factory)``
+# and the named function must return a configured ``argparse.ArgumentParser``.
+CLI_SCRIPTS: list[tuple[str, str, str]] = [
+    ("procfunc", "procfunc.cli", "get_parser"),
+]
+CLI_PAGE_SLUG = "cli"
+CLI_PAGE_TITLE = "Command-line interface"
 
 _BLENDER_DOCS = "https://docs.blender.org/api/current"
 
@@ -143,6 +153,35 @@ _PACKAGE_TEMPLATE = """\
 {members_section}
 {submodule_details}
 """
+
+
+def _emit_cli_page(out_dir: Path) -> None:
+    """Write a dedicated ``cli.rst`` page rendering each CLI script with sphinx-argparse."""
+    from procfunc.transpiler.main import TRANSPILE_TRANSFORM_REFS
+
+    blocks = [CLI_PAGE_TITLE, "=" * len(CLI_PAGE_TITLE), ""]
+    for script, parser_module, parser_func in CLI_SCRIPTS:
+        blocks.append(f"``{script}``")
+        blocks.append("-" * (len(script) + 4))
+        blocks.append("")
+        blocks.append(".. argparse::")
+        blocks.append(f"   :module: {parser_module}")
+        blocks.append(f"   :func: {parser_func}")
+        blocks.append(f"   :prog: {script}")
+        blocks.append("")
+
+    blocks.append("``--transforms`` choices")
+    blocks.append("~~~~~~~~~~~~~~~~~~~~~~~~")
+    blocks.append("")
+    blocks.append(
+        "Each ``--transforms`` choice wraps a function from :mod:`procfunc.transforms`:"
+    )
+    blocks.append("")
+    for name, target in TRANSPILE_TRANSFORM_REFS.items():
+        blocks.append(f"* ``{name}`` — :func:`{target}`")
+    blocks.append("")
+    (out_dir / f"{CLI_PAGE_SLUG}.rst").write_text("\n".join(blocks))
+
 
 _TOPLEVEL_TEMPLATE = """\
 {title}
@@ -292,6 +331,7 @@ def _generate(app, config):  # noqa: ARG001
     out_dir = Path(app.srcdir)
     for slug, (modname, title) in DOC_PACKAGES.items():
         _emit_package_page(slug, modname, title, out_dir)
+    _emit_cli_page(out_dir)
 
 
 def _clean_exit(app, exception):
