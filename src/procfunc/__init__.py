@@ -2,7 +2,7 @@
 # ensure this gets imported first so that mathutils etc is available even if later modules dont import bpy
 import bpy
 
-__version__ = "0.30.1"
+__version__ = "0.30.2"
 
 from numpy.random import Generator as RNG
 
