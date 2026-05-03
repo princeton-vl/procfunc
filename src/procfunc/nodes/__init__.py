@@ -3,7 +3,7 @@ from pandas import read_json as _read_json
 from procfunc.tracer import autowrap_module as _autowrap
 from procfunc.util.manifest import module_path
 
-from . import compositor, func, geo, math, shader
+from . import compositor, func, geo, math, shader, texture
 from .bpy_node_info import NodeDataType, NodeGroupType, SocketType
 
 # ruff: noqa: E402
@@ -12,6 +12,7 @@ _autowrap(func, allow_exec=False)
 _autowrap(geo, allow_exec=False)
 _autowrap(math, allow_exec=False)
 _autowrap(shader, allow_exec=False)
+_autowrap(texture, allow_exec=False)
 
 from .execute.execute import (
     as_nodegroup,
@@ -43,6 +44,7 @@ __all__ = [
     "geo",
     "math",
     "shader",
+    "texture",
     # Core types
     "ProcNode",
     "Shader",

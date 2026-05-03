@@ -85,8 +85,8 @@ However, you may re-generate using commands below, and especially should do so i
 
 Generate simple .txt reference files for ProcFunc and BlenderGym/Infinigen1.2.5's NodeWrangler interface:
 ```bash
-uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_shader_interface.py ../src/procfunc/nodes/{math,shader}.py
-uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_geo_interface.py ../src/procfunc/nodes/{math,func,shader,geo}.py
+uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_shader_interface.py ../src/procfunc/nodes/{math,shader,texture}.py
+uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_geo_interface.py ../src/procfunc/nodes/{math,func,shader,geo,texture}.py
 ./blender_3_6.sh --background --python scripts/create_blender_nodes_interface.py -- prompts/reference_code/ifg_shader_nodes_interface.txt --node-types ShaderNode 
 ./blender_3_6.sh --background --python scripts/create_blender_nodes_interface.py -- prompts/reference_code/ifg_geo_nodes_interface.txt --node-types GeometryNode ShaderNode FunctionNode
 ```

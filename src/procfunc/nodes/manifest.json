@@ -1414,7 +1414,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_maximum",
     "arg_names_map": {
-      "vector_0": "a", 
+      "vector_0": "a",
       "vector_1": "b"
     },
     "node_group_type": [
@@ -1489,7 +1489,7 @@
     "bpy_name": "ShaderNodeCombineXYZ",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CombineXYZ",
-    "name": "pf.nodes.func.combine_xyz",
+    "name": "pf.nodes.math.combine_xyz",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -1563,7 +1563,7 @@
     "bpy_name": "ShaderNodeValue",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Value",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1581,7 +1581,7 @@
     "bpy_name": "ShaderNodeMapRange",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MapRange",
-    "name": "pf.nodes.func.map_range",
+    "name": "pf.nodes.math.map_range",
     "arg_names_map": {
       "vector": "value",
       "value": "value"
@@ -1621,7 +1621,7 @@
     "bpy_name": "ShaderNodeTexNoise",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.NoiseTexture",
-    "name": "pf.nodes.shader.noise",
+    "name": "pf.nodes.texture.noise",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1670,7 +1670,7 @@
     "bpy_name": "ShaderNodeValToRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.ColorRamp",
-    "name": "pf.nodes.shader.color_ramp",
+    "name": "pf.nodes.math.color_ramp",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -1707,7 +1707,7 @@
     "bpy_name": "ShaderNodeMixRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MixRGB",
-    "name": "pf.nodes.func.mix_rgb",
+    "name": "pf.nodes.math.mix_rgb",
     "arg_names_map": {
       "color1": "a",
       "color2": "b",
@@ -1907,7 +1907,7 @@
       "data_type": "FLOAT"
     },
     "infinigen_v1_name": "Nodes.Mix",
-    "name": "pf.nodes.func.mix",
+    "name": "pf.nodes.math.mix",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1927,7 +1927,7 @@
       "data_type": "VECTOR"
     },
     "infinigen_v1_name": "Nodes.Mix",
-    "name": "pf.nodes.func.mix",
+    "name": "pf.nodes.math.mix",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1947,7 +1947,7 @@
       "data_type": "RGBA"
     },
     "infinigen_v1_name": "Nodes.Mix",
-    "name": "pf.nodes.func.mix_rgb",
+    "name": "pf.nodes.math.mix_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1969,7 +1969,7 @@
       "feature": "F1"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi",
+    "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -1988,7 +1988,7 @@
       "feature": "F2"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi",
+    "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2007,7 +2007,7 @@
       "feature": "DISTANCE_TO_EDGE"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi_distance",
+    "name": "pf.nodes.texture.voronoi_distance",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2026,7 +2026,7 @@
       "feature": "SMOOTH_F1"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi_smooth_f1",
+    "name": "pf.nodes.texture.voronoi_smooth_f1",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2045,7 +2045,7 @@
       "feature": "N_SPHERE_RADIUS"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi",
+    "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2078,7 +2078,7 @@
     "bpy_name": "ShaderNodeFloatCurve",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.FloatCurve",
-    "name": "pf.nodes.func.float_curve",
+    "name": "pf.nodes.math.float_curve",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -2602,7 +2602,7 @@
     "bpy_name": "FunctionNodeInputInt",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Integer",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "integer": "value"
     },
@@ -2652,7 +2652,7 @@
     "bpy_name": "ShaderNodeTexWave",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.WaveTexture",
-    "name": "pf.nodes.shader.wave",
+    "name": "pf.nodes.texture.wave",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2669,7 +2669,7 @@
     "bpy_name": "FunctionNodeInputVector",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Vector",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "vector": "value"
     },
@@ -2838,7 +2838,7 @@
     "bpy_name": "ShaderNodeRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.RGB",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "color": "value"
     },
@@ -3049,7 +3049,7 @@
     "bpy_name": "ShaderNodeTexWhiteNoise",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.WhiteNoiseTexture",
-    "name": "pf.nodes.shader.white_noise",
+    "name": "pf.nodes.texture.white_noise",
     "arg_names_map": null,
     "output_names_map": {
       "Value": "fac"
@@ -3191,7 +3191,7 @@
       "mode": "RGB"
     },
     "infinigen_v1_name": "Nodes.SeparateColor",
-    "name": "pf.nodes.func.separate_rgb",
+    "name": "pf.nodes.math.separate_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -3211,7 +3211,7 @@
       "mode": "HSV"
     },
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.separate_hsv",
+    "name": "pf.nodes.math.separate_hsv",
     "arg_names_map": null,
     "output_names_map": {
       "Red": "hue",
@@ -3236,7 +3236,7 @@
       "mode": "HSL"
     },
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.separate_hsl",
+    "name": "pf.nodes.math.separate_hsl",
     "arg_names_map": null,
     "output_names_map": {
       "Red": "hue",
@@ -3307,7 +3307,7 @@
     "bpy_name": "ShaderNodeTexBrick",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.BrickTexture",
-    "name": "pf.nodes.shader.brick",
+    "name": "pf.nodes.texture.brick",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -3559,7 +3559,7 @@
     "bpy_name": "ShaderNodeVectorCurve",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.VectorCurve",
-    "name": "pf.nodes.func.vector_curve",
+    "name": "pf.nodes.math.vector_curve",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -3655,7 +3655,7 @@
     "bpy_name": "FunctionNodeInputColor",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.InputColor",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
@@ -3737,7 +3737,7 @@
       "mode": "RGB"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.func.combine_rgb",
+    "name": "pf.nodes.math.combine_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -3756,7 +3756,7 @@
       "mode": "HSV"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.func.combine_hsv",
+    "name": "pf.nodes.math.combine_hsv",
     "arg_names_map": {
       "red": "hue",
       "green": "saturation",
@@ -3779,7 +3779,7 @@
       "mode": "HSL"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.func.combine_hsl",
+    "name": "pf.nodes.math.combine_hsl",
     "arg_names_map": {
       "red": "hue",
       "green": "saturation",
@@ -3817,7 +3817,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Raycast",
     "name": "pf.nodes.geo.raycast",
-    "arg_names_map": {"target_geometry": "geometry"},
+    "arg_names_map": {
+      "target_geometry": "geometry"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3887,7 +3889,7 @@
     "bpy_name": "ShaderNodeTexGradient",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.GradientTexture",
-    "name": "pf.nodes.shader.gradient",
+    "name": "pf.nodes.texture.gradient",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -4003,7 +4005,7 @@
     "bpy_name": "ShaderNodeTexChecker",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CheckerTexture",
-    "name": "pf.nodes.shader.checker",
+    "name": "pf.nodes.texture.checker",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -4232,7 +4234,7 @@
     "bpy_name": "ShaderNodeTexEnvironment",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.EnvironmentTexture",
-    "name": "pf.nodes.shader.environment",
+    "name": "pf.nodes.texture.environment",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -4377,7 +4379,7 @@
     "bpy_name": "ShaderNodeRGBCurve",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.RGBCurve",
-    "name": "pf.nodes.func.rgb_curve",
+    "name": "pf.nodes.math.rgb_curve",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4426,7 +4428,7 @@
     "bpy_name": "ShaderNodeTexImage",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.ShaderImageTexture",
-    "name": "pf.nodes.shader.image",
+    "name": "pf.nodes.texture.image",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4542,7 +4544,7 @@
     "bpy_name": "FunctionNodeInputBool",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Boolean",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "boolean": "value"
     },
@@ -4772,7 +4774,7 @@
     "bpy_name": "ShaderNodeTexSky",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.SkyTexture",
-    "name": "pf.nodes.shader.sky",
+    "name": "pf.nodes.texture.sky",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4821,7 +4823,7 @@
     "bpy_name": "ShaderNodeTexIES",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.ies",
+    "name": "pf.nodes.texture.ies",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4837,7 +4839,7 @@
     "bpy_name": "ShaderNodeTexMagic",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MagicTexture",
-    "name": "pf.nodes.shader.magic",
+    "name": "pf.nodes.texture.magic",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -4854,7 +4856,7 @@
     "bpy_name": "ShaderNodeTexPointDensity",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.point_density",
+    "name": "pf.nodes.texture.point_density",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -6281,7 +6283,7 @@
     "bpy_name": "ShaderNodeCombineHSV",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.combine_hsv",
+    "name": "pf.nodes.math.combine_hsv",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -6348,7 +6350,7 @@
     "bpy_name": "FunctionNodeInputRotation",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
@@ -6380,7 +6382,7 @@
     "bpy_name": "FunctionNodeInputString",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
@@ -6604,7 +6606,7 @@
     "bpy_name": "ShaderNodeSeparateXYZ",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.separate_xyz",
+    "name": "pf.nodes.math.separate_xyz",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
