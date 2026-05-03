@@ -64,10 +64,10 @@ NODE_OPERATOR_TABLE = [
         math.vector_modulo, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.MOD
     ),
     # NodeOperatorResolution(
-    #     func.combine_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.VECTOR_PACK
+    #     math.combine_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.VECTOR_PACK
     # ),
     NodeOperatorResolution(
-        func.separate_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.NOOP
+        math.separate_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.NOOP
     ),
 ]
 

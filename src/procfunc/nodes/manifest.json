@@ -1670,7 +1670,7 @@
     "bpy_name": "ShaderNodeValToRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.ColorRamp",
-    "name": "pf.nodes.math.color_ramp",
+    "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -1707,7 +1707,7 @@
     "bpy_name": "ShaderNodeMixRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MixRGB",
-    "name": "pf.nodes.math.mix_rgb",
+    "name": "pf.nodes.color.mix_rgb",
     "arg_names_map": {
       "color1": "a",
       "color2": "b",
@@ -1947,7 +1947,7 @@
       "data_type": "RGBA"
     },
     "infinigen_v1_name": "Nodes.Mix",
-    "name": "pf.nodes.math.mix_rgb",
+    "name": "pf.nodes.color.mix_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -3191,7 +3191,7 @@
       "mode": "RGB"
     },
     "infinigen_v1_name": "Nodes.SeparateColor",
-    "name": "pf.nodes.math.separate_rgb",
+    "name": "pf.nodes.color.separate_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -3211,7 +3211,7 @@
       "mode": "HSV"
     },
     "infinigen_v1_name": null,
-    "name": "pf.nodes.math.separate_hsv",
+    "name": "pf.nodes.color.separate_hsv",
     "arg_names_map": null,
     "output_names_map": {
       "Red": "hue",
@@ -3236,7 +3236,7 @@
       "mode": "HSL"
     },
     "infinigen_v1_name": null,
-    "name": "pf.nodes.math.separate_hsl",
+    "name": "pf.nodes.color.separate_hsl",
     "arg_names_map": null,
     "output_names_map": {
       "Red": "hue",
@@ -3737,7 +3737,7 @@
       "mode": "RGB"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.math.combine_rgb",
+    "name": "pf.nodes.color.combine_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -3756,7 +3756,7 @@
       "mode": "HSV"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.math.combine_hsv",
+    "name": "pf.nodes.color.combine_hsv",
     "arg_names_map": {
       "red": "hue",
       "green": "saturation",
@@ -3779,7 +3779,7 @@
       "mode": "HSL"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.math.combine_hsl",
+    "name": "pf.nodes.color.combine_hsl",
     "arg_names_map": {
       "red": "hue",
       "green": "saturation",
@@ -4395,7 +4395,7 @@
     "bpy_name": "ShaderNodeCombineHSV",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CombineHSV",
-    "name": null,
+    "name": "pf.nodes.color.combine_hsv",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -4406,7 +4406,7 @@
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
-    "notes": "redundant with combine_color mode=hsv"
+    "notes": null
   },
   {
     "bpy_name": "CompositorNodeOutputFile",
@@ -4806,7 +4806,7 @@
     "bpy_name": "ShaderNodeCombineRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CombineRGB",
-    "name": null,
+    "name": "pf.nodes.color.combine_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -4817,7 +4817,7 @@
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
-    "notes": "redundant with combine_color mode=rgb"
+    "notes": null
   },
   {
     "bpy_name": "ShaderNodeTexIES",
@@ -6283,7 +6283,7 @@
     "bpy_name": "ShaderNodeCombineHSV",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.math.combine_hsv",
+    "name": null,
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",

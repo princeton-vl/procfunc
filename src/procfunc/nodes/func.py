@@ -8,37 +8,6 @@ from procfunc.nodes.bindings_util import (
     raise_io_error,
 )
 from procfunc.nodes.bpy_node_info import NodeDataType
-from procfunc.nodes.math import (  # noqa: F401  (re-exports kept for back-compat)
-    ColorRampResult,
-    SeparateColorResult,
-    SeparateHslResult,
-    SeparateHsvResult,
-    SeparateRgbResult,
-    SeparateXyzResult,
-    TColorMixType,
-    TConstant,
-    TInterpolationType,
-    TMix,
-    TRampInterpolationType,
-    color_ramp,
-    combine_color,
-    combine_hsl,
-    combine_hsv,
-    combine_rgb,
-    combine_xyz,
-    constant,
-    float_curve,
-    map_range,
-    mix,
-    mix_rgb,
-    rgb_curve,
-    separate_color,
-    separate_hsl,
-    separate_hsv,
-    separate_rgb,
-    separate_xyz,
-    vector_curve,
-)
 
 logger = logging.getLogger(__name__)
 

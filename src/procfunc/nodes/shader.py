@@ -1,7 +1,3 @@
-"""
-Auto-generated Shader Node bindings for Blender
-"""
-
 import logging
 from typing import Any, Literal, NamedTuple
 
@@ -12,36 +8,6 @@ from procfunc.nodes.bindings_util import (
     raise_error_or_warn,
     raise_io_error,
     raise_shader_normal_error,
-)
-from procfunc.nodes.math import (  # noqa: F401  (re-exports kept for back-compat)
-    ColorRampResult,
-    TRampInterpolationType,
-    color_ramp,
-)
-from procfunc.nodes.texture import (  # noqa: F401  (re-exports kept for back-compat)
-    PointDensityResult,
-    TDistanceMetric,
-    TextureResult,
-    TNoiseDimensions,
-    TNoiseType,
-    TTextureInterpolationType,
-    VoronoiResult,
-    brick,
-    checker,
-    environment,
-    gradient,
-    ies,
-    image,
-    magic,
-    noise,
-    point_density,
-    sky,
-    voronoi,
-    voronoi_distance,
-    voronoi_n_spheres_distance,
-    voronoi_smooth_f1,
-    wave,
-    white_noise,
 )
 
 TBlendType = Literal[
