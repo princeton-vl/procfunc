@@ -64,7 +64,7 @@ uv run python scripts/visualize_bgym_pf_start_goal.py material outputs/bench_dat
 uv run python scripts/visualize_bgym_pf_start_goal.py geometry outputs/bench_data outputs/bench_data_pf outputs/visualize_bgym_pf_geometry
 ```
 
-The procfunc start and end renders are not exact matches to the original BlenderGym renders. The main sources of error are (1) different random seeds for placement of geometry particles (e.g. grains of sugar in tasks geometry46-geometry50), and a difference subsurface shading model (e.g. geometry49) due to our using Blender4.2 vs Blender3.6. 
+The procfunc start and end renders are not exact matches to the original BlenderGym renders. The main sources of error are (1) different random seeds for placement of geometry particles (e.g. grains of sugar in tasks geometry46-geometry50), and (2) a different subsurface shading model (e.g. geometry49) due to our using Blender4.2 vs Blender3.6.
 In both cases these are not major semantic differences and should not affect the difficulty of the task, since the required code edits do not change and the image differences do not obscure the edits needed.
 
 ### Generate BlenderGym From-Scratch Procedural Generation Files

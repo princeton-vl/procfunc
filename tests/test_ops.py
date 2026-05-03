@@ -478,3 +478,34 @@ def test_uv_project_creates_named_layer():
 
     assert "TestUV" in mesh.uv_layers
     assert mesh.uv_layers.active.name == "TestUV"
+
+
+def test_render_returns_ndarray():
+    bpy.ops.wm.read_homefile(use_empty=True)
+    pf.ops.primitives.mesh.mesh_plane(size=2.0)
+    cam = pf.ops.primitives.camera.perspective_camera()
+    cam_obj = cam.item()
+    cam_obj.location = (0.0, 0.0, 3.0)
+    bpy.context.scene.camera = cam_obj
+
+    arr = pf.ops.file.render(path=None, device="CPU", samples=1, resolution=32)
+
+    assert isinstance(arr, np.ndarray), f"Expected ndarray, got {type(arr)}"
+    assert arr.dtype == np.uint8, f"Expected uint8, got {arr.dtype}"
+    assert arr.shape == (32, 32, 3), f"Unexpected shape {arr.shape}"
+
+
+def test_render_writes_file(tmp_path):
+    bpy.ops.wm.read_homefile(use_empty=True)
+    pf.ops.primitives.mesh.mesh_plane(size=2.0)
+    cam = pf.ops.primitives.camera.perspective_camera()
+    cam_obj = cam.item()
+    cam_obj.location = (0.0, 0.0, 3.0)
+    bpy.context.scene.camera = cam_obj
+
+    out = tmp_path / "out.png"
+    result = pf.ops.file.render(out, device="CPU", samples=1, resolution=32)
+
+    assert result == out
+    assert out.exists()
+    assert out.stat().st_size > 0

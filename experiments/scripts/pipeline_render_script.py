@@ -4,7 +4,6 @@
 
 import argparse
 import sys
-import time
 from pathlib import Path
 
 import bpy
@@ -12,39 +11,6 @@ import bpy
 import procfunc as pf
 from procfunc.util.teardown import skip_teardown_on_exit
 
-
-def configure_render_device():
-    # Enable GPU rendering
-
-    for i in range(10):
-        try:
-            bpy.context.scene.render.engine = 'CYCLES'
-            break
-        except Exception as e:
-            print(f"Error setting render engine {i}: {e}")
-            time.sleep(1)
-    else:
-        raise RuntimeError("Failed to set render engine to CYCLES after 10 attempts")
-
-    # Try device types in order of preference
-    cycles_prefs = bpy.context.preferences.addons['cycles'].preferences
-    device_type_priority = ['OPTIX', 'CUDA', 'METAL', 'HIP', 'CPU']  # NONE = CPU
-
-    for device_type in device_type_priority:
-        try:
-            cycles_prefs.compute_device_type = device_type
-            cycles_prefs.get_devices()
-            break
-        except Exception:
-            continue
-    else:
-        raise RuntimeError(
-            f"No supported Cycles compute device found of types {device_type_priority}, available devices: {cycles_prefs.devices}"
-        )
-
-    for device in cycles_prefs.devices:
-        device.use = (device.type == device_type)
-    bpy.context.scene.cycles.device = 'CPU' if device_type == 'CPU' else 'GPU'
 
 def main():
     parser = argparse.ArgumentParser()
@@ -135,43 +101,16 @@ def main():
     print(f"Saving scene blend to {scene_blend_path}")
     bpy.ops.wm.save_mainfile(filepath=scene_blend_path)
 
-    configure_render_device()
-    bpy.context.scene.render.resolution_x = 512
-    bpy.context.scene.render.resolution_y = 512
-    bpy.context.scene.cycles.samples = 512
-    bpy.context.scene.render.image_settings.color_mode = 'RGB'
-
-    # Render from camera1
-    if 'Camera' in bpy.data.objects:
-        bpy.context.scene.camera = bpy.data.objects['Camera']
-        bpy.context.scene.render.image_settings.file_format = 'PNG'
-
-        render_path = args.rendering_dir / 'render.png'
-        bpy.context.scene.render.filepath = str(render_path)
-        bpy.ops.render.render(write_still=True)
-        assert render_path.exists(), render_path
-        assert render_path.is_file(), render_path
-
-    # Render from camera1
-    if 'Camera1' in bpy.data.objects:
-        bpy.context.scene.camera = bpy.data.objects['Camera1']
-        bpy.context.scene.render.image_settings.file_format = 'PNG'
-        bpy.context.scene.render.filepath = str(args.rendering_dir / 'render1.png')
-        bpy.ops.render.render(write_still=True)
-
-    # Render from camera2
-    if 'Camera2' in bpy.data.objects:
-        bpy.context.scene.camera = bpy.data.objects['Camera2']
-        bpy.context.scene.render.image_settings.file_format = 'PNG'
-        bpy.context.scene.render.filepath = str(args.rendering_dir / 'render2.png')
-        bpy.ops.render.render(write_still=True)
-
-    for extra_cam in ['Camera3', 'Camera4', 'Camera5']:
-        if extra_cam in bpy.data.objects:
-            bpy.context.scene.camera = bpy.data.objects[extra_cam]
-            bpy.context.scene.render.image_settings.file_format = 'PNG'
-            bpy.context.scene.render.filepath = str(args.rendering_dir / f'render{extra_cam[-1]}.png')
-            bpy.ops.render.render(write_still=True)
+    cam_to_filename = [('Camera', 'render.png')] + [
+        (f'Camera{i}', f'render{i}.png') for i in range(1, 6)
+    ]
+    for cam_name, filename in cam_to_filename:
+        if cam_name in bpy.data.objects:
+            pf.ops.file.render(
+                args.rendering_dir / filename,
+                camera=cam_name,
+                samples=512,
+            )
 
 
 if __name__ == "__main__":
