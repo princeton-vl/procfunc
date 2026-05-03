@@ -63,6 +63,7 @@ DOC_PACKAGES = {
     "tracer": ("procfunc.tracer", "pf.tracer"),
     "transforms": ("procfunc.transforms", "pf.transforms"),
     "transpiler": ("procfunc.transpiler", "pf.transpiler"),
+    "codegen": ("procfunc.codegen", "pf.codegen"),
     "types": ("procfunc.types", "pf.types"),
 }
 

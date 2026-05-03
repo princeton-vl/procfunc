@@ -17,6 +17,7 @@ Public API
    tracer
    transforms
    transpiler
+   codegen
    types
    cli
 

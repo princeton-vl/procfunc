@@ -4,7 +4,7 @@ from typing import Unpack
 
 import procfunc as pf
 from procfunc import compute_graph as cg
-from procfunc.transpiler import codegen
+from procfunc.codegen import codegen
 
 
 def test_normalize_args_to_kwargs():

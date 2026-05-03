@@ -11,13 +11,13 @@ import numpy as np
 
 import procfunc as pf
 from procfunc import compute_graph as cg
+from procfunc.codegen import identifiers
 from procfunc.compute_graph.operators_info import (
     FUNCTIONS_TO_OPERATORS,
     OPERATOR_TEMPLATES,
     OperatorType,
 )
 from procfunc.nodes import types as nt
-from procfunc.transpiler import identifiers
 from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)

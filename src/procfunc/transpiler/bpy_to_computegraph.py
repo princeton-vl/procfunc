@@ -21,12 +21,12 @@ import pandas as pd
 import procfunc as pf
 from procfunc import compute_graph as cg
 from procfunc import types as t
+from procfunc.codegen import identifiers
 from procfunc.nodes import NODES_MANIFEST, bpy_node_info
 from procfunc.nodes import bpy_node_info as bni
 from procfunc.nodes import types as nt
 from procfunc.nodes.execute.util import get_active_sockets, normalize_socket_type
 from procfunc.ops import OPS_MANIFEST
-from procfunc.transpiler import identifiers
 from procfunc.util import bpy_info, log, manifest, pytree
 
 logger = logging.getLogger(__name__)
