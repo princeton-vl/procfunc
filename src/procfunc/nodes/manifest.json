@@ -3191,8 +3191,58 @@
       "mode": "RGB"
     },
     "infinigen_v1_name": "Nodes.SeparateColor",
-    "name": "pf.nodes.func.separate_color",
+    "name": "pf.nodes.func.separate_rgb",
     "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree",
+      "GeometryNodeTree",
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.func.separate_hsv",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "value"
+    },
+    "node_group_type": [
+      "ShaderNodeTree",
+      "GeometryNodeTree",
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.func.separate_hsl",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "lightness"
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree",
@@ -3522,22 +3572,6 @@
     "notes": null
   },
   {
-    "bpy_name": "ShaderNodeSeparateRGB",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": "Nodes.SeparateRGB",
-    "name": null,
-    "arg_names_map": null,
-    "node_group_type": [
-      "ShaderNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": true,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
     "bpy_name": "GeometryNodeAttributeDomainSize",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.DomainSize",
@@ -3723,7 +3757,11 @@
     },
     "infinigen_v1_name": "Nodes.CombineColor",
     "name": "pf.nodes.func.combine_hsv",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "value"
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -3742,7 +3780,11 @@
     },
     "infinigen_v1_name": "Nodes.CombineColor",
     "name": "pf.nodes.func.combine_hsl",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "lightness"
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -6518,24 +6560,6 @@
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": true,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
-    "bpy_name": "ShaderNodeSeparateHSV",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.func.separate_hsv",
-    "arg_names_map": null,
-    "node_group_type": [
-      "ShaderNodeTree",
-      "GeometryNodeTree",
-      "CompositorNodeTree"
     ],
     "data_types": null,
     "is_multi_output": true,

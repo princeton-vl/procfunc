@@ -1127,9 +1127,10 @@ def combine_hsv(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
     """
+    # Blender socket identifiers stay as Red/Green/Blue regardless of mode
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.COMBINE_COLOR.value,
-        inputs={"Hue": hue, "Saturation": saturation, "Value": value},
+        inputs={"Red": hue, "Green": saturation, "Blue": value},
         attrs={"mode": "HSV"},
     )
 
@@ -1144,9 +1145,10 @@ def combine_hsl(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
     """
+    # Blender socket identifiers stay as Red/Green/Blue regardless of mode
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.COMBINE_COLOR.value,
-        inputs={"Hue": hue, "Saturation": saturation, "Lightness": lightness},
+        inputs={"Red": hue, "Green": saturation, "Blue": lightness},
         attrs={"mode": "HSL"},
     )
 
@@ -1168,55 +1170,87 @@ def combine_xyz(
     )
 
 
+class SeparateRgbResult(NamedTuple):
+    red: nt.ProcNode[float]
+    green: nt.ProcNode[float]
+    blue: nt.ProcNode[float]
+    alpha: nt.ProcNode[float]
+
+
+def separate_rgb(
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+) -> SeparateRgbResult:
+    """
+    Uses a SeparateColor Shader Node in RGB mode.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/separate_color.html
+    """
+    res = nt.ProcNode.from_nodetype(
+        node_type=ContextualNode.SEPARATE_COLOR.value,
+        inputs={"Color": color},
+        attrs={"mode": "RGB"},
+    )
+    return SeparateRgbResult(
+        red=res._output_socket("red"),
+        green=res._output_socket("green"),
+        blue=res._output_socket("blue"),
+        alpha=res._output_socket("alpha"),
+    )
+
+
 class SeparateHsvResult(NamedTuple):
-    h: nt.ProcNode[float]
-    s: nt.ProcNode[float]
-    v: nt.ProcNode[float]
+    hue: nt.ProcNode[float]
+    saturation: nt.ProcNode[float]
+    value: nt.ProcNode[float]
+    alpha: nt.ProcNode[float]
 
 
 def separate_hsv(
     color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
 ) -> SeparateHsvResult:
     """
-    Uses a SeparateHSV Shader Node.
+    Uses a SeparateColor Shader Node in HSV mode.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/separate_color.html
     """
     res = nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeSeparateHSV",
+        node_type=ContextualNode.SEPARATE_COLOR.value,
         inputs={"Color": color},
-        attrs={},
+        attrs={"mode": "HSV"},
     )
     return SeparateHsvResult(
-        h=res._output_socket("h"),
-        s=res._output_socket("s"),
-        v=res._output_socket("v"),
+        hue=res._output_socket("red"),
+        saturation=res._output_socket("green"),
+        value=res._output_socket("blue"),
+        alpha=res._output_socket("alpha"),
     )
 
 
-class SeparateRgbResult(NamedTuple):
-    r: nt.ProcNode[float]
-    g: nt.ProcNode[float]
-    b: nt.ProcNode[float]
+class SeparateHslResult(NamedTuple):
+    hue: nt.ProcNode[float]
+    saturation: nt.ProcNode[float]
+    lightness: nt.ProcNode[float]
+    alpha: nt.ProcNode[float]
 
 
-def separate_rgb(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-) -> SeparateRgbResult:
+def separate_hsl(
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+) -> SeparateHslResult:
     """
-    Uses a SeparateRGB Shader Node.
+    Uses a SeparateColor Shader Node in HSL mode.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/separate_color.html
     """
     res = nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeSeparateRGB",
-        inputs={"Image": image},
-        attrs={},
+        node_type=ContextualNode.SEPARATE_COLOR.value,
+        inputs={"Color": color},
+        attrs={"mode": "HSL"},
     )
-    return SeparateRgbResult(
-        r=res._output_socket("r"),
-        g=res._output_socket("g"),
-        b=res._output_socket("b"),
+    return SeparateHslResult(
+        hue=res._output_socket("red"),
+        saturation=res._output_socket("green"),
+        lightness=res._output_socket("blue"),
+        alpha=res._output_socket("alpha"),
     )
 
 

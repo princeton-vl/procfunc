@@ -1882,7 +1882,7 @@ TDistanceMetric = Literal["EUCLIDEAN", "MANHATTAN", "CHEBYCHEV", "MINKOWSKI"]
 
 
 def voronoi(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None = None,
     scale: nt.SocketOrVal[float] = 5.0,
     detail: nt.SocketOrVal[float] = 0.0,
     roughness: nt.SocketOrVal[float] = 0.5,
@@ -1901,21 +1901,23 @@ def voronoi(
 
     Args:
         exponent: Only supported for Minkowski distance.
+        vector: Required for 2D/3D/4D modes. Not used in 1D mode (use w instead).
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/voronoi.html
     """
 
-    if vector == (0.0, 0.0, 0.0):
-        raise_explicit_noise_vector_error("voronoi", logger=logger)
-
     inputs = {
-        "Vector": vector,
         "Scale": scale,
         "Detail": detail,
         "Roughness": roughness,
         "Lacunarity": lacunarity,
         "Randomness": randomness,
     }
+
+    if voronoi_dimensions != "1D":
+        if vector is None or vector == (0.0, 0.0, 0.0):
+            raise_explicit_noise_vector_error("voronoi", logger=logger)
+        inputs["Vector"] = vector
 
     if exponent != 0.0:
         assert distance == "MINKOWSKI", (
@@ -1948,7 +1950,7 @@ def voronoi(
 
 
 def voronoi_distance(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None = None,
     scale: nt.SocketOrVal[float] = 5.0,
     detail: nt.SocketOrVal[float] = 0.0,
     roughness: nt.SocketOrVal[float] = 0.5,
@@ -1958,17 +1960,18 @@ def voronoi_distance(
     voronoi_dimensions: TNoiseDimensions = "3D",
     w: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[float]:
-    if vector == (0.0, 0.0, 0.0):
-        raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
-
     inputs = {
-        "Vector": vector,
         "Scale": scale,
         "Detail": detail,
         "Roughness": roughness,
         "Lacunarity": lacunarity,
         "Randomness": randomness,
     }
+
+    if voronoi_dimensions != "1D":
+        if vector is None or vector == (0.0, 0.0, 0.0):
+            raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
+        inputs["Vector"] = vector
 
     if w != 0.0:
         assert voronoi_dimensions in ["4D", "1D"]
