@@ -156,36 +156,6 @@ def bevel(
     )
 
 
-def blackbody(temperature: nt.SocketOrVal[float] = 1500.0) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a Blackbody Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/blackbody.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeBlackbody",
-        inputs={"Temperature": temperature},
-        attrs={},
-    )
-
-
-def bright_contrast(
-    color: nt.SocketOrVal[pt.Color],
-    bright: nt.SocketOrVal[float] = 0.0,
-    contrast: nt.SocketOrVal[float] = 0.0,
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a BrightContrast Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/bright_contrast.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeBrightContrast",
-        inputs={"Color": color, "Bright": bright, "Contrast": contrast},
-        attrs={},
-    )
-
-
 def anisotropic_bsdf(
     color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     roughness: nt.SocketOrVal[float] = 0.5,
@@ -712,21 +682,6 @@ def fresnel(
     )
 
 
-def gamma(
-    color: nt.SocketOrVal[pt.Color], gamma: nt.SocketOrVal[float] = 1.0
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a Gamma Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/gamma.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeGamma",
-        inputs={"Color": color, "Gamma": gamma},
-        attrs={},
-    )
-
-
 class HairInfoResult(NamedTuple):
     is_strand: nt.ProcNode[float]
     intercept: nt.ProcNode[float]
@@ -767,33 +722,8 @@ def holdout() -> nt.ProcNode[nt.Shader]:
     return nt.ProcNode.from_nodetype(node_type="ShaderNodeHoldout", inputs={}, attrs={})
 
 
-def hue_saturation(
-    color: nt.SocketOrVal[pt.Color],
-    fac: nt.SocketOrVal[float],
-    hue: nt.SocketOrVal[float] = 0.5,
-    saturation: nt.SocketOrVal[float] = 1.0,
-    value: nt.SocketOrVal[float] = 1.0,
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a HueSaturation Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/hue_saturation.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeHueSaturation",
-        inputs={
-            "Hue": hue,
-            "Saturation": saturation,
-            "Value": value,
-            "Fac": fac,
-            "Color": color,
-        },
-        attrs={},
-    )
-
-
 def invert(
-    fac: nt.SocketOrVal[float], color: nt.SocketOrVal[pt.Color]
+    fac: nt.SocketOrVal[float] = 1.0, color: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1)
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a Invert Shader Node.
@@ -1205,30 +1135,6 @@ def point_info() -> PointInfoResult:
     )
 
 
-def rgb() -> nt.ProcNode[pt.Color]:
-    """
-    Uses a RGB Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/rgb.html
-    """
-    return nt.ProcNode.from_nodetype(node_type="ShaderNodeRGB", inputs={}, attrs={})
-
-
-def rgb_to_bw(
-    color: nt.SocketOrVal[pt.Color],
-) -> nt.ProcNode[float]:
-    """
-    Uses a RGBToBW Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/rgb_to_bw.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeRGBToBW",
-        inputs={"Color": color},
-        attrs={},
-    )
-
-
 def script(
     bytecode: str = "",
     bytecode_hash: str = "",
@@ -1446,7 +1352,7 @@ def value() -> nt.ProcNode[float]:
 
 
 def vector_displacement(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     midlevel: nt.SocketOrVal[float] = 0.0,
     scale: nt.SocketOrVal[float] = 1.0,
     space: Literal["TANGENT", "OBJECT", "WORLD"] = "TANGENT",

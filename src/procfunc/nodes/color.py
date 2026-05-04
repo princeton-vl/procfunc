@@ -31,9 +31,9 @@ TColorMixType = Literal[
 
 
 def mix_rgb(
-    factor: nt.SocketOrVal[float],
-    a: nt.SocketOrVal[pt.Color],
-    b: nt.SocketOrVal[pt.Color],
+    factor: nt.SocketOrVal[float] = 0.5,
+    a: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
+    b: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
     blend_type: TColorMixType = "MIX",
     clamp_result: bool = False,
     clamp_factor: bool = True,
@@ -58,8 +58,8 @@ def mix_rgb(
 
 
 def rgb_curve(
-    fac: nt.SocketOrVal[float],
-    color: nt.SocketOrVal[pt.Color],
+    fac: nt.SocketOrVal[float] = 1.0,
+    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     curves: list[np.ndarray] | None = None,
 ) -> nt.ProcNode:
     """
@@ -128,42 +128,6 @@ def combine_hsl(
     )
 
 
-class SeparateColorResult(NamedTuple):
-    red: nt.ProcNode[float]
-    green: nt.ProcNode[float]
-    blue: nt.ProcNode[float]
-    alpha: nt.ProcNode[float]
-
-
-def separate_color(
-    color: nt.SocketOrVal[pt.Color],
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
-    ycc_mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
-) -> SeparateColorResult:
-    """
-    Uses a SeparateColor Function Node.
-
-    Context mapping:
-    - Shader: ShaderNodeSeparateColor (input: Color, outputs: red/green/blue, mode: RGB only)
-    - Compositor: CompositorNodeSeparateColor (input: Image, outputs: red/green/blue/alpha, modes: RGB/HSV/HSL/YCC/YUV, ycc_mode param)
-    - Texture: TextureNodeSeparateColor (input: Color, modes: RGB/HSV/HSL)
-    - Function: FunctionNodeSeparateColor (input: Color, outputs: red/green/blue/alpha)
-
-    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/color/separate_color.html
-    """
-    res = nt.ProcNode.from_nodetype(
-        node_type=ContextualNode.SEPARATE_COLOR.value,
-        inputs={"Color": color},
-        attrs={"mode": mode},
-    )
-    return SeparateColorResult(
-        red=res._output_socket("red"),
-        green=res._output_socket("green"),
-        blue=res._output_socket("blue"),
-        alpha=res._output_socket("alpha"),
-    )
-
-
 class SeparateRgbResult(NamedTuple):
     red: nt.ProcNode[float]
     green: nt.ProcNode[float]
@@ -172,7 +136,7 @@ class SeparateRgbResult(NamedTuple):
 
 
 def separate_rgb(
-    color: nt.SocketOrVal[pt.Color],
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
 ) -> SeparateRgbResult:
     """
     Uses a SeparateColor Shader Node in RGB mode.
@@ -200,7 +164,7 @@ class SeparateHsvResult(NamedTuple):
 
 
 def separate_hsv(
-    color: nt.SocketOrVal[pt.Color],
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
 ) -> SeparateHsvResult:
     """
     Uses a SeparateColor Shader Node in HSV mode.
@@ -228,7 +192,7 @@ class SeparateHslResult(NamedTuple):
 
 
 def separate_hsl(
-    color: nt.SocketOrVal[pt.Color],
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
 ) -> SeparateHslResult:
     """
     Uses a SeparateColor Shader Node in HSL mode.
@@ -260,7 +224,7 @@ TRampInterpolationType = Literal["EASE", "CARDINAL", "LINEAR", "B_SPLINE", "CONS
 
 
 def color_ramp(
-    fac: nt.SocketOrVal[float],
+    fac: nt.SocketOrVal[float] = 0.5,
     points: list[tuple[float, pt.Color]] | None = None,
     mode: Literal["RGB", "HSV", "HSL"] = "RGB",
     interpolation: TRampInterpolationType = "LINEAR",
@@ -283,4 +247,98 @@ def color_ramp(
     return ColorRampResult(
         color=res._output_socket("Color"),
         alpha=res._output_socket("Alpha"),
+    )
+
+
+def blackbody(temperature: nt.SocketOrVal[float] = 1500.0) -> nt.ProcNode[pt.Color]:
+    """
+    Uses a Blackbody Shader Node.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/blackbody.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeBlackbody",
+        inputs={"Temperature": temperature},
+        attrs={},
+    )
+
+
+def bright_contrast(
+    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    bright: nt.SocketOrVal[float] = 0.0,
+    contrast: nt.SocketOrVal[float] = 0.0,
+) -> nt.ProcNode[pt.Color]:
+    """
+    Uses a BrightContrast Shader Node.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/bright_contrast.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeBrightContrast",
+        inputs={"Color": color, "Bright": bright, "Contrast": contrast},
+        attrs={},
+    )
+
+
+def gamma(
+    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1), gamma: nt.SocketOrVal[float] = 1.0
+) -> nt.ProcNode[pt.Color]:
+    """
+    Uses a Gamma Shader Node.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/gamma.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeGamma",
+        inputs={"Color": color, "Gamma": gamma},
+        attrs={},
+    )
+
+
+def hue_saturation(
+    hue: nt.SocketOrVal[float] = 0.5,
+    saturation: nt.SocketOrVal[float] = 1.0,
+    value: nt.SocketOrVal[float] = 1.0,
+    fac: nt.SocketOrVal[float] = 1.0,
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+) -> nt.ProcNode[pt.Color]:
+    """
+    Uses a HueSaturation Shader Node.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/hue_saturation.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeHueSaturation",
+        inputs={
+            "Hue": hue,
+            "Saturation": saturation,
+            "Value": value,
+            "Fac": fac,
+            "Color": color,
+        },
+        attrs={},
+    )
+
+
+def rgb() -> nt.ProcNode[pt.Color]:
+    """
+    Uses a RGB Shader Node.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/rgb.html
+    """
+    return nt.ProcNode.from_nodetype(node_type="ShaderNodeRGB", inputs={}, attrs={})
+
+
+def rgb_to_bw(
+    color: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
+) -> nt.ProcNode[float]:
+    """
+    Uses a RGBToBW Shader Node.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/rgb_to_bw.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeRGBToBW",
+        inputs={"Color": color},
+        attrs={},
     )

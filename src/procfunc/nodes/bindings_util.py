@@ -65,6 +65,12 @@ CONTEXTUAL_NODE_MAPPING = [
         input_keys_map=None,
     ),
     NodeContextResolution(
+        contextual_node=ContextualNode.COMBINE_COLOR,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeCombineColor",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
         contextual_node=ContextualNode.SEPARATE_COLOR,
         node_group_type=NodeGroupType.SHADER,
         node_type="ShaderNodeSeparateColor",
