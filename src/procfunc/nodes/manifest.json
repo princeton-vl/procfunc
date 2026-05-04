@@ -1587,7 +1587,8 @@
       "value": "value"
     },
     "node_group_type": [
-      "GeometryNodeTree"
+      "GeometryNodeTree",
+      "ShaderNodeTree"
     ],
     "data_types": [
       "float",
@@ -1674,7 +1675,8 @@
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
-      "ShaderNodeTree"
+      "ShaderNodeTree",
+      "CompositorNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -3582,7 +3584,9 @@
     "name": "pf.nodes.math.vector_curve",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree"
+      "GeometryNodeTree",
+      "ShaderNodeTree",
+      "CompositorNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -4602,7 +4606,7 @@
     "bpy_name": "CompositorNodeLensdist",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.LensDistortion",
-    "name": "pf.nodes.compositor.lensdist",
+    "name": "pf.nodes.compositor.lens_distortion",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -4855,7 +4859,8 @@
     "name": "pf.nodes.color.hue_saturation",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree"
+      "ShaderNodeTree",
+      "CompositorNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -5118,7 +5123,7 @@
     "bpy_name": "CompositorNodeBilateralblur",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.bilateralblur",
+    "name": "pf.nodes.compositor.bilateral_blur",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5440,7 +5445,7 @@
     "bpy_name": "CompositorNodeCurveRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.curve_rgb",
+    "name": "pf.nodes.compositor.rgb_curve",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5456,7 +5461,7 @@
     "bpy_name": "CompositorNodeCurveVec",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.curve_vec",
+    "name": "pf.nodes.math.vector_curve",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5472,7 +5477,7 @@
     "bpy_name": "CompositorNodeDBlur",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.d_blur",
+    "name": "pf.nodes.compositor.directional_blur",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5693,22 +5698,6 @@
     "notes": null
   },
   {
-    "bpy_name": "CompositorNodeGroup",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.group",
-    "arg_names_map": null,
-    "node_group_type": [
-      "CompositorNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
     "bpy_name": "CompositorNodeHueCorrect",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
@@ -5728,8 +5717,10 @@
     "bpy_name": "CompositorNodeHueSat",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.hue_sat",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.hue_saturation",
+    "arg_names_map": {
+      "image": "color"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5888,8 +5879,10 @@
     "bpy_name": "CompositorNodeMapRange",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.map_range",
-    "arg_names_map": null,
+    "name": "pf.nodes.math.map_range",
+    "arg_names_map": {
+      "use_clamp": "clamp"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6064,7 +6057,7 @@
     "bpy_name": "CompositorNodePremulKey",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.premul_key",
+    "name": "pf.nodes.compositor.premultiply_key",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -6448,7 +6441,7 @@
     "bpy_name": "CompositorNodeValToRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.val_to_rgb",
+    "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -6464,7 +6457,7 @@
     "bpy_name": "CompositorNodeVecBlur",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.vec_blur",
+    "name": "pf.nodes.compositor.vector_blur",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -6480,7 +6473,7 @@
     "bpy_name": "CompositorNodeZcombine",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.zcombine",
+    "name": "pf.nodes.compositor.z_combine",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"

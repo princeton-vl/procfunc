@@ -7,13 +7,13 @@ across shader and geometry trees - they live here rather than in shader.py
 or func.py to avoid implying they are specific to those contexts.
 """
 
-from typing import Literal, NamedTuple, TypeVar
+from typing import Any, Literal, NamedTuple, TypeVar
 
 import numpy as np
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import RuntimeResolveDataType
+from procfunc.nodes.bindings_util import ContextualNode, RuntimeResolveDataType
 from procfunc.nodes.bpy_node_info import NodeDataType
 
 
@@ -53,7 +53,7 @@ def _math(
     """
 
     return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeMath",
+        node_type=ContextualNode.MATH.value,
         inputs={("Value", 0): a, ("Value", 1): b, ("Value", 2): value_2},
         attrs={
             "operation": operation,
@@ -746,7 +746,7 @@ def vector_curve(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/curves.html
     """
     return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeVectorCurve",
+        node_type=ContextualNode.VECTOR_CURVE.value,
         inputs={"Fac": fac, "Vector": vector},
         attrs={"curves": curves},
     )
@@ -766,7 +766,7 @@ def combine_xyz(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_xyz.html
     """
     return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeCombineXYZ",
+        node_type=ContextualNode.COMBINE_XYZ.value,
         inputs={"X": x, "Y": y, "Z": z},
         attrs={},
     )
@@ -822,8 +822,18 @@ def map_range(
             ["From Max", "From Min", "To Max", "To Min", "Value"],
         )
 
+    # interpolation_type / data_type only exist on ShaderNodeMapRange. The
+    # wrapper omits interpolation_type at default so a compositor call with
+    # all defaults doesn't trip _set_node_attribute. RuntimeResolveDataType
+    # is dropped at construct time when the target lacks the attr; an
+    # explicit NodeDataType in compositor context will reach setattr and
+    # raise naturally.
+    attrs: dict[str, Any] = {"clamp": clamp, "data_type": data_type}
+    if interpolation_type != "LINEAR":
+        attrs["interpolation_type"] = interpolation_type
+
     return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeMapRange",
+        node_type=ContextualNode.MAP_RANGE.value,
         inputs={
             "From Max": from_max,
             "From Min": from_min,
@@ -831,9 +841,5 @@ def map_range(
             "To Min": to_min,
             "Value": value,
         },
-        attrs={
-            "clamp": clamp,
-            "interpolation_type": interpolation_type,
-            "data_type": data_type,
-        },
+        attrs=attrs,
     )

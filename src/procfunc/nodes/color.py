@@ -58,8 +58,8 @@ def mix_rgb(
 
 
 def rgb_curve(
-    fac: nt.SocketOrVal[float] = 1.0,
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    color: nt.SocketOrVal[pt.Color],
     curves: list[np.ndarray] | None = None,
 ) -> nt.ProcNode:
     """
@@ -78,7 +78,6 @@ def combine_rgb(
     red: nt.SocketOrVal[float] = 0.0,
     green: nt.SocketOrVal[float] = 0.0,
     blue: nt.SocketOrVal[float] = 0.0,
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a CombineColor Shader Node.
@@ -88,7 +87,7 @@ def combine_rgb(
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.COMBINE_COLOR.value,
         inputs={"Red": red, "Green": green, "Blue": blue},
-        attrs={"mode": mode},
+        attrs={"mode": "RGB"},
     )
 
 
@@ -236,7 +235,7 @@ def color_ramp(
     """
 
     res = nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeValToRGB",
+        node_type=ContextualNode.COLOR_RAMP.value,
         inputs={"Fac": fac},
         attrs={
             "points": points,

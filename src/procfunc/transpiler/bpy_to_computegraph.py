@@ -137,12 +137,16 @@ def handle_specialcase_curve(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
 
 SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
     "ShaderNodeMath": handle_specialcase_math,
+    "CompositorNodeMath": handle_specialcase_math,
     "ShaderNodeValToRGB": handle_specialcase_color_ramp,
+    "CompositorNodeValToRGB": handle_specialcase_color_ramp,
     "ShaderNodeVectorRotate": handle_specialcase_vector_rotate,
     # curves share handler
     "ShaderNodeFloatCurve": handle_specialcase_curve,
     "ShaderNodeRGBCurve": handle_specialcase_curve,
+    "CompositorNodeCurveRGB": handle_specialcase_curve,
     "ShaderNodeVectorCurve": handle_specialcase_curve,
+    "CompositorNodeCurveVec": handle_specialcase_curve,
     # values with .outputs[0].default_value can share handler
     "ShaderNodeValue": handle_specialcase_value,
     "ShaderNodeRGB": handle_specialcase_value,

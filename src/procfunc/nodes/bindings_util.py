@@ -24,6 +24,11 @@ class ContextualNode(Enum):
     GROUP = "ContextualGroup"
     MIX_RGB = "ContextualMixRGB"
     MATH = "ContextualMath"
+    COLOR_RAMP = "ContextualColorRamp"
+    VECTOR_CURVE = "ContextualVectorCurve"
+    COMBINE_XYZ = "ContextualCombineXYZ"
+    MAP_RANGE = "ContextualMapRange"
+    HUE_SATURATION = "ContextualHueSaturation"
 
     @classmethod
     def parse_name(cls, from_name: str) -> Self | None:
@@ -39,6 +44,7 @@ class NodeContextResolution:
     node_group_type: NodeGroupType
     node_type: str
     input_keys_map: dict[str, tuple[str, int] | str | None] | None
+    output_keys_map: dict[str, str] | None = None
 
 
 # Mapping to map unified version of nodes to context-specific blender versions
@@ -138,6 +144,12 @@ CONTEXTUAL_NODE_MAPPING = [
     ),
     NodeContextResolution(
         contextual_node=ContextualNode.MATH,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="ShaderNodeMath",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.MATH,
         node_group_type=NodeGroupType.COMPOSITOR,
         node_type="CompositorNodeMath",
         input_keys_map=None,
@@ -148,12 +160,104 @@ CONTEXTUAL_NODE_MAPPING = [
         node_type="TextureNodeMath",
         input_keys_map=None,
     ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COLOR_RAMP,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeValToRGB",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COLOR_RAMP,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="ShaderNodeValToRGB",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COLOR_RAMP,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeValToRGB",
+        input_keys_map=None,
+        output_keys_map={"Color": "Image"},
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VECTOR_CURVE,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeVectorCurve",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VECTOR_CURVE,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="ShaderNodeVectorCurve",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VECTOR_CURVE,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        # CompositorNodeCurveVec has no Fac input; the wrapper's `fac` arg is dropped
+        # silently in compositor context. Honoring fac would require synthesizing an
+        # extra mix node.
+        node_type="CompositorNodeCurveVec",
+        input_keys_map={"Fac": None},
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COMBINE_XYZ,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeCombineXYZ",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COMBINE_XYZ,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="ShaderNodeCombineXYZ",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COMBINE_XYZ,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeCombineXYZ",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.MAP_RANGE,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeMapRange",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.MAP_RANGE,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="ShaderNodeMapRange",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.MAP_RANGE,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        # CompositorNodeMapRange exposes only float Value and use_clamp; it has
+        # no interpolation_type and no vector data_type. The wrapper omits
+        # those attrs when at default, so setattr only fails (with its own
+        # "no attribute" error) when a user actually requested a non-default.
+        node_type="CompositorNodeMapRange",
+        input_keys_map={"clamp": "use_clamp"},
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.HUE_SATURATION,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeHueSaturation",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.HUE_SATURATION,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeHueSat",
+        input_keys_map={"Color": "Image"},
+    ),
 ]
 
 
 def resolve_contextual_node(
     node: list[NodeContextResolution], group: NodeGroupType
-) -> tuple[str, dict[str, str]]:
+) -> NodeContextResolution:
     item = next(
         (
             item
@@ -166,7 +270,7 @@ def resolve_contextual_node(
     if item is None:
         raise ValueError(f"No contextual node found for {node} in {group}")
 
-    return item.node_type, item.input_keys_map
+    return item
 
 
 def raise_shader_normal_error(node_func_name: str, logger: logging.Logger):

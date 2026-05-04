@@ -242,10 +242,13 @@ def special_case_value_outputdefault(
 
 NODE_SPECIAL_CASES = {
     "ShaderNodeValToRGB": special_case_color_ramp,
+    "CompositorNodeValToRGB": special_case_color_ramp,
     "ShaderNodeFloatCurve": special_case_float_curve,
     "ShaderNodeMapRange": special_case_map_range,
     "ShaderNodeRGBCurve": special_case_rgb_curves,
+    "CompositorNodeCurveRGB": special_case_rgb_curves,
     "ShaderNodeVectorCurve": special_case_vector_curves,
+    "CompositorNodeCurveVec": special_case_vector_curves,
     "CompositorNodeOutputFile": special_case_file_output,
     nt.INPUT_NODE_TYPE: special_case_input,
     "GeometryNodeCaptureAttribute": special_case_capture_attribute,
