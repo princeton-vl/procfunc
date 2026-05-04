@@ -320,15 +320,6 @@ def hue_saturation(
     )
 
 
-def rgb() -> nt.ProcNode[pt.Color]:
-    """
-    Uses a RGB Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/rgb.html
-    """
-    return nt.ProcNode.from_nodetype(node_type="ShaderNodeRGB", inputs={}, attrs={})
-
-
 def rgb_to_bw(
     color: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
 ) -> nt.ProcNode[float]:

@@ -6,7 +6,6 @@ from procfunc import types as pt
 from procfunc.nodes import types as nt
 from procfunc.nodes.bindings_util import (
     raise_error_or_warn,
-    raise_io_error,
     raise_shader_normal_error,
 )
 
@@ -1337,18 +1336,6 @@ def uv_map(from_instancer: bool = False, uv_map: str = "") -> nt.ProcNode[pt.Vec
         inputs={},
         attrs={"from_instancer": from_instancer, "uv_map": uv_map},
     )
-
-
-def value() -> nt.ProcNode[float]:
-    """
-    Uses a Value Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/value.html
-    """
-
-    raise_io_error("value", logger=logger)
-
-    return nt.ProcNode.from_nodetype(node_type="ShaderNodeValue", inputs={}, attrs={})
 
 
 def vector_displacement(
