@@ -4379,7 +4379,7 @@
     "bpy_name": "ShaderNodeRGBCurve",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.RGBCurve",
-    "name": "pf.nodes.math.rgb_curve",
+    "name": "pf.nodes.color.rgb_curve",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
