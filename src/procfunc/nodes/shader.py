@@ -170,7 +170,7 @@ def blackbody(temperature: nt.SocketOrVal[float] = 1500.0) -> nt.ProcNode[pt.Col
 
 
 def bright_contrast(
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    color: nt.SocketOrVal[pt.Color],
     bright: nt.SocketOrVal[float] = 0.0,
     contrast: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.Color]:
@@ -713,7 +713,7 @@ def fresnel(
 
 
 def gamma(
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1), gamma: nt.SocketOrVal[float] = 1.0
+    color: nt.SocketOrVal[pt.Color], gamma: nt.SocketOrVal[float] = 1.0
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a Gamma Shader Node.
@@ -768,11 +768,11 @@ def holdout() -> nt.ProcNode[nt.Shader]:
 
 
 def hue_saturation(
+    color: nt.SocketOrVal[pt.Color],
+    fac: nt.SocketOrVal[float],
     hue: nt.SocketOrVal[float] = 0.5,
     saturation: nt.SocketOrVal[float] = 1.0,
     value: nt.SocketOrVal[float] = 1.0,
-    fac: nt.SocketOrVal[float] = 1.0,
-    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a HueSaturation Shader Node.
@@ -793,7 +793,7 @@ def hue_saturation(
 
 
 def invert(
-    fac: nt.SocketOrVal[float] = 1.0, color: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1)
+    fac: nt.SocketOrVal[float], color: nt.SocketOrVal[pt.Color]
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a Invert Shader Node.
@@ -1215,7 +1215,7 @@ def rgb() -> nt.ProcNode[pt.Color]:
 
 
 def rgb_to_bw(
-    color: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
+    color: nt.SocketOrVal[pt.Color],
 ) -> nt.ProcNode[float]:
     """
     Uses a RGBToBW Shader Node.
@@ -1446,7 +1446,7 @@ def value() -> nt.ProcNode[float]:
 
 
 def vector_displacement(
-    vector: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    vector: nt.SocketOrVal[pt.Vector],
     midlevel: nt.SocketOrVal[float] = 0.0,
     scale: nt.SocketOrVal[float] = 1.0,
     space: Literal["TANGENT", "OBJECT", "WORLD"] = "TANGENT",

@@ -1,10 +1,10 @@
-from typing import Literal, NamedTuple, TypeVar
+from typing import Literal, NamedTuple
 
 import numpy as np
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import ContextualNode, RuntimeResolveDataType
+from procfunc.nodes.bindings_util import ContextualNode
 from procfunc.nodes.bpy_node_info import NodeDataType
 
 TColorMixType = Literal[
@@ -29,10 +29,11 @@ TColorMixType = Literal[
     "VALUE",
 ]
 
+
 def mix_rgb(
-    factor: nt.SocketOrVal[float] = 0.5,
-    a: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
-    b: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
+    factor: nt.SocketOrVal[float],
+    a: nt.SocketOrVal[pt.Color],
+    b: nt.SocketOrVal[pt.Color],
     blend_type: TColorMixType = "MIX",
     clamp_result: bool = False,
     clamp_factor: bool = True,
@@ -57,8 +58,8 @@ def mix_rgb(
 
 
 def rgb_curve(
-    fac: nt.SocketOrVal[float] = 1.0,
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    color: nt.SocketOrVal[pt.Color],
     curves: list[np.ndarray] | None = None,
 ) -> nt.ProcNode:
     """
@@ -71,7 +72,6 @@ def rgb_curve(
         inputs={"Fac": fac, "Color": color},
         attrs={"curves": curves},
     )
-
 
 
 def combine_rgb(
@@ -136,7 +136,7 @@ class SeparateColorResult(NamedTuple):
 
 
 def separate_color(
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    color: nt.SocketOrVal[pt.Color],
     mode: Literal["RGB", "HSV", "HSL"] = "RGB",
     ycc_mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
 ) -> SeparateColorResult:
@@ -172,7 +172,7 @@ class SeparateRgbResult(NamedTuple):
 
 
 def separate_rgb(
-    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    color: nt.SocketOrVal[pt.Color],
 ) -> SeparateRgbResult:
     """
     Uses a SeparateColor Shader Node in RGB mode.
@@ -200,7 +200,7 @@ class SeparateHsvResult(NamedTuple):
 
 
 def separate_hsv(
-    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    color: nt.SocketOrVal[pt.Color],
 ) -> SeparateHsvResult:
     """
     Uses a SeparateColor Shader Node in HSV mode.
@@ -228,7 +228,7 @@ class SeparateHslResult(NamedTuple):
 
 
 def separate_hsl(
-    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    color: nt.SocketOrVal[pt.Color],
 ) -> SeparateHslResult:
     """
     Uses a SeparateColor Shader Node in HSL mode.
@@ -260,7 +260,7 @@ TRampInterpolationType = Literal["EASE", "CARDINAL", "LINEAR", "B_SPLINE", "CONS
 
 
 def color_ramp(
-    fac: nt.SocketOrVal[float] = 0.5,
+    fac: nt.SocketOrVal[float],
     points: list[tuple[float, pt.Color]] | None = None,
     mode: Literal["RGB", "HSV", "HSL"] = "RGB",
     interpolation: TRampInterpolationType = "LINEAR",

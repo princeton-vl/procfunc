@@ -76,9 +76,9 @@ def render_layers() -> RenderLayersResult:
 
 
 def alpha_over(
-    fac: nt.SocketOrVal[float] = 1.0,
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    image_0: nt.SocketOrVal[pt.Color],
+    image_1: nt.SocketOrVal[pt.Color],
     premul: float = 0.0,
     use_premultiply: bool = False,
 ) -> nt.ProcNode:
@@ -95,7 +95,7 @@ def alpha_over(
 
 
 def anti_aliasing(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     contrast_limit: float = 0.2,
     corner_rounding: float = 0.25,
     threshold: float = 1.0,
@@ -117,8 +117,8 @@ def anti_aliasing(
 
 
 def bilateralblur(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    determinator: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    determinator: nt.SocketOrVal[pt.Color],
     iterations: int = 1,
     sigma_color: float = 0.3,
     sigma_space: float = 5.0,
@@ -140,7 +140,7 @@ def bilateralblur(
 
 
 def blur(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     size: nt.SocketOrVal[float] = 1.0,
     aspect_correction: Literal["NONE", "Y", "X"] = "NONE",
     factor: float = 0.0,
@@ -183,8 +183,8 @@ def blur(
 
 
 def bokeh_blur(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-    bokeh: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    bokeh: nt.SocketOrVal[pt.Color],
     size: nt.SocketOrVal[float] = 1.0,
     bounding_box: nt.SocketOrVal[float] = 1.0,
     blur_max: float = 16.0,
@@ -267,7 +267,7 @@ def box_mask(
 
 
 def bright_contrast(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     bright: nt.SocketOrVal[float] = 0.0,
     contrast: nt.SocketOrVal[float] = 0.0,
     use_premultiply: bool = True,
@@ -285,7 +285,7 @@ def bright_contrast(
 
 
 def channel_matte(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     color_space: Literal["RGB", "HSV", "YUV", "YCC"] = "RGB",
     limit_channel: Literal["R", "G", "B"] = "R",
     limit_max: float = 1.0,
@@ -313,8 +313,8 @@ def channel_matte(
 
 
 def chroma_matte(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    key_color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    key_color: nt.SocketOrVal[pt.Color],
     gain: float = 1.0,
     lift: float = 0.0,
     shadow_adjust: float = 0.0,
@@ -340,8 +340,8 @@ def chroma_matte(
 
 
 def color_balance(
-    fac: nt.SocketOrVal[float] = 1.0,
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    image: nt.SocketOrVal[pt.Color],
     correction_method: Literal[
         "LIFT_GAMMA_GAIN", "OFFSET_POWER_SLOPE"
     ] = "LIFT_GAMMA_GAIN",
@@ -375,7 +375,7 @@ def color_balance(
 
 
 def color_correction(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     mask: nt.SocketOrVal[float] = 1.0,
     blue: bool = True,
     green: bool = True,
@@ -442,8 +442,8 @@ def color_correction(
 
 
 def color_matte(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    key_color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    key_color: nt.SocketOrVal[pt.Color],
     color_hue: float = 0.01,
     color_saturation: float = 0.1,
     color_value: float = 0.1,
@@ -465,8 +465,8 @@ def color_matte(
 
 
 def color_spill(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    fac: nt.SocketOrVal[float] = 1.0,
+    image: nt.SocketOrVal[pt.Color],
+    fac: nt.SocketOrVal[float],
     channel: Literal["R", "G", "B"] = "G",
     limit_channel: Literal["R", "G", "B"] = "R",
     limit_method: Literal["SIMPLE", "AVERAGE"] = "SIMPLE",
@@ -608,7 +608,7 @@ def combine_xyz(
 
 
 def composite(
-    image: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
+    image: nt.SocketOrVal[pt.Color],
     alpha: nt.SocketOrVal[float] = 1.0,
     use_alpha: bool = True,
 ) -> nt.ProcNode:
@@ -625,7 +625,7 @@ def composite(
 
 
 def convert_color_space(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     from_color_space: TColorSpace = "Linear Rec.709",
     to_color_space: TColorSpace = "Linear Rec.709",
 ) -> nt.ProcNode:
@@ -642,11 +642,11 @@ def convert_color_space(
 
 
 def corner_pin(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    upper_left: nt.SocketOrVal[pt.Vector] = (0, 1, 0),
-    upper_right: nt.SocketOrVal[pt.Vector] = (1, 1, 0),
-    lower_left: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    lower_right: nt.SocketOrVal[pt.Vector] = (1, 0, 0),
+    image: nt.SocketOrVal[pt.Color],
+    upper_left: nt.SocketOrVal[pt.Vector],
+    upper_right: nt.SocketOrVal[pt.Vector],
+    lower_left: nt.SocketOrVal[pt.Vector],
+    lower_right: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode:
     """
     Uses a CornerPin Compositor Node.
@@ -667,7 +667,7 @@ def corner_pin(
 
 
 def crop(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     max_x: int = 0,
     max_y: int = 0,
     min_x: int = 0,
@@ -703,10 +703,10 @@ def crop(
 
 
 def cryptomatte(
-    image: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
-    crypto_00: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
-    crypto_01: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
-    crypto_02: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
+    image: nt.SocketOrVal[pt.Color],
+    crypto_00: nt.SocketOrVal[pt.Color],
+    crypto_01: nt.SocketOrVal[pt.Color],
+    crypto_02: nt.SocketOrVal[pt.Color],
     add: tuple = (0.0, 0.0, 0.0),
     matte_id: str = "",
     remove: tuple = (0.0, 0.0, 0.0),
@@ -729,10 +729,10 @@ def cryptomatte(
 
 
 def curve_rgb(
-    fac: nt.SocketOrVal[float] = 1.0,
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    black_level: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
-    white_level: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    image: nt.SocketOrVal[pt.Color],
+    black_level: nt.SocketOrVal[pt.Color],
+    white_level: nt.SocketOrVal[pt.Color],
 ) -> nt.ProcNode:
     """
     Uses a CurveRGB Compositor Node.
@@ -751,7 +751,7 @@ def curve_rgb(
     )
 
 
-def curve_vec(vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0)) -> nt.ProcNode:
+def curve_vec(vector: nt.SocketOrVal[pt.Vector]) -> nt.ProcNode:
     """
     Uses a CurveVec Compositor Node.
 
@@ -765,7 +765,7 @@ def curve_vec(vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0)) -> nt.ProcNode:
 
 
 def d_blur(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     angle: float = 0.0,
     center_x: float = 0.5,
     center_y: float = 0.5,
@@ -795,7 +795,7 @@ def d_blur(
 
 
 def defocus(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     z: nt.SocketOrVal[float] = 1.0,
     angle: float = 0.0,
     blur_max: float = 16.0,
@@ -834,9 +834,9 @@ def defocus(
 
 
 def denoise(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    normal: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    albedo: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    normal: nt.SocketOrVal[pt.Vector],
+    albedo: nt.SocketOrVal[pt.Color],
     prefilter: Literal["NONE", "FAST", "ACCURATE"] = "ACCURATE",
     use_hdr: bool = True,
 ) -> nt.ProcNode:
@@ -853,8 +853,8 @@ def denoise(
 
 
 def despeckle(
-    fac: nt.SocketOrVal[float] = 1.0,
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    image: nt.SocketOrVal[pt.Color],
     threshold: float = 0.5,
     threshold_neighbor: float = 0.5,
 ) -> nt.ProcNode:
@@ -871,8 +871,8 @@ def despeckle(
 
 
 def diff_matte(
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_2: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image_1: nt.SocketOrVal[pt.Color],
+    image_2: nt.SocketOrVal[pt.Color],
     falloff: float = 0.1,
     tolerance: float = 0.1,
 ) -> nt.ProcNode:
@@ -910,8 +910,8 @@ def dilate_erode(
 
 
 def displace(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    vector: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    vector: nt.SocketOrVal[pt.Vector],
     x_scale: nt.SocketOrVal[float] = 0.0,
     y_scale: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode:
@@ -933,8 +933,8 @@ def displace(
 
 
 def distance_matte(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    key_color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    key_color: nt.SocketOrVal[pt.Color],
     channel: Literal["RGB", "YCC"] = "RGB",
     falloff: float = 0.1,
     tolerance: float = 0.1,
@@ -999,7 +999,7 @@ def ellipse_mask(
 
 
 def exposure(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     exposure: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode:
     """
@@ -1015,8 +1015,8 @@ def exposure(
 
 
 def filter(
-    fac: nt.SocketOrVal[float] = 1.0,
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    image: nt.SocketOrVal[pt.Color],
     filter_type: Literal[
         "SOFTEN",
         "SHARPEN",
@@ -1041,7 +1041,7 @@ def filter(
 
 
 def flip(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1), axis: Literal["X", "Y", "XY"] = "X"
+    image: nt.SocketOrVal[pt.Color], axis: Literal["X", "Y", "XY"] = "X"
 ) -> nt.ProcNode:
     """
     Uses a Flip Compositor Node.
@@ -1056,7 +1056,7 @@ def flip(
 
 
 def gamma(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1), gamma: nt.SocketOrVal[float] = 1.0
+    image: nt.SocketOrVal[pt.Color], gamma: nt.SocketOrVal[float] = 1.0
 ) -> nt.ProcNode:
     """
     Uses a Gamma Compositor Node.
@@ -1071,7 +1071,7 @@ def gamma(
 
 
 def glare(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     angle_offset: float = 0.0,
     color_modulation: float = 0.25,
     fade: float = 0.9,
@@ -1124,7 +1124,7 @@ def group(node_tree: Any = None) -> nt.ProcNode:
 
 
 def hue_correct(
-    fac: nt.SocketOrVal[float] = 1.0, image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)
+    fac: nt.SocketOrVal[float], image: nt.SocketOrVal[pt.Color]
 ) -> nt.ProcNode:
     """
     Uses a HueCorrect Compositor Node.
@@ -1139,11 +1139,11 @@ def hue_correct(
 
 
 def hue_sat(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    fac: nt.SocketOrVal[float],
     hue: nt.SocketOrVal[float] = 0.5,
     saturation: nt.SocketOrVal[float] = 1.0,
     value: nt.SocketOrVal[float] = 1.0,
-    fac: nt.SocketOrVal[float] = 1.0,
 ) -> nt.ProcNode:
     """
     Uses a HueSat Compositor Node.
@@ -1216,9 +1216,7 @@ def image(
     )
 
 
-def inpaint(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1), distance: int = 0
-) -> nt.ProcNode:
+def inpaint(image: nt.SocketOrVal[pt.Color], distance: int = 0) -> nt.ProcNode:
     """
     Uses a Inpaint Compositor Node.
 
@@ -1232,8 +1230,8 @@ def inpaint(
 
 
 def invert(
-    fac: nt.SocketOrVal[float] = 1.0,
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    color: nt.SocketOrVal[pt.Color],
     invert_alpha: bool = False,
     invert_rgb: bool = True,
 ) -> nt.ProcNode:
@@ -1250,8 +1248,8 @@ def invert(
 
 
 def keying(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-    key_color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
+    key_color: nt.SocketOrVal[pt.Color],
     garbage_matte: nt.SocketOrVal[float] = 0.0,
     core_matte: nt.SocketOrVal[float] = 0.0,
     blur_post: int = 0,
@@ -1319,7 +1317,7 @@ def keying_screen(
 
 
 def kuwahara(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     size: nt.SocketOrVal[float] = 6.0,
     eccentricity: float = 1.0,
     sharpness: float = 0.5,
@@ -1346,7 +1344,7 @@ def kuwahara(
 
 
 def lensdist(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     distortion: nt.SocketOrVal[float] = 0.0,
     dispersion: nt.SocketOrVal[float] = 0.0,
     use_fit: bool = False,
@@ -1370,7 +1368,7 @@ def lensdist(
 
 
 def levels(
-    image: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
+    image: nt.SocketOrVal[pt.Color],
     channel: Literal[
         "COMBINED_RGB", "RED", "GREEN", "BLUE", "LUMINANCE"
     ] = "COMBINED_RGB",
@@ -1388,7 +1386,7 @@ def levels(
 
 
 def luma_matte(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     limit_max: float = 1.0,
     limit_min: float = 0.0,
 ) -> nt.ProcNode:
@@ -1430,8 +1428,8 @@ def map_range(
 
 
 def map_uv(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    uv: nt.SocketOrVal[pt.Vector] = (1, 0, 0),
+    image: nt.SocketOrVal[pt.Color],
+    uv: nt.SocketOrVal[pt.Vector],
     alpha: int = 0,
     filter_type: Literal["NEAREST", "ANISOTROPIC"] = "ANISOTROPIC",
 ) -> nt.ProcNode:
@@ -1522,9 +1520,9 @@ def math(
 
 
 def mix_rgb(
-    fac: nt.SocketOrVal[float] = 1.0,
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fac: nt.SocketOrVal[float],
+    image_0: nt.SocketOrVal[pt.Color],
+    image_1: nt.SocketOrVal[pt.Color],
     blend_type: TBlendType = "MIX",
     use_alpha: bool = False,
 ) -> nt.ProcNode:
@@ -1571,7 +1569,7 @@ def movie_clip(clip: Any = None) -> MovieClipResult:
 
 
 def movie_distortion(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    image: nt.SocketOrVal[pt.Color],
     clip: Any = None,
     distortion_type: Literal["UNDISTORT", "DISTORT"] = "UNDISTORT",
 ) -> nt.ProcNode:
@@ -1587,7 +1585,7 @@ def movie_distortion(
     )
 
 
-def normal(normal: nt.SocketOrVal[pt.Vector] = (0, 0, 1)) -> nt.ProcNode:
+def normal(normal: nt.SocketOrVal[pt.Vector]) -> nt.ProcNode:
     """
     Uses a Normal Compositor Node.
 
@@ -1642,9 +1640,7 @@ def output_file(
     )
 
 
-def pixelate(
-    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1), pixel_size: int = 1
-) -> nt.ProcNode:
+def pixelate(color: nt.SocketOrVal[pt.Color], pixel_size: int = 1) -> nt.ProcNode:
     """
     Uses a Pixelate Compositor Node.
 
@@ -1658,7 +1654,7 @@ def pixelate(
 
 
 def plane_track_deform(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    image: nt.SocketOrVal[pt.Color],
     clip: Any = None,
     motion_blur_samples: int = 16,
     motion_blur_shutter: float = 0.5,
@@ -1686,7 +1682,7 @@ def plane_track_deform(
 
 
 def posterize(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1), steps: nt.SocketOrVal[float] = 8.0
+    image: nt.SocketOrVal[pt.Color], steps: nt.SocketOrVal[float] = 8.0
 ) -> nt.ProcNode:
     """
     Uses a Posterize Compositor Node.
@@ -1701,7 +1697,7 @@ def posterize(
 
 
 def premul_key(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     mapping: Literal["STRAIGHT_TO_PREMUL", "PREMUL_TO_STRAIGHT"] = "STRAIGHT_TO_PREMUL",
 ) -> nt.ProcNode:
     """
@@ -1725,7 +1721,7 @@ def rgb() -> nt.ProcNode:
     return nt.ProcNode.from_nodetype(node_type="CompositorNodeRGB", inputs={}, attrs={})
 
 
-def rgb_to_bw(image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1)) -> nt.ProcNode:
+def rgb_to_bw(image: nt.SocketOrVal[pt.Color]) -> nt.ProcNode:
     """
     Uses a RGBToBW Compositor Node.
 
@@ -1739,7 +1735,7 @@ def rgb_to_bw(image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1)) -> nt.ProcNo
 
 
 def rotate(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     degr: nt.SocketOrVal[float] = 0.0,
     filter_type: Literal["NEAREST", "BILINEAR", "BICUBIC"] = "BILINEAR",
 ) -> nt.ProcNode:
@@ -1756,7 +1752,7 @@ def rotate(
 
 
 def scale(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     x: nt.SocketOrVal[float] = 1.0,
     y: nt.SocketOrVal[float] = 1.0,
     frame_method: Literal["STRETCH", "FIT", "CROP"] = "STRETCH",
@@ -1807,7 +1803,7 @@ class SepHsvaResult(NamedTuple):
     a: nt.ProcNode[float]
 
 
-def sep_hsva(image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)) -> SepHsvaResult:
+def sep_hsva(image: nt.SocketOrVal[pt.Color]) -> SepHsvaResult:
     """
     Uses a SepHSVA Compositor Node.
 
@@ -1833,7 +1829,7 @@ class SepRgbaResult(NamedTuple):
     a: nt.ProcNode[float]
 
 
-def sep_rgba(image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)) -> SepRgbaResult:
+def sep_rgba(image: nt.SocketOrVal[pt.Color]) -> SepRgbaResult:
     """
     Uses a SepRGBA Compositor Node.
 
@@ -1860,7 +1856,7 @@ class SepYccaResult(NamedTuple):
 
 
 def sep_ycca(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
 ) -> SepYccaResult:
     """
@@ -1888,7 +1884,7 @@ class SepYuvaResult(NamedTuple):
     a: nt.ProcNode[float]
 
 
-def sep_yuva(image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)) -> SepYuvaResult:
+def sep_yuva(image: nt.SocketOrVal[pt.Color]) -> SepYuvaResult:
     """
     Uses a SepYUVA Compositor Node.
 
@@ -1908,7 +1904,7 @@ def sep_yuva(image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)) -> SepYuvaResult:
 
 
 def set_alpha(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     alpha: nt.SocketOrVal[float] = 1.0,
     mode: Literal["APPLY", "REPLACE_ALPHA"] = "APPLY",
 ) -> nt.ProcNode:
@@ -1925,8 +1921,8 @@ def set_alpha(
 
 
 def split(
-    image_0: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    image_0: nt.SocketOrVal[pt.Color],
+    image_1: nt.SocketOrVal[pt.Color],
     axis: Literal["X", "Y"] = "X",
     factor: int = 50,
 ) -> nt.ProcNode:
@@ -1943,7 +1939,7 @@ def split(
 
 
 def stabilize(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    image: nt.SocketOrVal[pt.Color],
     clip: Any = None,
     filter_type: Literal["NEAREST", "BILINEAR", "BICUBIC"] = "BILINEAR",
     invert: bool = False,
@@ -1961,7 +1957,7 @@ def stabilize(
 
 
 def sun_beams(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     ray_length: float = 0.0,
     source: tuple = (0.5, 0.5),
 ) -> nt.ProcNode:
@@ -1978,8 +1974,8 @@ def sun_beams(
 
 
 def switch(
-    off: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-    on: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    off: nt.SocketOrVal[pt.Color],
+    on: nt.SocketOrVal[pt.Color],
     check: bool = False,
 ) -> nt.ProcNode:
     """
@@ -1995,8 +1991,8 @@ def switch(
 
 
 def switch_view(
-    left: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
-    right: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
+    left: nt.SocketOrVal[pt.Color],
+    right: nt.SocketOrVal[pt.Color],
 ) -> nt.ProcNode:
     """
     Uses a SwitchView Compositor Node.
@@ -2011,8 +2007,8 @@ def switch_view(
 
 
 def texture(
-    offset: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+    offset: nt.SocketOrVal[pt.Vector],
+    scale: nt.SocketOrVal[pt.Vector],
     node_output: int = 0,
     texture: Any = None,
 ) -> nt.ProcNode:
@@ -2042,7 +2038,7 @@ def time(frame_end: int = 250, frame_start: int = 1) -> nt.ProcNode:
 
 
 def tonemap(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     adaptation: float = 1.0,
     contrast: float = 0.0,
     correction: float = 0.0,
@@ -2101,7 +2097,7 @@ def track_pos(
 
 
 def transform(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    image: nt.SocketOrVal[pt.Color],
     x: nt.SocketOrVal[float] = 0.0,
     y: nt.SocketOrVal[float] = 0.0,
     angle: nt.SocketOrVal[float] = 0.0,
@@ -2121,7 +2117,7 @@ def transform(
 
 
 def translate(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image: nt.SocketOrVal[pt.Color],
     x: nt.SocketOrVal[float] = 0.0,
     y: nt.SocketOrVal[float] = 0.0,
     interpolation: Literal["Nearest", "Bilinear", "Bicubic"] = "Nearest",
@@ -2144,7 +2140,7 @@ def translate(
     )
 
 
-def val_to_rgb(fac: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode:
+def val_to_rgb(fac: nt.SocketOrVal[float]) -> nt.ProcNode:
     """
     Uses a ValToRGB Compositor Node.
 
@@ -2169,9 +2165,9 @@ def value() -> nt.ProcNode:
 
 
 def vec_blur(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    z: nt.SocketOrVal[float] = 0.0,
-    speed: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    image: nt.SocketOrVal[pt.Color],
+    z: nt.SocketOrVal[float],
+    speed: nt.SocketOrVal[pt.Vector],
     factor: float = 0.25,
     samples: int = 32,
     speed_max: int = 0,
@@ -2197,7 +2193,7 @@ def vec_blur(
 
 
 def viewer(
-    image: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
+    image: nt.SocketOrVal[pt.Color],
     alpha: nt.SocketOrVal[float] = 1.0,
     use_alpha: bool = True,
 ) -> nt.ProcNode:
@@ -2214,9 +2210,9 @@ def viewer(
 
 
 def zcombine(
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    image_0: nt.SocketOrVal[pt.Color],
+    image_1: nt.SocketOrVal[pt.Color],
     z_0: nt.SocketOrVal[float] = 1.0,
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     z_1: nt.SocketOrVal[float] = 1.0,
     use_alpha: bool = False,
     use_antialias_z: bool = True,

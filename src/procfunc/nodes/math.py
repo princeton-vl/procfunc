@@ -13,12 +13,12 @@ import numpy as np
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import ContextualNode, RuntimeResolveDataType
+from procfunc.nodes.bindings_util import RuntimeResolveDataType
 from procfunc.nodes.bpy_node_info import NodeDataType
 
 
 def clamp(
-    value: nt.SocketOrVal[float] = 1.0,
+    value: nt.SocketOrVal[float],
     min: nt.SocketOrVal[float] = 0.0,
     max: nt.SocketOrVal[float] = 1.0,
     clamp_type: Literal["MINMAX", "RANGE"] = "MINMAX",
@@ -63,153 +63,137 @@ def _math(
 
 
 # Basic Math Operations
-def add(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def add(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="ADD")
 
 
-def subtract(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def subtract(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="SUBTRACT")
 
 
-def multiply(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def multiply(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="MULTIPLY")
 
 
 def multiply_add(
-    a: nt.SocketOrVal[float] = 0.5,
-    b: nt.SocketOrVal[float] = 0.5,
-    addend: nt.SocketOrVal[float] = 0.0,
+    a: nt.SocketOrVal[float],
+    b: nt.SocketOrVal[float],
+    addend: nt.SocketOrVal[float],
 ) -> nt.ProcNode[float]:
     return _math(a, b, addend, operation="MULTIPLY_ADD")
 
 
 def divide(
-    numerator: nt.SocketOrVal[float] = 0.5, denominator: nt.SocketOrVal[float] = 0.5
+    numerator: nt.SocketOrVal[float], denominator: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
     return _math(numerator, denominator, operation="DIVIDE")
 
 
 def power(
-    base: nt.SocketOrVal[float] = 0.5, exponent: nt.SocketOrVal[float] = 0.5
+    base: nt.SocketOrVal[float], exponent: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
     return _math(base, exponent, operation="POWER")
 
 
 def logarithm(
-    value: nt.SocketOrVal[float] = 0.5, base: nt.SocketOrVal[float] = 0.5
+    value: nt.SocketOrVal[float], base: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
     return _math(value, base, operation="LOGARITHM")
 
 
-def sqrt(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def sqrt(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="SQRT")
 
 
-def inverse_sqrt(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def inverse_sqrt(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="INVERSE_SQRT")
 
 
-def absolute(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def absolute(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="ABSOLUTE")
 
 
-def exponent(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def exponent(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="EXPONENT")
 
 
 # Comparison Operations
-def minimum(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def minimum(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="MINIMUM")
 
 
-def maximum(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def maximum(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="MAXIMUM")
 
 
-def less_than(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def less_than(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="LESS_THAN")
 
 
 def greater_than(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
+    a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
     return _math(a, b, operation="GREATER_THAN")
 
 
-def sign(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def sign(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="SIGN")
 
 
 def compare(
-    a: nt.SocketOrVal[float] = 0.5,
-    b: nt.SocketOrVal[float] = 0.5,
+    a: nt.SocketOrVal[float],
+    b: nt.SocketOrVal[float],
     epsilon: nt.SocketOrVal[float] = 0.001,
 ) -> nt.ProcNode[float]:
     return _math(a, b, epsilon, operation="COMPARE")
 
 
 def smooth_minimum(
-    a: nt.SocketOrVal[float] = 0.5,
-    b: nt.SocketOrVal[float] = 0.5,
+    a: nt.SocketOrVal[float],
+    b: nt.SocketOrVal[float],
     distance: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[float]:
     return _math(a, b, distance, operation="SMOOTH_MIN")
 
 
 def smooth_maximum(
-    a: nt.SocketOrVal[float] = 0.5,
-    b: nt.SocketOrVal[float] = 0.5,
+    a: nt.SocketOrVal[float],
+    b: nt.SocketOrVal[float],
     distance: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[float]:
     return _math(a, b, distance, operation="SMOOTH_MAX")
 
 
-def round(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def round(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="ROUND")
 
 
-def floor(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def floor(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="FLOOR")
 
 
-def ceil(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def ceil(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="CEIL")
 
 
-def truncate(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def truncate(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="TRUNC")
 
 
-def fraction(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def fraction(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="FRACT")
 
 
-def modulo(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def modulo(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="MODULO")
 
 
-def floor_mod(
-    a: nt.SocketOrVal[float] = 0.5, b: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def floor_mod(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(a, b, operation="FLOORED_MODULO")
 
 
 def wrap(
-    value: nt.SocketOrVal[float] = 0.5,
+    value: nt.SocketOrVal[float],
     max_val: nt.SocketOrVal[float] = 1.0,
     min_val: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[float]:
@@ -217,73 +201,71 @@ def wrap(
 
 
 def snap(
-    value: nt.SocketOrVal[float] = 0.5, increment: nt.SocketOrVal[float] = 1.0
+    value: nt.SocketOrVal[float], increment: nt.SocketOrVal[float] = 1.0
 ) -> nt.ProcNode[float]:
     return _math(value, increment, operation="SNAP")
 
 
 def pingpong(
-    value: nt.SocketOrVal[float] = 0.5, scale: nt.SocketOrVal[float] = 1.0
+    value: nt.SocketOrVal[float], scale: nt.SocketOrVal[float] = 1.0
 ) -> nt.ProcNode[float]:
     return _math(value, scale, operation="PINGPONG")
 
 
 # Trigonometric Operations
-def sin(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def sin(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="SINE")
 
 
-def cos(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def cos(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="COSINE")
 
 
-def tan(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def tan(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="TANGENT")
 
 
-def asin(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def asin(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="ARCSINE")
 
 
-def acos(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def acos(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="ARCCOSINE")
 
 
-def atan(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def atan(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="ARCTANGENT")
 
 
-def atan2(
-    y: nt.SocketOrVal[float] = 0.5, x: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode[float]:
+def atan2(y: nt.SocketOrVal[float], x: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(y, x, operation="ARCTAN2")
 
 
-def sinh(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def sinh(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="SINH")
 
 
-def cosh(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def cosh(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="COSH")
 
 
-def tanh(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def tanh(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="TANH")
 
 
 # Conversion Operations
-def deg_to_rad(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def deg_to_rad(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="RADIANS")
 
 
-def rad_to_deg(value: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode[float]:
+def rad_to_deg(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
     return _math(value, operation="DEGREES")
 
 
 # Vector Math Operations
 def vector_add(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     """Add two vectors."""
 
@@ -295,8 +277,8 @@ def vector_add(
 
 
 def vector_subtract(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -306,8 +288,8 @@ def vector_subtract(
 
 
 def vector_multiply(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -317,9 +299,9 @@ def vector_multiply(
 
 
 def vector_multiply_add(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    addend: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
+    addend: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -329,8 +311,8 @@ def vector_multiply_add(
 
 
 def vector_divide(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -340,8 +322,8 @@ def vector_divide(
 
 
 def vector_cross_product(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -351,8 +333,8 @@ def vector_cross_product(
 
 
 def vector_project(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    onto: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
+    onto: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[float]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -362,8 +344,8 @@ def vector_project(
 
 
 def vector_reflect(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    normal: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    normal: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -373,8 +355,8 @@ def vector_reflect(
 
 
 def vector_refract(
-    incident: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    normal: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    incident: nt.SocketOrVal[pt.Vector],
+    normal: nt.SocketOrVal[pt.Vector],
     ior: nt.SocketOrVal[float] = 1.0,
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
@@ -385,9 +367,9 @@ def vector_refract(
 
 
 def vector_faceforward(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    surface: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    normal: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
+    surface: nt.SocketOrVal[pt.Vector],
+    normal: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -401,8 +383,8 @@ def vector_faceforward(
 
 
 def vector_dot_product(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -412,8 +394,8 @@ def vector_dot_product(
 
 
 def vector_distance(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -422,7 +404,7 @@ def vector_distance(
     )
 
 
-def vector_length(vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0)) -> nt.ProcNode[float]:
+def vector_length(vector: nt.SocketOrVal[pt.Vector]) -> nt.ProcNode[float]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -431,7 +413,7 @@ def vector_length(vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0)) -> nt.ProcNode[
 
 
 def vector_scale(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0), scale: nt.SocketOrVal[float] = 1.0
+    vector: nt.SocketOrVal[pt.Vector], scale: nt.SocketOrVal[float]
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -441,7 +423,7 @@ def vector_scale(
 
 
 def vector_normalize(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -451,9 +433,9 @@ def vector_normalize(
 
 
 def vector_wrap(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    max_val: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
-    min_val: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
+    max_val: nt.SocketOrVal[pt.Vector],
+    min_val: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -463,8 +445,8 @@ def vector_wrap(
 
 
 def vector_snap(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -474,7 +456,7 @@ def vector_snap(
 
 
 def vector_floor(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -484,7 +466,7 @@ def vector_floor(
 
 
 def vector_ceil(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -494,8 +476,8 @@ def vector_ceil(
 
 
 def vector_modulo(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -505,7 +487,7 @@ def vector_modulo(
 
 
 def vector_fraction(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -515,7 +497,7 @@ def vector_fraction(
 
 
 def vector_round(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -525,7 +507,7 @@ def vector_round(
 
 
 def vector_truncate(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -535,7 +517,7 @@ def vector_truncate(
 
 
 def vector_absolute(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -545,8 +527,8 @@ def vector_absolute(
 
 
 def vector_minimum(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -556,8 +538,8 @@ def vector_minimum(
 
 
 def vector_maximum(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -567,7 +549,7 @@ def vector_maximum(
 
 
 def vector_sine(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -577,7 +559,7 @@ def vector_sine(
 
 
 def vector_cosine(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -587,7 +569,7 @@ def vector_cosine(
 
 
 def vector_tangent(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -597,10 +579,10 @@ def vector_tangent(
 
 
 def vector_rotate_axis_angle(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    center: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    axis: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
-    angle: nt.SocketOrVal[float] = 0.0,
+    vector: nt.SocketOrVal[pt.Vector],
+    center: nt.SocketOrVal[pt.Vector],
+    axis: nt.SocketOrVal[pt.Vector],
+    angle: nt.SocketOrVal[float],
     invert: bool = False,
 ) -> nt.ProcNode[pt.Vector]:
     """
@@ -616,9 +598,9 @@ def vector_rotate_axis_angle(
 
 
 def vector_rotate_euler(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    center: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[pt.Vector],
+    center: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Vector],
     invert: bool = False,
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
@@ -632,7 +614,7 @@ def vector_rotate_euler(
 
 
 def vector_transform(
-    vector: nt.SocketOrVal[pt.Vector] = (0.5, 0.5, 0.5),
+    vector: nt.SocketOrVal[pt.Vector],
     convert_from: Literal["WORLD", "OBJECT", "CAMERA"] = "WORLD",
     convert_to: Literal["WORLD", "OBJECT", "CAMERA"] = "OBJECT",
     vector_type: Literal["POINT", "VECTOR", "NORMAL"] = "VECTOR",
@@ -694,9 +676,9 @@ TMix = TypeVar("TMix", nt.SocketOrVal[float], nt.SocketOrVal[pt.Vector])
 
 
 def mix(
-    a: TMix | None = None,
-    b: TMix | None = None,
-    factor: nt.SocketOrVal[float] = 0.5,
+    a: TMix,
+    b: TMix,
+    factor: nt.SocketOrVal[float],
     clamp_factor: bool = True,
     factor_mode: Literal["UNIFORM", "NON_UNIFORM"] = "UNIFORM",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
@@ -727,14 +709,12 @@ def mix(
     )
 
 
-
 # ---- Curves ----------------------------------------------------------------
 
 
-
 def float_curve(
-    factor: nt.SocketOrVal[float] = 1.0,
-    value: nt.SocketOrVal[float] = 1.0,
+    factor: nt.SocketOrVal[float],
+    value: nt.SocketOrVal[float],
     curve: np.ndarray | None = None,
     handle_type: str = "AUTO",
     use_clip: bool = True,
@@ -752,8 +732,8 @@ def float_curve(
 
 
 def vector_curve(
-    fac: nt.SocketOrVal[float] = 1.0,
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    fac: nt.SocketOrVal[float],
+    vector: nt.SocketOrVal[pt.Vector],
     curves: np.ndarray | None = None,
 ) -> nt.ProcNode[pt.Vector]:
     """
@@ -769,6 +749,7 @@ def vector_curve(
 
 
 # ---- Combine / Separate ------------------------------------
+
 
 def combine_xyz(
     x: nt.SocketOrVal[float] = 0.0,
@@ -786,13 +767,14 @@ def combine_xyz(
         attrs={},
     )
 
+
 class SeparateXyzResult(NamedTuple):
     x: nt.ProcNode[float]
     y: nt.ProcNode[float]
     z: nt.ProcNode[float]
 
 
-def separate_xyz(vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0)) -> SeparateXyzResult:
+def separate_xyz(vector: nt.SocketOrVal[pt.Vector]) -> SeparateXyzResult:
     """
     Uses a SeparateXYZ Shader Node.
 
@@ -815,7 +797,7 @@ TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHER
 
 
 def map_range(
-    value: nt.SocketOrVal[float] = 1.0,
+    value: nt.SocketOrVal[float],
     from_max: nt.SocketOrVal[float] = 1.0,
     from_min: nt.SocketOrVal[float] = 0.0,
     to_max: nt.SocketOrVal[float] = 1.0,
@@ -851,4 +833,3 @@ def map_range(
             "data_type": data_type,
         },
     )
-

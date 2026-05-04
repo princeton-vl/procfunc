@@ -6,7 +6,7 @@ import bpy
 from procfunc import compute_graph as cg
 from procfunc import types as t
 from procfunc.nodes import bpy_node_info as bni
-from procfunc.nodes import func, math
+from procfunc.nodes import math
 from procfunc.nodes import types as nt
 from procfunc.util.log import add_exception_context_msg
 

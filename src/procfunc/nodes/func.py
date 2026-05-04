@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 def align_euler_to_vector(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    factor: nt.SocketOrVal[float] = 1.0,
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    rotation: nt.SocketOrVal[pt.Vector],
+    factor: nt.SocketOrVal[float],
+    vector: nt.SocketOrVal[pt.Vector],
     axis: Literal["X", "Y", "Z"] = "X",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> nt.ProcNode[pt.Vector]:
@@ -32,9 +32,9 @@ def align_euler_to_vector(
 
 
 def align_rotation_to_vector(
-    rotation: Any = (0, 0, 0),
-    factor: nt.SocketOrVal[float] = 1.0,
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    rotation: Any,
+    factor: nt.SocketOrVal[float],
+    vector: nt.SocketOrVal[pt.Vector],
     axis: Literal["X", "Y", "Z"] = "Z",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> nt.ProcNode[pt.Vector]:
@@ -51,8 +51,8 @@ def align_rotation_to_vector(
 
 
 def axes_to_rotation(
-    primary_axis_vector: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
-    secondary_axis_vector: nt.SocketOrVal[pt.Vector] = (1, 0, 0),
+    primary_axis_vector: nt.SocketOrVal[pt.Vector],
+    secondary_axis_vector: nt.SocketOrVal[pt.Vector],
     primary_axis: Literal["X", "Y", "Z"] = "X",
     secondary_axis: Literal["X", "Y", "Z"] = "Y",
 ) -> nt.ProcNode[pt.Vector]:
@@ -72,7 +72,7 @@ def axes_to_rotation(
 
 
 def axis_angle_to_rotation(
-    axis: nt.SocketOrVal[pt.Vector] = (0, 0, 1), angle: nt.SocketOrVal[float] = 0.0
+    axis: nt.SocketOrVal[pt.Vector], angle: nt.SocketOrVal[float]
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a AxisAngleToRotation Function Node.
@@ -87,8 +87,8 @@ def axis_angle_to_rotation(
 
 
 def boolean_or(
-    a: nt.SocketOrVal[bool] = False,
-    b: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
+    b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
@@ -98,8 +98,8 @@ def boolean_or(
 
 
 def boolean_and(
-    a: nt.SocketOrVal[bool] = False,
-    b: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
+    b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
@@ -109,8 +109,8 @@ def boolean_and(
 
 
 def boolean_xor(
-    a: nt.SocketOrVal[bool] = False,
-    b: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
+    b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
@@ -120,7 +120,7 @@ def boolean_xor(
 
 
 def boolean_not(
-    a: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     """
     Uses a BooleanNot Function Node.
@@ -182,9 +182,9 @@ def combine_matrix(
 
 
 def combine_transform(
-    translation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    rotation: Any = (0, 0, 0),
-    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+    translation: nt.SocketOrVal[pt.Vector],
+    rotation: Any,
+    scale: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Matrix]:
     """
     Uses a CombineTransform Function Node.
@@ -303,8 +303,8 @@ def not_equal(
 
 
 def vector_compare_elementwise(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
     epsilon: nt.SocketOrVal[float] = 0.001,
     operation: TCompareOperation = "EQUAL",
 ) -> nt.ProcNode[bool]:
@@ -335,7 +335,7 @@ def compare_color(
 
 
 def euler_to_rotation(
-    euler: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    euler: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a EulerToRotation Function Node.
@@ -350,7 +350,7 @@ def euler_to_rotation(
 
 
 def float_to_int(
-    float: nt.SocketOrVal[float] = 0.0,
+    float: nt.SocketOrVal[float],
     rounding_mode: Literal["ROUND", "FLOOR", "CEILING", "TRUNCATE"] = "ROUND",
 ) -> nt.ProcNode[int]:
     """
@@ -492,7 +492,7 @@ class InvertMatrixResult(NamedTuple):
     invertible: nt.ProcNode[bool]
 
 
-def invert_matrix(matrix: nt.SocketOrVal[pt.Matrix] = None) -> InvertMatrixResult:
+def invert_matrix(matrix: nt.SocketOrVal[pt.Matrix]) -> InvertMatrixResult:
     """
     Uses a InvertMatrix Function Node.
 
@@ -509,7 +509,7 @@ def invert_matrix(matrix: nt.SocketOrVal[pt.Matrix] = None) -> InvertMatrixResul
 
 
 def invert_rotation(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a InvertRotation Function Node.
@@ -524,8 +524,8 @@ def invert_rotation(
 
 
 def matrix_multiply(
-    matrix_0: nt.SocketOrVal[pt.Matrix] = None,
-    matrix_1: nt.SocketOrVal[pt.Matrix] = None,
+    matrix_0: nt.SocketOrVal[pt.Matrix],
+    matrix_1: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Matrix]:
     """
     Uses a MatrixMultiply Function Node.
@@ -540,8 +540,8 @@ def matrix_multiply(
 
 
 def project_point(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    vector: nt.SocketOrVal[pt.Vector],
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a ProjectPoint Function Node.
@@ -628,9 +628,9 @@ def random_boolean(
 
 
 def replace_string(
-    string: nt.SocketOrVal[str] = "",
-    find: nt.SocketOrVal[str] = "",
-    replace: nt.SocketOrVal[str] = "",
+    string: nt.SocketOrVal[str],
+    find: nt.SocketOrVal[str],
+    replace: nt.SocketOrVal[str],
 ) -> nt.ProcNode[str]:
     """
     Uses a ReplaceString Function Node.
@@ -645,8 +645,8 @@ def replace_string(
 
 
 def rotate_euler(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    rotate_by: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector],
+    rotate_by: nt.SocketOrVal[pt.Vector],
     rotation_type: Literal["EULER", "AXIS_ANGLE"] = "EULER",
     space: Literal["OBJECT", "LOCAL"] = "OBJECT",
 ) -> nt.ProcNode[pt.Vector]:
@@ -663,8 +663,8 @@ def rotate_euler(
 
 
 def rotate_rotation(
-    rotation: Any = (0, 0, 0),
-    rotate_by: Any = (0, 0, 0),
+    rotation: Any,
+    rotate_by: Any,
     rotation_space: Literal["GLOBAL", "LOCAL"] = "GLOBAL",
 ) -> nt.ProcNode[pt.Vector]:
     """
@@ -680,7 +680,7 @@ def rotate_rotation(
 
 
 def rotate_vector(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0), rotation: Any = (0, 0, 0)
+    vector: nt.SocketOrVal[pt.Vector], rotation: Any
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a RotateVector Function Node.
@@ -700,7 +700,7 @@ class RotationToAxisAngleResult(NamedTuple):
 
 
 def rotation_to_axis_angle(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector],
 ) -> RotationToAxisAngleResult:
     """
     Uses a RotationToAxisAngle Function Node.
@@ -718,7 +718,7 @@ def rotation_to_axis_angle(
 
 
 def rotation_to_euler(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a RotationToEuler Function Node.
@@ -740,7 +740,7 @@ class RotationToQuaternionResult(NamedTuple):
 
 
 def rotation_to_quaternion(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector],
 ) -> RotationToQuaternionResult:
     """
     Uses a RotationToQuaternion Function Node.
@@ -795,7 +795,7 @@ class SeparateTransformResult(NamedTuple):
 
 
 def separate_transform(
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> SeparateTransformResult:
     """
     Uses a SeparateTransform Function Node.
@@ -815,7 +815,7 @@ def separate_transform(
 
 
 def slice_string(
-    string: nt.SocketOrVal[str] = "",
+    string: nt.SocketOrVal[str],
     position: nt.SocketOrVal[int] = 0,
     length: nt.SocketOrVal[int] = 10,
 ) -> nt.ProcNode[str]:
@@ -831,7 +831,7 @@ def slice_string(
     )
 
 
-def string_length(string: nt.SocketOrVal[str] = "") -> nt.ProcNode[int]:
+def string_length(string: nt.SocketOrVal[str]) -> nt.ProcNode[int]:
     """
     Uses a StringLength Function Node.
 
@@ -845,8 +845,8 @@ def string_length(string: nt.SocketOrVal[str] = "") -> nt.ProcNode[int]:
 
 
 def transform_direction(
-    direction: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    direction: nt.SocketOrVal[pt.Vector],
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a TransformDirection Function Node.
@@ -861,8 +861,8 @@ def transform_direction(
 
 
 def transform_point(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    vector: nt.SocketOrVal[pt.Vector],
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a TransformPoint Function Node.
@@ -877,7 +877,7 @@ def transform_point(
 
 
 def transpose_matrix(
-    matrix: nt.SocketOrVal[pt.Matrix] = None,
+    matrix: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Matrix]:
     """
     Uses a TransposeMatrix Function Node.
@@ -892,7 +892,7 @@ def transpose_matrix(
 
 
 def value_to_string(
-    value: nt.SocketOrVal[float] = 0.0, decimals: nt.SocketOrVal[int] = 0
+    value: nt.SocketOrVal[float], decimals: nt.SocketOrVal[int] = 0
 ) -> nt.ProcNode[str]:
     """
     Uses a ValueToString Function Node.
@@ -904,7 +904,6 @@ def value_to_string(
         inputs={"Value": value, "Decimals": decimals},
         attrs={},
     )
-
 
 
 TIndexSwitch = TypeVar(
