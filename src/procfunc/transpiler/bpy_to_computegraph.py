@@ -367,15 +367,19 @@ def _repr_default_value(value: Any, socket_type: str) -> Any:
     if isinstance(value, SUBCOMPONENT_TYPES):
         return value.name
     elif socket_type == "RGBA":
-        return pf.Color([round(x, 6) for x in value[:3]])
+        if len(value) >= 4 and value[3] != 1.0:
+            raise NotImplementedError(
+                f"Cannot transpile non-default alpha={value[3]} on RGBA value {tuple(value)}: "
+                "pf.Color stores RGB only and the round-trip would reset alpha to 1.0. "
+                "Please contact the developers."
+            )
+        return pf.Color(tuple(value[:3]))
     elif isinstance(
         value, (bpy.types.bpy_prop_array, t.Vector, t.Euler, t.Quaternion, t.Matrix)
     ):
-        return tuple(round(v, 6) for v in value)
+        return tuple(value)
     elif isinstance(value, idprop.types.IDPropertyArray):
-        return tuple(round(v, 6) for v in value)
-    elif isinstance(value, float):
-        return round(value, 6)
+        return tuple(value)
     else:
         return value
 

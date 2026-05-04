@@ -97,7 +97,7 @@ def _repr_value(value: Any) -> str:
     elif isinstance(value, np.dtype):
         return f"np.dtype('{value}')"
     elif isinstance(value, (pf.Color, pf.Vector, pf.Euler, pf.Quaternion, pf.Matrix)):
-        x = tuple(round(x, 6) for x in value)
+        x = tuple(round(x, 8) for x in value)
         return f"pf.{value.__class__.__name__}({x})"
     elif isinstance(value, enum.Enum):
         return f"{type(value).__name__}.{value.name}"
@@ -111,6 +111,11 @@ def _repr_value(value: Any) -> str:
         return f"{type(value).__name__}({args_str})"
     elif isinstance(value, list):
         return f"[{', '.join([_repr_value(x) for x in value])}]"
+    elif isinstance(value, tuple):
+        inner = ", ".join(_repr_value(x) for x in value)
+        return f"({inner},)" if len(value) == 1 else f"({inner})"
+    elif isinstance(value, float) and not isinstance(value, bool):
+        return repr(round(value, 8))
     else:
         return repr(value)
 

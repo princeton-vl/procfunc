@@ -672,7 +672,12 @@ def constant(
 
 # ---- Mix -------------------------------------------------------------------
 
-TMix = TypeVar("TMix", nt.SocketOrVal[float], nt.SocketOrVal[pt.Vector])
+TMix = TypeVar(
+    "TMix",
+    nt.SocketOrVal[float],
+    nt.SocketOrVal[pt.Vector],
+    nt.SocketOrVal[pt.Color],
+)
 
 
 def mix(
@@ -684,11 +689,10 @@ def mix(
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode[TMix]:
     """
-    Uses MixNode to mix float or vector fields
+    Uses MixNode to mix float, vector, or color fields with a plain MIX blend.
 
-    NOTE: procfunc forces all colors to be mixed via mix_rgb, since setting this function
-    to type Color adds extra args & exactly matches the interface of mix_rgb
-
+    For colors, prefer mix_rgb when you need a non-MIX blend mode or clamp_result;
+    this function hardcodes blend_type="MIX" and clamp_result=False.
     """
 
     if data_type is None:
