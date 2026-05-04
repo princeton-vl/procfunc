@@ -8165,22 +8165,6 @@
     "notes": null
   },
   {
-    "bpy_name": "GeometryNodeViewer",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.geo.viewer",
-    "arg_names_map": null,
-    "node_group_type": [
-      "GeometryNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": true,
-    "notes": null
-  },
-  {
     "bpy_name": "GeometryNodeViewportTransform",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
@@ -8210,24 +8194,6 @@
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
-    "bpy_name": "GeometryNodeGroup",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.misc.group",
-    "arg_names_map": null,
-    "node_group_type": [
-      "GeometryNodeTree",
-      "ShaderNodeTree",
-      "CompositorNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": true,
-    "is_contextual": "1",
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": true,
     "notes": null
   },
   {
