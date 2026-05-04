@@ -3476,9 +3476,29 @@
   },
   {
     "bpy_name": "GeometryNodeFilletCurve",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "mode": "BEZIER"
+    },
     "infinigen_v1_name": "Nodes.FilletCurve",
-    "name": "pf.nodes.geo.fillet_curve",
+    "name": "pf.nodes.geo.fillet_curve_bezier",
+    "arg_names_map": null,
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "GeometryNodeFilletCurve",
+    "bpy_mode_args": {
+      "mode": "POLY"
+    },
+    "infinigen_v1_name": "Nodes.FilletCurve",
+    "name": "pf.nodes.geo.fillet_curve_poly",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"

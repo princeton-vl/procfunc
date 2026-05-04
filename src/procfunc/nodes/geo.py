@@ -1189,15 +1189,35 @@ def fill_curve(
     )
 
 
-def fillet_curve(
+def fillet_curve_bezier(
     curve: nt.ProcNode[pt.CurveObject],
     radius: nt.SocketOrVal[float] = 0.25,
     limit_radius: nt.SocketOrVal[bool] = False,
-    count: nt.SocketOrVal[int] = 1,
-    mode: Literal["BEZIER", "POLY"] = "BEZIER",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
-    Uses a FilletCurve Geometry Node.
+    Uses a FilletCurve Geometry Node in BEZIER mode.
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/operations/fillet_curve.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeFilletCurve",
+        inputs={
+            "Curve": curve,
+            "Radius": radius,
+            "Limit Radius": limit_radius,
+        },
+        attrs={"mode": "BEZIER"},
+    )
+
+
+def fillet_curve_poly(
+    curve: nt.ProcNode[pt.CurveObject],
+    radius: nt.SocketOrVal[float] = 0.25,
+    count: nt.SocketOrVal[int] = 1,
+    limit_radius: nt.SocketOrVal[bool] = False,
+) -> nt.ProcNode[pt.CurveObject]:
+    """
+    Uses a FilletCurve Geometry Node in POLY mode.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/operations/fillet_curve.html
     """
@@ -1209,7 +1229,7 @@ def fillet_curve(
             "Limit Radius": limit_radius,
             "Count": count,
         },
-        attrs={"mode": mode},
+        attrs={"mode": "POLY"},
     )
 
 

@@ -238,9 +238,12 @@ def _compare(
             ],
             ["A", "B"],
         )
+    inputs: dict[str, Any] = {"A": a, "B": b}
+    if epsilon is not None:
+        inputs["Epsilon"] = epsilon
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeCompare",
-        inputs={"A": a, "B": b, "Epsilon": epsilon},
+        inputs=inputs,
         attrs={
             "operation": operation,
             "data_type": data_type,
@@ -316,7 +319,7 @@ def vector_compare_elementwise(
         attrs={
             "operation": operation,
             "data_type": NodeDataType.FLOAT_VECTOR,
-            "mode": "ELEMENT_WISE",
+            "mode": "ELEMENT",
         },
     )
 
