@@ -394,7 +394,9 @@ def _codegen_for_outputs(
     scope_expressions: dict[int, str | list[str]],
 ) -> tuple[str | None, list[str], list[str]]:
     if len(graph.outputs) == 0:
-        return None, [], []
+        # Sink graphs (no return values) still need a body statement so the
+        # generated function parses; emit `pass` when nothing else fills it.
+        return None, [], ["pass"]
     if len(graph.outputs) == 1:
         single_output = next(graph.outputs.values())
         vt = single_output.metadata.get("known_value_type", None)

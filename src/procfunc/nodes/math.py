@@ -496,26 +496,6 @@ def vector_fraction(
     )
 
 
-def vector_round(
-    vector: nt.SocketOrVal[pt.Vector],
-) -> nt.ProcNode[pt.Vector]:
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeVectorMath",
-        inputs={("Vector", 0): vector},
-        attrs={"operation": "ROUND"},
-    )
-
-
-def vector_truncate(
-    vector: nt.SocketOrVal[pt.Vector],
-) -> nt.ProcNode[pt.Vector]:
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeVectorMath",
-        inputs={("Vector", 0): vector},
-        attrs={"operation": "TRUNC"},
-    )
-
-
 def vector_absolute(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
@@ -738,7 +718,7 @@ def float_curve(
 def vector_curve(
     fac: nt.SocketOrVal[float],
     vector: nt.SocketOrVal[pt.Vector],
-    curves: np.ndarray | None = None,
+    curves: list[np.ndarray] | np.ndarray | None = None,
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a VectorCurve Shader Node.

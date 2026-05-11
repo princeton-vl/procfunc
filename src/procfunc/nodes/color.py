@@ -60,7 +60,7 @@ def mix_rgb(
 def rgb_curve(
     fac: nt.SocketOrVal[float],
     color: nt.SocketOrVal[pt.Color],
-    curves: list[np.ndarray] | None = None,
+    curves: list[np.ndarray] | np.ndarray | None = None,
 ) -> nt.ProcNode:
     """
     Uses a RGBCurve Shader Node.

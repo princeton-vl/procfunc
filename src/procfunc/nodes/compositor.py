@@ -1,5 +1,7 @@
 from typing import Any, Literal, NamedTuple
 
+import numpy as np
+
 from procfunc import types as pt
 from procfunc.nodes import types as nt
 
@@ -1543,6 +1545,7 @@ def rgb_curve(
     image: nt.SocketOrVal[pt.Color],
     black_level: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
     white_level: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    curves: list[np.ndarray] | np.ndarray | None = None,
 ) -> nt.ProcNode:
     """
     Uses a CurveRGB Compositor Node.
@@ -1557,7 +1560,7 @@ def rgb_curve(
             "Black Level": black_level,
             "White Level": white_level,
         },
-        attrs={},
+        attrs={"curves": curves},
     )
 
 

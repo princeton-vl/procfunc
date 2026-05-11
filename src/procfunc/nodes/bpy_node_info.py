@@ -58,6 +58,8 @@ class SocketType(Enum):
     COLLECTION = "NodeSocketCollection"
     TEXTURE = "NodeSocketTexture"
     MATERIAL = "NodeSocketMaterial"
+    MATRIX = "NodeSocketMatrix"
+    IMAGE = "NodeSocketImage"
 
 
 class SocketDType(Enum):
@@ -150,6 +152,10 @@ SOCKET_TYPE_TO_PYTHON_TYPE = {
     SocketType.COLLECTION: pt.Collection,
     SocketType.MATERIAL: pt.Material,
     SocketType.SHADER: nt.Shader,
+    SocketType.OBJECT: pt.Object,
+    SocketType.TEXTURE: pt.Texture,
+    SocketType.MATRIX: pt.Matrix,
+    SocketType.IMAGE: pt.Image,
 }
 
 # Socket types that can be implicitly converted between each other
@@ -263,6 +269,7 @@ SPECIAL_CASE_ATTR_NAMES = set(
         "interface",
         "node_tree",
         "tag_need_exec",
+        "index_switch_items",
     ]
 )
 
