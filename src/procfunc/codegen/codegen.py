@@ -727,7 +727,7 @@ def default_func_resolution_map(
     skip_funcs: set | None = None,
 ) -> tuple[dict[Any, str | OperatorType], list[str]]:
     func_resolution = {}
-    import_lines = set()
+    import_lines = {"import procfunc as pf"}
 
     for graph in cg.traverse_nested_graphs(toplevel_graph):
         assert isinstance(graph, cg.ComputeGraph), graph

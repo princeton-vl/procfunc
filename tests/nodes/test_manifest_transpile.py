@@ -215,5 +215,6 @@ def test_manifest_row_transpiles(row):
         graph, _ = parse_node_tree(tree, memo)
         src = to_python(graph, toplevel_as_maincall=False)
         ast.parse(src)
+        exec(src, {})  # noqa: S102
     finally:
         cleanup()
