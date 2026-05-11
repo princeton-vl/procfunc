@@ -41,7 +41,7 @@ def clamp(
 def _math(
     a: nt.SocketOrVal[float] = None,
     b: nt.SocketOrVal[float] = None,
-    value_2: nt.SocketOrVal[float] = None,
+    c: nt.SocketOrVal[float] = None,
     operation: str = "ADD",
 ) -> nt.ProcNode[float]:
     """
@@ -54,7 +54,7 @@ def _math(
 
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.MATH.value,
-        inputs={("Value", 0): a, ("Value", 1): b, ("Value", 2): value_2},
+        inputs={("Value", 0): a, ("Value", 1): b, ("Value", 2): c},
         attrs={
             "operation": operation,
             "use_clamp": False,  # not supported by procfunc

@@ -77,8 +77,8 @@ def render_layers() -> RenderLayersResult:
 
 def alpha_over(
     fac: nt.SocketOrVal[float] = 1.0,
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     premul: float = 0.0,
     use_premultiply: bool = False,
 ) -> nt.ProcNode:
@@ -89,7 +89,7 @@ def alpha_over(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeAlphaOver",
-        inputs={"Fac": fac, ("Image", 0): image_0, ("Image", 1): image_1},
+        inputs={"Fac": fac, ("Image", 0): a, ("Image", 1): b},
         attrs={"premul": premul, "use_premultiply": use_premultiply},
     )
 
@@ -732,8 +732,8 @@ def despeckle(
 
 
 def diff_matte(
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_2: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     falloff: float = 0.1,
     tolerance: float = 0.1,
 ) -> nt.ProcNode:
@@ -744,7 +744,7 @@ def diff_matte(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeDiffMatte",
-        inputs={"Image 1": image_1, "Image 2": image_2},
+        inputs={"Image 1": a, "Image 2": b},
         attrs={"falloff": falloff, "tolerance": tolerance},
     )
 
@@ -1336,8 +1336,8 @@ def mask(
 
 def mix_rgb(
     fac: nt.SocketOrVal[float] = 1.0,
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     blend_type: TBlendType = "MIX",
     use_alpha: bool = False,
 ) -> nt.ProcNode:
@@ -1348,7 +1348,7 @@ def mix_rgb(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeMixRGB",
-        inputs={"Fac": fac, ("Image", 0): image_0, ("Image", 1): image_1},
+        inputs={"Fac": fac, ("Image", 0): a, ("Image", 1): b},
         attrs={"blend_type": blend_type, "use_alpha": use_alpha},
     )
 
@@ -1711,8 +1711,8 @@ def set_alpha(
 
 
 def split(
-    image_0: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    a: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    b: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     axis: Literal["X", "Y"] = "X",
     factor: int = 50,
 ) -> nt.ProcNode:
@@ -1723,7 +1723,7 @@ def split(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeSplit",
-        inputs={("Image", 0): image_0, ("Image", 1): image_1},
+        inputs={("Image", 0): a, ("Image", 1): b},
         attrs={"axis": axis, "factor": factor},
     )
 
@@ -1987,10 +1987,10 @@ def viewer(
 
 
 def z_combine(
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    z_0: nt.SocketOrVal[float] = 1.0,
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    z_1: nt.SocketOrVal[float] = 1.0,
+    image_a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    z_a: nt.SocketOrVal[float] = 1.0,
+    image_b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    z_b: nt.SocketOrVal[float] = 1.0,
     use_alpha: bool = False,
     use_antialias_z: bool = True,
 ) -> nt.ProcNode:
@@ -2002,10 +2002,10 @@ def z_combine(
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeZcombine",
         inputs={
-            ("Image", 0): image_0,
-            ("Z", 0): z_0,
-            ("Image", 1): image_1,
-            ("Z", 1): z_1,
+            ("Image", 0): image_a,
+            ("Z", 0): z_a,
+            ("Image", 1): image_b,
+            ("Z", 1): z_b,
         },
         attrs={"use_alpha": use_alpha, "use_antialias_z": use_antialias_z},
     )

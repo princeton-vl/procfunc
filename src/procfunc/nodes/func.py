@@ -527,8 +527,8 @@ def invert_rotation(
 
 
 def matrix_multiply(
-    matrix_0: nt.SocketOrVal[pt.Matrix],
-    matrix_1: nt.SocketOrVal[pt.Matrix],
+    a: nt.SocketOrVal[pt.Matrix],
+    b: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Matrix]:
     """
     Uses a MatrixMultiply Function Node.
@@ -537,7 +537,7 @@ def matrix_multiply(
     """
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeMatrixMultiply",
-        inputs={("Matrix", 0): matrix_0, ("Matrix", 1): matrix_1},
+        inputs={("Matrix", 0): a, ("Matrix", 1): b},
         attrs={},
     )
 
@@ -921,8 +921,8 @@ TIndexSwitch = TypeVar(
 
 
 def index_switch(
-    val_0: TIndexSwitch = 0,
-    val_1: TIndexSwitch = 0,
+    a: TIndexSwitch = 0,
+    b: TIndexSwitch = 0,
     index: nt.SocketOrVal[int] = 0,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode:
@@ -945,7 +945,7 @@ def index_switch(
         )
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeIndexSwitch",
-        inputs={"0": val_0, "1": val_1, "Index": index},
+        inputs={"0": a, "1": b, "Index": index},
         attrs={
             "data_type": data_type,
         },

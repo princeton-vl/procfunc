@@ -2075,8 +2075,8 @@ def merge_by_distance(
 
 
 def mesh_boolean(
-    mesh_1: nt.ProcNode[nt.Geometry] | None = None,
-    mesh_2: nt.ProcNode[nt.Geometry] | None = None,
+    a: nt.ProcNode[nt.Geometry] | None = None,
+    b: nt.ProcNode[nt.Geometry] | None = None,
     self_intersection: nt.SocketOrVal[bool] = False,
     hole_tolerant: nt.SocketOrVal[bool] = False,
     operation: Literal["INTERSECT", "UNION", "DIFFERENCE"] = "DIFFERENCE",
@@ -2090,8 +2090,8 @@ def mesh_boolean(
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshBoolean",
         inputs={
-            "Mesh 1": mesh_1,
-            "Mesh 2": mesh_2,
+            "Mesh 1": a,
+            "Mesh 2": b,
             "Self Intersection": self_intersection,
             "Hole Tolerant": hole_tolerant,
         },
@@ -2883,7 +2883,7 @@ def rotate_instances(
 
 
 def sdf_grid_boolean(
-    grid_1: nt.SocketOrVal[float] = 0.0, grid_2: nt.SocketOrVal[float] = 0.0
+    a: nt.SocketOrVal[float] = 0.0, b: nt.SocketOrVal[float] = 0.0
 ) -> nt.ProcNode[nt.Geometry]:
     """
     Uses a SDFGridBoolean Geometry Node.
@@ -2892,7 +2892,7 @@ def sdf_grid_boolean(
     """
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSDFGridBoolean",
-        inputs={"Grid 1": grid_1, "Grid 2": grid_2},
+        inputs={"Grid 1": a, "Grid 2": b},
         attrs={},
     )
 

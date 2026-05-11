@@ -2935,7 +2935,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MeshBoolean",
     "name": "pf.nodes.geo.mesh_boolean",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "mesh_1": "a",
+      "mesh_2": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4623,7 +4626,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CompositorMixRGB",
     "name": "pf.nodes.compositor.mix_rgb",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_0": "a",
+      "image_1": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5092,7 +5098,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.alpha_over",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_0": "a",
+      "image_1": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5542,7 +5551,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.diff_matte",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_1": "a",
+      "image_2": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6266,7 +6278,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.split",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_0": "a",
+      "image_1": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6474,7 +6489,12 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.z_combine",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_0": "image_a",
+      "z_0": "z_a",
+      "image_1": "image_b",
+      "z_1": "z_b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6688,7 +6708,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.matrix_multiply",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "matrix_0": "a",
+      "matrix_1": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7333,7 +7356,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.index_switch",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "val_0": "a",
+      "val_1": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8042,7 +8068,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.sdf_grid_boolean",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "grid_1": "a",
+      "grid_2": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8458,7 +8487,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.add_shader",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "shader_0": "a",
+      "shader_1": "b"
+    },
     "node_group_type": [
       "ShaderNodeTree"
     ],

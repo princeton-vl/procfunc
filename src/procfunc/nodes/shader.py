@@ -36,8 +36,8 @@ logger = logging.getLogger(__name__)
 
 
 def add_shader(
-    shader_0: nt.ProcNode[nt.Shader] | None = None,
-    shader_1: nt.ProcNode[nt.Shader] | None = None,
+    a: nt.ProcNode[nt.Shader] | None = None,
+    b: nt.ProcNode[nt.Shader] | None = None,
 ) -> nt.ProcNode[nt.Shader]:
     """
     Uses a AddShader Shader Node.
@@ -46,7 +46,7 @@ def add_shader(
     """
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeAddShader",
-        inputs={("Shader", 0): shader_0, ("Shader", 1): shader_1},
+        inputs={("Shader", 0): a, ("Shader", 1): b},
         attrs={},
     )
 
