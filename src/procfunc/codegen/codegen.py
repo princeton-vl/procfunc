@@ -11,13 +11,13 @@ import numpy as np
 
 import procfunc as pf
 from procfunc import compute_graph as cg
+from procfunc.codegen import identifiers
 from procfunc.compute_graph.operators_info import (
     FUNCTIONS_TO_OPERATORS,
     OPERATOR_TEMPLATES,
     OperatorType,
 )
 from procfunc.nodes import types as nt
-from procfunc.transpiler import identifiers
 from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
@@ -97,7 +97,7 @@ def _repr_value(value: Any) -> str:
     elif isinstance(value, np.dtype):
         return f"np.dtype('{value}')"
     elif isinstance(value, (pf.Color, pf.Vector, pf.Euler, pf.Quaternion, pf.Matrix)):
-        x = tuple(round(x, 6) for x in value)
+        x = tuple(round(x, 8) for x in value)
         return f"pf.{value.__class__.__name__}({x})"
     elif isinstance(value, enum.Enum):
         return f"{type(value).__name__}.{value.name}"
@@ -111,6 +111,11 @@ def _repr_value(value: Any) -> str:
         return f"{type(value).__name__}({args_str})"
     elif isinstance(value, list):
         return f"[{', '.join([_repr_value(x) for x in value])}]"
+    elif isinstance(value, tuple):
+        inner = ", ".join(_repr_value(x) for x in value)
+        return f"({inner},)" if len(value) == 1 else f"({inner})"
+    elif isinstance(value, float) and not isinstance(value, bool):
+        return repr(round(value, 8))
     else:
         return repr(value)
 
@@ -389,7 +394,9 @@ def _codegen_for_outputs(
     scope_expressions: dict[int, str | list[str]],
 ) -> tuple[str | None, list[str], list[str]]:
     if len(graph.outputs) == 0:
-        return None, [], []
+        # Sink graphs (no return values) still need a body statement so the
+        # generated function parses; emit `pass` when nothing else fills it.
+        return None, [], ["pass"]
     if len(graph.outputs) == 1:
         single_output = next(graph.outputs.values())
         vt = single_output.metadata.get("known_value_type", None)
@@ -720,7 +727,7 @@ def default_func_resolution_map(
     skip_funcs: set | None = None,
 ) -> tuple[dict[Any, str | OperatorType], list[str]]:
     func_resolution = {}
-    import_lines = set()
+    import_lines = {"import procfunc as pf"}
 
     for graph in cg.traverse_nested_graphs(toplevel_graph):
         assert isinstance(graph, cg.ComputeGraph), graph

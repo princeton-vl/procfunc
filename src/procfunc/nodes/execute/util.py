@@ -6,7 +6,7 @@ import bpy
 from procfunc import compute_graph as cg
 from procfunc import types as t
 from procfunc.nodes import bpy_node_info as bni
-from procfunc.nodes import func, math
+from procfunc.nodes import math
 from procfunc.nodes import types as nt
 from procfunc.util.log import add_exception_context_msg
 
@@ -64,10 +64,10 @@ NODE_OPERATOR_TABLE = [
         math.vector_modulo, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.MOD
     ),
     # NodeOperatorResolution(
-    #     func.combine_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.VECTOR_PACK
+    #     math.combine_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.VECTOR_PACK
     # ),
     NodeOperatorResolution(
-        func.separate_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.NOOP
+        math.separate_xyz, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.NOOP
     ),
 ]
 

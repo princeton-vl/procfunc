@@ -625,7 +625,10 @@
     },
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.pingpong",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "scale"
+    },
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -765,7 +768,10 @@
     },
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.atan2",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "value_0": "y",
+      "value_1": "x"
+    },
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -1063,8 +1069,9 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_refract",
     "arg_names_map": {
-      "vector_0": "a",
-      "vector_1": "normal"
+      "vector_0": "incident",
+      "vector_1": "normal",
+      "scale": "ior"
     },
     "node_group_type": [
       "GeometryNodeTree",
@@ -1251,25 +1258,6 @@
   {
     "bpy_name": "ShaderNodeVectorMath",
     "bpy_mode_args": {
-      "operation": "ROUND"
-    },
-    "infinigen_v1_name": "Nodes.VectorMath",
-    "name": "pf.nodes.math.vector_round",
-    "arg_names_map": null,
-    "node_group_type": [
-      "GeometryNodeTree",
-      "ShaderNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
-    "bpy_name": "ShaderNodeVectorMath",
-    "bpy_mode_args": {
       "operation": "FLOOR"
     },
     "infinigen_v1_name": "Nodes.VectorMath",
@@ -1293,25 +1281,6 @@
     },
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_ceil",
-    "arg_names_map": null,
-    "node_group_type": [
-      "GeometryNodeTree",
-      "ShaderNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
-    "bpy_name": "ShaderNodeVectorMath",
-    "bpy_mode_args": {
-      "operation": "TRUNC"
-    },
-    "infinigen_v1_name": "Nodes.VectorMath",
-    "name": "pf.nodes.math.vector_truncate",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -1414,7 +1383,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_maximum",
     "arg_names_map": {
-      "vector_0": "a", 
+      "vector_0": "a",
       "vector_1": "b"
     },
     "node_group_type": [
@@ -1489,7 +1458,7 @@
     "bpy_name": "ShaderNodeCombineXYZ",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CombineXYZ",
-    "name": "pf.nodes.func.combine_xyz",
+    "name": "pf.nodes.math.combine_xyz",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -1528,7 +1497,9 @@
     },
     "infinigen_v1_name": "Nodes.Transform",
     "name": "pf.nodes.geo.transform_by_matrix",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "transform": "matrix"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1563,12 +1534,11 @@
     "bpy_name": "ShaderNodeValue",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Value",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
-      "GeometryNodeTree",
-      "CompositorNodeTree"
+      "GeometryNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -1581,13 +1551,14 @@
     "bpy_name": "ShaderNodeMapRange",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MapRange",
-    "name": "pf.nodes.func.map_range",
+    "name": "pf.nodes.math.map_range",
     "arg_names_map": {
       "vector": "value",
       "value": "value"
     },
     "node_group_type": [
-      "GeometryNodeTree"
+      "GeometryNodeTree",
+      "ShaderNodeTree"
     ],
     "data_types": [
       "float",
@@ -1621,7 +1592,7 @@
     "bpy_name": "ShaderNodeTexNoise",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.NoiseTexture",
-    "name": "pf.nodes.shader.noise",
+    "name": "pf.nodes.texture.noise",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1670,11 +1641,12 @@
     "bpy_name": "ShaderNodeValToRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.ColorRamp",
-    "name": "pf.nodes.shader.color_ramp",
+    "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
-      "ShaderNodeTree"
+      "ShaderNodeTree",
+      "CompositorNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -1707,7 +1679,7 @@
     "bpy_name": "ShaderNodeMixRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MixRGB",
-    "name": "pf.nodes.func.mix_rgb",
+    "name": "pf.nodes.color.mix_rgb",
     "arg_names_map": {
       "color1": "a",
       "color2": "b",
@@ -1857,8 +1829,8 @@
   {
     "bpy_name": "FunctionNodeCompare",
     "bpy_mode_args": {
-      "mode": "ELEMENT_WISE",
-      "data_type": "FLOAT_VECTOR"
+      "mode": "ELEMENT",
+      "data_type": "VECTOR"
     },
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.vector_compare_elementwise",
@@ -1867,13 +1839,14 @@
       "GeometryNodeTree"
     ],
     "data_types": [
-      "Vector"
+      "vector"
     ]
   },
   {
     "bpy_name": "FunctionNodeCompare",
     "bpy_mode_args": {
-      "data_type": "COLOR"
+      "data_type": "RGBA",
+      "operation": "EQUAL"
     },
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.compare_color",
@@ -1882,7 +1855,55 @@
       "GeometryNodeTree"
     ],
     "data_types": [
-      "Color"
+      "rgba"
+    ]
+  },
+  {
+    "bpy_name": "FunctionNodeCompare",
+    "bpy_mode_args": {
+      "data_type": "RGBA",
+      "operation": "NOT_EQUAL"
+    },
+    "infinigen_v1_name": "Nodes.Compare",
+    "name": "pf.nodes.func.compare_color",
+    "arg_names_map": null,
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": [
+      "rgba"
+    ]
+  },
+  {
+    "bpy_name": "FunctionNodeCompare",
+    "bpy_mode_args": {
+      "data_type": "RGBA",
+      "operation": "BRIGHTER"
+    },
+    "infinigen_v1_name": "Nodes.Compare",
+    "name": "pf.nodes.func.compare_color",
+    "arg_names_map": null,
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": [
+      "rgba"
+    ]
+  },
+  {
+    "bpy_name": "FunctionNodeCompare",
+    "bpy_mode_args": {
+      "data_type": "RGBA",
+      "operation": "DARKER"
+    },
+    "infinigen_v1_name": "Nodes.Compare",
+    "name": "pf.nodes.func.compare_color",
+    "arg_names_map": null,
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": [
+      "rgba"
     ]
   },
   {
@@ -1907,7 +1928,7 @@
       "data_type": "FLOAT"
     },
     "infinigen_v1_name": "Nodes.Mix",
-    "name": "pf.nodes.func.mix",
+    "name": "pf.nodes.math.mix",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1927,7 +1948,7 @@
       "data_type": "VECTOR"
     },
     "infinigen_v1_name": "Nodes.Mix",
-    "name": "pf.nodes.func.mix",
+    "name": "pf.nodes.math.mix",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1947,7 +1968,7 @@
       "data_type": "RGBA"
     },
     "infinigen_v1_name": "Nodes.Mix",
-    "name": "pf.nodes.func.mix_rgb",
+    "name": "pf.nodes.color.mix_rgb",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -1969,7 +1990,7 @@
       "feature": "F1"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi",
+    "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -1988,7 +2009,7 @@
       "feature": "F2"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi",
+    "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2007,7 +2028,7 @@
       "feature": "DISTANCE_TO_EDGE"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi_distance",
+    "name": "pf.nodes.texture.voronoi_distance",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2026,7 +2047,7 @@
       "feature": "SMOOTH_F1"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi_smooth_f1",
+    "name": "pf.nodes.texture.voronoi_smooth_f1",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2045,7 +2066,7 @@
       "feature": "N_SPHERE_RADIUS"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.shader.voronoi",
+    "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2078,7 +2099,7 @@
     "bpy_name": "ShaderNodeFloatCurve",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.FloatCurve",
-    "name": "pf.nodes.func.float_curve",
+    "name": "pf.nodes.math.float_curve",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -2232,8 +2253,7 @@
     "name": "pf.nodes.func.random_boolean",
     "arg_names_map": null,
     "node_group_type": [
-      "GeometryNodeTree",
-      "ShaderNodeTree"
+      "GeometryNodeTree"
     ]
   },
   {
@@ -2556,8 +2576,7 @@
       "shader_1": "b"
     },
     "node_group_type": [
-      "ShaderNodeTree",
-      "GeometryNodeTree"
+      "ShaderNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -2602,7 +2621,7 @@
     "bpy_name": "FunctionNodeInputInt",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Integer",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "integer": "value"
     },
@@ -2652,7 +2671,7 @@
     "bpy_name": "ShaderNodeTexWave",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.WaveTexture",
-    "name": "pf.nodes.shader.wave",
+    "name": "pf.nodes.texture.wave",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2669,7 +2688,7 @@
     "bpy_name": "FunctionNodeInputVector",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Vector",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "vector": "value"
     },
@@ -2838,7 +2857,7 @@
     "bpy_name": "ShaderNodeRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.RGB",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "color": "value"
     },
@@ -2933,7 +2952,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MeshBoolean",
     "name": "pf.nodes.geo.mesh_boolean",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "mesh_1": "a",
+      "mesh_2": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3049,7 +3071,7 @@
     "bpy_name": "ShaderNodeTexWhiteNoise",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.WhiteNoiseTexture",
-    "name": "pf.nodes.shader.white_noise",
+    "name": "pf.nodes.texture.white_noise",
     "arg_names_map": null,
     "output_names_map": {
       "Value": "fac"
@@ -3191,8 +3213,58 @@
       "mode": "RGB"
     },
     "infinigen_v1_name": "Nodes.SeparateColor",
-    "name": "pf.nodes.func.separate_color",
+    "name": "pf.nodes.color.separate_rgb",
     "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree",
+      "GeometryNodeTree",
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsv",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "value"
+    },
+    "node_group_type": [
+      "ShaderNodeTree",
+      "GeometryNodeTree",
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsl",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "lightness"
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree",
@@ -3257,7 +3329,7 @@
     "bpy_name": "ShaderNodeTexBrick",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.BrickTexture",
-    "name": "pf.nodes.shader.brick",
+    "name": "pf.nodes.texture.brick",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -3426,9 +3498,29 @@
   },
   {
     "bpy_name": "GeometryNodeFilletCurve",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "mode": "BEZIER"
+    },
     "infinigen_v1_name": "Nodes.FilletCurve",
-    "name": "pf.nodes.geo.fillet_curve",
+    "name": "pf.nodes.geo.fillet_curve_bezier",
+    "arg_names_map": null,
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "GeometryNodeFilletCurve",
+    "bpy_mode_args": {
+      "mode": "POLY"
+    },
+    "infinigen_v1_name": "Nodes.FilletCurve",
+    "name": "pf.nodes.geo.fillet_curve_poly",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
@@ -3479,8 +3571,7 @@
     "name": "pf.nodes.shader.geometry",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree",
-      "GeometryNodeTree"
+      "ShaderNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -3509,29 +3600,15 @@
     "bpy_name": "ShaderNodeVectorCurve",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.VectorCurve",
-    "name": "pf.nodes.func.vector_curve",
+    "name": "pf.nodes.math.vector_curve",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree"
+      "GeometryNodeTree",
+      "ShaderNodeTree",
+      "CompositorNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
-    "bpy_name": "ShaderNodeSeparateRGB",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": "Nodes.SeparateRGB",
-    "name": null,
-    "arg_names_map": null,
-    "node_group_type": [
-      "ShaderNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -3621,7 +3698,7 @@
     "bpy_name": "FunctionNodeInputColor",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.InputColor",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
@@ -3703,8 +3780,10 @@
       "mode": "RGB"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.func.combine_rgb",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_rgb",
+    "arg_names_map": {
+      "alpha": null
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -3722,8 +3801,13 @@
       "mode": "HSV"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.func.combine_hsv",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_hsv",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "value",
+      "alpha": null
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -3741,8 +3825,13 @@
       "mode": "HSL"
     },
     "infinigen_v1_name": "Nodes.CombineColor",
-    "name": "pf.nodes.func.combine_hsl",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_hsl",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "lightness",
+      "alpha": null
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -3775,7 +3864,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Raycast",
     "name": "pf.nodes.geo.raycast",
-    "arg_names_map": {"target_geometry": "geometry"},
+    "arg_names_map": {
+      "target_geometry": "geometry"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3845,7 +3936,7 @@
     "bpy_name": "ShaderNodeTexGradient",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.GradientTexture",
-    "name": "pf.nodes.shader.gradient",
+    "name": "pf.nodes.texture.gradient",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -3961,7 +4052,7 @@
     "bpy_name": "ShaderNodeTexChecker",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CheckerTexture",
-    "name": "pf.nodes.shader.checker",
+    "name": "pf.nodes.texture.checker",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -3984,6 +4075,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
+    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -4000,6 +4092,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
+    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -4190,10 +4283,9 @@
     "bpy_name": "ShaderNodeTexEnvironment",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.EnvironmentTexture",
-    "name": "pf.nodes.shader.environment",
+    "name": "pf.nodes.texture.environment",
     "arg_names_map": null,
     "node_group_type": [
-      "GeometryNodeTree",
       "ShaderNodeTree"
     ],
     "data_types": null,
@@ -4335,7 +4427,7 @@
     "bpy_name": "ShaderNodeRGBCurve",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.RGBCurve",
-    "name": "pf.nodes.func.rgb_curve",
+    "name": "pf.nodes.color.rgb_curve",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4351,18 +4443,21 @@
     "bpy_name": "ShaderNodeCombineHSV",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CombineHSV",
-    "name": null,
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_hsv",
+    "arg_names_map": {
+      "h": "hue",
+      "s": "saturation",
+      "v": "value"
+    },
     "node_group_type": [
-      "ShaderNodeTree",
-      "GeometryNodeTree"
+      "ShaderNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
-    "notes": "redundant with combine_color mode=hsv"
+    "notes": null
   },
   {
     "bpy_name": "CompositorNodeOutputFile",
@@ -4384,7 +4479,7 @@
     "bpy_name": "ShaderNodeTexImage",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.ShaderImageTexture",
-    "name": "pf.nodes.shader.image",
+    "name": "pf.nodes.texture.image",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4414,10 +4509,14 @@
   },
   {
     "bpy_name": "CompositorNodeCombineColor",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "mode": "RGB"
+    },
     "infinigen_v1_name": "Nodes.CompCombineColor",
-    "name": "pf.nodes.compositor.combine_color",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_rgb",
+    "arg_names_map": {
+      "alpha": null
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4426,7 +4525,99 @@
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
-    "notes": "compositor version has extra color modes so we'll keep it separate"
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.combine_hsv",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "value",
+      "alpha": null
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.combine_hsl",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "lightness",
+      "alpha": null
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "YCC"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.combine_ycc",
+    "arg_names_map": {
+      "red": "y",
+      "green": "cb",
+      "blue": "cr",
+      "alpha": null
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "YUV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.combine_yuv",
+    "arg_names_map": {
+      "red": "y",
+      "green": "u",
+      "blue": "v",
+      "alpha": null
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
   },
   {
     "bpy_name": "CompositorNodeGlare",
@@ -4448,7 +4639,7 @@
     "bpy_name": "CompositorNodeLensdist",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.LensDistortion",
-    "name": "pf.nodes.compositor.lensdist",
+    "name": "pf.nodes.compositor.lens_distortion",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -4465,7 +4656,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CompositorMixRGB",
     "name": "pf.nodes.compositor.mix_rgb",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_0": "a",
+      "image_1": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4490,6 +4684,7 @@
       "int",
       "float"
     ],
+    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -4500,7 +4695,7 @@
     "bpy_name": "FunctionNodeInputBool",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Boolean",
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": {
       "boolean": "value"
     },
@@ -4666,7 +4861,7 @@
     "bpy_name": "ShaderNodeBlackbody",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.BlackBody",
-    "name": "pf.nodes.shader.blackbody",
+    "name": "pf.nodes.color.blackbody",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4698,10 +4893,11 @@
     "bpy_name": "ShaderNodeHueSaturation",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.HueSaturationValue",
-    "name": "pf.nodes.shader.hue_saturation",
+    "name": "pf.nodes.color.hue_saturation",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree"
+      "ShaderNodeTree",
+      "CompositorNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -4730,7 +4926,7 @@
     "bpy_name": "ShaderNodeTexSky",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.SkyTexture",
-    "name": "pf.nodes.shader.sky",
+    "name": "pf.nodes.texture.sky",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4744,10 +4940,114 @@
   },
   {
     "bpy_name": "CompositorNodeSeparateColor",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "mode": "RGB"
+    },
     "infinigen_v1_name": "Nodes.CompSeparateColor",
-    "name": null,
-    "arg_names_map": null,
+    "name": "pf.nodes.color.separate_rgb",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": true,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsv",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "value"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": true,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsl",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "lightness"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": true,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "YCC"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.separate_ycc",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "Red": "y",
+      "Green": "cb",
+      "Blue": "cr"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": true,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "YUV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.separate_yuv",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "Red": "y",
+      "Green": "u",
+      "Blue": "v"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4762,8 +5062,12 @@
     "bpy_name": "ShaderNodeCombineRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.CombineRGB",
-    "name": null,
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_rgb",
+    "arg_names_map": {
+      "r": "red",
+      "g": "green",
+      "b": "blue"
+    },
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -4773,13 +5077,13 @@
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
-    "notes": "redundant with combine_color mode=rgb"
+    "notes": null
   },
   {
     "bpy_name": "ShaderNodeTexIES",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.ies",
+    "name": "pf.nodes.texture.ies",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4795,7 +5099,7 @@
     "bpy_name": "ShaderNodeTexMagic",
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MagicTexture",
-    "name": "pf.nodes.shader.magic",
+    "name": "pf.nodes.texture.magic",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
@@ -4812,7 +5116,7 @@
     "bpy_name": "ShaderNodeTexPointDensity",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.point_density",
+    "name": "pf.nodes.texture.point_density",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -4829,7 +5133,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.alpha_over",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_0": "a",
+      "image_1": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4860,7 +5167,7 @@
     "bpy_name": "CompositorNodeBilateralblur",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.bilateralblur",
+    "name": "pf.nodes.compositor.bilateral_blur",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5036,8 +5343,13 @@
     "bpy_name": "CompositorNodeCombHSVA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.comb_hsva",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_hsv",
+    "arg_names_map": {
+      "h": "hue",
+      "s": "saturation",
+      "v": "value",
+      "a": null
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5052,8 +5364,13 @@
     "bpy_name": "CompositorNodeCombRGBA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.comb_rgba",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.combine_rgb",
+    "arg_names_map": {
+      "r": "red",
+      "g": "green",
+      "b": "blue",
+      "a": null
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5068,8 +5385,13 @@
     "bpy_name": "CompositorNodeCombYCCA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.comb_ycca",
-    "arg_names_map": null,
+    "name": "pf.nodes.compositor.combine_ycc",
+    "arg_names_map": {
+      "y": "y",
+      "cb": "cb",
+      "cr": "cr",
+      "a": "alpha"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5084,8 +5406,13 @@
     "bpy_name": "CompositorNodeCombYUVA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.comb_yuva",
-    "arg_names_map": null,
+    "name": "pf.nodes.compositor.combine_yuv",
+    "arg_names_map": {
+      "y": "y",
+      "u": "u",
+      "v": "v",
+      "a": "alpha"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5164,12 +5491,13 @@
     "bpy_name": "CompositorNodeCurveRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.curve_rgb",
+    "name": "pf.nodes.compositor.rgb_curve",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
     "data_types": null,
+    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -5180,7 +5508,7 @@
     "bpy_name": "CompositorNodeCurveVec",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.curve_vec",
+    "name": "pf.nodes.math.vector_curve",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5196,7 +5524,7 @@
     "bpy_name": "CompositorNodeDBlur",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.d_blur",
+    "name": "pf.nodes.compositor.directional_blur",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5261,7 +5589,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.diff_matte",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_1": "a",
+      "image_2": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5417,22 +5748,6 @@
     "notes": null
   },
   {
-    "bpy_name": "CompositorNodeGroup",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.group",
-    "arg_names_map": null,
-    "node_group_type": [
-      "CompositorNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
     "bpy_name": "CompositorNodeHueCorrect",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
@@ -5452,8 +5767,10 @@
     "bpy_name": "CompositorNodeHueSat",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.hue_sat",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.hue_saturation",
+    "arg_names_map": {
+      "image": "color"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5612,8 +5929,10 @@
     "bpy_name": "CompositorNodeMapRange",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.map_range",
-    "arg_names_map": null,
+    "name": "pf.nodes.math.map_range",
+    "arg_names_map": {
+      "use_clamp": "clamp"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5788,7 +6107,7 @@
     "bpy_name": "CompositorNodePremulKey",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.premul_key",
+    "name": "pf.nodes.compositor.premultiply_key",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5884,8 +6203,16 @@
     "bpy_name": "CompositorNodeSepHSVA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.sep_hsva",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.separate_hsv",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "h": "hue",
+      "s": "saturation",
+      "v": "value",
+      "a": "alpha"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5900,8 +6227,16 @@
     "bpy_name": "CompositorNodeSepRGBA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.sep_rgba",
-    "arg_names_map": null,
+    "name": "pf.nodes.color.separate_rgb",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "r": "red",
+      "g": "green",
+      "b": "blue",
+      "a": "alpha"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5916,8 +6251,16 @@
     "bpy_name": "CompositorNodeSepYCCA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.sep_ycca",
-    "arg_names_map": null,
+    "name": "pf.nodes.compositor.separate_ycc",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "y": "y",
+      "cb": "cb",
+      "cr": "cr",
+      "a": "alpha"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5932,8 +6275,16 @@
     "bpy_name": "CompositorNodeSepYUVA",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.sep_yuva",
-    "arg_names_map": null,
+    "name": "pf.nodes.compositor.separate_yuv",
+    "arg_names_map": {
+      "image": "color"
+    },
+    "output_names_map": {
+      "y": "y",
+      "u": "u",
+      "v": "v",
+      "a": "alpha"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5965,7 +6316,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.split",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "image_0": "a",
+      "image_1": "b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6061,7 +6415,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.time",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "curve": null
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6140,7 +6496,7 @@
     "bpy_name": "CompositorNodeValToRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.val_to_rgb",
+    "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -6156,7 +6512,7 @@
     "bpy_name": "CompositorNodeVecBlur",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.vec_blur",
+    "name": "pf.nodes.compositor.vector_blur",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -6172,8 +6528,13 @@
     "bpy_name": "CompositorNodeZcombine",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.zcombine",
-    "arg_names_map": null,
+    "name": "pf.nodes.compositor.z_combine",
+    "arg_names_map": {
+      "image_0": "image_a",
+      "z_0": "z_a",
+      "image_1": "image_b",
+      "z_1": "z_b"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6236,30 +6597,12 @@
     "notes": null
   },
   {
-    "bpy_name": "ShaderNodeCombineHSV",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.func.combine_hsv",
-    "arg_names_map": null,
-    "node_group_type": [
-      "ShaderNodeTree",
-      "GeometryNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
     "bpy_name": "FunctionNodeCombineMatrix",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.combine_matrix",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree",
       "GeometryNodeTree"
     ],
     "data_types": null,
@@ -6276,7 +6619,6 @@
     "name": "pf.nodes.func.combine_transform",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree",
       "GeometryNodeTree"
     ],
     "data_types": null,
@@ -6306,7 +6648,7 @@
     "bpy_name": "FunctionNodeInputRotation",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
@@ -6338,7 +6680,7 @@
     "bpy_name": "FunctionNodeInputString",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.constant",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
@@ -6387,7 +6729,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.matrix_multiply",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "matrix_0": "a",
+      "matrix_1": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6527,24 +6872,6 @@
     "notes": null
   },
   {
-    "bpy_name": "ShaderNodeSeparateHSV",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.func.separate_hsv",
-    "arg_names_map": null,
-    "node_group_type": [
-      "ShaderNodeTree",
-      "GeometryNodeTree",
-      "CompositorNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": true,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": null
-  },
-  {
     "bpy_name": "FunctionNodeSeparateMatrix",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
@@ -6580,12 +6907,11 @@
     "bpy_name": "ShaderNodeSeparateXYZ",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.func.separate_xyz",
+    "name": "pf.nodes.math.separate_xyz",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
-      "GeometryNodeTree",
-      "CompositorNodeTree"
+      "GeometryNodeTree"
     ],
     "data_types": null,
     "is_multi_output": true,
@@ -7050,17 +7376,20 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.index_switch",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "0": "a",
+      "1": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
     "data_types": [
       "bool",
       "int",
-      "Color",
-      "str",
+      "rgba",
+      "string",
       "float",
-      "Vector"
+      "vector"
     ],
     "is_multi_output": false,
     "is_contextual": null,
@@ -7759,7 +8088,10 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.sdf_grid_boolean",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "grid_1": "a",
+      "grid_2": "b"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7855,7 +8187,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.set_spline_cyclic",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "geometry": "curve"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7871,7 +8205,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.SetSplineResolution",
     "name": "pf.nodes.geo.set_spline_resolution",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "geometry": "curve"
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7951,7 +8287,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.string_to_curves",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "font": null
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8139,22 +8477,6 @@
     "notes": null
   },
   {
-    "bpy_name": "GeometryNodeViewer",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.geo.viewer",
-    "arg_names_map": null,
-    "node_group_type": [
-      "GeometryNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": false,
-    "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": true,
-    "notes": null
-  },
-  {
     "bpy_name": "GeometryNodeViewportTransform",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
@@ -8187,29 +8509,14 @@
     "notes": null
   },
   {
-    "bpy_name": "GeometryNodeGroup",
-    "bpy_mode_args": null,
-    "infinigen_v1_name": null,
-    "name": "pf.nodes.misc.group",
-    "arg_names_map": null,
-    "node_group_type": [
-      "GeometryNodeTree",
-      "ShaderNodeTree",
-      "CompositorNodeTree"
-    ],
-    "data_types": null,
-    "is_multi_output": true,
-    "is_contextual": "1",
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": true,
-    "notes": null
-  },
-  {
     "bpy_name": "ShaderNodeAddShader",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.add_shader",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "shader_0": "a",
+      "shader_1": "b"
+    },
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8240,10 +8547,9 @@
     "bpy_name": "ShaderNodeBrightContrast",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.bright_contrast",
+    "name": "pf.nodes.color.bright_contrast",
     "arg_names_map": null,
     "node_group_type": [
-      "GeometryNodeTree",
       "ShaderNodeTree"
     ],
     "data_types": null,
@@ -8385,7 +8691,7 @@
     "bpy_name": "ShaderNodeGamma",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.gamma",
+    "name": "pf.nodes.color.gamma",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -8497,7 +8803,7 @@
     "bpy_name": "ShaderNodeRGBToBW",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.rgb_to_bw",
+    "name": "pf.nodes.color.rgb_to_bw",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -8519,6 +8825,7 @@
       "ShaderNodeTree"
     ],
     "data_types": null,
+    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -8628,8 +8935,7 @@
     "name": "pf.nodes.math.vector_transform",
     "arg_names_map": null,
     "node_group_type": [
-      "ShaderNodeTree",
-      "GeometryNodeTree"
+      "ShaderNodeTree"
     ],
     "data_types": null,
     "is_multi_output": false,
@@ -8765,5 +9071,1907 @@
     "is_infinigen_restricted": true,
     "is_unittest_specialcase": true,
     "notes": "incorporated into output typing"
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "ADD"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.add",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "MULTIPLY_ADD"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.multiply_add",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "addend"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SUBTRACT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.subtract",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "MULTIPLY"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.multiply",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "DIVIDE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.divide",
+    "arg_names_map": {
+      "value_0": "numerator",
+      "value_1": "denominator"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "POWER"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.power",
+    "arg_names_map": {
+      "value_0": "base",
+      "value_1": "exponent"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "LOGARITHM"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.logarithm",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "base"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SQRT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sqrt",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "INVERSE_SQRT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.inverse_sqrt",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "ABSOLUTE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.absolute",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "EXPONENT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.exponent",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "MINIMUM"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.minimum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "MAXIMUM"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.maximum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "LESS_THAN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.less_than",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "GREATER_THAN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.greater_than",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SIGN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sign",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "COMPARE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.compare",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "epsilon"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SMOOTH_MIN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.smooth_minimum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "distance"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SMOOTH_MAX"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.smooth_maximum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "distance"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "ROUND"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.round",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "FLOOR"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.floor",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "CEIL"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.ceil",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "TRUNC"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.truncate",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "FRACT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.fraction",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "MODULO"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.modulo",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "FLOORED_MODULO"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.floor_mod",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "WRAP"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.wrap",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "max_val",
+      "value_2": "min_val"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SNAP"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.snap",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "increment"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "PINGPONG"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.pingpong",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "scale"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sin",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "COSINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.cos",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "TANGENT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.tan",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCSINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.asin",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCCOSINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.acos",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCTANGENT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.atan",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCTAN2"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.atan2",
+    "arg_names_map": {
+      "value_0": "y",
+      "value_1": "x"
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "SINH"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sinh",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "COSH"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.cosh",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "TANH"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.tanh",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "RADIANS"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.deg_to_rad",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeMath",
+    "bpy_mode_args": {
+      "operation": "DEGREES"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.rad_to_deg",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeCombineXYZ",
+    "bpy_mode_args": null,
+    "infinigen_v1_name": "Nodes.CombineXYZ",
+    "name": "pf.nodes.math.combine_xyz",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": "TRUE",
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "FunctionNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "RGB"
+    },
+    "infinigen_v1_name": "Nodes.CombineColor",
+    "name": "pf.nodes.color.combine_rgb",
+    "arg_names_map": {
+      "alpha": null
+    },
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "FunctionNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": "Nodes.CombineColor",
+    "name": "pf.nodes.color.combine_hsv",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "value",
+      "alpha": null
+    },
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "FunctionNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": "Nodes.CombineColor",
+    "name": "pf.nodes.color.combine_hsl",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "lightness",
+      "alpha": null
+    },
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "FunctionNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "RGB"
+    },
+    "infinigen_v1_name": "Nodes.SeparateColor",
+    "name": "pf.nodes.color.separate_rgb",
+    "arg_names_map": null,
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "FunctionNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsv",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "value"
+    },
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "FunctionNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsl",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "lightness"
+    },
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "RGB"
+    },
+    "infinigen_v1_name": "Nodes.CombineColor",
+    "name": "pf.nodes.color.combine_rgb",
+    "arg_names_map": {
+      "alpha": null
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": "Nodes.CombineColor",
+    "name": "pf.nodes.color.combine_hsv",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "value",
+      "alpha": null
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeCombineColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": "Nodes.CombineColor",
+    "name": "pf.nodes.color.combine_hsl",
+    "arg_names_map": {
+      "red": "hue",
+      "green": "saturation",
+      "blue": "lightness",
+      "alpha": null
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "RGB"
+    },
+    "infinigen_v1_name": "Nodes.SeparateColor",
+    "name": "pf.nodes.color.separate_rgb",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSV"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsv",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "value"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeSeparateColor",
+    "bpy_mode_args": {
+      "mode": "HSL"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.color.separate_hsl",
+    "arg_names_map": null,
+    "output_names_map": {
+      "Red": "hue",
+      "Green": "saturation",
+      "Blue": "lightness"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "ADD"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.add",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "MULTIPLY_ADD"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.multiply_add",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "addend"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SUBTRACT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.subtract",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "MULTIPLY"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.multiply",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "DIVIDE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.divide",
+    "arg_names_map": {
+      "value_0": "numerator",
+      "value_1": "denominator"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "POWER"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.power",
+    "arg_names_map": {
+      "value_0": "base",
+      "value_1": "exponent"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "LOGARITHM"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.logarithm",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "base"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SQRT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sqrt",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "INVERSE_SQRT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.inverse_sqrt",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "ABSOLUTE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.absolute",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "EXPONENT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.exponent",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "MINIMUM"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.minimum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "MAXIMUM"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.maximum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "LESS_THAN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.less_than",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "GREATER_THAN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.greater_than",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SIGN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sign",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "COMPARE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.compare",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "epsilon"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SMOOTH_MIN"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.smooth_minimum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "distance"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SMOOTH_MAX"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.smooth_maximum",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b",
+      "value_2": "distance"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "ROUND"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.round",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "FLOOR"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.floor",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "CEIL"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.ceil",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "TRUNC"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.truncate",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "FRACT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.fraction",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "MODULO"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.modulo",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "FLOORED_MODULO"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.floor_mod",
+    "arg_names_map": {
+      "value_0": "a",
+      "value_1": "b"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "WRAP"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.wrap",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "max_val",
+      "value_2": "min_val"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SNAP"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.snap",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "increment"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "PINGPONG"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.pingpong",
+    "arg_names_map": {
+      "value_0": "value",
+      "value_1": "scale"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sin",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "COSINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.cos",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "TANGENT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.tan",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCSINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.asin",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCCOSINE"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.acos",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCTANGENT"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.atan",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "ARCTAN2"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.atan2",
+    "arg_names_map": {
+      "value_0": "y",
+      "value_1": "x"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "SINH"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.sinh",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "COSH"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.cosh",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "TANH"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.tanh",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "RADIANS"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.deg_to_rad",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMath",
+    "bpy_mode_args": {
+      "operation": "DEGREES"
+    },
+    "infinigen_v1_name": "Nodes.Math",
+    "name": "pf.nodes.math.rad_to_deg",
+    "arg_names_map": null,
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "TextureNodeMixRGB",
+    "bpy_mode_args": null,
+    "infinigen_v1_name": "Nodes.MixRGB",
+    "name": "pf.nodes.color.mix_rgb",
+    "arg_names_map": {
+      "color1": "a",
+      "color2": "b",
+      "fac": "factor"
+    },
+    "node_group_type": [
+      "TextureNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
   }
 ]

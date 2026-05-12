@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass
-from typing import Any, Generic, Literal, NamedTuple, TypeVar
+from typing import Generic, Literal, NamedTuple, TypeVar
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
@@ -74,7 +74,7 @@ class AttributeDomainSizeResult(NamedTuple):
 
 
 def attribute_domain_size(
-    geometry: nt.ProcNode[nt.Geometry],
+    geometry: nt.ProcNode[nt.Geometry] | None,
     component: Literal["MESH", "POINTCLOUD", "CURVE", "INSTANCES"] = "MESH",
 ) -> AttributeDomainSizeResult:
     """
@@ -109,7 +109,7 @@ class AttributeStatisticResult(NamedTuple, Generic[TAttribute]):
 
 
 def attribute_statistic(
-    geometry: nt.ProcNode[nt.Geometry],
+    geometry: nt.ProcNode[nt.Geometry] | None,
     attribute: nt.ProcNode[TAttribute] | None = None,
     selection: nt.SocketOrVal[bool] = True,
     domain: TDomain = "POINT",
@@ -180,7 +180,7 @@ class BoundBoxResult(NamedTuple):
     max: nt.ProcNode[pt.Vector]
 
 
-def bound_box(geometry: nt.ProcNode[nt.Geometry]) -> BoundBoxResult:
+def bound_box(geometry: nt.ProcNode[nt.Geometry] | None) -> BoundBoxResult:
     """
     Uses a BoundBox Geometry Node.
 
@@ -211,9 +211,9 @@ class CaptureAttributeResult(Generic[TAnyGeometry]):
 
 
 def capture_attribute(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
     # active_index: int = 0, # TODO unsure how active_* function
-    # active_item: Any = None,
+    # active_item: pt.NodeItem | None = None,
     domain: TDomain = "POINT",
     **attributes: nt.SocketOrVal[TAttribute],
 ) -> CaptureAttributeResult[TAnyGeometry]:
@@ -257,7 +257,9 @@ def collection_info(
     )
 
 
-def convex_hull(geometry: nt.ProcNode[nt.Geometry]) -> nt.ProcNode[pt.MeshObject]:
+def convex_hull(
+    geometry: nt.ProcNode[nt.Geometry] | None,
+) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a ConvexHull Geometry Node.
 
@@ -401,7 +403,7 @@ def curve_endpoint_selection(
 #    )
 
 
-def curve_length(curve: nt.ProcNode[pt.CurveObject]) -> nt.ProcNode[float]:
+def curve_length(curve: nt.ProcNode[pt.CurveObject] | None) -> nt.ProcNode[float]:
     """
     Uses a CurveLength Geometry Node.
 
@@ -436,11 +438,11 @@ def curve_of_point(point_index: nt.SocketOrVal[int] = 0) -> CurveOfPointResult:
 
 
 def curve_bezier_segment(
+    start: nt.SocketOrVal[nt.pt.Vector],
+    start_handle: nt.SocketOrVal[nt.pt.Vector],
+    end_handle: nt.SocketOrVal[nt.pt.Vector],
+    end: nt.SocketOrVal[nt.pt.Vector],
     resolution: nt.SocketOrVal[int] = 16,
-    start: nt.SocketOrVal[nt.pt.Vector] = (-1, 0, 0),
-    start_handle: nt.SocketOrVal[nt.pt.Vector] = (-0.5, 0.5, 0),
-    end_handle: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    end: nt.SocketOrVal[nt.pt.Vector] = (1, 0, 0),
     mode: Literal["POSITION", "OFFSET"] = "POSITION",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
@@ -479,8 +481,8 @@ def curve_circle(
 
 
 def curve_line(
-    start: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    end: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 1),
+    start: nt.SocketOrVal[nt.pt.Vector],
+    end: nt.SocketOrVal[nt.pt.Vector],
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a CurvePrimitiveLine Geometry Node.
@@ -495,8 +497,8 @@ def curve_line(
 
 
 def curve_line_from_direction(
-    start: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    direction: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 1),
+    start: nt.SocketOrVal[nt.pt.Vector],
+    direction: nt.SocketOrVal[nt.pt.Vector],
     length: nt.SocketOrVal[float] = 1.0,
 ) -> nt.ProcNode[pt.CurveObject]:
     """
@@ -531,10 +533,10 @@ def curve_quadrilateral(
 
 
 def curve_bezier(
+    start: nt.SocketOrVal[nt.pt.Vector],
+    middle: nt.SocketOrVal[nt.pt.Vector],
+    end: nt.SocketOrVal[nt.pt.Vector],
     resolution: nt.SocketOrVal[int] = 16,
-    start: nt.SocketOrVal[nt.pt.Vector] = (-1, 0, 0),
-    middle: nt.SocketOrVal[nt.pt.Vector] = (0, 2, 0),
-    end: nt.SocketOrVal[nt.pt.Vector] = (1, 0, 0),
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a CurveQuadraticBezier Geometry Node.
@@ -549,7 +551,7 @@ def curve_bezier(
 
 
 def curve_set_handles(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     handle_type: Literal["FREE", "AUTO", "VECTOR", "ALIGN"] = "AUTO",
     mode: Literal["LEFT", "RIGHT"] = "RIGHT",
@@ -594,7 +596,7 @@ def curve_spiral(
 
 
 def curve_spline_type(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     spline_type: Literal["CATMULL_ROM", "POLY", "BEZIER", "NURBS"] = "POLY",
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -643,7 +645,7 @@ def curve_star(
 
 
 def curve_to_mesh(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     profile_curve: nt.ProcNode[pt.CurveObject] | None = None,
     fill_caps: nt.SocketOrVal[bool] = False,
 ) -> nt.ProcNode[pt.MeshObject]:
@@ -667,7 +669,7 @@ class CurveToPointsResult(NamedTuple):
 
 
 def curve_to_points(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     count: nt.SocketOrVal[int] = 10,
     length: nt.SocketOrVal[float] = 1.0,
     mode: Literal["EVALUATED", "COUNT", "LENGTH"] = "COUNT",
@@ -696,7 +698,7 @@ def curve_to_points(
 
 
 def curve_to_points_evaluated(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
 ) -> CurveToPointsResult:
     """
     Uses a CurveToPoints Geometry Node with mode="EVALUATED".
@@ -718,7 +720,7 @@ def curve_to_points_evaluated(
 
 
 def curve_to_points_count(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     count: nt.SocketOrVal[int] = 10,
 ) -> CurveToPointsResult:
     """
@@ -740,7 +742,7 @@ def curve_to_points_count(
 
 
 def curve_to_points_length(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     length: nt.SocketOrVal[float] = 0.1,
 ) -> CurveToPointsResult:
     """
@@ -762,7 +764,7 @@ def curve_to_points_length(
 
 
 def deform_curves_on_surface(
-    curves: nt.ProcNode[pt.HairObject],
+    curves: nt.ProcNode[pt.HairObject] | None,
 ) -> nt.ProcNode[pt.HairObject]:
     """
     Uses a DeformCurvesOnSurface Geometry Node.
@@ -784,7 +786,7 @@ TDeleteGeometry = TypeVar(
 
 
 def delete_geometry(
-    geometry: nt.ProcNode[TDeleteGeometry],
+    geometry: nt.ProcNode[TDeleteGeometry] | None,
     selection: nt.SocketOrVal[bool] = True,
     domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
     mode: Literal["ALL", "EDGE_FACE", "ONLY_FACE"] = "ALL",
@@ -820,7 +822,7 @@ def distribute_points_in_grid(
 
 
 def distribute_points_in_volume(
-    volume: nt.ProcNode[pt.VolumeObject],
+    volume: nt.ProcNode[pt.VolumeObject] | None,
     density: nt.SocketOrVal[float] = 1.0,
     seed: nt.SocketOrVal[int] = 0,
     mode: Literal["DENSITY_RANDOM", "DENSITY_GRID"] = "DENSITY_RANDOM",
@@ -844,7 +846,7 @@ class DistributePointsOnFacesResult(NamedTuple):
 
 
 def distribute_points_on_faces(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     density: nt.SocketOrVal[float] | None = None,
     seed: nt.SocketOrVal[int] = 0,
@@ -879,11 +881,11 @@ def distribute_points_on_faces(
 
 
 def distribute_points_on_faces_poisson(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
+    density_factor: nt.SocketOrVal[float],
     selection: nt.SocketOrVal[bool] = True,
     distance_min: nt.SocketOrVal[float] = 0.0,
     density_max: nt.SocketOrVal[float] = 10.0,
-    density_factor: nt.SocketOrVal[float] = 1.0,
     seed: nt.SocketOrVal[int] = 0,
     use_legacy_normal: bool = False,
 ) -> DistributePointsOnFacesResult:
@@ -915,7 +917,8 @@ def distribute_points_on_faces_poisson(
 
 
 def dual_mesh(
-    mesh: nt.ProcNode[pt.MeshObject], keep_boundaries: nt.SocketOrVal[bool] = False
+    mesh: nt.ProcNode[pt.MeshObject] | None,
+    keep_boundaries: nt.SocketOrVal[bool] = False,
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a DualMesh Geometry Node.
@@ -935,7 +938,7 @@ class DuplicateElementsResult(NamedTuple, Generic[TAnyGeometry]):
 
 
 def duplicate_elements(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
     selection: nt.SocketOrVal[bool] = True,
     amount: nt.SocketOrVal[int] = 1,
     domain: Literal["POINT", "EDGE", "FACE", "SPLINE", "INSTANCE"] = "POINT",
@@ -957,7 +960,7 @@ def duplicate_elements(
 
 
 def edge_paths_to_curves(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
     start_vertices: nt.SocketOrVal[bool] = True,
     next_vertex_index: nt.SocketOrVal[int] = -1,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -1070,9 +1073,9 @@ class ExtrudeMeshResult(NamedTuple):
 
 
 def extrude_mesh(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
+    offset: nt.SocketOrVal[nt.pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
-    offset: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     offset_scale: nt.SocketOrVal[float] = 1.0,
     individual: nt.SocketOrVal[bool] = True,
     mode: Literal["VERTICES", "EDGES", "FACES"] = "FACES",
@@ -1173,7 +1176,7 @@ def field_on_domain(
 
 
 def fill_curve(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     group_id: nt.SocketOrVal[int] = 0,
     mode: Literal["TRIANGLES", "NGONS"] = "TRIANGLES",
 ) -> nt.ProcNode[pt.MeshObject]:
@@ -1189,15 +1192,35 @@ def fill_curve(
     )
 
 
-def fillet_curve(
-    curve: nt.ProcNode[pt.CurveObject],
+def fillet_curve_bezier(
+    curve: nt.ProcNode[pt.CurveObject] | None,
     radius: nt.SocketOrVal[float] = 0.25,
     limit_radius: nt.SocketOrVal[bool] = False,
-    count: nt.SocketOrVal[int] = 1,
-    mode: Literal["BEZIER", "POLY"] = "BEZIER",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
-    Uses a FilletCurve Geometry Node.
+    Uses a FilletCurve Geometry Node in BEZIER mode.
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/operations/fillet_curve.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeFilletCurve",
+        inputs={
+            "Curve": curve,
+            "Radius": radius,
+            "Limit Radius": limit_radius,
+        },
+        attrs={"mode": "BEZIER"},
+    )
+
+
+def fillet_curve_poly(
+    curve: nt.ProcNode[pt.CurveObject] | None,
+    radius: nt.SocketOrVal[float] = 0.25,
+    count: nt.SocketOrVal[int] = 1,
+    limit_radius: nt.SocketOrVal[bool] = False,
+) -> nt.ProcNode[pt.CurveObject]:
+    """
+    Uses a FilletCurve Geometry Node in POLY mode.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/operations/fillet_curve.html
     """
@@ -1209,12 +1232,12 @@ def fillet_curve(
             "Limit Radius": limit_radius,
             "Count": count,
         },
-        attrs={"mode": mode},
+        attrs={"mode": "POLY"},
     )
 
 
 def flip_faces(
-    mesh: nt.ProcNode[pt.MeshObject], selection: nt.SocketOrVal[bool] = True
+    mesh: nt.ProcNode[pt.MeshObject] | None, selection: nt.SocketOrVal[bool] = True
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a FlipFaces Geometry Node.
@@ -1229,7 +1252,7 @@ def flip_faces(
 
 
 def geometry_to_instance(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
 ) -> nt.ProcNode[nt.Instances]:
     """
     Uses a GeometryToInstance Geometry Node.
@@ -1244,7 +1267,7 @@ def geometry_to_instance(
 
 
 def get_named_grid(
-    volume: nt.ProcNode[nt.Geometry],
+    volume: nt.ProcNode[nt.Geometry] | None,
     name: nt.SocketOrVal[str] = "",
     remove: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode:
@@ -1278,7 +1301,7 @@ def grid_to_mesh(
 
 
 '''
-def group(node_tree: Any = None) -> t.ProcNode:
+def group(node_tree=None) -> t.ProcNode:
     """
     Uses a Group Geometry Node.
 
@@ -1324,7 +1347,7 @@ def image_info(
 
 def image_texture(
     image: nt.SocketOrVal[pt.Image],
-    vector: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
+    vector: nt.SocketOrVal[nt.pt.Vector],
     frame: nt.SocketOrVal[int] = 0,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
     interpolation: Literal["Linear", "Closest", "Cubic"] = "Linear",
@@ -1342,7 +1365,7 @@ def image_texture(
 
 
 def index_of_nearest(
-    position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
+    position: nt.SocketOrVal[nt.pt.Vector],
     group_id: nt.SocketOrVal[int] = 0,
 ) -> nt.ProcNode[int]:
     """
@@ -1432,7 +1455,7 @@ def input_id() -> nt.ProcNode[int]:
     )
 
 
-def input_image(image: Any = None) -> nt.ProcNode[pt.Image]:
+def input_image(image: pt.Image) -> nt.ProcNode[pt.Image]:
     """
     Uses a InputImage Geometry Node.
 
@@ -1486,7 +1509,7 @@ def input_instance_scale() -> nt.ProcNode[pt.Vector]:
     )
 
 
-def input_material(material: Any = None) -> nt.ProcNode[pt.Material]:
+def input_material(material: pt.Material) -> nt.ProcNode[pt.Material]:
     """
     Uses a InputMaterial Geometry Node.
 
@@ -1845,13 +1868,13 @@ def input_tangent() -> nt.ProcNode[pt.Vector]:
 
 
 def instance_on_points(
-    points: nt.ProcNode[nt.Geometry] | None = None,
-    instance: nt.ProcNode[nt.Geometry] | None = None,
+    points: nt.ProcNode[nt.Geometry] | None,
+    instance: nt.ProcNode[nt.Geometry] | None,
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
     selection: nt.SocketOrVal[bool] = True,
     pick_instance: nt.SocketOrVal[bool] = False,
     instance_index: nt.SocketOrVal[int] = 0,
-    rotation: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    scale: nt.SocketOrVal[nt.pt.Vector] = (1, 1, 1),
 ) -> nt.ProcNode[nt.Instances]:
     """
     Uses a InstanceOnPoints Geometry Node.
@@ -1887,9 +1910,9 @@ def instance_transform() -> nt.ProcNode:
 
 
 def instances_to_points(
+    position: nt.SocketOrVal[nt.pt.Vector],
     instances: nt.ProcNode[nt.Instances] | None = None,
     selection: nt.SocketOrVal[bool] = True,
-    position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     radius: nt.SocketOrVal[float] = 0.05,
 ) -> nt.ProcNode[nt.Points]:
     """
@@ -1916,11 +1939,11 @@ class InterpolateCurvesResult(NamedTuple):
 
 
 def interpolate_curves(
-    guide_curves: nt.ProcNode[pt.HairObject],
-    points: nt.ProcNode[nt.Geometry],
-    guide_up: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
+    guide_curves: nt.ProcNode[pt.HairObject] | None,
+    points: nt.ProcNode[nt.Geometry] | None,
+    guide_up: nt.SocketOrVal[nt.pt.Vector],
+    point_up: nt.SocketOrVal[nt.pt.Vector],
     guide_group_id: nt.SocketOrVal[int] = 0,
-    point_up: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     point_group_id: nt.SocketOrVal[int] = 0,
     max_neighbors: nt.SocketOrVal[int] = 4,
 ) -> InterpolateCurvesResult:
@@ -2008,7 +2031,7 @@ TMenuSwitch = TypeVar(
 def menu_switch(
     a: TMenuSwitch = 0,
     b: TMenuSwitch = 0,
-    menu: Any = "A",
+    menu: nt.SocketOrVal[str] = "A",
     active_index: int = 1,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode[TMenuSwitch]:
@@ -2037,7 +2060,7 @@ def menu_switch(
 
 
 def merge_by_distance(
-    geometry: nt.ProcNode[nt.Geometry],
+    geometry: nt.ProcNode[nt.Geometry] | None,
     selection: nt.SocketOrVal[bool] = True,
     distance: nt.SocketOrVal[float] = 0.001,
     mode: Literal["ALL", "CONNECTED"] = "ALL",
@@ -2055,8 +2078,8 @@ def merge_by_distance(
 
 
 def mesh_boolean(
-    mesh_1: nt.ProcNode[nt.Geometry] | None = None,
-    mesh_2: nt.ProcNode[nt.Geometry] | None = None,
+    a: nt.ProcNode[nt.Geometry] | None = None,
+    b: nt.ProcNode[nt.Geometry] | None = None,
     self_intersection: nt.SocketOrVal[bool] = False,
     hole_tolerant: nt.SocketOrVal[bool] = False,
     operation: Literal["INTERSECT", "UNION", "DIFFERENCE"] = "DIFFERENCE",
@@ -2070,8 +2093,8 @@ def mesh_boolean(
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshBoolean",
         inputs={
-            "Mesh 1": mesh_1,
-            "Mesh 2": mesh_2,
+            "Mesh 1": a,
+            "Mesh 2": b,
             "Self Intersection": self_intersection,
             "Hole Tolerant": hole_tolerant,
         },
@@ -2274,8 +2297,8 @@ def mesh_icosphere(
 
 
 def mesh_line(
-    start_location: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    offset: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 1),
+    start_location: nt.SocketOrVal[nt.pt.Vector],
+    offset: nt.SocketOrVal[nt.pt.Vector],
     count: nt.SocketOrVal[int] = 10,
     count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
 ) -> nt.ProcNode[pt.MeshObject]:
@@ -2309,7 +2332,7 @@ def mesh_line_from_endpoints(
 
 
 def mesh_to_curve(
-    mesh: nt.ProcNode[pt.MeshObject], selection: nt.SocketOrVal[bool] = True
+    mesh: nt.ProcNode[pt.MeshObject] | None, selection: nt.SocketOrVal[bool] = True
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a MeshToCurve Geometry Node.
@@ -2324,7 +2347,7 @@ def mesh_to_curve(
 
 
 def mesh_to_density_grid(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
     density: nt.SocketOrVal[float] = 1.0,
     voxel_size: nt.SocketOrVal[float] = 0.3,
     gradient_width: nt.SocketOrVal[float] = 0.2,
@@ -2347,9 +2370,9 @@ def mesh_to_density_grid(
 
 
 def mesh_to_points(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
+    position: nt.SocketOrVal[nt.pt.Vector],
     selection: nt.SocketOrVal[bool] = True,
-    position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     radius: nt.SocketOrVal[float] = 0.05,
     mode: Literal["VERTICES", "EDGES", "FACES", "CORNERS"] = "VERTICES",
 ) -> nt.ProcNode[nt.Points]:
@@ -2371,7 +2394,7 @@ def mesh_to_points(
 
 
 def mesh_to_sdf_grid(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
     voxel_size: nt.SocketOrVal[float] = 0.3,
     band_width: nt.SocketOrVal[int] = 3,
 ) -> nt.ProcNode:
@@ -2388,7 +2411,7 @@ def mesh_to_sdf_grid(
 
 
 def mesh_to_volume(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
     density: nt.SocketOrVal[float] = 1.0,
     voxel_amount: nt.SocketOrVal[float] = 64.0,
     interior_band_width: nt.SocketOrVal[float] = 0.2,
@@ -2507,8 +2530,8 @@ def offset_point_in_curve(
 
 
 def points(
+    position: nt.SocketOrVal[nt.pt.Vector],
     count: nt.SocketOrVal[int] = 1,
-    position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     radius: nt.SocketOrVal[float] = 0.1,
 ) -> nt.ProcNode[nt.Points]:
     """
@@ -2554,7 +2577,7 @@ def points_of_curve(
 
 
 def points_to_curves(
-    points: nt.ProcNode[nt.Geometry],
+    points: nt.ProcNode[nt.Geometry] | None,
     curve_group_id: nt.SocketOrVal[int] = 0,
     weight: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -2571,7 +2594,7 @@ def points_to_curves(
 
 
 def points_to_sdf_grid(
-    points: nt.ProcNode[nt.Points],
+    points: nt.ProcNode[nt.Points] | None,
     radius: nt.SocketOrVal[float] = 0.5,
     voxel_size: nt.SocketOrVal[float] = 0.3,
 ) -> nt.ProcNode:
@@ -2588,7 +2611,7 @@ def points_to_sdf_grid(
 
 
 def points_to_vertices(
-    points: nt.ProcNode[nt.Points], selection: nt.SocketOrVal[bool] = True
+    points: nt.ProcNode[nt.Points] | None, selection: nt.SocketOrVal[bool] = True
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a PointsToVertices Geometry Node.
@@ -2603,7 +2626,7 @@ def points_to_vertices(
 
 
 def points_to_volume(
-    points: nt.ProcNode[nt.Points],
+    points: nt.ProcNode[nt.Points] | None,
     density: nt.SocketOrVal[float] = 1.0,
     voxel_amount: nt.SocketOrVal[float] = 64.0,
     radius: nt.SocketOrVal[float] = 0.5,
@@ -2633,9 +2656,9 @@ class ProximityResult(NamedTuple):
 
 
 def proximity(
-    geometry: nt.ProcNode[pt.MeshObject],
+    geometry: nt.ProcNode[pt.MeshObject] | None,
+    sample_position: nt.SocketOrVal[nt.pt.Vector],
     group_id: nt.SocketOrVal[int] = 0,
-    sample_position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     sample_group_id: nt.SocketOrVal[int] = 0,
     target_element: Literal["POINTS", "EDGES", "FACES"] = "FACES",
 ) -> ProximityResult:
@@ -2675,11 +2698,11 @@ class RaycastResult(NamedTuple):
 
 
 def raycast(
-    geometry: nt.ProcNode[pt.MeshObject],
+    geometry: nt.ProcNode[pt.MeshObject] | None,
+    source_position: nt.SocketOrVal[nt.pt.Vector],
+    ray_direction: nt.SocketOrVal[nt.pt.Vector],
     attribute: TRaycast = 0,
-    ray_direction: nt.SocketOrVal[nt.pt.Vector] = (0, 0, -1),
     ray_length: nt.SocketOrVal[float] = 100.0,
-    source_position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     mapping: Literal["INTERPOLATED", "NEAREST"] = "INTERPOLATED",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> RaycastResult:
@@ -2717,7 +2740,7 @@ def raycast(
 
 
 def realize_instances(
-    geometry: nt.ProcNode[nt.Geometry] | nt.ProcNode[nt.Instances],
+    geometry: nt.ProcNode[nt.Geometry] | None | nt.ProcNode[nt.Instances],
     selection: nt.SocketOrVal[bool] = True,
     realize_all: nt.SocketOrVal[bool] = True,
     depth: nt.SocketOrVal[int] = 0,
@@ -2740,7 +2763,7 @@ def realize_instances(
 
 
 def remove_attribute(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
     name: nt.SocketOrVal[str] = "",
     pattern_mode: Literal["EXACT", "WILDCARD"] = "EXACT",
 ) -> nt.ProcNode[TAnyGeometry]:
@@ -2757,7 +2780,7 @@ def remove_attribute(
 
 
 def replace_material(
-    geometry: nt.ProcNode[pt.MeshObject],
+    geometry: nt.ProcNode[pt.MeshObject] | None,
     old: nt.SocketOrVal[pt.Material] | None = None,
     new: nt.SocketOrVal[pt.Material] | None = None,
 ) -> nt.ProcNode[pt.MeshObject]:
@@ -2774,7 +2797,7 @@ def replace_material(
 
 
 def resample_curve_evaluated(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode[pt.CurveObject]:
     """
@@ -2791,7 +2814,7 @@ def resample_curve_evaluated(
 
 
 def resample_curve_count(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     count: nt.SocketOrVal[int] = 10,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -2807,7 +2830,7 @@ def resample_curve_count(
 
 
 def resample_curve_length(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     length: nt.SocketOrVal[float] = 1.0,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -2823,7 +2846,7 @@ def resample_curve_length(
 
 
 def reverse_curve(
-    curve: nt.ProcNode[pt.CurveObject], selection: nt.SocketOrVal[bool] = True
+    curve: nt.ProcNode[pt.CurveObject] | None, selection: nt.SocketOrVal[bool] = True
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a ReverseCurve Geometry Node.
@@ -2838,10 +2861,10 @@ def reverse_curve(
 
 
 def rotate_instances(
-    instances: nt.ProcNode[nt.Instances],
+    instances: nt.ProcNode[nt.Instances] | None,
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
+    pivot_point: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     selection: nt.SocketOrVal[bool] = True,
-    rotation: Any = (0, 0, 0),
-    pivot_point: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     local_space: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode[nt.Instances]:
     """
@@ -2863,7 +2886,7 @@ def rotate_instances(
 
 
 def sdf_grid_boolean(
-    grid_1: nt.SocketOrVal[float] = 0.0, grid_2: nt.SocketOrVal[float] = 0.0
+    a: nt.SocketOrVal[float] = 0.0, b: nt.SocketOrVal[float] = 0.0
 ) -> nt.ProcNode[nt.Geometry]:
     """
     Uses a SDFGridBoolean Geometry Node.
@@ -2872,7 +2895,7 @@ def sdf_grid_boolean(
     """
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSDFGridBoolean",
-        inputs={"Grid 1": grid_1, "Grid 2": grid_2},
+        inputs={"Grid 1": a, "Grid 2": b},
         attrs={},
     )
 
@@ -2885,9 +2908,9 @@ class SampleCurveResult(NamedTuple):
 
 
 def sample_curve(
-    curves: nt.ProcNode[nt.Geometry],
+    curves: nt.ProcNode[nt.Geometry] | None,
+    factor: nt.SocketOrVal[float],
     curve_index: nt.SocketOrVal[int] = 0,
-    factor: nt.SocketOrVal[float] = 0.0,
     value: nt.SocketOrVal[TAttribute] | None = None,
     mode: Literal["FACTOR", "LENGTH"] = "FACTOR",
     use_all_curves: bool = False,
@@ -2928,7 +2951,7 @@ def sample_curve(
 
 
 def sample_curve_length(
-    curves: nt.ProcNode[nt.Geometry],
+    curves: nt.ProcNode[nt.Geometry] | None,
     length: nt.SocketOrVal[float] = 0.0,
     curve_index: nt.SocketOrVal[int] = 0,
     value: nt.SocketOrVal[TAttribute] | None = None,
@@ -3038,7 +3061,7 @@ def sample_grid_index(
 
 
 def sample_index(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
     index: nt.SocketOrVal[int] = 0,
     value: nt.ProcNode[TAttribute] | None = None,
     clamp: bool = False,
@@ -3067,8 +3090,8 @@ def sample_index(
 
 
 def sample_nearest(
-    geometry: nt.ProcNode[nt.Points],
-    sample_position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
+    geometry: nt.ProcNode[nt.Points] | None,
+    sample_position: nt.SocketOrVal[nt.pt.Vector],
     domain: Literal["POINT", "EDGE", "FACE", "CORNER"] = "POINT",
 ) -> nt.ProcNode[int]:
     """
@@ -3089,11 +3112,11 @@ class SampleResult(NamedTuple, Generic[TAttribute]):
 
 
 def sample_nearest_surface(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
+    sample_position: nt.SocketOrVal[nt.pt.Vector],
     value: nt.ProcNode[TAttribute] | None = None,
     group_id: nt.SocketOrVal[int] = 0,
     sample_group_id: nt.SocketOrVal[int] = 0,
-    sample_position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleResult[TAttribute]:
     """
@@ -3126,10 +3149,10 @@ def sample_nearest_surface(
 
 
 def sample_uv_surface(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
+    sample_uv: nt.SocketOrVal[nt.pt.Vector],
+    uv_map: nt.SocketOrVal[nt.pt.Vector],
     value: nt.ProcNode[TAttribute] | None = None,
-    sample_uv: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    uv_map: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleResult[TAttribute]:
     """
@@ -3156,10 +3179,10 @@ def sample_uv_surface(
 
 
 def scale_elements(
-    geometry: nt.ProcNode[nt.Geometry],
+    geometry: nt.ProcNode[nt.Geometry] | None,
+    scale: nt.SocketOrVal[float],
+    center: nt.SocketOrVal[nt.pt.Vector],
     selection: nt.SocketOrVal[bool] = True,
-    scale: nt.SocketOrVal[float] = 1.0,
-    center: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     axis: nt.SocketOrVal[nt.pt.Vector] | None = None,
     domain: Literal["FACE", "EDGE"] = "FACE",
     scale_mode: Literal["UNIFORM", "SINGLE_AXIS"] = "UNIFORM",
@@ -3185,10 +3208,10 @@ def scale_elements(
 
 
 def scale_instances(
-    instances: nt.ProcNode[nt.Instances],
+    instances: nt.ProcNode[nt.Instances] | None,
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+    center: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     selection: nt.SocketOrVal[bool] = True,
-    scale: nt.SocketOrVal[nt.pt.Vector] = (1, 1, 1),
-    center: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     local_space: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode[nt.Instances]:
     """
@@ -3231,7 +3254,7 @@ class SeparateComponentsResult(NamedTuple):
 
 
 def separate_components(
-    geometry: nt.ProcNode[nt.Geometry],
+    geometry: nt.ProcNode[nt.Geometry] | None,
 ) -> SeparateComponentsResult:
     """
     Uses a SeparateComponents Geometry Node.
@@ -3280,10 +3303,10 @@ def separate_geometry(
 
 
 def set_curve_handle_positions(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
+    position: nt.SocketOrVal[nt.pt.Vector],
+    offset: nt.SocketOrVal[nt.pt.Vector],
     selection: nt.SocketOrVal[bool] = True,
-    position: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    offset: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     mode: Literal["LEFT", "RIGHT"] = "LEFT",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
@@ -3304,10 +3327,10 @@ def set_curve_handle_positions(
 
 
 def set_curve_normal(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
+    normal: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
     selection: nt.SocketOrVal[bool] = True,
     mode: Literal["MINIMUM_TWIST", "Z_UP", "FREE"] = "MINIMUM_TWIST",
-    normal: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 1),
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a SetCurveNormal Geometry Node.
@@ -3322,7 +3345,7 @@ def set_curve_normal(
 
 
 def set_curve_radius(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.005,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -3339,7 +3362,7 @@ def set_curve_radius(
 
 
 def set_curve_tilt(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     tilt: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -3356,7 +3379,7 @@ def set_curve_tilt(
 
 
 def set_id(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
     selection: nt.SocketOrVal[bool] = True,
     id: nt.SocketOrVal[int] = 0,
 ) -> nt.ProcNode[TAnyGeometry]:
@@ -3373,7 +3396,7 @@ def set_id(
 
 
 def set_instance_transform(
-    instances: nt.ProcNode[nt.Instances],
+    instances: nt.ProcNode[nt.Instances] | None,
     transform: nt.SocketOrVal[pt.Matrix] | None = None,
     selection: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode[nt.Instances]:
@@ -3390,7 +3413,7 @@ def set_instance_transform(
 
 
 def set_material(
-    geometry: nt.ProcNode[pt.MeshObject],
+    geometry: nt.ProcNode[pt.MeshObject] | None,
     material: nt.SocketOrVal[pt.Material] = None,
     selection: nt.SocketOrVal[bool] = None,
 ) -> nt.ProcNode[pt.MeshObject]:
@@ -3407,7 +3430,7 @@ def set_material(
 
 
 def set_material_index(
-    geometry: nt.ProcNode[pt.MeshObject],
+    geometry: nt.ProcNode[pt.MeshObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     material_index: nt.SocketOrVal[int] = 0,
 ) -> nt.ProcNode[pt.MeshObject]:
@@ -3428,7 +3451,7 @@ def set_material_index(
 
 
 def set_point_radius(
-    points: nt.ProcNode[pt.PointCloudObject],
+    points: nt.ProcNode[pt.PointCloudObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.05,
 ) -> nt.ProcNode[pt.PointCloudObject]:
@@ -3445,10 +3468,10 @@ def set_point_radius(
 
 
 def set_position(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
+    position: nt.SocketOrVal[pt.Vector] | None = None,
+    offset: nt.SocketOrVal[pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
-    position: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    offset: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
 ) -> nt.ProcNode[TAnyGeometry]:
     """
     Uses a SetPosition Geometry Node.
@@ -3468,7 +3491,7 @@ def set_position(
 
 
 def set_shade_smooth(
-    geometry: nt.ProcNode[pt.MeshObject],
+    geometry: nt.ProcNode[pt.MeshObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     shade_smooth: nt.SocketOrVal[bool] = True,
     domain: Literal["EDGE", "FACE"] = "FACE",
@@ -3490,7 +3513,7 @@ def set_shade_smooth(
 
 
 def set_spline_cyclic(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     cyclic: nt.SocketOrVal[bool] = False,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -3507,7 +3530,7 @@ def set_spline_cyclic(
 
 
 def set_spline_resolution(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     resolution: nt.SocketOrVal[int] = 12,
 ) -> nt.ProcNode[pt.CurveObject]:
@@ -3524,7 +3547,7 @@ def set_spline_resolution(
 
 
 def sort_elements(
-    geometry: nt.ProcNode[TAnyGeometry],
+    geometry: nt.ProcNode[TAnyGeometry] | None,
     selection: nt.SocketOrVal[bool] = True,
     group_id: nt.SocketOrVal[int] = 0,
     sort_weight: nt.SocketOrVal[float] = 0.0,
@@ -3593,7 +3616,7 @@ def spline_parameter() -> SplineParameterResult:
 
 
 def split_edges(
-    mesh: nt.ProcNode[pt.MeshObject], selection: nt.SocketOrVal[bool] = True
+    mesh: nt.ProcNode[pt.MeshObject] | None, selection: nt.SocketOrVal[bool] = True
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a SplitEdges Geometry Node.
@@ -3613,7 +3636,7 @@ class SplitToInstancesResult(NamedTuple):
 
 
 def split_to_instances(
-    geometry: nt.ProcNode[pt.MeshObject],
+    geometry: nt.ProcNode[pt.MeshObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     group_id: nt.SocketOrVal[int] = 0,
     domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
@@ -3669,7 +3692,7 @@ def store_named_attribute(
 
 
 def store_named_grid(
-    volume: nt.ProcNode[nt.Geometry],
+    volume: nt.ProcNode[nt.Geometry] | None,
     grid: nt.SocketOrVal[float] = 0.0,
     name: nt.SocketOrVal[str] = "",
 ) -> nt.ProcNode:
@@ -3760,7 +3783,7 @@ def string_to_curves(
 
 
 def subdivide_curve(
-    curve: nt.ProcNode[pt.CurveObject], cuts: nt.SocketOrVal[int] = 1
+    curve: nt.ProcNode[pt.CurveObject] | None, cuts: nt.SocketOrVal[int] = 1
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a SubdivideCurve Geometry Node.
@@ -3775,7 +3798,7 @@ def subdivide_curve(
 
 
 def subdivide_mesh(
-    mesh: nt.ProcNode[pt.MeshObject], level: nt.SocketOrVal[int] = 1
+    mesh: nt.ProcNode[pt.MeshObject] | None, level: nt.SocketOrVal[int] = 1
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a SubdivideMesh Geometry Node.
@@ -3790,7 +3813,7 @@ def subdivide_mesh(
 
 
 def subdivision_surface(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
     level: nt.SocketOrVal[int] = 1,
     edge_crease: nt.SocketOrVal[float] = 0.0,
     vertex_crease: nt.SocketOrVal[float] = 0.0,
@@ -3969,9 +3992,9 @@ def tool_set_selection(
 
 def transform(
     geometry: nt.ProcNode[TMeshOrCurve],
-    translation: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
-    rotation: Any = (0, 0, 0),
-    scale: nt.SocketOrVal[nt.pt.Vector] = (1, 1, 1),
+    translation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
 ) -> nt.ProcNode[TMeshOrCurve]:
     """
     Uses a Transform Geometry Node.
@@ -4005,9 +4028,9 @@ def transform_by_matrix(
 
 
 def translate_instances(
-    instances: nt.ProcNode[nt.Instances],
+    instances: nt.ProcNode[nt.Instances] | None,
+    translation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     selection: nt.SocketOrVal[bool] = True,
-    translation: nt.SocketOrVal[nt.pt.Vector] = (0, 0, 0),
     local_space: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode[nt.Instances]:
     """
@@ -4028,7 +4051,7 @@ def translate_instances(
 
 
 def triangulate(
-    mesh: nt.ProcNode[pt.MeshObject],
+    mesh: nt.ProcNode[pt.MeshObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     minimum_vertices: nt.SocketOrVal[int] = 4,
     ngon_method: Literal["BEAUTY", "CLIP"] = "BEAUTY",
@@ -4053,7 +4076,7 @@ def triangulate(
 
 
 def trim_curve(
-    curve: nt.ProcNode[pt.CurveObject],
+    curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     start: nt.SocketOrVal[float] = 0.0,
     end: nt.SocketOrVal[float] = 1.0,
@@ -4072,7 +4095,7 @@ def trim_curve(
 
 
 def uv_pack_islands(
-    uv: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    uv: nt.SocketOrVal[pt.Vector],
     selection: nt.SocketOrVal[bool] = True,
     margin: nt.SocketOrVal[float] = 0.001,
     rotate: nt.SocketOrVal[bool] = True,
@@ -4131,32 +4154,30 @@ TViewer = TypeVar(
 )
 
 
-'''
-def viewer(
-    geometry: t.ProcNode[t.Geometry],
-    value: TViewer = 0,
-    domain: TDomain = "AUTO",
-    data_type: NodeDataType | RuntimeResolveDataType | None = None,
-) -> t.ProcNode:
-    """
-    Uses a Viewer Geometry Node.
-
-    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
-    """
-    if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
-    return t.ProcNode.from_nodetype(
-        node_type="GeometryNodeViewer",
-        inputs={"Geometry": geometry, "Value": value},
-        attrs={
-            "domain": domain,
-            "data_type": data_type,
-        },
-    )
-'''
+# def viewer(
+#     geometry: t.ProcNode[t.Geometry],
+#     value: TViewer = 0,
+#     domain: TDomain = "AUTO",
+#     data_type: NodeDataType | RuntimeResolveDataType | None = None,
+# ) -> t.ProcNode:
+#     """
+#     Uses a Viewer Geometry Node.
+#
+#     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
+#     """
+#     if data_type is None:
+#         data_type = RuntimeResolveDataType(
+#             [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
+#             ["Value"],
+#         )
+#     return t.ProcNode.from_nodetype(
+#         node_type="GeometryNodeViewer",
+#         inputs={"Geometry": geometry, "Value": value},
+#         attrs={
+#             "domain": domain,
+#             "data_type": data_type,
+#         },
+#     )
 
 
 class ViewportTransformResult(NamedTuple):
@@ -4213,7 +4234,7 @@ def volume_cube(
 
 
 def volume_to_mesh(
-    volume: nt.ProcNode[pt.VolumeObject],
+    volume: nt.ProcNode[pt.VolumeObject] | None,
     threshold: nt.SocketOrVal[float] = 0.1,
     adaptivity: nt.SocketOrVal[float] = 0.0,
     resolution_mode: Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"] = "GRID",

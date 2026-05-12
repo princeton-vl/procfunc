@@ -28,7 +28,7 @@ def test_to_material_with_texture():
     """Test to_material with texture nodes."""
     # Create a texture-based material
     coord = pf.nodes.shader.coord()
-    noise = pf.nodes.shader.noise(
+    noise = pf.nodes.texture.noise(
         vector=coord.generated, scale=5.0, detail=2.0, roughness=0.5
     )
 
@@ -64,7 +64,7 @@ def test_to_environment_basic():
 def test_to_environment_with_sky():
     """Test to_environment with sky texture."""
     # Create sky-based environment
-    sky = pf.nodes.shader.sky(sky_type="NISHITA", sun_elevation=0.5, sun_rotation=0.0)
+    sky = pf.nodes.texture.sky(sky_type="NISHITA", sun_elevation=0.5, sun_rotation=0.0)
 
     background = pf.nodes.shader.background(color=sky, strength=1.0)
 
@@ -103,7 +103,7 @@ def test_material_with_displacement():
     """Test material creation with displacement."""
     # Create material with displacement
     coord = pf.nodes.shader.coord()
-    noise = pf.nodes.shader.noise(vector=coord.generated, scale=2.0)
+    noise = pf.nodes.texture.noise(vector=coord.generated, scale=2.0)
 
     bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.8, 0.8, 1.0))
 
@@ -163,11 +163,11 @@ def test_complex_shader_network():
     coord = pf.nodes.shader.coord()
     mapping = pf.nodes.shader.mapping(vector=coord.generated, scale=(2.0, 2.0, 2.0))
 
-    noise1 = pf.nodes.shader.noise(vector=mapping, scale=5.0)
+    noise1 = pf.nodes.texture.noise(vector=mapping, scale=5.0)
 
-    noise2 = pf.nodes.shader.noise(vector=mapping, scale=10.0, roughness=0.3)
+    noise2 = pf.nodes.texture.noise(vector=mapping, scale=10.0, roughness=0.3)
 
-    mix_color = pf.nodes.func.mix_rgb(factor=0.5, a=noise1.color, b=noise2.color)
+    mix_color = pf.nodes.color.mix_rgb(factor=0.5, a=noise1.color, b=noise2.color)
 
     bsdf = pf.nodes.shader.principled_bsdf(
         base_color=mix_color, roughness=noise1.fac, metallic=0.0

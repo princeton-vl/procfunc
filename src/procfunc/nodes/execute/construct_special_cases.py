@@ -74,6 +74,22 @@ def special_case_float_curve(
     bl_node.mapping.update()
 
 
+def _apply_curves(bl_node: bpy.types.Node, curves):
+    # Accept either list[np.ndarray] or a single stacked ndarray of shape
+    # (n_curves, n_points, 2); both iterate per-curve on the outer dim.
+    if len(curves) != len(bl_node.mapping.curves):
+        raise ValueError(
+            f"{bl_node.bl_idname} expects {len(bl_node.mapping.curves)} curves, "
+            f"got {len(curves)}"
+        )
+    for bl_curve, curve_np in zip(bl_node.mapping.curves, curves, strict=True):
+        while len(bl_curve.points) < len(curve_np):
+            bl_curve.points.new(0, 0)
+        for i, (x, y) in enumerate(curve_np):
+            bl_curve.points[i].location = (x, y)
+    bl_node.mapping.update()
+
+
 def special_case_rgb_curves(
     bl_node: bpy.types.Node,
     attrs: dict[str, Any],
@@ -84,15 +100,7 @@ def special_case_rgb_curves(
     curves = attrs.pop("curves", None)
     if curves is None:
         return
-
-    for bl_curve, curve_np in zip(bl_node.mapping.curves, curves):
-        while len(bl_curve.points) < len(curve_np):
-            bl_curve.points.new(0, 0)
-
-        for i, (x, y) in enumerate(curve_np):
-            bl_curve.points[i].location = (x, y)
-
-    bl_node.mapping.update()
+    _apply_curves(bl_node, curves)
 
 
 def special_case_vector_curves(
@@ -105,15 +113,7 @@ def special_case_vector_curves(
     curves = attrs.pop("curves", None)
     if curves is None:
         return
-
-    for bl_curve, curve_np in zip(bl_node.mapping.curves, curves):
-        while len(bl_curve.points) < len(curve_np):
-            bl_curve.points.new(0, 0)
-
-        for i, (x, y) in enumerate(curve_np):
-            bl_curve.points[i].location = (x, y)
-
-    bl_node.mapping.update()
+    _apply_curves(bl_node, curves)
 
 
 def special_case_file_output(
@@ -242,10 +242,13 @@ def special_case_value_outputdefault(
 
 NODE_SPECIAL_CASES = {
     "ShaderNodeValToRGB": special_case_color_ramp,
+    "CompositorNodeValToRGB": special_case_color_ramp,
     "ShaderNodeFloatCurve": special_case_float_curve,
     "ShaderNodeMapRange": special_case_map_range,
     "ShaderNodeRGBCurve": special_case_rgb_curves,
+    "CompositorNodeCurveRGB": special_case_rgb_curves,
     "ShaderNodeVectorCurve": special_case_vector_curves,
+    "CompositorNodeCurveVec": special_case_vector_curves,
     "CompositorNodeOutputFile": special_case_file_output,
     nt.INPUT_NODE_TYPE: special_case_input,
     "GeometryNodeCaptureAttribute": special_case_capture_attribute,

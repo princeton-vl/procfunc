@@ -64,7 +64,7 @@ uv run python scripts/visualize_bgym_pf_start_goal.py material outputs/bench_dat
 uv run python scripts/visualize_bgym_pf_start_goal.py geometry outputs/bench_data outputs/bench_data_pf outputs/visualize_bgym_pf_geometry
 ```
 
-The procfunc start and end renders are not exact matches to the original BlenderGym renders. The main sources of error are (1) different random seeds for placement of geometry particles (e.g. grains of sugar in tasks geometry46-geometry50), and a difference subsurface shading model (e.g. geometry49) due to our using Blender4.2 vs Blender3.6. 
+The procfunc start and end renders are not exact matches to the original BlenderGym renders. The main sources of error are (1) different random seeds for placement of geometry particles (e.g. grains of sugar in tasks geometry46-geometry50), and (2) a different subsurface shading model (e.g. geometry49) due to our using Blender4.2 vs Blender3.6.
 In both cases these are not major semantic differences and should not affect the difficulty of the task, since the required code edits do not change and the image differences do not obscure the edits needed.
 
 ### Generate BlenderGym From-Scratch Procedural Generation Files
@@ -85,8 +85,8 @@ However, you may re-generate using commands below, and especially should do so i
 
 Generate simple .txt reference files for ProcFunc and BlenderGym/Infinigen1.2.5's NodeWrangler interface:
 ```bash
-uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_shader_interface.py ../src/procfunc/nodes/{math,shader}.py
-uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_geo_interface.py ../src/procfunc/nodes/{math,func,shader,geo}.py
+uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_shader_interface.py ../src/procfunc/nodes/{math,color,shader,texture}.py
+uv run python scripts/create_procfunc_incontext_reference.py prompts/reference_code/pf_geo_interface.py ../src/procfunc/nodes/{math,color,func,shader,geo,texture}.py
 ./blender_3_6.sh --background --python scripts/create_blender_nodes_interface.py -- prompts/reference_code/ifg_shader_nodes_interface.txt --node-types ShaderNode 
 ./blender_3_6.sh --background --python scripts/create_blender_nodes_interface.py -- prompts/reference_code/ifg_geo_nodes_interface.txt --node-types GeometryNode ShaderNode FunctionNode
 ```

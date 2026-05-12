@@ -2,7 +2,6 @@
 
 [**Documentation**](#documentation)
 | [**Research Paper**](https://arxiv.org/abs/2604.26943)
-| [**Documentation**](https://procfunc.readthedocs.io)
 | [**Transpiling**](#transpile-a-blender-file-to-procfunc-code)
 | [**Experiments**](#experiments)
 | [**Contributing**](#contributing)

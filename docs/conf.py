@@ -4,6 +4,7 @@ from pathlib import Path
 
 from docutils import nodes as _docnodes
 from sphinx import addnodes as _addnodes
+from sphinx.util.nodes import make_refnode as _make_refnode
 
 import procfunc
 
@@ -63,6 +64,7 @@ DOC_PACKAGES = {
     "tracer": ("procfunc.tracer", "pf.tracer"),
     "transforms": ("procfunc.transforms", "pf.transforms"),
     "transpiler": ("procfunc.transpiler", "pf.transpiler"),
+    "codegen": ("procfunc.codegen", "pf.codegen"),
     "types": ("procfunc.types", "pf.types"),
 }
 
@@ -147,11 +149,10 @@ _PACKAGE_TEMPLATE = """\
 {title_underline}
 
 .. automodule:: {modname}
-   :no-members:
-
-{submodules_section}
-{members_section}
-{submodule_details}
+   :members:
+   :imported-members:
+   :undoc-members:
+{submodule_sections}
 """
 
 
@@ -186,9 +187,6 @@ def _emit_cli_page(out_dir: Path) -> None:
 _TOPLEVEL_TEMPLATE = """\
 {title}
 {title_underline}
-
-.. automodule:: {modname}
-   :no-members:
 
 Subpackages
 -----------
@@ -272,57 +270,35 @@ def _emit_package_page(slug: str, modname: str, title: str, out_dir: Path) -> No
         _emit_top_level_page(slug, modname, title, mod, out_dir)
         return
 
-    names = _public_names(mod)
-    submodules: list[str] = []
-    direct: list[str] = []
-    for n in names:
-        try:
-            attr = getattr(mod, n)
-        except AttributeError:
-            continue
+    # Only submodules explicitly listed in __all__ get their own subsection;
+    # everything else is documented under the package's :imported-members:
+    # block at the package's public path.
+    all_names = getattr(mod, "__all__", None) or []
+    category_submodules: list[str] = []
+    for n in all_names:
+        attr = getattr(mod, n, None)
         if inspect.ismodule(attr) and attr.__name__.startswith(modname + "."):
-            submodules.append(attr.__name__)
-        else:
-            direct.append(n)
+            category_submodules.append(attr.__name__)
 
     short_prefix = modname.replace("procfunc", "pf")
-
-    if submodules:
-        sub_lines = []
-        for sub in submodules:
+    submodule_sections = ""
+    if category_submodules:
+        blocks = []
+        for sub in category_submodules:
             short = sub.split(".")[-1]
-            sub_lines.append(f"* :ref:`{short_prefix}.{short} <{sub}>` — ``{sub}``")
-        submodules_section = "Submodules\n----------\n\n" + "\n".join(sub_lines)
-    else:
-        submodules_section = ""
-
-    if direct:
-        members_section = (
-            f"Members\n-------\n\n"
-            f".. automodule:: {modname}\n"
-            f"   :members:\n   :imported-members:\n   :undoc-members:"
-        )
-    else:
-        members_section = ""
-
-    detail_blocks = []
-    for sub in submodules:
-        short = sub.split(".")[-1]
-        header = f"``{short_prefix}.{short}``"
-        detail_blocks.append(
-            f".. _{sub}:\n\n"
-            f"{header}\n{'-' * len(header)}\n\n"
-            f".. automodule:: {sub}\n"
-            f"   :members:\n   :undoc-members:"
-        )
+            header = f"``{short_prefix}.{short}``"
+            blocks.append(
+                f"{header}\n{'-' * len(header)}\n\n"
+                f".. automodule:: {sub}\n"
+                f"   :members:\n   :undoc-members:\n"
+            )
+        submodule_sections = "\n" + "\n".join(blocks)
 
     rst = _PACKAGE_TEMPLATE.format(
         title=title,
         title_underline="=" * len(title),
         modname=modname,
-        submodules_section=submodules_section,
-        members_section=members_section,
-        submodule_details="\n\n".join(detail_blocks),
+        submodule_sections=submodule_sections,
     )
     (out_dir / f"{slug}.rst").write_text(rst)
 
@@ -395,11 +371,37 @@ def _numpy_docs_url(target: str) -> str | None:
     return f"{_NUMPY_DOCS}/generated/{target}.html"
 
 
-def _resolve_external_xref(app, env, node, contnode):  # noqa: ARG001
+_DOC_PACKAGE_MODULES = frozenset(name for name, _ in DOC_PACKAGES.values())
+
+
+def _resolve_internal_inner_xref(app, env, node, contnode, target):
+    """Redirect inner-module xrefs to the package-level re-export path.
+
+    e.g. ``procfunc.compute_graph.node.Node`` → ``procfunc.compute_graph.Node``.
+    Returns None if no candidate exists in the py domain inventory.
+    """
+    parts = target.split(".")
+    if len(parts) < 4 or parts[0] != "procfunc":
+        return None
+    pkg = f"procfunc.{parts[1]}"
+    if pkg not in _DOC_PACKAGE_MODULES:
+        return None
+    candidate = f"{pkg}.{parts[-1]}"
+    domain = env.get_domain("py")
+    obj = domain.objects.get(candidate)
+    if obj is None:
+        return None
+    fromdocname = node.get("refdoc", env.docname)
+    return _make_refnode(
+        app.builder, fromdocname, obj.docname, obj.node_id, contnode, candidate
+    )
+
+
+def _resolve_external_xref(app, env, node, contnode):
     target = node.get("reftarget", "")
     url = _blender_docs_url(target) or _numpy_docs_url(target)
     if url is None:
-        return None
+        return _resolve_internal_inner_xref(app, env, node, contnode, target)
     ref = _docnodes.reference("", "", internal=False, refuri=url, reftitle=target)
     ref.append(contnode)
     return ref

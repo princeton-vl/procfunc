@@ -57,7 +57,7 @@ def transpile_blendergym_task_blendfile(blend_path: Path, code_path: Path, task_
         objects_arg = "Cube"
 
     cmd = (
-        "uv run --no-sync python -m procfunc.transpiler.main".split()
+        "uv run --no-sync python -m procfunc.cli transpile".split()
         + [str(blend_path)]
         + ["--objects", objects_arg]
         + ["--output", str(code_path)]
@@ -68,7 +68,7 @@ def transpile_blendergym_task_blendfile(blend_path: Path, code_path: Path, task_
     if task_type == "geometry":
         cmd += ["--transforms", "extract_materials"]
     else:
-        cmd += ["--include_object_materials"]
+        cmd += ["--include_object_materials", "1"]
 
     print(" ".join(cmd))
     subprocess.check_call(cmd)

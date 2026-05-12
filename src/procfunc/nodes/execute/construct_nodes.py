@@ -208,7 +208,9 @@ def _set_node_attribute(bl_node: bpy.types.Node, k: str, v: Any):
             a for a in dir(bl_node) if not a.startswith("_") and not a.startswith("bl_")
         ]
         raise ValueError(
-            f"Node {bl_node.type} has no attribute {k!r}, available attributes: {available}"
+            f"{bl_node.bl_idname} has no attribute {k!r}={v!r} — likely a "
+            f"shader/geometry-only option used in a {bl_node.id_data.bl_idname} "
+            f"context. Available attributes: {available}"
         )
     try:
         setattr(bl_node, k, v)
@@ -225,7 +227,21 @@ def _set_node_attribute(bl_node: bpy.types.Node, k: str, v: Any):
 
 
 def _map_keys(d: dict, map: dict) -> dict:
-    return {map.get(k, k): v for k, v in d.items()}
+    return {map.get(k, k): v for k, v in d.items() if map.get(k, k) is not None}
+
+
+def _resolve_output_socket_name(
+    source: cg.Node, attribute_name: str, bl_node_tree: bpy.types.NodeTree
+) -> str:
+    """If `source` is a contextual ProceduralNode, remap the output socket name per its output_keys_map."""
+    if not isinstance(source, cg.ProceduralNode):
+        return attribute_name
+    ctx = ContextualNode.parse_name(source.node_type)
+    if ctx is None:
+        return attribute_name
+    group_type = bni.NodeGroupType(bl_node_tree.bl_idname)
+    output_keys_map = resolve_contextual_node(ctx, group_type).output_keys_map or {}
+    return output_keys_map.get(attribute_name, attribute_name)
 
 
 def _resolve_data_type(
@@ -298,18 +314,26 @@ def _construct_procnode_standard(
     #   difference happens when we are using a given operation for shader vs geometry vs compositor - the same op has a different name via the bl4.2 api
     if nt := ContextualNode.parse_name(node_type):
         group_type = bni.NodeGroupType(bl_node_tree.bl_idname)
-        node_type, keymap = resolve_contextual_node(nt, group_type)
-        if keymap:
+        resolution = resolve_contextual_node(nt, group_type)
+        node_type = resolution.node_type
+        if keymap := resolution.input_keys_map:
             logger.debug(
                 f"Applying keymap {keymap} to {input_results.keys()=} for context {node_type=} {group_type=}"
             )
             kwargs = _map_keys(kwargs, keymap)
             input_results = _map_keys(input_results, keymap)
+            attrs = _map_keys(attrs, keymap)
 
     bl_node = bl_node_tree.nodes.new(node_type)
 
     for attr_key in ["data_type", "input_type"]:  # Switch node uses input_type
         if attr_key not in attrs:
+            continue
+        if isinstance(attrs[attr_key], RuntimeResolveDataType) and not hasattr(
+            bl_node, attr_key
+        ):
+            # auto-resolve default landed on a node without this attr; drop it
+            attrs.pop(attr_key)
             continue
         attrs[attr_key] = _resolve_data_type(
             attrs[attr_key], attr_key, node, bl_node, bl_node_tree, input_results
@@ -391,11 +415,15 @@ def _dispatch_construct_procnode_by_type(
 ):
     if isinstance(node, cg.GetAttributeNode):
         base_node = construct_procnode_to_bpy(node.source, bl_node_tree, cache)
-        return get_nth_socket(base_node.outputs, node.attribute_name, 0, base_node.type)
+        socket_name = _resolve_output_socket_name(
+            node.source, node.attribute_name, bl_node_tree
+        )
+        return get_nth_socket(base_node.outputs, socket_name, 0, base_node.type)
 
     match node:
         case cg.GetAttributeNode(args=(source,), attribute_name=socket_name):
             base_node = construct_procnode_to_bpy(source, bl_node_tree, cache)
+            socket_name = _resolve_output_socket_name(source, socket_name, bl_node_tree)
             return get_nth_socket(base_node.outputs, socket_name, 0, base_node.type)
         case cg.ProceduralNode():
             return _construct_procnode_standard(node, bl_node_tree, input_results)
@@ -450,7 +478,10 @@ def construct_procnode_to_bpy(
         assert len(node.kwargs) == 0, node.kwargs
         base_node = construct_procnode_to_bpy(node.args[0], bl_node_tree, cache)
         assert isinstance(base_node, bpy.types.Node), base_node
-        return get_nth_socket(base_node.outputs, node.attribute_name, 0, base_node.type)
+        socket_name = _resolve_output_socket_name(
+            node.args[0], node.attribute_name, bl_node_tree
+        )
+        return get_nth_socket(base_node.outputs, socket_name, 0, base_node.type)
 
     def _construct_leaf(input_val: cg.Node | Any | None):
         if not isinstance(input_val, cg.Node):

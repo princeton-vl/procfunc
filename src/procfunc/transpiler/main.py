@@ -10,6 +10,7 @@ import pandas as pd
 import procfunc as pf
 from procfunc import compute_graph as cg
 from procfunc import transforms as tr
+from procfunc.codegen import default_func_resolution_map, to_python
 from procfunc.nodes import NODE_OPERATOR_TABLE
 from procfunc.util import pytree
 
@@ -19,7 +20,6 @@ from .bpy_to_computegraph import (
     parse_node_tree,
     parse_object,
 )
-from .codegen import default_func_resolution_map, to_python
 
 logging.basicConfig(
     format="[%(asctime)s.%(msecs)03d] [%(module)s] [%(levelname)s] | %(message)s",

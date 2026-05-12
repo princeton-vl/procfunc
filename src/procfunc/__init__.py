@@ -41,6 +41,7 @@ from .types import (
     LightObject,
     LightProbeObject,
     MetaObject,
+    PointCloudObject,
     Material,
     Texture,
     Collection,

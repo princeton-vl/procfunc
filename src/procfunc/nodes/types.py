@@ -64,14 +64,6 @@ def _has_unpreprocessed_inputs(node: cg.Node) -> bool:
 
 
 class ProcNode(Generic[T]):
-    """
-    Result datatype for all functions that return shader nodes, geometry nodes or compositor nodes.
-
-    ProcNode stores the data necessary to construct a blender nodegroup upon later execution.
-
-    ProcNode defines dunders to allow concise construction of nodegraphs e.g. __getattr__ and __add__, which map to appropriate blender nodes.
-    """
-
     def __init__(
         self,
         node: cg.Node,
@@ -92,16 +84,6 @@ class ProcNode(Generic[T]):
         self._node.metadata["definition"] = _node_definition_metadata()
 
     def astype(self, dtype: type) -> "ProcNode":
-        """
-        Marks a node as having been converted to a different internal data type, similarly to np.astype
-
-        Currently this just adds runtime NodeType data to help subsequent type-inferred functions/operators
-        make a correct choice of data_type.
-
-        e.g noise.color + (0.5, 0.5, 0.5) fails but noise.color.astype(t.Vector) + (0.5, 0.5, 0.5) works,
-        because `+` is defined for Vector but not Color
-        """
-
         node = copy.copy(self._node)
         node.metadata = copy.copy(self._node.metadata)
         node.metadata["known_value_type"] = dtype

@@ -1,5 +1,7 @@
 from typing import Any, Literal, NamedTuple
 
+import numpy as np
+
 from procfunc import types as pt
 from procfunc.nodes import types as nt
 
@@ -77,8 +79,8 @@ def render_layers() -> RenderLayersResult:
 
 def alpha_over(
     fac: nt.SocketOrVal[float] = 1.0,
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     premul: float = 0.0,
     use_premultiply: bool = False,
 ) -> nt.ProcNode:
@@ -89,7 +91,7 @@ def alpha_over(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeAlphaOver",
-        inputs={"Fac": fac, ("Image", 0): image_0, ("Image", 1): image_1},
+        inputs={"Fac": fac, ("Image", 0): a, ("Image", 1): b},
         attrs={"premul": premul, "use_premultiply": use_premultiply},
     )
 
@@ -116,7 +118,7 @@ def anti_aliasing(
     )
 
 
-def bilateralblur(
+def bilateral_blur(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     determinator: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     iterations: int = 1,
@@ -497,113 +499,40 @@ def color_spill(
     )
 
 
-def comb_hsva(
-    h: nt.SocketOrVal[float] = 0.0,
-    s: nt.SocketOrVal[float] = 0.0,
-    v: nt.SocketOrVal[float] = 0.0,
-    a: nt.SocketOrVal[float] = 1.0,
-) -> nt.ProcNode:
-    """
-    Uses a CombHSVA Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeCombHSVA",
-        inputs={"H": h, "S": s, "V": v, "A": a},
-        attrs={},
-    )
-
-
-def comb_rgba(
-    r: nt.SocketOrVal[float] = 0.0,
-    g: nt.SocketOrVal[float] = 0.0,
-    b: nt.SocketOrVal[float] = 0.0,
-    a: nt.SocketOrVal[float] = 1.0,
-) -> nt.ProcNode:
-    """
-    Uses a CombRGBA Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeCombRGBA",
-        inputs={"R": r, "G": g, "B": b, "A": a},
-        attrs={},
-    )
-
-
-def comb_ycca(
+def combine_ycc(
     y: nt.SocketOrVal[float] = 0.0,
     cb: nt.SocketOrVal[float] = 0.5,
     cr: nt.SocketOrVal[float] = 0.5,
-    a: nt.SocketOrVal[float] = 1.0,
-    mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
-) -> nt.ProcNode:
-    """
-    Uses a CombYCCA Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeCombYCCA",
-        inputs={"Y": y, "Cb": cb, "Cr": cr, "A": a},
-        attrs={"mode": mode},
-    )
-
-
-def comb_yuva(
-    y: nt.SocketOrVal[float] = 0.0,
-    u: nt.SocketOrVal[float] = 0.0,
-    v: nt.SocketOrVal[float] = 0.0,
-    a: nt.SocketOrVal[float] = 1.0,
-) -> nt.ProcNode:
-    """
-    Uses a CombYUVA Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeCombYUVA",
-        inputs={"Y": y, "U": u, "V": v, "A": a},
-        attrs={},
-    )
-
-
-def combine_color(
-    red: nt.SocketOrVal[float] = 0.0,
-    green: nt.SocketOrVal[float] = 0.0,
-    blue: nt.SocketOrVal[float] = 0.0,
     alpha: nt.SocketOrVal[float] = 1.0,
-    mode: Literal["RGB", "HSV", "HSL", "YCC", "YUV"] = "RGB",
     ycc_mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
-) -> nt.ProcNode:
+) -> nt.ProcNode[pt.Color]:
     """
-    Uses a CombineColor Compositor Node.
+    Uses a CombineColor Compositor Node in YCC mode.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/combine_color.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeCombineColor",
-        inputs={"Red": red, "Green": green, "Blue": blue, "Alpha": alpha},
-        attrs={"mode": mode, "ycc_mode": ycc_mode},
+        inputs={"Red": y, "Green": cb, "Blue": cr, "Alpha": alpha},
+        attrs={"mode": "YCC", "ycc_mode": ycc_mode},
     )
 
 
-def combine_xyz(
-    x: nt.SocketOrVal[float] = 0.0,
+def combine_yuv(
     y: nt.SocketOrVal[float] = 0.0,
-    z: nt.SocketOrVal[float] = 0.0,
-) -> nt.ProcNode:
+    u: nt.SocketOrVal[float] = 0.0,
+    v: nt.SocketOrVal[float] = 0.0,
+    alpha: nt.SocketOrVal[float] = 1.0,
+) -> nt.ProcNode[pt.Color]:
     """
-    Uses a CombineXYZ Compositor Node.
+    Uses a CombineColor Compositor Node in YUV mode.
 
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/vector/combine_xyz.html
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/combine_color.html
     """
     return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeCombineXYZ",
-        inputs={"X": x, "Y": y, "Z": z},
-        attrs={},
+        node_type="CompositorNodeCombineColor",
+        inputs={"Red": y, "Green": u, "Blue": v, "Alpha": alpha},
+        attrs={"mode": "YUV"},
     )
 
 
@@ -728,72 +657,6 @@ def cryptomatte(
     )
 
 
-def curve_rgb(
-    fac: nt.SocketOrVal[float] = 1.0,
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    black_level: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
-    white_level: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-) -> nt.ProcNode:
-    """
-    Uses a CurveRGB Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/rgb_curves.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeCurveRGB",
-        inputs={
-            "Fac": fac,
-            "Image": image,
-            "Black Level": black_level,
-            "White Level": white_level,
-        },
-        attrs={},
-    )
-
-
-def curve_vec(vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0)) -> nt.ProcNode:
-    """
-    Uses a CurveVec Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/rgb_curves.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeCurveVec",
-        inputs={"Vector": vector},
-        attrs={},
-    )
-
-
-def d_blur(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    angle: float = 0.0,
-    center_x: float = 0.5,
-    center_y: float = 0.5,
-    distance: float = 0.0,
-    iterations: int = 1,
-    spin: float = 0.0,
-    zoom: float = 0.0,
-) -> nt.ProcNode:
-    """
-    Uses a DBlur Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/filter/blur/directional_blur.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeDBlur",
-        inputs={"Image": image},
-        attrs={
-            "angle": angle,
-            "center_x": center_x,
-            "center_y": center_y,
-            "distance": distance,
-            "iterations": iterations,
-            "spin": spin,
-            "zoom": zoom,
-        },
-    )
-
-
 def defocus(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     z: nt.SocketOrVal[float] = 1.0,
@@ -871,8 +734,8 @@ def despeckle(
 
 
 def diff_matte(
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_2: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     falloff: float = 0.1,
     tolerance: float = 0.1,
 ) -> nt.ProcNode:
@@ -883,7 +746,7 @@ def diff_matte(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeDiffMatte",
-        inputs={"Image 1": image_1, "Image 2": image_2},
+        inputs={"Image 1": a, "Image 2": b},
         attrs={"falloff": falloff, "tolerance": tolerance},
     )
 
@@ -906,6 +769,36 @@ def dilate_erode(
         node_type="CompositorNodeDilateErode",
         inputs={"Mask": mask},
         attrs={"distance": distance, "edge": edge, "falloff": falloff, "mode": mode},
+    )
+
+
+def directional_blur(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    angle: float = 0.0,
+    center_x: float = 0.5,
+    center_y: float = 0.5,
+    distance: float = 0.0,
+    iterations: int = 1,
+    spin: float = 0.0,
+    zoom: float = 0.0,
+) -> nt.ProcNode:
+    """
+    Uses a DBlur Compositor Node.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/filter/blur/directional_blur.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeDBlur",
+        inputs={"Image": image},
+        attrs={
+            "angle": angle,
+            "center_x": center_x,
+            "center_y": center_y,
+            "distance": distance,
+            "iterations": iterations,
+            "spin": spin,
+            "zoom": zoom,
+        },
     )
 
 
@@ -1110,19 +1003,6 @@ def glare(
     )
 
 
-def group(node_tree: Any = None) -> nt.ProcNode:
-    """
-    Uses a Group Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/group.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeGroup",
-        inputs={},
-        attrs={"node_tree": node_tree},
-    )
-
-
 def hue_correct(
     fac: nt.SocketOrVal[float] = 1.0, image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)
 ) -> nt.ProcNode:
@@ -1134,31 +1014,6 @@ def hue_correct(
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeHueCorrect",
         inputs={"Fac": fac, "Image": image},
-        attrs={},
-    )
-
-
-def hue_sat(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    hue: nt.SocketOrVal[float] = 0.5,
-    saturation: nt.SocketOrVal[float] = 1.0,
-    value: nt.SocketOrVal[float] = 1.0,
-    fac: nt.SocketOrVal[float] = 1.0,
-) -> nt.ProcNode:
-    """
-    Uses a HueSat Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/hue_saturation.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeHueSat",
-        inputs={
-            "Image": image,
-            "Hue": hue,
-            "Saturation": saturation,
-            "Value": value,
-            "Fac": fac,
-        },
         attrs={},
     )
 
@@ -1345,7 +1200,7 @@ def kuwahara(
     )
 
 
-def lensdist(
+def lens_distortion(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     distortion: nt.SocketOrVal[float] = 0.0,
     dispersion: nt.SocketOrVal[float] = 0.0,
@@ -1401,31 +1256,6 @@ def luma_matte(
         node_type="CompositorNodeLumaMatte",
         inputs={"Image": image},
         attrs={"limit_max": limit_max, "limit_min": limit_min},
-    )
-
-
-def map_range(
-    value: nt.SocketOrVal[float] = 1.0,
-    from_min: nt.SocketOrVal[float] = 0.0,
-    from_max: nt.SocketOrVal[float] = 1.0,
-    to_min: nt.SocketOrVal[float] = 0.0,
-    to_max: nt.SocketOrVal[float] = 1.0,
-) -> nt.ProcNode:
-    """
-    Uses a MapRange Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/utilities/map_range.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeMapRange",
-        inputs={
-            "Value": value,
-            "From Min": from_min,
-            "From Max": from_max,
-            "To Min": to_min,
-            "To Max": to_max,
-        },
-        attrs={},
     )
 
 
@@ -1506,25 +1336,10 @@ def mask(
     )
 
 
-def math(
-    value_0: nt.SocketOrVal[float] = 0.5, value_1: nt.SocketOrVal[float] = 0.5
-) -> nt.ProcNode:
-    """
-    Uses a Math Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/utilities/math.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeMath",
-        inputs={("Value", 0): value_0, ("Value", 1): value_1},
-        attrs={},
-    )
-
-
 def mix_rgb(
     fac: nt.SocketOrVal[float] = 1.0,
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     blend_type: TBlendType = "MIX",
     use_alpha: bool = False,
 ) -> nt.ProcNode:
@@ -1535,7 +1350,7 @@ def mix_rgb(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeMixRGB",
-        inputs={"Fac": fac, ("Image", 0): image_0, ("Image", 1): image_1},
+        inputs={"Fac": fac, ("Image", 0): a, ("Image", 1): b},
         attrs={"blend_type": blend_type, "use_alpha": use_alpha},
     )
 
@@ -1700,7 +1515,7 @@ def posterize(
     )
 
 
-def premul_key(
+def premultiply_key(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     mapping: Literal["STRAIGHT_TO_PREMUL", "PREMUL_TO_STRAIGHT"] = "STRAIGHT_TO_PREMUL",
 ) -> nt.ProcNode:
@@ -1723,6 +1538,30 @@ def rgb() -> nt.ProcNode:
     See: https://docs.blender.org/manual/en/4.2/compositing/types/input/constant/rgb.html
     """
     return nt.ProcNode.from_nodetype(node_type="CompositorNodeRGB", inputs={}, attrs={})
+
+
+def rgb_curve(
+    fac: nt.SocketOrVal[float],
+    image: nt.SocketOrVal[pt.Color],
+    black_level: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
+    white_level: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    curves: list[np.ndarray] | np.ndarray | None = None,
+) -> nt.ProcNode:
+    """
+    Uses a CurveRGB Compositor Node.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/rgb_curves.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeCurveRGB",
+        inputs={
+            "Fac": fac,
+            "Image": image,
+            "Black Level": black_level,
+            "White Level": white_level,
+        },
+        attrs={"curves": curves},
+    )
 
 
 def rgb_to_bw(image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1)) -> nt.ProcNode:
@@ -1800,110 +1639,60 @@ def scene_time() -> SceneTimeResult:
     return SceneTimeResult(node._output_socket("seconds"), node._output_socket("frame"))
 
 
-class SepHsvaResult(NamedTuple):
-    h: nt.ProcNode[float]
-    s: nt.ProcNode[float]
-    v: nt.ProcNode[float]
-    a: nt.ProcNode[float]
-
-
-def sep_hsva(image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)) -> SepHsvaResult:
-    """
-    Uses a SepHSVA Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/separate_color.html
-    """
-    node = nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeSepHSVA",
-        inputs={"Image": image},
-        attrs={},
-    )
-    return SepHsvaResult(
-        node._output_socket("h"),
-        node._output_socket("s"),
-        node._output_socket("v"),
-        node._output_socket("a"),
-    )
-
-
-class SepRgbaResult(NamedTuple):
-    r: nt.ProcNode[float]
-    g: nt.ProcNode[float]
-    b: nt.ProcNode[float]
-    a: nt.ProcNode[float]
-
-
-def sep_rgba(image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)) -> SepRgbaResult:
-    """
-    Uses a SepRGBA Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/separate_color.html
-    """
-    node = nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeSepRGBA",
-        inputs={"Image": image},
-        attrs={},
-    )
-    return SepRgbaResult(
-        node._output_socket("r"),
-        node._output_socket("g"),
-        node._output_socket("b"),
-        node._output_socket("a"),
-    )
-
-
-class SepYccaResult(NamedTuple):
+class SeparateYccResult(NamedTuple):
     y: nt.ProcNode[float]
     cb: nt.ProcNode[float]
     cr: nt.ProcNode[float]
-    a: nt.ProcNode[float]
+    alpha: nt.ProcNode[float]
 
 
-def sep_ycca(
-    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
-) -> SepYccaResult:
+def separate_ycc(
+    color: nt.SocketOrVal[pt.Color],
+    ycc_mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
+) -> SeparateYccResult:
     """
-    Uses a SepYCCA Compositor Node.
+    Uses a SeparateColor Compositor Node in YCC mode.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/separate_color.html
     """
-    node = nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeSepYCCA",
-        inputs={"Image": image},
-        attrs={"mode": mode},
+    res = nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeSeparateColor",
+        inputs={"Image": color},
+        attrs={"mode": "YCC", "ycc_mode": ycc_mode},
     )
-    return SepYccaResult(
-        node._output_socket("y"),
-        node._output_socket("cb"),
-        node._output_socket("cr"),
-        node._output_socket("a"),
+    return SeparateYccResult(
+        y=res._output_socket("red"),
+        cb=res._output_socket("green"),
+        cr=res._output_socket("blue"),
+        alpha=res._output_socket("alpha"),
     )
 
 
-class SepYuvaResult(NamedTuple):
+class SeparateYuvResult(NamedTuple):
     y: nt.ProcNode[float]
     u: nt.ProcNode[float]
     v: nt.ProcNode[float]
-    a: nt.ProcNode[float]
+    alpha: nt.ProcNode[float]
 
 
-def sep_yuva(image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)) -> SepYuvaResult:
+def separate_yuv(
+    color: nt.SocketOrVal[pt.Color],
+) -> SeparateYuvResult:
     """
-    Uses a SepYUVA Compositor Node.
+    Uses a SeparateColor Compositor Node in YUV mode.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/separate_color.html
     """
-    node = nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeSepYUVA",
-        inputs={"Image": image},
-        attrs={},
+    res = nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeSeparateColor",
+        inputs={"Image": color},
+        attrs={"mode": "YUV"},
     )
-    return SepYuvaResult(
-        node._output_socket("y"),
-        node._output_socket("u"),
-        node._output_socket("v"),
-        node._output_socket("a"),
+    return SeparateYuvResult(
+        y=res._output_socket("red"),
+        u=res._output_socket("green"),
+        v=res._output_socket("blue"),
+        alpha=res._output_socket("alpha"),
     )
 
 
@@ -1925,8 +1714,8 @@ def set_alpha(
 
 
 def split(
-    image_0: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-    image_1: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    a: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    b: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     axis: Literal["X", "Y"] = "X",
     factor: int = 50,
 ) -> nt.ProcNode:
@@ -1937,7 +1726,7 @@ def split(
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeSplit",
-        inputs={("Image", 0): image_0, ("Image", 1): image_1},
+        inputs={("Image", 0): a, ("Image", 1): b},
         attrs={"axis": axis, "factor": factor},
     )
 
@@ -2144,19 +1933,6 @@ def translate(
     )
 
 
-def val_to_rgb(fac: nt.SocketOrVal[float] = 0.5) -> nt.ProcNode:
-    """
-    Uses a ValToRGB Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/color_ramp.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeValToRGB",
-        inputs={"Fac": fac},
-        attrs={},
-    )
-
-
 def value() -> nt.ProcNode:
     """
     Uses a Value Compositor Node.
@@ -2168,7 +1944,7 @@ def value() -> nt.ProcNode:
     )
 
 
-def vec_blur(
+def vector_blur(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     z: nt.SocketOrVal[float] = 0.0,
     speed: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
@@ -2213,11 +1989,11 @@ def viewer(
     )
 
 
-def zcombine(
-    image_0: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    z_0: nt.SocketOrVal[float] = 1.0,
-    image_1: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    z_1: nt.SocketOrVal[float] = 1.0,
+def z_combine(
+    image_a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    z_a: nt.SocketOrVal[float] = 1.0,
+    image_b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    z_b: nt.SocketOrVal[float] = 1.0,
     use_alpha: bool = False,
     use_antialias_z: bool = True,
 ) -> nt.ProcNode:
@@ -2229,10 +2005,10 @@ def zcombine(
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeZcombine",
         inputs={
-            ("Image", 0): image_0,
-            ("Z", 0): z_0,
-            ("Image", 1): image_1,
-            ("Z", 1): z_1,
+            ("Image", 0): image_a,
+            ("Z", 0): z_a,
+            ("Image", 1): image_b,
+            ("Z", 1): z_b,
         },
         attrs={"use_alpha": use_alpha, "use_antialias_z": use_antialias_z},
     )

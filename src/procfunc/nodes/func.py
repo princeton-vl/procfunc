@@ -1,12 +1,9 @@
 import logging
-from typing import Any, Literal, NamedTuple, TypeVar
-
-import numpy as np
+from typing import Literal, NamedTuple, TypeVar
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
 from procfunc.nodes.bindings_util import (
-    ContextualNode,
     RuntimeResolveDataType,
     raise_io_error,
 )
@@ -14,43 +11,11 @@ from procfunc.nodes.bpy_node_info import NodeDataType
 
 logger = logging.getLogger(__name__)
 
-TConstant = TypeVar("TConstant", int, float, bool, pt.Vector, pt.Euler, pt.Color)
-
-
-def constant(
-    value: TConstant,
-) -> nt.ProcNode[TConstant]:
-    """
-    Replaces all nodes which just store a constant
-    e.g. ShaderNodeValue, ShaderNodeRGB, FunctionNodeInput*, etc
-    """
-    if isinstance(value, (float, int)):
-        return nt.ProcNode.from_nodetype(
-            node_type="ShaderNodeValue", inputs={}, attrs={"value": value}
-        )
-    elif isinstance(value, (pt.Vector, pt.Euler, tuple)):
-        x, y, z = value
-        return combine_xyz(x=float(x), y=float(y), z=float(z))
-    elif isinstance(value, bool):
-        return nt.ProcNode.from_nodetype(
-            node_type="FunctionNodeBoolean", inputs={}, attrs={"boolean": value}
-        )
-    elif isinstance(value, pt.Color):
-        return nt.ProcNode.from_nodetype(
-            node_type="ShaderNodeRGB", inputs={}, attrs={"value": value}
-        )
-    elif isinstance(value, str):
-        return nt.ProcNode.from_nodetype(
-            node_type="FunctionNodeInputString", inputs={}, attrs={"value": value}
-        )
-    else:
-        raise ValueError(f"Unsupported constant type: {type(value)}")
-
 
 def align_euler_to_vector(
+    factor: nt.SocketOrVal[float],
+    vector: nt.SocketOrVal[pt.Vector],
     rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    factor: nt.SocketOrVal[float] = 1.0,
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
     axis: Literal["X", "Y", "Z"] = "X",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> nt.ProcNode[pt.Vector]:
@@ -67,9 +32,9 @@ def align_euler_to_vector(
 
 
 def align_rotation_to_vector(
-    rotation: Any = (0, 0, 0),
-    factor: nt.SocketOrVal[float] = 1.0,
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    factor: nt.SocketOrVal[float],
+    vector: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
     axis: Literal["X", "Y", "Z"] = "Z",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> nt.ProcNode[pt.Vector]:
@@ -86,8 +51,8 @@ def align_rotation_to_vector(
 
 
 def axes_to_rotation(
-    primary_axis_vector: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
-    secondary_axis_vector: nt.SocketOrVal[pt.Vector] = (1, 0, 0),
+    primary_axis_vector: nt.SocketOrVal[pt.Vector],
+    secondary_axis_vector: nt.SocketOrVal[pt.Vector],
     primary_axis: Literal["X", "Y", "Z"] = "X",
     secondary_axis: Literal["X", "Y", "Z"] = "Y",
 ) -> nt.ProcNode[pt.Vector]:
@@ -107,7 +72,8 @@ def axes_to_rotation(
 
 
 def axis_angle_to_rotation(
-    axis: nt.SocketOrVal[pt.Vector] = (0, 0, 1), angle: nt.SocketOrVal[float] = 0.0
+    axis: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    angle: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a AxisAngleToRotation Function Node.
@@ -122,8 +88,8 @@ def axis_angle_to_rotation(
 
 
 def boolean_or(
-    a: nt.SocketOrVal[bool] = False,
-    b: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
+    b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
@@ -133,8 +99,8 @@ def boolean_or(
 
 
 def boolean_and(
-    a: nt.SocketOrVal[bool] = False,
-    b: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
+    b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
@@ -144,8 +110,8 @@ def boolean_and(
 
 
 def boolean_xor(
-    a: nt.SocketOrVal[bool] = False,
-    b: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
+    b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
@@ -155,7 +121,7 @@ def boolean_xor(
 
 
 def boolean_not(
-    a: nt.SocketOrVal[bool] = False,
+    a: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     """
     Uses a BooleanNot Function Node.
@@ -218,7 +184,7 @@ def combine_matrix(
 
 def combine_transform(
     translation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    rotation: Any = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
     scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
 ) -> nt.ProcNode[pt.Matrix]:
     """
@@ -273,9 +239,12 @@ def _compare(
             ],
             ["A", "B"],
         )
+    inputs: dict[str, nt.SocketOrVal] = {"A": a, "B": b}
+    if epsilon is not None:
+        inputs["Epsilon"] = epsilon
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeCompare",
-        inputs={"A": a, "B": b, "Epsilon": epsilon},
+        inputs=inputs,
         attrs={
             "operation": operation,
             "data_type": data_type,
@@ -338,8 +307,8 @@ def not_equal(
 
 
 def vector_compare_elementwise(
-    a: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    b: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
     epsilon: nt.SocketOrVal[float] = 0.001,
     operation: TCompareOperation = "EQUAL",
 ) -> nt.ProcNode[bool]:
@@ -351,7 +320,7 @@ def vector_compare_elementwise(
         attrs={
             "operation": operation,
             "data_type": NodeDataType.FLOAT_VECTOR,
-            "mode": "ELEMENT_WISE",
+            "mode": "ELEMENT",
         },
     )
 
@@ -385,7 +354,7 @@ def euler_to_rotation(
 
 
 def float_to_int(
-    float: nt.SocketOrVal[float] = 0.0,
+    float: nt.SocketOrVal[float],
     rounding_mode: Literal["ROUND", "FLOOR", "CEILING", "TRUNCATE"] = "ROUND",
 ) -> nt.ProcNode[int]:
     """
@@ -527,7 +496,7 @@ class InvertMatrixResult(NamedTuple):
     invertible: nt.ProcNode[bool]
 
 
-def invert_matrix(matrix: nt.SocketOrVal[pt.Matrix] = None) -> InvertMatrixResult:
+def invert_matrix(matrix: nt.SocketOrVal[pt.Matrix]) -> InvertMatrixResult:
     """
     Uses a InvertMatrix Function Node.
 
@@ -544,7 +513,7 @@ def invert_matrix(matrix: nt.SocketOrVal[pt.Matrix] = None) -> InvertMatrixResul
 
 
 def invert_rotation(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a InvertRotation Function Node.
@@ -559,8 +528,8 @@ def invert_rotation(
 
 
 def matrix_multiply(
-    matrix_0: nt.SocketOrVal[pt.Matrix] = None,
-    matrix_1: nt.SocketOrVal[pt.Matrix] = None,
+    a: nt.SocketOrVal[pt.Matrix],
+    b: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Matrix]:
     """
     Uses a MatrixMultiply Function Node.
@@ -569,14 +538,14 @@ def matrix_multiply(
     """
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeMatrixMultiply",
-        inputs={("Matrix", 0): matrix_0, ("Matrix", 1): matrix_1},
+        inputs={("Matrix", 0): a, ("Matrix", 1): b},
         attrs={},
     )
 
 
 def project_point(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    vector: nt.SocketOrVal[pt.Vector],
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a ProjectPoint Function Node.
@@ -663,9 +632,9 @@ def random_boolean(
 
 
 def replace_string(
-    string: nt.SocketOrVal[str] = "",
-    find: nt.SocketOrVal[str] = "",
-    replace: nt.SocketOrVal[str] = "",
+    string: nt.SocketOrVal[str],
+    find: nt.SocketOrVal[str],
+    replace: nt.SocketOrVal[str],
 ) -> nt.ProcNode[str]:
     """
     Uses a ReplaceString Function Node.
@@ -698,8 +667,8 @@ def rotate_euler(
 
 
 def rotate_rotation(
-    rotation: Any = (0, 0, 0),
-    rotate_by: Any = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
+    rotate_by: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
     rotation_space: Literal["GLOBAL", "LOCAL"] = "GLOBAL",
 ) -> nt.ProcNode[pt.Vector]:
     """
@@ -715,7 +684,8 @@ def rotate_rotation(
 
 
 def rotate_vector(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0), rotation: Any = (0, 0, 0)
+    vector: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a RotateVector Function Node.
@@ -735,7 +705,7 @@ class RotationToAxisAngleResult(NamedTuple):
 
 
 def rotation_to_axis_angle(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> RotationToAxisAngleResult:
     """
     Uses a RotationToAxisAngle Function Node.
@@ -753,7 +723,7 @@ def rotation_to_axis_angle(
 
 
 def rotation_to_euler(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a RotationToEuler Function Node.
@@ -775,7 +745,7 @@ class RotationToQuaternionResult(NamedTuple):
 
 
 def rotation_to_quaternion(
-    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> RotationToQuaternionResult:
     """
     Uses a RotationToQuaternion Function Node.
@@ -792,42 +762,6 @@ def rotation_to_quaternion(
         node._output_socket("x"),
         node._output_socket("y"),
         node._output_socket("z"),
-    )
-
-
-class SeparateColorResult(NamedTuple):
-    red: nt.ProcNode[float]
-    green: nt.ProcNode[float]
-    blue: nt.ProcNode[float]
-    alpha: nt.ProcNode[float]
-
-
-def separate_color(
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
-    ycc_mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
-) -> SeparateColorResult:
-    """
-    Uses a SeparateColor Function Node.
-
-    Context mapping:
-    - Shader: ShaderNodeSeparateColor (input: Color, outputs: red/green/blue, mode: RGB only)
-    - Compositor: CompositorNodeSeparateColor (input: Image, outputs: red/green/blue/alpha, modes: RGB/HSV/HSL/YCC/YUV, ycc_mode param)
-    - Texture: TextureNodeSeparateColor (input: Color, modes: RGB/HSV/HSL)
-    - Function: FunctionNodeSeparateColor (input: Color, outputs: red/green/blue/alpha)
-
-    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/color/separate_color.html
-    """
-    res = nt.ProcNode.from_nodetype(
-        node_type=ContextualNode.SEPARATE_COLOR.value,
-        inputs={"Color": color},
-        attrs={"mode": mode},
-    )
-    return SeparateColorResult(
-        red=res._output_socket("red"),
-        green=res._output_socket("green"),
-        blue=res._output_socket("blue"),
-        alpha=res._output_socket("alpha"),
     )
 
 
@@ -866,7 +800,7 @@ class SeparateTransformResult(NamedTuple):
 
 
 def separate_transform(
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> SeparateTransformResult:
     """
     Uses a SeparateTransform Function Node.
@@ -886,7 +820,7 @@ def separate_transform(
 
 
 def slice_string(
-    string: nt.SocketOrVal[str] = "",
+    string: nt.SocketOrVal[str],
     position: nt.SocketOrVal[int] = 0,
     length: nt.SocketOrVal[int] = 10,
 ) -> nt.ProcNode[str]:
@@ -902,7 +836,7 @@ def slice_string(
     )
 
 
-def string_length(string: nt.SocketOrVal[str] = "") -> nt.ProcNode[int]:
+def string_length(string: nt.SocketOrVal[str]) -> nt.ProcNode[int]:
     """
     Uses a StringLength Function Node.
 
@@ -916,8 +850,8 @@ def string_length(string: nt.SocketOrVal[str] = "") -> nt.ProcNode[int]:
 
 
 def transform_direction(
-    direction: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    direction: nt.SocketOrVal[pt.Vector],
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a TransformDirection Function Node.
@@ -932,8 +866,8 @@ def transform_direction(
 
 
 def transform_point(
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    transform: nt.SocketOrVal[pt.Matrix] = None,
+    vector: nt.SocketOrVal[pt.Vector],
+    transform: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a TransformPoint Function Node.
@@ -948,7 +882,7 @@ def transform_point(
 
 
 def transpose_matrix(
-    matrix: nt.SocketOrVal[pt.Matrix] = None,
+    matrix: nt.SocketOrVal[pt.Matrix],
 ) -> nt.ProcNode[pt.Matrix]:
     """
     Uses a TransposeMatrix Function Node.
@@ -963,7 +897,7 @@ def transpose_matrix(
 
 
 def value_to_string(
-    value: nt.SocketOrVal[float] = 0.0, decimals: nt.SocketOrVal[int] = 0
+    value: nt.SocketOrVal[float], decimals: nt.SocketOrVal[int] = 0
 ) -> nt.ProcNode[str]:
     """
     Uses a ValueToString Function Node.
@@ -974,349 +908,6 @@ def value_to_string(
         node_type="FunctionNodeValueToString",
         inputs={"Value": value, "Decimals": decimals},
         attrs={},
-    )
-
-
-TMix = TypeVar("TMix", nt.SocketOrVal[float], nt.SocketOrVal[pt.Vector])
-
-
-def mix(
-    a: TMix | None = None,
-    b: TMix | None = None,
-    factor: nt.SocketOrVal[float] = 0.5,
-    clamp_factor: bool = True,
-    factor_mode: Literal["UNIFORM", "NON_UNIFORM"] = "UNIFORM",
-    data_type: NodeDataType | RuntimeResolveDataType | None = None,
-) -> nt.ProcNode[TMix]:
-    """
-    Uses MixNode to mix float or vector fields
-
-    NOTE: procfunc forces all colors to be mixed via mix_rgb, since setting this function
-    to type Color adds extra args & exactly matches the interface of mix_rgb
-
-    """
-
-    if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.RGBA, NodeDataType.FLOAT, NodeDataType.FLOAT_VECTOR],
-            ["A", "B"],
-        )
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeMix",
-        inputs={"A": a, "B": b, "Factor": factor},
-        attrs={
-            "blend_type": "MIX",
-            "clamp_factor": clamp_factor,
-            "clamp_result": False,
-            "factor_mode": factor_mode,
-            "data_type": data_type,
-        },
-    )
-
-
-TColorMixType = Literal[
-    "MIX",
-    "DARKEN",
-    "MULTIPLY",
-    "BURN",
-    "LIGHTEN",
-    "SCREEN",
-    "DODGE",
-    "ADD",
-    "OVERLAY",
-    "SOFT_LIGHT",
-    "LINEAR_LIGHT",
-    "DIFFERENCE",
-    "EXCLUSION",
-    "SUBTRACT",
-    "DIVIDE",
-    "HUE",
-    "SATURATION",
-    "COLOR",
-    "VALUE",
-]
-
-
-def mix_rgb(
-    factor: nt.SocketOrVal[float] = 0.5,
-    a: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
-    b: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
-    blend_type: TColorMixType = "MIX",
-    clamp_result: bool = False,
-    clamp_factor: bool = True,
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a Mix Node with datatype Color
-
-    NOTE: separated from float/vector mix() due to extra arguments
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/mix.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeMix",
-        inputs={"Factor": factor, "A": a, "B": b},
-        attrs={
-            "blend_type": blend_type,
-            "clamp_result": clamp_result,
-            "clamp_factor": clamp_factor,
-            "data_type": NodeDataType.RGBA,
-        },
-    )
-
-
-def rgb_curve(
-    fac: nt.SocketOrVal[float] = 1.0,
-    color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    curves: list[np.ndarray] | None = None,
-) -> nt.ProcNode:
-    """
-    Uses a RGBCurve Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/rgb_curves.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeRGBCurve",
-        inputs={"Fac": fac, "Color": color},
-        attrs={"curves": curves},
-    )
-
-
-def combine_color(
-    red: nt.SocketOrVal[float] = 0.0,
-    green: nt.SocketOrVal[float] = 0.0,
-    blue: nt.SocketOrVal[float] = 0.0,
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a CombineColor Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type=ContextualNode.COMBINE_COLOR.value,
-        inputs={"Red": red, "Green": green, "Blue": blue},
-        attrs={"mode": mode},
-    )
-
-
-def combine_rgb(
-    red: nt.SocketOrVal[float] = 0.0,
-    green: nt.SocketOrVal[float] = 0.0,
-    blue: nt.SocketOrVal[float] = 0.0,
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a CombineColor Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type=ContextualNode.COMBINE_COLOR.value,
-        inputs={"Red": red, "Green": green, "Blue": blue},
-        attrs={"mode": mode},
-    )
-
-
-def combine_hsv(
-    hue: nt.SocketOrVal[float] = 0.0,
-    saturation: nt.SocketOrVal[float] = 0.0,
-    value: nt.SocketOrVal[float] = 0.0,
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a CombineColor Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type=ContextualNode.COMBINE_COLOR.value,
-        inputs={"Hue": hue, "Saturation": saturation, "Value": value},
-        attrs={"mode": "HSV"},
-    )
-
-
-def combine_hsl(
-    hue: nt.SocketOrVal[float] = 0.0,
-    saturation: nt.SocketOrVal[float] = 0.0,
-    lightness: nt.SocketOrVal[float] = 0.0,
-) -> nt.ProcNode[pt.Color]:
-    """
-    Uses a CombineHSV Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type=ContextualNode.COMBINE_COLOR.value,
-        inputs={"Hue": hue, "Saturation": saturation, "Lightness": lightness},
-        attrs={"mode": "HSL"},
-    )
-
-
-def combine_xyz(
-    x: nt.SocketOrVal[float] = 0.0,
-    y: nt.SocketOrVal[float] = 0.0,
-    z: nt.SocketOrVal[float] = 0.0,
-) -> nt.ProcNode[pt.Vector]:
-    """
-    Uses a CombineXYZ Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_xyz.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeCombineXYZ",
-        inputs={"X": x, "Y": y, "Z": z},
-        attrs={},
-    )
-
-
-class SeparateHsvResult(NamedTuple):
-    h: nt.ProcNode[float]
-    s: nt.ProcNode[float]
-    v: nt.ProcNode[float]
-
-
-def separate_hsv(
-    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-) -> SeparateHsvResult:
-    """
-    Uses a SeparateHSV Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/separate_color.html
-    """
-    res = nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeSeparateHSV",
-        inputs={"Color": color},
-        attrs={},
-    )
-    return SeparateHsvResult(
-        h=res._output_socket("h"),
-        s=res._output_socket("s"),
-        v=res._output_socket("v"),
-    )
-
-
-class SeparateRgbResult(NamedTuple):
-    r: nt.ProcNode[float]
-    g: nt.ProcNode[float]
-    b: nt.ProcNode[float]
-
-
-def separate_rgb(
-    image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
-) -> SeparateRgbResult:
-    """
-    Uses a SeparateRGB Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/separate_color.html
-    """
-    res = nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeSeparateRGB",
-        inputs={"Image": image},
-        attrs={},
-    )
-    return SeparateRgbResult(
-        r=res._output_socket("r"),
-        g=res._output_socket("g"),
-        b=res._output_socket("b"),
-    )
-
-
-class SeparateXyzResult(NamedTuple):
-    x: nt.ProcNode[float]
-    y: nt.ProcNode[float]
-    z: nt.ProcNode[float]
-
-
-def separate_xyz(vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0)) -> SeparateXyzResult:
-    """
-    Uses a SeparateXYZ Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/separate_xyz.html
-    """
-    node = nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeSeparateXYZ",
-        inputs={"Vector": vector},
-        attrs={},
-    )
-    return SeparateXyzResult(
-        node._output_socket("x"), node._output_socket("y"), node._output_socket("z")
-    )
-
-
-TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
-
-
-def map_range(
-    value: nt.SocketOrVal[float] = 1.0,
-    from_max: nt.SocketOrVal[float] = 1.0,
-    from_min: nt.SocketOrVal[float] = 0.0,
-    to_max: nt.SocketOrVal[float] = 1.0,
-    to_min: nt.SocketOrVal[float] = 0.0,
-    clamp: bool = True,
-    interpolation_type: TInterpolationType = "LINEAR",
-    data_type: NodeDataType | RuntimeResolveDataType | None = None,
-) -> nt.ProcNode:
-    """
-    Uses a MapRange Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/map_range.html
-    """
-
-    if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.FLOAT, NodeDataType.FLOAT_VECTOR],
-            ["From Max", "From Min", "To Max", "To Min", "Value"],
-        )
-
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeMapRange",
-        inputs={
-            "From Max": from_max,
-            "From Min": from_min,
-            "To Max": to_max,
-            "To Min": to_min,
-            "Value": value,
-        },
-        attrs={
-            "clamp": clamp,
-            "interpolation_type": interpolation_type,
-            "data_type": data_type,
-        },
-    )
-
-
-def float_curve(
-    factor: nt.SocketOrVal[float] = 1.0,
-    value: nt.SocketOrVal[float] = 1.0,
-    curve: np.ndarray | None = None,
-    handle_type: str = "AUTO",
-    use_clip: bool = True,
-) -> nt.ProcNode[float]:
-    """
-    Uses a FloatCurve Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/float_curve.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeFloatCurve",
-        inputs={"Factor": factor, "Value": value},
-        attrs={"mapping": curve, "handle_type": handle_type, "use_clip": use_clip},
-    )
-
-
-def vector_curve(
-    fac: nt.SocketOrVal[float] = 1.0,
-    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    curves: np.ndarray | None = None,
-) -> nt.ProcNode[pt.Vector]:
-    """
-    Uses a VectorCurve Shader Node.
-
-    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/curves.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeVectorCurve",
-        inputs={"Fac": fac, "Vector": vector},
-        attrs={"curves": curves},
     )
 
 
@@ -1332,8 +923,8 @@ TIndexSwitch = TypeVar(
 
 
 def index_switch(
-    val_0: TIndexSwitch = 0,
-    val_1: TIndexSwitch = 0,
+    a: TIndexSwitch = 0,
+    b: TIndexSwitch = 0,
     index: nt.SocketOrVal[int] = 0,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode:
@@ -1356,7 +947,7 @@ def index_switch(
         )
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeIndexSwitch",
-        inputs={"0": val_0, "1": val_1, "Index": index},
+        inputs={"0": a, "1": b, "Index": index},
         attrs={
             "data_type": data_type,
         },

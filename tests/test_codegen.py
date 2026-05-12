@@ -1,4 +1,4 @@
-from procfunc.transpiler.identifiers import dedup_names_with_suffix
+from procfunc.codegen.identifiers import dedup_names_with_suffix
 
 
 def test_dedup_suffix_collides_with_later_base_name():

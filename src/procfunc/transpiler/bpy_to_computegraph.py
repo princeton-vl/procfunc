@@ -21,12 +21,12 @@ import pandas as pd
 import procfunc as pf
 from procfunc import compute_graph as cg
 from procfunc import types as t
+from procfunc.codegen import identifiers
 from procfunc.nodes import NODES_MANIFEST, bpy_node_info
 from procfunc.nodes import bpy_node_info as bni
 from procfunc.nodes import types as nt
 from procfunc.nodes.execute.util import get_active_sockets, normalize_socket_type
 from procfunc.ops import OPS_MANIFEST
-from procfunc.transpiler import identifiers
 from procfunc.util import bpy_info, log, manifest, pytree
 
 logger = logging.getLogger(__name__)
@@ -85,15 +85,15 @@ def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> 
     match node.rotation_type:
         case "X_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.func.combine_xyz, args=(angle, 0, 0), kwargs={}
+                pf.nodes.math.combine_xyz, args=(angle, 0, 0), kwargs={}
             )
         case "Y_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.func.combine_xyz, args=(0, angle, 0), kwargs={}
+                pf.nodes.math.combine_xyz, args=(0, angle, 0), kwargs={}
             )
         case "Z_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.func.combine_xyz, args=(0, 0, angle), kwargs={}
+                pf.nodes.math.combine_xyz, args=(0, 0, angle), kwargs={}
             )
         case "EULER_XYZ" | "AXIS_ANGLE":
             pass
@@ -101,6 +101,9 @@ def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> 
             raise ValueError(f"Unknown rotation type {node.rotation_type}")
 
     return cg_node
+
+
+SINGLE_CURVE_NODES = {"ShaderNodeFloatCurve"}
 
 
 def handle_specialcase_curve(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
@@ -113,10 +116,10 @@ def handle_specialcase_curve(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
         np.array([_repr_point(point) for point in curve.points])
         for curve in node.mapping.curves
     ]
-    if len(curves) > 1:
-        cg_node.kwargs["curves"] = curves
-    else:
+    if node.bl_idname in SINGLE_CURVE_NODES:
         cg_node.kwargs["curve"] = curves[0]
+    else:
+        cg_node.kwargs["curves"] = curves
 
     invalid_handle = next(
         (
@@ -137,12 +140,16 @@ def handle_specialcase_curve(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
 
 SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
     "ShaderNodeMath": handle_specialcase_math,
+    "CompositorNodeMath": handle_specialcase_math,
     "ShaderNodeValToRGB": handle_specialcase_color_ramp,
+    "CompositorNodeValToRGB": handle_specialcase_color_ramp,
     "ShaderNodeVectorRotate": handle_specialcase_vector_rotate,
     # curves share handler
     "ShaderNodeFloatCurve": handle_specialcase_curve,
     "ShaderNodeRGBCurve": handle_specialcase_curve,
+    "CompositorNodeCurveRGB": handle_specialcase_curve,
     "ShaderNodeVectorCurve": handle_specialcase_curve,
+    "CompositorNodeCurveVec": handle_specialcase_curve,
     # values with .outputs[0].default_value can share handler
     "ShaderNodeValue": handle_specialcase_value,
     "ShaderNodeRGB": handle_specialcase_value,
@@ -200,7 +207,12 @@ def _target_attrs(node: bpy.types.Node) -> dict[str, Any]:
         elif k in bpy_node_info.SPECIAL_CASE_ATTR_NAMES:
             attr_vals[k] = None
         elif k not in bpy_node_info.UNIVERSAL_ATTR_NAMES:
-            attr_vals[k] = getattr(node, k)
+            v = getattr(node, k)
+            # Skip bound methods exposed alongside data properties
+            # (e.g. ShaderNodeTexPointDensity.cache_point_density()).
+            if callable(v):
+                continue
+            attr_vals[k] = v
 
     return attr_vals
 
@@ -213,6 +225,10 @@ def _bpy_node_defaults(
     temp_default_node = node_tree.nodes.new(node.bl_idname)
     if node.bl_idname.endswith("NodeGroup"):
         temp_default_node.node_tree = node.node_tree
+    # data_type must precede operation: FunctionNodeCompare.operation enum
+    # values (e.g. BRIGHTER/DARKER) are only valid for certain data_types.
+    if hasattr(node, "data_type"):
+        temp_default_node.data_type = node.data_type
     if hasattr(node, "operation"):
         # assert "operation" not in attr_keys, (node, attr_keys)
         temp_default_node.operation = node.operation
@@ -221,8 +237,10 @@ def _bpy_node_defaults(
     for k in attr_keys:
         if hasattr(temp_default_node, k):
             val = getattr(temp_default_node, k)
-            # copy mathutils types before removing the node to avoid dangling pointer segfaults
-            if hasattr(val, "copy"):
+            # copy mathutils types before removing the node to avoid dangling pointer segfaults.
+            # ID datablocks (Scene/Object/Material/...) are persistent — copying them duplicates
+            # the asset and breaks equality comparison against the source node's attr.
+            if hasattr(val, "copy") and not isinstance(val, bpy.types.ID):
                 val = val.copy()
             attr_defaults[k] = val
 
@@ -367,15 +385,15 @@ def _repr_default_value(value: Any, socket_type: str) -> Any:
     if isinstance(value, SUBCOMPONENT_TYPES):
         return value.name
     elif socket_type == "RGBA":
-        return pf.Color([round(x, 6) for x in value[:3]])
+        if len(value) >= 4 and value[3] != 1.0:
+            return tuple(value)
+        return tuple(value[:3])
     elif isinstance(
         value, (bpy.types.bpy_prop_array, t.Vector, t.Euler, t.Quaternion, t.Matrix)
     ):
-        return tuple(round(v, 6) for v in value)
+        return tuple(value)
     elif isinstance(value, idprop.types.IDPropertyArray):
-        return tuple(round(v, 6) for v in value)
-    elif isinstance(value, float):
-        return round(value, 6)
+        return tuple(value)
     else:
         return value
 
@@ -464,17 +482,17 @@ def _create_inputs(
             func_default=func_default_kwarg,
         )
         if res is None:
+            if name not in func_defaults:
+                # binding declares this input as required (no default), but the
+                # source has nothing to supply for it — emit explicit None so
+                # the transpiled call still satisfies the signature
+                inputs[name] = None
+                continue
             logger.debug(
                 f"Skipping argument for {name=} {socket.node.bl_idname=} {func_default_kwarg=}"
             )
             continue
         inputs[name] = res
-
-    for name in inputs.keys():
-        if not identifiers.is_valid_snake_identifier(name):
-            raise ValueError(
-                f"Input name {name!r} is not a valid identifier. {node.bl_idname=}, {node.inputs.keys()=}"
-            )
 
     return inputs
 
@@ -493,24 +511,32 @@ def _find_manifest_func(
 
     exploded = candidates["bpy_mode_args"].fillna({}).apply(pd.Series)
 
+    # Each row matches a (mode_attr, val) constraint if it specifies that
+    # value, or if the row leaves the attr null (= unconstrained / any).
+    # When multiple rows match, prefer the one with the most specific
+    # (non-null) overlap with the requested mode_vals — that's the row
+    # whose author intended to handle this exact case.
     mask = pd.Series([True] * len(candidates), index=candidates.index)
+    specificity = pd.Series([0] * len(candidates), index=candidates.index)
     for mode_attr, val in mode_vals.items():
-        # Behavior: if a mode_attr is not in the manifest, we can ignore it.
-        #   if its in the manifest, but none match our val, then we can take a
-
         if val is None:
             continue
         if mode_attr not in exploded.columns:
             continue
-        match_mask = exploded[mode_attr] == val
-        if match_mask.sum() == 0:
-            match_mask = exploded[mode_attr].isna()
+        column = exploded[mode_attr]
+        explicit = column == val
+        match_mask = explicit | column.isna()
         mask &= match_mask
+        specificity = specificity + explicit.astype(int)
 
     if mask.sum() == 0:
         raise ValueError(
             f"{bpy_name=} had {len(candidates)=}, but filtering for {mode_vals=} eliminated them all"
         )
+
+    if mask.sum() > 1:
+        max_spec = specificity[mask].max()
+        mask = mask & (specificity == max_spec)
 
     if mask.sum() > 1:
         options_for_modevals = {
@@ -555,12 +581,18 @@ def _node_to_spec(
 
 def _map_inputs_with_arg_map(
     inputs: dict[str, Any],
-    arg_names_map: dict[str, str],
+    arg_names_map: dict[str, str | None],
 ) -> dict[str, Any]:
+    """Rename input keys per arg_names_map. A target value of None drops
+    the input entirely (used when the bpy node exposes a socket the binding
+    intentionally ignores, e.g. CombineColor's Alpha for combine_rgb)."""
     mapped_inputs = {}
     for k, v in inputs.items():
         if k in arg_names_map:
-            k = arg_names_map[k]
+            new_k = arg_names_map[k]
+            if new_k is None:
+                continue
+            k = new_k
         mapped_inputs[k] = v
 
     return mapped_inputs
@@ -594,7 +626,11 @@ def parse_standard_node(
     }
 
     if arg_names_map is not None:
-        attrs = {arg_names_map.get(k, k): v for k, v in attrs.items()}
+        attrs = {
+            arg_names_map.get(k, k): v
+            for k, v in attrs.items()
+            if arg_names_map.get(k, k) is not None
+        }
 
     # we only want to remove MODE_ATTRS which were actually used to resolve the function
     #   (since presumably the restriction implied by these is already enforced by the new function signature)
@@ -620,15 +656,32 @@ def parse_standard_node(
     if arg_names_map is not None:
         inputs = _map_inputs_with_arg_map(inputs, arg_names_map)
 
+    # Validate keys after arg_names_map has had a chance to rename socket-derived
+    # names that aren't valid Python identifiers (e.g. IndexSwitch's '0', '1').
+    for name in inputs.keys():
+        if not identifiers.is_valid_snake_identifier(name):
+            raise ValueError(
+                f"Input name {name!r} is not a valid identifier. "
+                f"{node.bl_idname=}, {node.inputs.keys()=}"
+            )
+
     if overlap := set(attrs.keys()).intersection(set(inputs.keys())):
         raise ValueError(
             f"Node {node.bl_idname} had keys {overlap=} between {attrs.keys()=} and {inputs.keys()=}, which is invalid"
         )
 
+    # SPECIAL_CASE_ATTR_NAMES enter attrs as None placeholders. Handlers that
+    # need them read from the bpy node directly, so the placeholder is never
+    # useful to the function call — drop before constructing the cg_node.
+    placeholder_attrs = {**attrs, **inputs}
+    for k in bpy_node_info.SPECIAL_CASE_ATTR_NAMES:
+        if placeholder_attrs.get(k, ...) is None:
+            placeholder_attrs.pop(k, None)
+
     cg_node = cg.FunctionCallNode(
         func=func,
         args=(),
-        kwargs={**attrs, **inputs},
+        kwargs=placeholder_attrs,
     )
 
     cg_node_orig = cg_node
@@ -1054,7 +1107,12 @@ def parse_node_tree(
             proc_node.default_value = None
         outputs[output_name] = proc_node
 
-    if len(outputs) > 1:
+    if len(outputs) == 0:
+        # Sink-style trees (e.g. compositor with only Composite/Viewer, no
+        # NodeGroupOutput links) produce a graph with no outputs. Use an empty
+        # dict so PyTree flattens to len==0 (vs PyTree(None) which has len==1).
+        output = {}
+    elif len(outputs) > 1:
         assert " " not in cg_name, f"cg_name {cg_name} contains spaces"
 
         # remove .001 suffixes
