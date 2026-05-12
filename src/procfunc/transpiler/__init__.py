@@ -1,8 +1,3 @@
-from procfunc.codegen import (
-    default_func_resolution_map,
-    to_python,
-)
-
 from .bpy_to_computegraph import (
     parse_material,
     parse_modifier,
@@ -20,6 +15,4 @@ __all__ = [
     "parse_object",
     "parse_primitive",
     "parse_scene",
-    "default_func_resolution_map",
-    "to_python",
 ]

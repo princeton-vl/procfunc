@@ -4154,32 +4154,30 @@ TViewer = TypeVar(
 )
 
 
-'''
-def viewer(
-    geometry: t.ProcNode[t.Geometry],
-    value: TViewer = 0,
-    domain: TDomain = "AUTO",
-    data_type: NodeDataType | RuntimeResolveDataType | None = None,
-) -> t.ProcNode:
-    """
-    Uses a Viewer Geometry Node.
-
-    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
-    """
-    if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
-    return t.ProcNode.from_nodetype(
-        node_type="GeometryNodeViewer",
-        inputs={"Geometry": geometry, "Value": value},
-        attrs={
-            "domain": domain,
-            "data_type": data_type,
-        },
-    )
-'''
+# def viewer(
+#     geometry: t.ProcNode[t.Geometry],
+#     value: TViewer = 0,
+#     domain: TDomain = "AUTO",
+#     data_type: NodeDataType | RuntimeResolveDataType | None = None,
+# ) -> t.ProcNode:
+#     """
+#     Uses a Viewer Geometry Node.
+#
+#     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
+#     """
+#     if data_type is None:
+#         data_type = RuntimeResolveDataType(
+#             [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
+#             ["Value"],
+#         )
+#     return t.ProcNode.from_nodetype(
+#         node_type="GeometryNodeViewer",
+#         inputs={"Geometry": geometry, "Value": value},
+#         attrs={
+#             "domain": domain,
+#             "data_type": data_type,
+#         },
+#     )
 
 
 class ViewportTransformResult(NamedTuple):

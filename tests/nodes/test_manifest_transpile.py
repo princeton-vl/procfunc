@@ -11,6 +11,7 @@ import bpy
 import pytest
 
 import procfunc as pf
+from procfunc.codegen import to_python
 from procfunc.nodes.bindings_util import CONTEXTUAL_NODE_MAPPING
 from procfunc.nodes.bpy_node_info import (
     DATATYPE_TO_SOCKET_CLASS,
@@ -20,7 +21,7 @@ from procfunc.nodes.bpy_node_info import (
     SocketDType,
     SocketType,
 )
-from procfunc.transpiler import parse_node_tree, to_python
+from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import ParseMemo
 from procfunc.util.manifest import filter_manifest
 

@@ -56,13 +56,6 @@ class FunctionCallNode(Node):
 
 
 class MethodCallNode(Node):
-    """
-    represents an {args[0]}.{method_name}(*args[1:], **kwargs) call
-
-    - the node to be used as `self` is the first arg, since it is a dynamic value
-    - the method name is assumed to be const
-    """
-
     def __init__(
         self,
         callee: Node,
@@ -161,7 +154,7 @@ def normalize_args_to_kwargs(
     """
     Try to fully populate kwargs, by moving over positional args & filling in defaults
 
-    Some args may not be able to be converted to kwargs, e.g. *args have no names that work
+    Some args may not be able to be converted to kwargs, e.g. ``*args`` have no names that work
 
     Args:
         func: The function whose signature we should respect
@@ -171,7 +164,7 @@ def normalize_args_to_kwargs(
     Returns:
         A tuple of (args, kwargs) where args is a tuple of positional arguments and kwargs is a dictionary of keyword arguments.
 
-    GUARANTEE: func(*returned_args, **returned_kwargs) == func(*args, **kwargs) and does not crash
+    GUARANTEE: ``func(*returned_args, **returned_kwargs) == func(*args, **kwargs)`` and does not crash
     """
 
     sig = inspect.signature(func)
