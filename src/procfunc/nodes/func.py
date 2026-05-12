@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Literal, NamedTuple, TypeVar
+from typing import Literal, NamedTuple, TypeVar
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 def align_euler_to_vector(
-    rotation: nt.SocketOrVal[pt.Vector],
     factor: nt.SocketOrVal[float],
     vector: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     axis: Literal["X", "Y", "Z"] = "X",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> nt.ProcNode[pt.Vector]:
@@ -32,9 +32,9 @@ def align_euler_to_vector(
 
 
 def align_rotation_to_vector(
-    rotation: Any,
     factor: nt.SocketOrVal[float],
     vector: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
     axis: Literal["X", "Y", "Z"] = "Z",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> nt.ProcNode[pt.Vector]:
@@ -72,7 +72,8 @@ def axes_to_rotation(
 
 
 def axis_angle_to_rotation(
-    axis: nt.SocketOrVal[pt.Vector], angle: nt.SocketOrVal[float]
+    axis: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    angle: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a AxisAngleToRotation Function Node.
@@ -182,9 +183,9 @@ def combine_matrix(
 
 
 def combine_transform(
-    translation: nt.SocketOrVal[pt.Vector],
-    rotation: Any,
-    scale: nt.SocketOrVal[pt.Vector],
+    translation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
 ) -> nt.ProcNode[pt.Matrix]:
     """
     Uses a CombineTransform Function Node.
@@ -238,7 +239,7 @@ def _compare(
             ],
             ["A", "B"],
         )
-    inputs: dict[str, Any] = {"A": a, "B": b}
+    inputs: dict[str, nt.SocketOrVal] = {"A": a, "B": b}
     if epsilon is not None:
         inputs["Epsilon"] = epsilon
     return nt.ProcNode.from_nodetype(
@@ -338,7 +339,7 @@ def compare_color(
 
 
 def euler_to_rotation(
-    euler: nt.SocketOrVal[pt.Vector],
+    euler: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a EulerToRotation Function Node.
@@ -512,7 +513,7 @@ def invert_matrix(matrix: nt.SocketOrVal[pt.Matrix]) -> InvertMatrixResult:
 
 
 def invert_rotation(
-    rotation: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a InvertRotation Function Node.
@@ -648,8 +649,8 @@ def replace_string(
 
 
 def rotate_euler(
-    rotation: nt.SocketOrVal[pt.Vector],
-    rotate_by: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotate_by: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     rotation_type: Literal["EULER", "AXIS_ANGLE"] = "EULER",
     space: Literal["OBJECT", "LOCAL"] = "OBJECT",
 ) -> nt.ProcNode[pt.Vector]:
@@ -666,8 +667,8 @@ def rotate_euler(
 
 
 def rotate_rotation(
-    rotation: Any,
-    rotate_by: Any,
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
+    rotate_by: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
     rotation_space: Literal["GLOBAL", "LOCAL"] = "GLOBAL",
 ) -> nt.ProcNode[pt.Vector]:
     """
@@ -683,7 +684,8 @@ def rotate_rotation(
 
 
 def rotate_vector(
-    vector: nt.SocketOrVal[pt.Vector], rotation: Any
+    vector: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a RotateVector Function Node.
@@ -703,7 +705,7 @@ class RotationToAxisAngleResult(NamedTuple):
 
 
 def rotation_to_axis_angle(
-    rotation: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> RotationToAxisAngleResult:
     """
     Uses a RotationToAxisAngle Function Node.
@@ -721,7 +723,7 @@ def rotation_to_axis_angle(
 
 
 def rotation_to_euler(
-    rotation: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a RotationToEuler Function Node.
@@ -743,7 +745,7 @@ class RotationToQuaternionResult(NamedTuple):
 
 
 def rotation_to_quaternion(
-    rotation: nt.SocketOrVal[pt.Vector],
+    rotation: nt.SocketOrVal[pt.Euler] = (0, 0, 0),
 ) -> RotationToQuaternionResult:
     """
     Uses a RotationToQuaternion Function Node.

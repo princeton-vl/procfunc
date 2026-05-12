@@ -7,7 +7,7 @@ across shader and geometry trees - they live here rather than in shader.py
 or func.py to avoid implying they are specific to those contexts.
 """
 
-from typing import Any, Literal, NamedTuple, TypeVar
+from typing import Literal, NamedTuple, TypeVar
 
 import numpy as np
 
@@ -560,9 +560,9 @@ def vector_tangent(
 
 def vector_rotate_axis_angle(
     vector: nt.SocketOrVal[pt.Vector],
-    center: nt.SocketOrVal[pt.Vector],
-    axis: nt.SocketOrVal[pt.Vector],
-    angle: nt.SocketOrVal[float],
+    center: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    axis: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    angle: nt.SocketOrVal[float] = 0.0,
     invert: bool = False,
 ) -> nt.ProcNode[pt.Vector]:
     """
@@ -579,8 +579,8 @@ def vector_rotate_axis_angle(
 
 def vector_rotate_euler(
     vector: nt.SocketOrVal[pt.Vector],
-    center: nt.SocketOrVal[pt.Vector],
-    rotation: nt.SocketOrVal[pt.Vector],
+    center: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     invert: bool = False,
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
@@ -808,7 +808,7 @@ def map_range(
     # is dropped at construct time when the target lacks the attr; an
     # explicit NodeDataType in compositor context will reach setattr and
     # raise naturally.
-    attrs: dict[str, Any] = {"clamp": clamp, "data_type": data_type}
+    attrs: dict[str, object] = {"clamp": clamp, "data_type": data_type}
     if interpolation_type != "LINEAR":
         attrs["interpolation_type"] = interpolation_type
 

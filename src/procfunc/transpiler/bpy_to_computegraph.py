@@ -482,6 +482,12 @@ def _create_inputs(
             func_default=func_default_kwarg,
         )
         if res is None:
+            if name not in func_defaults:
+                # binding declares this input as required (no default), but the
+                # source has nothing to supply for it — emit explicit None so
+                # the transpiled call still satisfies the signature
+                inputs[name] = None
+                continue
             logger.debug(
                 f"Skipping argument for {name=} {socket.node.bl_idname=} {func_default_kwarg=}"
             )
