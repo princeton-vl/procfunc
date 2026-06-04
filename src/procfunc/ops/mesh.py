@@ -1097,6 +1097,33 @@ def dissolve_limited(
 
 
 @pf.tracer.primitive(mutates=["mutates_obj"])
+def dissolve_degenerate(
+    mutates_obj: t.MeshObject,
+    threshold: float = 0.0001,
+    vertex_mask: np.ndarray | None = None,
+    edge_mask: np.ndarray | None = None,
+    face_mask: np.ndarray | None = None,
+) -> None:
+    """
+    Based on bpy.ops.mesh.dissolve_degenerate
+    Dissolve zero area faces and zero length edges
+
+    Args:
+        vertex_mask: Boolean array selecting vertices. If None, operates on entire mesh.
+        edge_mask: Boolean array selecting edges. If None, operates on entire mesh.
+        face_mask: Boolean array selecting faces. If None, operates on entire mesh.
+    """
+    execute_mesh_op(
+        bpy.ops.mesh.dissolve_degenerate,
+        mutates_obj,
+        threshold=threshold,
+        vertex_mask=vertex_mask,
+        edge_mask=edge_mask,
+        face_mask=face_mask,
+    )
+
+
+@pf.tracer.primitive(mutates=["mutates_obj"])
 def extrude_vertices(
     mutates_obj: t.MeshObject,
     vertex_mask: np.ndarray,

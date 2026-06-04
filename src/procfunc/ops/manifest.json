@@ -15085,9 +15085,12 @@
     "infinigen_v1_name": null,
     "infinigen_v1_count": "#N/A",
     "category": "mesh",
-    "name": null,
-    "arguments": null,
-    "is_unittest_specialcase": null,
+    "name": "pf.ops.mesh.dissolve_degenerate",
+    "arguments": [
+      "none",
+      "none"
+    ],
+    "is_unittest_specialcase": true,
     "bpy_doc": [
       "bpy.ops.mesh.dissolve_degenerate(threshold=0.0001)\nDissolve zero area faces and zero length edges"
     ]
