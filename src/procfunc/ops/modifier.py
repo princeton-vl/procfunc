@@ -502,14 +502,22 @@ def curve_deform(
 def shrinkwrap(
     mutates_obj: t.MeshObject,
     target: t.MeshObject,
-    # wrap_method: Literal["NEAREST_SURFACEPOINT", "NEAREST_VERTEX", "PROJECT", "TARGET_PROJECT"] = "NEAREST_SURFACEPOINT",
+    wrap_method: Literal[
+        "NEAREST_SURFACEPOINT", "NEAREST_VERTEX", "PROJECT", "TARGET_PROJECT"
+    ] = "NEAREST_SURFACEPOINT",
+    wrap_mode: Literal[
+        "ON_SURFACE", "INSIDE", "OUTSIDE", "OUTSIDE_SURFACE", "ABOVE_SURFACE"
+    ] = "ON_SURFACE",
+    offset: float = 0.0,
 ):
     """Apply shrinkwrap modifier."""
     return modify(
         mutates_obj,
         "SHRINKWRAP",
         target=target,
-        wrap_method="NEAREST_SURFACEPOINT",
+        wrap_method=wrap_method,
+        wrap_mode=wrap_mode,
+        offset=offset,
     )
 
 
