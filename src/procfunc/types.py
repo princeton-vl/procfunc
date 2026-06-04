@@ -131,6 +131,9 @@ class Object(BlenderAsset[bpy.types.Object]):
         bpy.context.collection.objects.link(new_obj)
         return self.__class__(new_obj)
 
+    def set_parent(self, parent: "Object"):
+        self._item.parent = parent._item
+
 
 class CameraObject(Object):
     def __init__(self, obj: bpy.types.Object):
