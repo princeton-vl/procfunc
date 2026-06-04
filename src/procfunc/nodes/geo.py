@@ -1911,7 +1911,7 @@ def instance_transform() -> nt.ProcNode:
 
 def instances_to_points(
     position: nt.SocketOrVal[nt.pt.Vector],
-    instances: nt.ProcNode[nt.Instances] | None = None,
+    instances: nt.ProcNode[nt.Instances] | None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.05,
 ) -> nt.ProcNode[nt.Points]:
@@ -2002,7 +2002,7 @@ def join_geometry(
 
 
 def material_selection(
-    material: nt.SocketOrVal[pt.Material] = None,
+    material: nt.SocketOrVal[pt.Material],
 ) -> nt.ProcNode[bool]:
     """
     Uses a MaterialSelection Geometry Node.
@@ -2078,8 +2078,8 @@ def merge_by_distance(
 
 
 def mesh_boolean(
-    a: nt.ProcNode[nt.Geometry] | None = None,
-    b: nt.ProcNode[nt.Geometry] | None = None,
+    a: nt.ProcNode[nt.Geometry] | None,
+    b: nt.ProcNode[nt.Geometry] | None,
     self_intersection: nt.SocketOrVal[bool] = False,
     hole_tolerant: nt.SocketOrVal[bool] = False,
     operation: Literal["INTERSECT", "UNION", "DIFFERENCE"] = "DIFFERENCE",
@@ -3414,7 +3414,7 @@ def set_instance_transform(
 
 def set_material(
     geometry: nt.ProcNode[pt.MeshObject] | None,
-    material: nt.SocketOrVal[pt.Material] = None,
+    material: nt.SocketOrVal[pt.Material],
     selection: nt.SocketOrVal[bool] = None,
 ) -> nt.ProcNode[pt.MeshObject]:
     """

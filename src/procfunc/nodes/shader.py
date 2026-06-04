@@ -36,11 +36,14 @@ logger = logging.getLogger(__name__)
 
 
 def add_shader(
-    a: nt.ProcNode[nt.Shader] | None = None,
-    b: nt.ProcNode[nt.Shader] | None = None,
+    a: nt.ProcNode[nt.Shader] | None,
+    b: nt.ProcNode[nt.Shader] | None,
 ) -> nt.ProcNode[nt.Shader]:
     """
     Uses a AddShader Shader Node.
+
+    Both inputs are required: an unconnected shader input renders pure black, so
+    callers must pass an explicit None to deliberately leave one disconnected.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/add.html
     """
@@ -863,12 +866,15 @@ def mapping(
 
 
 def mix_shader(
-    factor: nt.SocketOrVal[float] = 0.5,
-    a: nt.ProcNode[nt.Shader] | None = None,
-    b: nt.ProcNode[nt.Shader] | None = None,
+    factor: nt.SocketOrVal[float],
+    a: nt.ProcNode[nt.Shader] | None,
+    b: nt.ProcNode[nt.Shader] | None,
 ) -> nt.ProcNode[nt.Shader]:
     """
     Uses a MixShader Shader Node.
+
+    All inputs are required: an unconnected shader input renders pure black, so
+    callers must pass an explicit None to deliberately leave one disconnected.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/mix.html
     """
@@ -1162,7 +1168,7 @@ def script(
 
 
 def shader_to_rgb(
-    shader: nt.ProcNode[nt.Shader] | None = None,
+    shader: nt.ProcNode[nt.Shader] | None,
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a ShaderToRGB Shader Node.

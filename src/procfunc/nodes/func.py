@@ -214,8 +214,8 @@ TCompareOperation = Literal[
 
 
 def _compare(
-    a: TCompare = None,
-    b: TCompare = None,
+    a: TCompare,
+    b: TCompare,
     epsilon: nt.SocketOrVal[float] | None = None,
     operation: TCompareOperation = "EQUAL",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
@@ -256,29 +256,29 @@ TCompareNumeric = TypeVar("TCompareNumeric", nt.SocketOrVal[int], nt.SocketOrVal
 
 
 def less_than(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, operation="LESS_THAN")
 
 
 def less_equal(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, operation="LESS_EQUAL")
 
 
 def greater_than(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, operation="GREATER_THAN")
 
 
 def greater_equal(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, operation="GREATER_EQUAL")
 
@@ -291,16 +291,16 @@ TCompareEqual = TypeVar(
 
 
 def equal(
-    a: TCompareEqual = None,
-    b: TCompareEqual = None,
+    a: TCompareEqual,
+    b: TCompareEqual,
     epsilon: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, epsilon, operation="EQUAL")
 
 
 def not_equal(
-    a: TCompareEqual = None,
-    b: TCompareEqual = None,
+    a: TCompareEqual,
+    b: TCompareEqual,
     epsilon: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, epsilon, operation="NOT_EQUAL")

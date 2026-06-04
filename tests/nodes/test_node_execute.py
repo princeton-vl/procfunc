@@ -1,5 +1,6 @@
 import bpy
 import numpy as np
+import pytest
 
 import procfunc as pf
 
@@ -176,6 +177,40 @@ def test_complex_shader_network():
     material = pf.Material(surface=bsdf)
 
     assert material.item().use_nodes is True
+
+
+def test_mix_shader_inputs_required():
+    """mix_shader/add_shader inputs are required: omitting one raises TypeError;
+    passing explicit None deliberately disconnects it."""
+    bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.2, 0.1, 1.0))
+
+    with pytest.raises(TypeError):
+        pf.nodes.shader.mix_shader(factor=0.5, b=bsdf)
+    with pytest.raises(TypeError):
+        pf.nodes.shader.add_shader(a=bsdf)
+
+    mixed = pf.nodes.shader.mix_shader(factor=0.5, a=None, b=bsdf)
+    assert mixed is not None
+    added = pf.nodes.shader.add_shader(a=None, b=bsdf)
+    assert added is not None
+
+
+def test_primary_node_inputs_required():
+    """Primary geometry/compare inputs are required: omitting one raises TypeError;
+    passing explicit None deliberately disconnects it where None is a valid wiring."""
+    cube = pf.nodes.geo.mesh_cube(size=(1, 1, 1)).mesh
+
+    with pytest.raises(TypeError):
+        pf.nodes.geo.mesh_boolean(a=cube)
+    with pytest.raises(TypeError):
+        pf.nodes.func.less_than(a=1)
+    with pytest.raises(TypeError):
+        pf.nodes.geo.set_material(geometry=cube)
+
+    union = pf.nodes.geo.mesh_boolean(a=None, b=cube, operation="UNION")
+    assert union is not None
+    rgb = pf.nodes.shader.shader_to_rgb(shader=None)
+    assert rgb is not None
 
 
 @pf.nodes.node_function
