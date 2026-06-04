@@ -400,6 +400,10 @@ def write_material_index(
     obj.item().data.polygons.foreach_set("material_index", arr)
 
 
+def spline_lengths(obj: t.CurveObject) -> np.ndarray:
+    return np.array([spline.calc_length() for spline in obj.item().data.splines])
+
+
 __all__ = [
     "get_attribute",
     "read_attribute",
@@ -426,4 +430,5 @@ __all__ = [
     "loop_vertex_indices",
     "material_index",
     "write_material_index",
+    "spline_lengths",
 ]
