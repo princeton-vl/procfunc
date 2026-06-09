@@ -182,7 +182,8 @@ def _compute_pytree_obj_names(
 
     for parentname, child in zip(names, children):
         for childname in _compute_pytree_obj_names(child, separator):
-            yield (parentname + separator + childname if childname else parentname)
+            # str() since names may be non-str, e.g. tuple socket keys ("Vector", 0)
+            yield (str(parentname) + separator + childname if childname else parentname)
 
 
 TItem = TypeVar("TItem")

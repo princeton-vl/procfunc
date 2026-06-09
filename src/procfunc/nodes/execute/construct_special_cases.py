@@ -208,8 +208,7 @@ def special_case_capture_attribute(
             data_type = bni.SOCKET_CLASS_TO_DATATYPE[soc_type.value]
         elif isinstance(input_val, bpy.types.NodeSocket):
             data_type = bni.SOCKET_CLASS_TO_DATATYPE[input_val.bl_idname]
-        elif type(input_val) in bni.PYTHON_TYPE_TO_SOCKET_TYPE:
-            soc_type = bni.PYTHON_TYPE_TO_SOCKET_TYPE[type(input_val)]
+        elif (soc_type := bni.value_type_to_socket_type(type(input_val))) is not None:
             data_type = bni.SOCKET_CLASS_TO_DATATYPE[soc_type.value]
         else:
             raise ValueError(f"Could not determine data type for {input_val=}")
@@ -240,6 +239,37 @@ def special_case_value_outputdefault(
     bl_node.outputs[0].default_value = value
 
 
+def special_case_input_constant(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    **_kwargs,
+):
+    # FunctionNodeInput* store their constant on a node property (named per
+    # CONSTANT_NODES), not on an output socket default like ShaderNodeValue/RGB.
+    # Property-named attrs (e.g. from func.input_string) skip this and are
+    # applied by the generic attr loop.
+    if "value" not in attrs:
+        return
+    value = attrs.pop("value")
+    if bl_node.bl_idname == "FunctionNodeInputColor" and len(value) == 3:
+        value = (*value, 1.0)
+    setattr(bl_node, bni.CONSTANT_NODES[bl_node.bl_idname], value)
+
+
+def special_case_combine_xyz_constant(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    **_kwargs,
+):
+    # A vector/rotation constant lowered to CombineXYZ outside geometry trees;
+    # regular combine_xyz nodes carry no "value" attr and pass through untouched.
+    if "value" not in attrs:
+        return
+    value = attrs.pop("value")
+    for socket, component in zip(bl_node.inputs, value, strict=True):
+        socket.default_value = float(component)
+
+
 NODE_SPECIAL_CASES = {
     "ShaderNodeValToRGB": special_case_color_ramp,
     "CompositorNodeValToRGB": special_case_color_ramp,
@@ -254,4 +284,14 @@ NODE_SPECIAL_CASES = {
     "GeometryNodeCaptureAttribute": special_case_capture_attribute,
     "ShaderNodeValue": special_case_value_outputdefault,
     "ShaderNodeRGB": special_case_value_outputdefault,
+    "CompositorNodeValue": special_case_value_outputdefault,
+    "CompositorNodeRGB": special_case_value_outputdefault,
+    "FunctionNodeInputBool": special_case_input_constant,
+    "FunctionNodeInputColor": special_case_input_constant,
+    "FunctionNodeInputInt": special_case_input_constant,
+    "FunctionNodeInputRotation": special_case_input_constant,
+    "FunctionNodeInputString": special_case_input_constant,
+    "FunctionNodeInputVector": special_case_input_constant,
+    "ShaderNodeCombineXYZ": special_case_combine_xyz_constant,
+    "CompositorNodeCombineXYZ": special_case_combine_xyz_constant,
 }

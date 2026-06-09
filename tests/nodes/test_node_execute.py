@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 
 import procfunc as pf
+from conftest import realize as _realize
 
 
 def test_to_material_basic():
@@ -284,6 +285,24 @@ def test_collection_info_unwraps_collection_wrapper():
     assert result.item().type == "MESH"
 
 
+def test_image_texture_unwraps_image_wrapper():
+    """geo.image_texture should unwrap a pf.Image via .item() when assigning to a
+    NodeSocketImage, so that bpy receives a bpy.types.Image."""
+
+    raw = bpy.data.images.new("test_unwrap_image", width=4, height=4)
+    img = pf.Image(raw)
+    assert isinstance(img, pf.Image)
+
+    tex = pf.nodes.geo.image_texture(image=img, vector=pf.nodes.geo.input_position())
+    cube = pf.nodes.geo.set_position(
+        geometry=pf.nodes.geo.mesh_cube(size=(1, 1, 1)).mesh, offset=tex.color
+    )
+    obj = pf.nodes.to_mesh_object(geometry=cube)
+
+    assert obj is not None
+    assert obj.item().type == "MESH"
+
+
 def test_to_object_basic():
     cube = pf.nodes.geo.mesh_cube(size=(2, 2, 2))
     obj = pf.nodes.to_mesh_object(geometry=cube.mesh)
@@ -396,3 +415,125 @@ def test_func_as_nodegroup():
     assert items[1].socket_type == pf.nodes.SocketType.VECTOR.value
     assert items[2].socket_type == pf.nodes.SocketType.FLOAT.value
 """
+
+
+@pf.nodes.node_function
+def _random_value_4tuple(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    rv = pf.nodes.func.random_value(min=(0, 0, 0, 0), max=(1, 1, 1, 1))
+    return pf.nodes.geo.set_position(geo, offset=rv)
+
+
+@pf.nodes.node_function
+def _random_value_3tuple(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    rv = pf.nodes.func.random_value(min=(0, 0, 0), max=(1, 1, 1))
+    return pf.nodes.geo.set_position(geo, offset=rv)
+
+
+@pf.nodes.node_function
+def _mix_4tuple(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    mixed = pf.nodes.math.mix(a=(0, 0, 0, 0), b=(1, 1, 1, 1), factor=0.5)
+    return pf.nodes.geo.set_position(geo, offset=mixed)
+
+
+def _node_data_types(node_fn, bl_idname: str) -> list[str]:
+    ng = _realize(node_fn, pf.nodes.NodeGroupType.GEOMETRY)
+    return [n.data_type for n in ng.nodes if n.bl_idname == bl_idname]
+
+
+def test_random_value_4tuple_rejected():
+    """RandomValue has no color/4-component data type; a plain 4-tuple must raise
+    rather than silently truncate to a 3-component FLOAT_VECTOR."""
+    with pytest.raises(ValueError, match="length-4"):
+        _node_data_types(_random_value_4tuple, "FunctionNodeRandomValue")
+
+
+def test_random_value_3tuple_resolves_to_float_vector():
+    assert _node_data_types(_random_value_3tuple, "FunctionNodeRandomValue") == [
+        "FLOAT_VECTOR"
+    ]
+
+
+def test_mix_4tuple_resolves_to_rgba():
+    """Mix does support color, so a 4-tuple resolves to RGBA there."""
+    assert _node_data_types(_mix_4tuple, "ShaderNodeMix") == ["RGBA"]
+
+
+@pf.nodes.node_function
+def _set_handles_both(curve: pf.ProcNode[pf.CurveObject]) -> pf.ProcNode:
+    return pf.nodes.geo.curve_set_handles(curve)
+
+
+@pf.nodes.node_function
+def _set_handles_left_only(curve: pf.ProcNode[pf.CurveObject]) -> pf.ProcNode:
+    return pf.nodes.geo.curve_set_handles(curve, mode={"LEFT"})
+
+
+def _curve_set_handles_modes(node_fn) -> list[set]:
+    ng = _realize(node_fn, pf.nodes.NodeGroupType.GEOMETRY)
+    return [n.mode for n in ng.nodes if n.bl_idname == "GeometryNodeCurveSetHandles"]
+
+
+def test_curve_set_handles_mode_default_is_both():
+    """mode is a flag set defaulting to both handles, matching Blender."""
+    assert _curve_set_handles_modes(_set_handles_both) == [{"LEFT", "RIGHT"}]
+
+
+def test_curve_set_handles_mode_single_member_set():
+    """A single-member set is accepted by the construct path (string would be
+    rejected by Blender's enum-flag property)."""
+    assert _curve_set_handles_modes(_set_handles_left_only) == [{"LEFT"}]
+
+
+# --- strict-None policy: None is only allowed for sockets with no default_value ---
+
+
+def _realize_geo(node_fn):
+    return _realize(node_fn, pf.nodes.NodeGroupType.GEOMETRY)
+
+
+@pf.nodes.node_function
+def _none_into_float_socket(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    # ADD enables Value sockets 0 and 1; passing None to the second value socket
+    # (an enabled VALUE socket) must be rejected.
+    val = pf.nodes.math.add(1.0, None)
+    return pf.nodes.geo.set_position(geo, offset=(val, val, val))
+
+
+def test_none_for_float_socket_raises():
+    with pytest.raises(ValueError, match="received None"):
+        _realize_geo(_none_into_float_socket)
+
+
+@pf.nodes.node_function
+def _none_geometry_input(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    # join_geometry's Geometry is a Geometry socket; a None entry is allowed
+    # (leaves that multi-input slot disconnected).
+    return pf.nodes.geo.join_geometry([geo, None])
+
+
+def test_none_for_geometry_socket_ok():
+    ng = _realize_geo(_none_geometry_input)
+    assert any(n.bl_idname == "GeometryNodeJoinGeometry" for n in ng.nodes)
+
+
+@pf.nodes.node_function
+def _true_selection(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    # Selection's all-true behavior is spelled with an explicit True.
+    return pf.nodes.geo.set_position(geo, selection=True, offset=(0, 0, 1))
+
+
+def test_true_for_boolean_selection_socket_ok():
+    ng = _realize_geo(_true_selection)
+    assert any(n.bl_idname == "GeometryNodeSetPosition" for n in ng.nodes)
+
+
+@pf.nodes.node_function
+def _none_selection(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    # Selection has a (hidden) boolean default_value, so None is rejected like
+    # any other value socket.
+    return pf.nodes.geo.set_position(geo, selection=None, offset=(0, 0, 1))
+
+
+def test_none_for_boolean_selection_socket_raises():
+    with pytest.raises(ValueError, match="received None"):
+        _realize_geo(_none_selection)

@@ -6,6 +6,7 @@ from procfunc import types as pt
 from procfunc.nodes import types as nt
 from procfunc.nodes.bindings_util import RuntimeResolveDataType, raise_io_error
 from procfunc.nodes.bpy_node_info import NodeDataType
+from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
 
@@ -208,6 +209,37 @@ class CaptureAttributeResult(Generic[TAnyGeometry]):
             return self.attributes[name]
         else:
             return object.__getattribute__(self, name)
+
+
+# CaptureAttribute has one fixed output (geometry) plus a dynamic set of captured
+# attribute outputs keyed by user-chosen names, so it can't be a NamedTuple like
+# the other multi-output bindings. Register it as a pytree container instead so
+# the computegraph builder flattens it into its geometry + attribute sockets.
+def _capture_result_flatten(
+    obj: CaptureAttributeResult,
+) -> tuple[list[nt.ProcNode], list[str]]:
+    return [obj.geometry, *obj.attributes.values()], list(obj.attributes.keys())
+
+
+def _capture_result_unflatten(
+    children: list[nt.ProcNode], spec: pytree.PyTreeDef
+) -> CaptureAttributeResult:
+    geometry, *attrs = children
+    return CaptureAttributeResult(
+        geometry=geometry, attributes=dict(zip(spec.aux, attrs))
+    )
+
+
+def _capture_result_names(obj: CaptureAttributeResult) -> list[str]:
+    return ["geometry", *obj.attributes.keys()]
+
+
+pytree.register_pytree_container(
+    CaptureAttributeResult,
+    flatten_func=_capture_result_flatten,
+    unflatten_func=_capture_result_unflatten,
+    names_func=_capture_result_names,
+)
 
 
 def capture_attribute(
@@ -507,7 +539,7 @@ def curve_line_from_direction(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/curve_line.html
     """
     return nt.ProcNode.from_nodetype(
-        node_type="GeometryNodeCurveLineFromDirection",
+        node_type="GeometryNodeCurvePrimitiveLine",
         inputs={"Start": start, "Direction": direction, "Length": length},
         attrs={"mode": "DIRECTION"},
     )
@@ -554,10 +586,13 @@ def curve_set_handles(
     curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     handle_type: Literal["FREE", "AUTO", "VECTOR", "ALIGN"] = "AUTO",
-    mode: Literal["LEFT", "RIGHT"] = "RIGHT",
+    mode: set[str] = frozenset({"LEFT", "RIGHT"}),
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a CurveSetHandles Geometry Node.
+
+    `mode` is a flag set whose members are any of "LEFT", "RIGHT" (which curve
+    handles to affect); defaults to both, matching Blender's default.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/write/set_handle_type.html
     """
@@ -1080,15 +1115,26 @@ def extrude_mesh(
     individual: nt.SocketOrVal[bool] = True,
     mode: Literal["VERTICES", "EDGES", "FACES"] = "FACES",
 ) -> ExtrudeMeshResult:
+    # The node's Individual socket only exists in FACES mode; in other modes a
+    # passed value would be silently ignored, so reject it loudly.
+    if mode != "FACES" and individual is not True:
+        raise ValueError(
+            f"individual is only meaningful with mode='FACES', got {mode=}"
+        )
+    inputs = {
+        "Mesh": mesh,
+        "Selection": selection,
+        "Offset Scale": offset_scale,
+    }
+    # A disconnected Offset extrudes along the normal (implicit field), so we
+    # omit the input entirely when None rather than passing None to a value socket.
+    if offset is not None:
+        inputs["Offset"] = offset
+    if mode == "FACES":
+        inputs["Individual"] = individual
     node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeExtrudeMesh",
-        inputs={
-            "Mesh": mesh,
-            "Selection": selection,
-            "Offset": offset,
-            "Offset Scale": offset_scale,
-            "Individual": individual,
-        },
+        inputs=inputs,
         attrs={"mode": mode},
     )
     return ExtrudeMeshResult(
@@ -1266,20 +1312,28 @@ def geometry_to_instance(
     )
 
 
+class GetNamedGridResult(NamedTuple):
+    volume: nt.ProcNode[nt.Geometry]
+    grid: nt.ProcNode[float]
+
+
 def get_named_grid(
     volume: nt.ProcNode[nt.Geometry] | None,
     name: nt.SocketOrVal[str] = "",
     remove: nt.SocketOrVal[bool] = True,
-) -> nt.ProcNode:
+) -> GetNamedGridResult:
     """
     Uses a GetNamedGrid Geometry Node.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/volume/index.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeGetNamedGrid",
         inputs={"Name": name, "Remove": remove, "Volume": volume},
         attrs={},
+    )
+    return GetNamedGridResult(
+        node._output_socket("volume"), node._output_socket("grid")
     )
 
 
@@ -1345,38 +1399,54 @@ def image_info(
     )
 
 
+class ImageTextureResult(NamedTuple):
+    color: nt.ProcNode[pt.Color]
+    alpha: nt.ProcNode[float]
+
+
 def image_texture(
     image: nt.SocketOrVal[pt.Image],
     vector: nt.SocketOrVal[nt.pt.Vector],
     frame: nt.SocketOrVal[int] = 0,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
     interpolation: Literal["Linear", "Closest", "Cubic"] = "Linear",
-) -> nt.ProcNode:
+) -> ImageTextureResult:
     """
     Uses a ImageTexture Geometry Node.
 
-    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/scene/image_info.html
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/texture/image.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeImageTexture",
-        inputs={"Image": image, "pt.Vector": vector, "Frame": frame},
+        inputs={"Image": image, "Vector": vector, "Frame": frame},
         attrs={"extension": extension, "interpolation": interpolation},
     )
+    return ImageTextureResult(
+        node._output_socket("color"), node._output_socket("alpha")
+    )
+
+
+class IndexOfNearestResult(NamedTuple):
+    index: nt.ProcNode[int]
+    has_neighbor: nt.ProcNode[bool]
 
 
 def index_of_nearest(
     position: nt.SocketOrVal[nt.pt.Vector],
     group_id: nt.SocketOrVal[int] = 0,
-) -> nt.ProcNode[int]:
+) -> IndexOfNearestResult:
     """
     Uses a IndexOfNearest Geometry Node.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/geometry/sample/index_of_nearest.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeIndexOfNearest",
         inputs={"Position": position, "Group ID": group_id},
         attrs={},
+    )
+    return IndexOfNearestResult(
+        node._output_socket("index"), node._output_socket("has_neighbor")
     )
 
 
@@ -1455,7 +1525,7 @@ def input_id() -> nt.ProcNode[int]:
     )
 
 
-def input_image(image: pt.Image) -> nt.ProcNode[pt.Image]:
+def input_image(image: pt.Image | None = None) -> nt.ProcNode[pt.Image]:
     """
     Uses a InputImage Geometry Node.
 
@@ -1509,7 +1579,7 @@ def input_instance_scale() -> nt.ProcNode[pt.Vector]:
     )
 
 
-def input_material(material: pt.Material) -> nt.ProcNode[pt.Material]:
+def input_material(material: pt.Material | None = None) -> nt.ProcNode[pt.Material]:
     """
     Uses a InputMaterial Geometry Node.
 
@@ -3328,18 +3398,28 @@ def set_curve_handle_positions(
 
 def set_curve_normal(
     curve: nt.ProcNode[pt.CurveObject] | None,
-    normal: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    normal: nt.SocketOrVal[pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
     mode: Literal["MINIMUM_TWIST", "Z_UP", "FREE"] = "MINIMUM_TWIST",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a SetCurveNormal Geometry Node.
 
+    The Normal socket only exists in FREE mode; MINIMUM_TWIST and Z_UP compute
+    normals themselves, so `normal` is required for FREE and rejected otherwise.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/write/set_curve_normal.html
     """
+    if mode == "FREE" and normal is None:
+        raise ValueError("normal is required when mode='FREE'")
+    if mode != "FREE" and normal is not None:
+        raise ValueError(f"normal is only meaningful when mode='FREE', got {mode=}")
+    inputs = {"Curve": curve, "Selection": selection}
+    if mode == "FREE":
+        inputs["Normal"] = normal
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSetCurveNormal",
-        inputs={"Curve": curve, "Selection": selection, "Normal": normal},
+        inputs=inputs,
         attrs={"mode": mode},
     )
 
@@ -3415,7 +3495,7 @@ def set_instance_transform(
 def set_material(
     geometry: nt.ProcNode[pt.MeshObject] | None,
     material: nt.SocketOrVal[pt.Material],
-    selection: nt.SocketOrVal[bool] = None,
+    selection: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a SetMaterial Geometry Node.
@@ -3476,16 +3556,20 @@ def set_position(
     """
     Uses a SetPosition Geometry Node.
 
+    A disconnected Position keeps the geometry's existing position; a disconnected
+    Offset applies no offset. We therefore omit these inputs entirely when None
+    rather than passing None to a value socket (see strict-None policy).
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/geometry/write/set_position.html
     """
+    inputs = {"Geometry": geometry, "Selection": selection}
+    if position is not None:
+        inputs["Position"] = position
+    if offset is not None:
+        inputs["Offset"] = offset
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSetPosition",
-        inputs={
-            "Geometry": geometry,
-            "Selection": selection,
-            "Position": position,
-            "Offset": offset,
-        },
+        inputs=inputs,
         attrs={},
     )
 
@@ -4018,10 +4102,10 @@ def transform_by_matrix(
     matrix: nt.SocketOrVal[pt.Matrix],
 ):
     return nt.ProcNode.from_nodetype(
-        node_type="GeometryNodeTransformByMatrix",
+        node_type="GeometryNodeTransform",
         inputs={
             "Geometry": geometry,
-            "Matrix": matrix,
+            "Transform": matrix,
         },
         attrs={"mode": "MATRIX"},
     )

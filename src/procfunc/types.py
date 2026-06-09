@@ -269,12 +269,45 @@ class MetaObject(Object):
         super().__init__(obj)
 
 
+def is_zero_displacement(value: Any) -> bool:
+    """True for a constant zero-vector displacement node.
+
+    Such a displacement has no effect, so the material build can leave the
+    output socket disconnected and skip emitting the subgraph entirely.
+    """
+    from procfunc import compute_graph as cg
+    from procfunc.nodes import types as nt
+
+    if isinstance(value, nt.ProcNode):
+        value = value.item()
+    if not isinstance(value, cg.ConstantNode):
+        return False
+    return isinstance(value.value, (mathutils.Vector, tuple, list)) and tuple(
+        value.value
+    ) == (0.0, 0.0, 0.0)
+
+
 @dataclass
 class Material:
     surface: Any = None
     displacement: Any = None
     volume: Any = None
     _bpy_material: Any = field(default=None, init=False, repr=False)
+
+    def __post_init__(self):
+        # displacement is a connectable node, never a bare literal: None means
+        # "no displacement", otherwise it must be a graph node (a value-domain
+        # ProcNode or a graph-domain cg.Node).
+        if self.displacement is None:
+            return
+        from procfunc import compute_graph as cg
+        from procfunc.nodes import types as nt
+
+        if not isinstance(self.displacement, (nt.ProcNode, cg.Node)):
+            raise TypeError(
+                f"Material.displacement must be a ProcNode or None, not a literal "
+                f"{type(self.displacement).__name__}; wrap it with pf.nodes.math.constant(...)"
+            )
 
     def item(self) -> bpy.types.Material:
         if self._bpy_material is None:

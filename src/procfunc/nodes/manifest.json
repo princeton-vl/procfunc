@@ -1643,6 +1643,9 @@
     "infinigen_v1_name": "Nodes.ColorRamp",
     "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
+    "output_names_map": {
+      "Image": "color"
+    },
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -2066,7 +2069,7 @@
       "feature": "N_SPHERE_RADIUS"
     },
     "infinigen_v1_name": "Nodes.VoronoiTexture",
-    "name": "pf.nodes.texture.voronoi",
+    "name": "pf.nodes.texture.voronoi_n_spheres_distance",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
@@ -2137,7 +2140,7 @@
       "ShaderNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -4075,7 +4078,6 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -4092,7 +4094,6 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -4353,7 +4354,7 @@
       "GeometryNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -4481,11 +4482,14 @@
     "infinigen_v1_name": "Nodes.ShaderImageTexture",
     "name": "pf.nodes.texture.image",
     "arg_names_map": null,
+    "output_names_map": {
+      "Alpha": "fac"
+    },
     "node_group_type": [
       "ShaderNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -4684,7 +4688,6 @@
       "int",
       "float"
     ],
-    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -5253,7 +5256,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5269,7 +5272,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5317,7 +5320,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5449,7 +5452,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5481,7 +5484,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5497,7 +5500,6 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -5597,7 +5599,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5645,7 +5647,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5807,7 +5809,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5855,7 +5857,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5903,7 +5905,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -5919,7 +5921,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -6033,7 +6035,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -6081,7 +6083,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -6120,10 +6122,26 @@
     "notes": null
   },
   {
+    "bpy_name": "CompositorNodeValue",
+    "bpy_mode_args": null,
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.math.constant",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_multi_output": false,
+    "is_contextual": null,
+    "is_infinigen_restricted": false,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
     "bpy_name": "CompositorNodeRGB",
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.rgb",
+    "name": "pf.nodes.math.constant",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -6208,10 +6226,10 @@
       "image": "color"
     },
     "output_names_map": {
-      "h": "hue",
-      "s": "saturation",
-      "v": "value",
-      "a": "alpha"
+      "H": "hue",
+      "S": "saturation",
+      "V": "value",
+      "A": "alpha"
     },
     "node_group_type": [
       "CompositorNodeTree"
@@ -6232,10 +6250,10 @@
       "image": "color"
     },
     "output_names_map": {
-      "r": "red",
-      "g": "green",
-      "b": "blue",
-      "a": "alpha"
+      "R": "red",
+      "G": "green",
+      "B": "blue",
+      "A": "alpha"
     },
     "node_group_type": [
       "CompositorNodeTree"
@@ -6256,10 +6274,10 @@
       "image": "color"
     },
     "output_names_map": {
-      "y": "y",
-      "cb": "cb",
-      "cr": "cr",
-      "a": "alpha"
+      "Y": "y",
+      "Cb": "cb",
+      "Cr": "cr",
+      "A": "alpha"
     },
     "node_group_type": [
       "CompositorNodeTree"
@@ -6280,10 +6298,10 @@
       "image": "color"
     },
     "output_names_map": {
-      "y": "y",
-      "u": "u",
-      "v": "v",
-      "a": "alpha"
+      "Y": "y",
+      "U": "u",
+      "V": "v",
+      "A": "alpha"
     },
     "node_group_type": [
       "CompositorNodeTree"
@@ -6404,7 +6422,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -6454,7 +6472,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -6498,11 +6516,14 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
+    "output_names_map": {
+      "Image": "color"
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -6539,7 +6560,7 @@
       "CompositorNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -7317,7 +7338,7 @@
       "GeometryNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -7365,7 +7386,7 @@
       "GeometryNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
@@ -8825,7 +8846,6 @@
       "ShaderNodeTree"
     ],
     "data_types": null,
-    "exclude_from_transpile_test": false,
     "is_multi_output": false,
     "is_contextual": null,
     "is_infinigen_restricted": false,
@@ -8842,7 +8862,7 @@
       "ShaderNodeTree"
     ],
     "data_types": null,
-    "is_multi_output": false,
+    "is_multi_output": true,
     "is_contextual": null,
     "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,

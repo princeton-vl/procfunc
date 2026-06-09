@@ -4,6 +4,7 @@ from typing import Literal, NamedTuple, TypeVar
 from procfunc import types as pt
 from procfunc.nodes import types as nt
 from procfunc.nodes.bindings_util import (
+    ContextualNode,
     RuntimeResolveDataType,
     raise_io_error,
 )
@@ -212,21 +213,28 @@ TCompareOperation = Literal[
     "LESS_THAN", "LESS_EQUAL", "GREATER_THAN", "GREATER_EQUAL", "EQUAL", "NOT_EQUAL"
 ]
 
+# matches Blender's FunctionNodeCompare Epsilon socket default
+COMPARE_EPSILON_DEFAULT = 0.001
+
 
 def _compare(
     a: TCompare,
     b: TCompare,
-    epsilon: nt.SocketOrVal[float] | None = None,
+    epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
     operation: TCompareOperation = "EQUAL",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode[bool]:
     """
-    Uses a Compare Function Node.
+    Compares two values, context-dispatching to FunctionNodeCompare in geometry
+    trees (full data_type support incl. INT) and Math nodes elsewhere. Outside
+    geometry, LESS_THAN / GREATER_THAN map to a single Math node, while
+    EQUAL / NOT_EQUAL / LESS_EQUAL / GREATER_EQUAL lower to a small Math
+    composition (see _lower_compare_outside_geometry). The `data_type` option and
+    non-float operands remain geometry-only. `epsilon` defaults to Blender's own
+    Compare node default (0.001) and only applies to EQUAL / NOT_EQUAL.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/math/compare.html
     """
-
-    # TODO merge with math.less_than etc
 
     if data_type is None:
         data_type = RuntimeResolveDataType(
@@ -239,11 +247,15 @@ def _compare(
             ],
             ["A", "B"],
         )
-    inputs: dict[str, nt.SocketOrVal] = {"A": a, "B": b}
-    if epsilon is not None:
-        inputs["Epsilon"] = epsilon
+    # tuple keys let inline operator dispatch (`<`, `>`) bind positional args and
+    # let the contextual mapping remap A/B -> Value sockets for ShaderNodeMath
+    inputs: dict[tuple[str, int], nt.SocketOrVal] = {("A", 0): a, ("B", 0): b}
+    # the socket already holds the Blender default, so skip setting it - this also
+    # keeps INT/STRING compares working, whose Epsilon socket is disabled
+    if not (isinstance(epsilon, float) and epsilon == COMPARE_EPSILON_DEFAULT):
+        inputs[("Epsilon", 0)] = epsilon
     return nt.ProcNode.from_nodetype(
-        node_type="FunctionNodeCompare",
+        node_type=ContextualNode.COMPARE.value,
         inputs=inputs,
         attrs={
             "operation": operation,
@@ -293,7 +305,7 @@ TCompareEqual = TypeVar(
 def equal(
     a: TCompareEqual,
     b: TCompareEqual,
-    epsilon: nt.SocketOrVal[float] | None = None,
+    epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, epsilon, operation="EQUAL")
 
@@ -301,7 +313,7 @@ def equal(
 def not_equal(
     a: TCompareEqual,
     b: TCompareEqual,
-    epsilon: nt.SocketOrVal[float] | None = None,
+    epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
     return _compare(a, b, epsilon, operation="NOT_EQUAL")
 
@@ -328,7 +340,7 @@ def vector_compare_elementwise(
 def compare_color(
     a: nt.SocketOrVal[pt.Color],
     b: nt.SocketOrVal[pt.Color],
-    operation: Literal["EQUAL", "NOT_EQUAL", "BRIGHTER", "DARKER"],
+    operation: Literal["EQUAL", "NOT_EQUAL", "BRIGHTER", "DARKER"] = "EQUAL",
     epsilon: nt.SocketOrVal[float] = 0.001,
 ) -> nt.ProcNode[bool]:
     return nt.ProcNode.from_nodetype(
@@ -594,12 +606,13 @@ def random_value(
     """
 
     if data_type is None:
+        # bl4.2 FunctionNodeRandomValue only supports FLOAT/INT/FLOAT_VECTOR
+        # (and BOOLEAN via random_boolean) — it has no color/RGBA data type.
         data_type = RuntimeResolveDataType(
             [
                 NodeDataType.INT,
                 NodeDataType.FLOAT,
                 NodeDataType.FLOAT_VECTOR,
-                NodeDataType.RGBA,
             ],
             ["Min", "Max"],
         )

@@ -206,10 +206,11 @@ def ies(
 
 def image(
     vector: nt.SocketOrVal[pt.Vector],
+    # None mirrors a bare ShaderNodeTexImage; attr not socket, strict-None doesnt apply
+    image: pt.Image | None = None,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
-    image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
-    projection: Literal["FLAT", "BOX", "SPHERE", "CUBE"] = "FLAT",
+    projection: Literal["FLAT", "BOX", "SPHERE", "TUBE"] = "FLAT",
     projection_blend: float = 0.0,
 ) -> TextureResult:
     """
@@ -665,19 +666,18 @@ def white_noise(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/white_noise.html
     """
 
-    if noise_dimensions == "1D" and w is None:
-        raise ValueError("w is required for 1D white noise")
+    if noise_dimensions in ["1D", "4D"] and w is None:
+        raise ValueError(f"w is required for {noise_dimensions} white noise")
     if noise_dimensions in ["2D", "3D", "4D"] and vector is None:
         raise_explicit_noise_vector_error("white_noise", logger=logger)
     if noise_dimensions in ["2D", "3D"] and w is not None:
         raise ValueError("w is not supported for 2D or 3D white noise")
 
+    # only mention the sockets this mode enables (1D has no Vector; 2D/3D no W)
+    inputs = {k: v for k, v in {"Vector": vector, "W": w}.items() if v is not None}
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexWhiteNoise",
-        inputs={
-            "Vector": vector,
-            "W": w,
-        },
+        inputs=inputs,
         attrs={"noise_dimensions": noise_dimensions},
     )
     return TextureResult(

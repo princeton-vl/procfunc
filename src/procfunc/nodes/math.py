@@ -39,9 +39,7 @@ def clamp(
 
 
 def _math(
-    a: nt.SocketOrVal[float] = None,
-    b: nt.SocketOrVal[float] = None,
-    c: nt.SocketOrVal[float] = None,
+    *operands: nt.SocketOrVal[float],
     operation: str = "ADD",
 ) -> nt.ProcNode[float]:
     """
@@ -52,9 +50,12 @@ def _math(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/math.html
     """
 
+    # only mention the sockets this operation uses; an explicit None operand
+    # still propagates and is rejected by the strict-None policy
+    inputs = {("Value", i): v for i, v in enumerate(operands)}
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.MATH.value,
-        inputs={("Value", 0): a, ("Value", 1): b, ("Value", 2): c},
+        inputs=inputs,
         attrs={
             "operation": operation,
             "use_clamp": False,  # not supported by procfunc
@@ -361,7 +362,7 @@ def vector_refract(
 ) -> nt.ProcNode[pt.Vector]:
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
-        inputs={("Vector", 0): incident, ("Vector", 1): normal, ("Scale", 2): ior},
+        inputs={("Vector", 0): incident, ("Vector", 1): normal, "Scale": ior},
         attrs={"operation": "REFRACT"},
     )
 
@@ -617,7 +618,19 @@ def vector_transform(
 
 # ---- Constants / inputs ----------------------------------------------------
 
-TConstant = TypeVar("TConstant", int, float, bool, pt.Vector, pt.Euler, pt.Color)
+TConstant = TypeVar("TConstant", int, float, bool, str, pt.Vector, pt.Euler, pt.Color)
+
+_CONSTANT_CONTEXTUAL_BY_TYPE = [
+    # bool before int: bool is a subclass of int
+    (bool, ContextualNode.BOOLEAN),
+    (int, ContextualNode.INT),
+    (float, ContextualNode.VALUE),
+    (pt.Euler, ContextualNode.ROTATION),
+    (pt.Vector, ContextualNode.VECTOR),
+    (tuple, ContextualNode.VECTOR),
+    (pt.Color, ContextualNode.RGB),
+    (str, ContextualNode.STRING),
+]
 
 
 def constant(
@@ -626,28 +639,17 @@ def constant(
     """
     Replaces all nodes which just store a constant
     e.g. ShaderNodeValue, ShaderNodeRGB, FunctionNodeInput*, etc
+
+    Dispatches on python type to a contextual node, resolved per tree type at
+    execution time (e.g. vector -> FunctionNodeInputVector in geometry trees,
+    a CombineXYZ with component socket defaults elsewhere).
     """
-    if isinstance(value, (float, int)):
-        return nt.ProcNode.from_nodetype(
-            node_type="ShaderNodeValue", inputs={}, attrs={"value": value}
-        )
-    elif isinstance(value, (pt.Vector, pt.Euler, tuple)):
-        x, y, z = value
-        return combine_xyz(x=float(x), y=float(y), z=float(z))
-    elif isinstance(value, bool):
-        return nt.ProcNode.from_nodetype(
-            node_type="FunctionNodeBoolean", inputs={}, attrs={"boolean": value}
-        )
-    elif isinstance(value, pt.Color):
-        return nt.ProcNode.from_nodetype(
-            node_type="ShaderNodeRGB", inputs={}, attrs={"value": value}
-        )
-    elif isinstance(value, str):
-        return nt.ProcNode.from_nodetype(
-            node_type="FunctionNodeInputString", inputs={}, attrs={"value": value}
-        )
-    else:
-        raise ValueError(f"Unsupported constant type: {type(value)}")
+    for py_type, contextual in _CONSTANT_CONTEXTUAL_BY_TYPE:
+        if isinstance(value, py_type):
+            return nt.ProcNode.from_nodetype(
+                node_type=contextual.value, inputs={}, attrs={"value": value}
+            )
+    raise ValueError(f"Unsupported constant type: {type(value)}")
 
 
 # ---- Mix -------------------------------------------------------------------
@@ -716,12 +718,16 @@ def float_curve(
 
 
 def vector_curve(
-    fac: nt.SocketOrVal[float],
     vector: nt.SocketOrVal[pt.Vector],
+    fac: nt.SocketOrVal[float] = 1.0,
     curves: list[np.ndarray] | np.ndarray | None = None,
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a VectorCurve Shader Node.
+
+    `fac` blends between the input and curve-mapped vector; the compositor
+    variant (CompositorNodeCurveVec) has no Fac socket and always applies the
+    curve fully, so `fac` is accepted there only at its no-op value 1.0.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/curves.html
     """

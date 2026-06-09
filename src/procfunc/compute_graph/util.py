@@ -58,7 +58,7 @@ def traverse_breadth_first(
             yield res(parent, name, node)
             continue
 
-        if node is None:
+        if not isinstance(node, Node):
             continue
 
         if id(node) in visited:
@@ -154,7 +154,9 @@ def traverse_depth_first(
 ) -> Generator[Any, None, None]:
     visited = set()
     for name, node in graph.outputs.items():
-        if node is None:
+        # an absent output leaf (None, e.g. a Material with no displacement) is
+        # not part of the node graph
+        if not isinstance(node, Node):
             continue
         yield from _traverse_depth_first_node(
             node, visited, None, name, order, yield_parent, yield_name, yield_consts

@@ -17,8 +17,10 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class VectorLike:
-    # named/typed version of None to be used with _infer_value_math_type
-    pass
+    # named/typed version of None to be used with _infer_value_math_type.
+    # `length` is the tuple/list length when known (used to disambiguate
+    # 4-tuples as RGBA vs 3-tuples as FLOAT_VECTOR).
+    length: int | None = None
 
 
 def _infer_value_math_type(
@@ -54,11 +56,10 @@ def _infer_value_math_type(
     elif isinstance(val, bpy.types.NodeSocket):
         res = bni.SOCKET_DTYPE_TO_DATATYPE[bni.SocketDType(val.type)]
         logger.debug(f"used {val.type=} to infer {res=}")
-    elif type(val) in bni.PYTHON_TYPE_TO_SOCKET_TYPE:
-        res = bni.PYTHON_TYPE_TO_SOCKET_TYPE[type(val)]
-        res = bni.SOCKET_CLASS_TO_DATATYPE[res.value]
+    elif (st := bni.value_type_to_socket_type(type(val))) is not None:
+        res = bni.SOCKET_CLASS_TO_DATATYPE[st.value]
     elif isinstance(val, (list, tuple, np.ndarray)):
-        return VectorLike()
+        return VectorLike(length=len(val))
     elif val is None:
         return None
     else:
@@ -82,10 +83,16 @@ def infer_operation_type(
     inputs: dict[str | int, Any],
     coerce_integers: bool,
     filter_keys: list[str] | None = None,
-    vectorlike_default: bni.NodeDataType | None = None,
+    vectorlike_options: list[bni.NodeDataType] | None = None,
 ) -> bni.NodeDataType:
+    # kwargs keys may be tuple socket ids like ("A", 0); match on the name part
+    def _key_name(k):
+        return k[0] if isinstance(k, tuple) else k
+
     filtered_keys = [
-        k for k in node.kwargs.keys() if filter_keys is None or k in filter_keys
+        k
+        for k in node.kwargs.keys()
+        if filter_keys is None or _key_name(k) in filter_keys
     ]
     input_data_types: list[bni.NodeDataType | VectorLike] = [
         _infer_value_math_type(inputs[k], node.kwargs[k], coerce_integers)
@@ -103,13 +110,30 @@ def infer_operation_type(
         v for v in input_data_types if not isinstance(v, VectorLike) and v is not None
     ]
 
+    # A 4-component tuple/list is an RGBA color, so prefer RGBA when the node
+    # offers it; otherwise fall back to its first vector-like type.
+    has_length4 = any(
+        isinstance(v, VectorLike) and v.length == 4 for v in input_data_types
+    )
+    vectorlike_options = vectorlike_options or []
+    if has_length4 and bni.NodeDataType.RGBA in vectorlike_options:
+        vectorlike_default = bni.NodeDataType.RGBA
+    else:
+        vectorlike_default = vectorlike_options[0] if vectorlike_options else None
+
     if len(specific_types) == 0 and len(input_data_types) > 0:
-        if vectorlike_default is not None:
-            return vectorlike_default
-        # we had ALL VectorLike
-        raise NotImplementedError(
-            f"Need to handle case where all arguments to {node=} are non-type-specific tuples/lists. Potentially just assume Vector?"
-        )
+        if vectorlike_default is None:
+            # we had ALL VectorLike
+            raise NotImplementedError(
+                f"Need to handle case where all arguments to {node=} are non-type-specific tuples/lists. Potentially just assume Vector?"
+            )
+        if has_length4 and vectorlike_default is bni.NodeDataType.FLOAT_VECTOR:
+            raise ValueError(
+                f"{node=} got a length-4 tuple/list but only FLOAT_VECTOR (a "
+                "3-component type) is available here; this node has no RGBA/4-component "
+                "data type. Pass a 3-tuple or use pf.Color/.astype to disambiguate."
+            )
+        return vectorlike_default
 
     data_type = specific_types[0]
 
@@ -147,14 +171,13 @@ def resolve_operation_data_type(
     vectorlike_options = [
         o for o in resolve_options.data_types if o in _vectorlike_types
     ]
-    vectorlike_default = vectorlike_options[0] if len(vectorlike_options) > 0 else None
 
     data_type = infer_operation_type(
         node,
         input_results,
         coerce_integers,
         filter_keys=resolve_options.dependent_input_names,
-        vectorlike_default=vectorlike_default,
+        vectorlike_options=vectorlike_options,
     )
 
     if logger.isEnabledFor(logging.DEBUG):
@@ -185,11 +208,18 @@ def map_data_type_for_differing_node_interface(
     if data_type.value in data_type_options:
         # MapRange seems to use the DataType naming convention
         return data_type.value
-    as_socket_dtype = bni.DATATYPE_TO_SOCKET_DTYPE[data_type]
-    if as_socket_dtype.value in data_type_options:
-        # wheras others e.g. Mix use the SocketType naming convention
-        return as_socket_dtype.value
+    # Others use the SocketType naming convention; a single NodeDataType may
+    # have several SocketDType spellings (e.g. RGBA is "FLOAT_COLOR" on
+    # FunctionNodeRandomValue but "RGBA" elsewhere), so try them all.
+    socket_dtype_aliases = [
+        sdt.value
+        for sdt, mapped in bni.SOCKET_DTYPE_TO_DATATYPE.items()
+        if mapped is data_type
+    ]
+    for alias in socket_dtype_aliases:
+        if alias in data_type_options:
+            return alias
     raise ValueError(
-        f"Failed resolve {data_type=} or {as_socket_dtype=} to an available {data_type_options=} "
-        f"for {bl_node=} {attr_key=}"
+        f"Failed resolve {data_type=} or {socket_dtype_aliases=} to an available "
+        f"{data_type_options=} for {bl_node=} {attr_key=}"
     )

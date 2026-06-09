@@ -75,12 +75,14 @@ def ambient_occlusion(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/ao.html
     """
+    inputs = {"Color": color, "Distance": distance}
     if normal is not None:
         raise_shader_normal_error("ambient_occlusion", logger=logger)
+        inputs["Normal"] = normal
 
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeAmbientOcclusion",
-        inputs={"Color": color, "Distance": distance, "Normal": normal},
+        inputs=inputs,
         attrs={"inside": inside, "only_local": only_local, "samples": samples},
     )
     return AmbientOcclusionResult(
@@ -148,12 +150,14 @@ def bevel(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/bevel.html
     """
+    inputs = {"Radius": radius}
     if normal is not None:
         raise_shader_normal_error("bevel", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBevel",
-        inputs={"Radius": radius, "Normal": normal},
+        inputs=inputs,
         attrs={"samples": samples},
     )
 
@@ -178,19 +182,22 @@ def anisotropic_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/principled.html
     """
 
+    # Normal omitted unless wired: unconnected means 'use surface normal', and
+    # strict-None forbids passing None for a value socket.
+    inputs = {
+        "Color": color,
+        "Roughness": roughness,
+        "Anisotropy": anisotropy,
+        "Rotation": rotation,
+        "Tangent": tangent,
+    }
     if normal is not None:
         raise_shader_normal_error("anisotropic_bsdf", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBsdfAnisotropic",
-        inputs={
-            "Color": color,
-            "Roughness": roughness,
-            "Anisotropy": anisotropy,
-            "Rotation": rotation,
-            "Normal": normal,
-            "Tangent": tangent,
-        },
+        inputs=inputs,
         attrs={"distribution": distribution},
     )
 
@@ -209,12 +216,14 @@ def diffuse_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/diffuse.html
     """
 
+    inputs = {"Color": color, "Roughness": roughness}
     if normal is not None:
         raise_shader_normal_error("diffuse_bsdf", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBsdfDiffuse",
-        inputs={"Color": color, "Roughness": roughness, "Normal": normal},
+        inputs=inputs,
         attrs={},
     )
 
@@ -235,12 +244,14 @@ def glass_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/glass.html
     """
 
+    inputs = {"Color": color, "Roughness": roughness, "IOR": ior}
     if normal is not None:
         raise_shader_normal_error("glass_bsdf", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBsdfGlass",
-        inputs={"Color": color, "Roughness": roughness, "IOR": ior, "Normal": normal},
+        inputs=inputs,
         attrs={"distribution": distribution},
     )
 
@@ -362,11 +373,9 @@ def principled_bsdf(
         "Roughness": roughness,
         "IOR": ior,
         "Alpha": alpha,
-        "Normal": normal,
         "Subsurface Weight": subsurface_weight,
         "Subsurface Radius": subsurface_radius,
         "Subsurface Scale": subsurface_scale,
-        "Subsurface Anisotropy": subsurface_anisotropy,
         "Specular IOR Level": specular_ior_level,
         "Specular Tint": specular_tint,
         "Anisotropic": anisotropic,
@@ -387,6 +396,8 @@ def principled_bsdf(
         "Thin Film IOR": thin_film_ior,
     }
 
+    if normal is not None:
+        inputs["Normal"] = normal
     if subsurface_ior is not None:
         assert subsurface_method == "RANDOM_WALK_SKIN"
         inputs["Subsurface IOR"] = subsurface_ior
@@ -434,12 +445,14 @@ def refraction_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/refraction.html
     """
 
+    inputs = {"Color": color, "Roughness": roughness, "IOR": ior}
     if normal is not None:
         raise_shader_normal_error("refraction_bsdf", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBsdfRefraction",
-        inputs={"Color": color, "Roughness": roughness, "IOR": ior, "Normal": normal},
+        inputs=inputs,
         attrs={"distribution": distribution},
     )
 
@@ -459,12 +472,14 @@ def sheen_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/sheen.html
     """
 
+    inputs = {"Color": color, "Roughness": roughness}
     if normal is not None:
         raise_shader_normal_error("sheen_bsdf", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBsdfSheen",
-        inputs={"Color": color, "Roughness": roughness, "Normal": normal},
+        inputs=inputs,
         attrs={"distribution": distribution},
     )
 
@@ -485,12 +500,14 @@ def toon_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/toon.html
     """
 
+    inputs = {"Color": color, "Size": size, "Smooth": smooth}
     if normal is not None:
         raise_shader_normal_error("toon_bsdf", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBsdfToon",
-        inputs={"Color": color, "Size": size, "Smooth": smooth, "Normal": normal},
+        inputs=inputs,
         attrs={"component": component},
     )
 
@@ -508,12 +525,14 @@ def translucent_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/translucent.html
     """
 
+    inputs = {"Color": color}
     if normal is not None:
         raise_shader_normal_error("translucent_bsdf", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBsdfTranslucent",
-        inputs={"Color": color, "Normal": normal},
+        inputs=inputs,
         attrs={},
     )
 
@@ -553,14 +572,12 @@ def bump(
     )
     raise_error_or_warn(msg, pf.context.globals.warn_mode_avoid_normal_bump, logger)
 
+    inputs = {"Strength": strength, "Distance": distance, "Height": height}
+    if normal is not None:
+        inputs["Normal"] = normal
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeBump",
-        inputs={
-            "Strength": strength,
-            "Distance": distance,
-            "Height": height,
-            "Normal": normal,
-        },
+        inputs=inputs,
         attrs={"invert": invert},
     )
 
@@ -594,22 +611,23 @@ def displacement(
     height: nt.SocketOrVal[float] = 0.0,
     midlevel: nt.SocketOrVal[float] = 0.5,
     scale: nt.SocketOrVal[float] = 1.0,
-    normal: nt.SocketOrVal[pt.Vector] = None,
+    normal: nt.SocketOrVal[pt.Vector] | None = None,
     space: Literal["OBJECT", "WORLD"] = "OBJECT",
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a Displacement Shader Node.
 
+    A disconnected Normal defaults to the surface normal, so we omit the input
+    entirely when None rather than passing None to a value socket (strict-None policy).
+
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/displacement.html
     """
+    inputs = {"Height": height, "Midlevel": midlevel, "Scale": scale}
+    if normal is not None:
+        inputs["Normal"] = normal
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeDisplacement",
-        inputs={
-            "Height": height,
-            "Midlevel": midlevel,
-            "Scale": scale,
-            "Normal": normal,
-        },
+        inputs=inputs,
         attrs={"space": space},
     )
 
@@ -630,19 +648,22 @@ def eevee_specular(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/specular_bsdf.html
     """
+    inputs = {
+        "Base Color": base_color,
+        "Specular": specular,
+        "Roughness": roughness,
+        "Emissive Color": emissive_color,
+        "Transparency": transparency,
+        "Clear Coat": clear_coat,
+        "Clear Coat Roughness": clear_coat_roughness,
+    }
+    if normal is not None:
+        inputs["Normal"] = normal
+    if clear_coat_normal is not None:
+        inputs["Clear Coat Normal"] = clear_coat_normal
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeEeveeSpecular",
-        inputs={
-            "Base Color": base_color,
-            "Specular": specular,
-            "Roughness": roughness,
-            "Emissive Color": emissive_color,
-            "Transparency": transparency,
-            "Normal": normal,
-            "Clear Coat": clear_coat,
-            "Clear Coat Roughness": clear_coat_roughness,
-            "Clear Coat Normal": clear_coat_normal,
-        },
+        inputs=inputs,
         attrs={},
     )
 
@@ -674,12 +695,14 @@ def fresnel(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/fresnel.html
     """
+    inputs = {"IOR": ior}
     if normal is not None:
         raise_shader_normal_error("fresnel", logger=logger)
+        inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeFresnel",
-        inputs={"IOR": ior, "Normal": normal},
+        inputs=inputs,
         attrs={},
     )
 
@@ -1167,19 +1190,25 @@ def script(
     )
 
 
+class ShaderToRGBResult(NamedTuple):
+    color: nt.ProcNode[pt.Color]
+    alpha: nt.ProcNode[float]
+
+
 def shader_to_rgb(
     shader: nt.ProcNode[nt.Shader] | None,
-) -> nt.ProcNode[pt.Color]:
+) -> ShaderToRGBResult:
     """
     Uses a ShaderToRGB Shader Node.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/shader_to_rgb.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeShaderToRGB",
         inputs={"Shader": shader},
         attrs={},
     )
+    return ShaderToRGBResult(node._output_socket("color"), node._output_socket("alpha"))
 
 
 def squeeze(
@@ -1264,6 +1293,7 @@ class CoordResult(NamedTuple):
     object: nt.ProcNode[pt.Vector]
     camera: nt.ProcNode[pt.Vector]
     window: nt.ProcNode[pt.Vector]
+    reflection: nt.ProcNode[pt.Vector]
 
 
 def coord(from_instancer: bool = False, object: Any = None) -> CoordResult:
@@ -1284,6 +1314,7 @@ def coord(from_instancer: bool = False, object: Any = None) -> CoordResult:
         object=res._output_socket("object"),
         camera=res._output_socket("camera"),
         window=res._output_socket("window"),
+        reflection=res._output_socket("reflection"),
     )
 
 
@@ -1362,17 +1393,23 @@ def vector_displacement(
     )
 
 
-def vertex_color(layer_name: str = "") -> nt.ProcNode[pt.Color]:
+class VertexColorResult(NamedTuple):
+    color: nt.ProcNode[pt.Color]
+    alpha: nt.ProcNode[float]
+
+
+def vertex_color(layer_name: str = "") -> VertexColorResult:
     """
     Uses a VertexColor Shader Node.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/vertex_color.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVertexColor",
         inputs={},
         attrs={"layer_name": layer_name},
     )
+    return VertexColorResult(node._output_socket("color"), node._output_socket("alpha"))
 
 
 def volume_absorption(
@@ -1391,16 +1428,29 @@ def volume_absorption(
     )
 
 
-def volume_info() -> nt.ProcNode:
+class VolumeInfoResult(NamedTuple):
+    color: nt.ProcNode[pt.Color]
+    density: nt.ProcNode[float]
+    flame: nt.ProcNode[float]
+    temperature: nt.ProcNode[float]
+
+
+def volume_info() -> VolumeInfoResult:
     """
     Uses a VolumeInfo Shader Node.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/volume_info.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVolumeInfo",
         inputs={},
         attrs={},
+    )
+    return VolumeInfoResult(
+        node._output_socket("color"),
+        node._output_socket("density"),
+        node._output_socket("flame"),
+        node._output_socket("temperature"),
     )
 
 

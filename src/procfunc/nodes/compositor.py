@@ -286,6 +286,11 @@ def bright_contrast(
     )
 
 
+class MatteResult(NamedTuple):
+    image: nt.ProcNode[pt.Color]
+    matte: nt.ProcNode[float]
+
+
 def channel_matte(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     color_space: Literal["RGB", "HSV", "YUV", "YCC"] = "RGB",
@@ -294,13 +299,13 @@ def channel_matte(
     limit_method: Literal["SINGLE", "MAX"] = "MAX",
     limit_min: float = 0.0,
     matte_channel: Literal["R", "G", "B"] = "G",
-) -> nt.ProcNode:
+) -> MatteResult:
     """
     Uses a ChannelMatte Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/keying/channel_key.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeChannelMatte",
         inputs={"Image": image},
         attrs={
@@ -312,6 +317,7 @@ def channel_matte(
             "matte_channel": matte_channel,
         },
     )
+    return MatteResult(node._output_socket("image"), node._output_socket("matte"))
 
 
 def chroma_matte(
@@ -322,13 +328,13 @@ def chroma_matte(
     shadow_adjust: float = 0.0,
     threshold: float = 0.174533,
     tolerance: float = 0.523599,
-) -> nt.ProcNode:
+) -> MatteResult:
     """
     Uses a ChromaMatte Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/keying/chroma_key.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeChromaMatte",
         inputs={"Image": image, "Key Color": key_color},
         attrs={
@@ -339,6 +345,7 @@ def chroma_matte(
             "tolerance": tolerance,
         },
     )
+    return MatteResult(node._output_socket("image"), node._output_socket("matte"))
 
 
 def color_balance(
@@ -449,13 +456,13 @@ def color_matte(
     color_hue: float = 0.01,
     color_saturation: float = 0.1,
     color_value: float = 0.1,
-) -> nt.ProcNode:
+) -> MatteResult:
     """
     Uses a ColorMatte Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/keying/color_key.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeColorMatte",
         inputs={"Image": image, "Key Color": key_color},
         attrs={
@@ -464,6 +471,7 @@ def color_matte(
             "color_value": color_value,
         },
     )
+    return MatteResult(node._output_socket("image"), node._output_socket("matte"))
 
 
 def color_spill(
@@ -570,19 +578,24 @@ def convert_color_space(
     )
 
 
+class PlaneResult(NamedTuple):
+    image: nt.ProcNode[pt.Color]
+    plane: nt.ProcNode[pt.Color]
+
+
 def corner_pin(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     upper_left: nt.SocketOrVal[pt.Vector] = (0, 1, 0),
     upper_right: nt.SocketOrVal[pt.Vector] = (1, 1, 0),
     lower_left: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     lower_right: nt.SocketOrVal[pt.Vector] = (1, 0, 0),
-) -> nt.ProcNode:
+) -> PlaneResult:
     """
     Uses a CornerPin Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/transform/corner_pin.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeCornerPin",
         inputs={
             "Image": image,
@@ -593,6 +606,7 @@ def corner_pin(
         },
         attrs={},
     )
+    return PlaneResult(node._output_socket("image"), node._output_socket("plane"))
 
 
 def crop(
@@ -631,6 +645,12 @@ def crop(
     )
 
 
+class CryptomatteResult(NamedTuple):
+    image: nt.ProcNode[pt.Color]
+    matte: nt.ProcNode[float]
+    pick: nt.ProcNode[pt.Color]
+
+
 def cryptomatte(
     image: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
     crypto_00: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
@@ -639,13 +659,13 @@ def cryptomatte(
     add: tuple = (0.0, 0.0, 0.0),
     matte_id: str = "",
     remove: tuple = (0.0, 0.0, 0.0),
-) -> nt.ProcNode:
+) -> CryptomatteResult:
     """
     Uses a Cryptomatte Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/mask/cryptomatte.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeCryptomatte",
         inputs={
             "Image": image,
@@ -654,6 +674,11 @@ def cryptomatte(
             "Crypto 02": crypto_02,
         },
         attrs={"add": add, "matte_id": matte_id, "remove": remove},
+    )
+    return CryptomatteResult(
+        node._output_socket("image"),
+        node._output_socket("matte"),
+        node._output_socket("pick"),
     )
 
 
@@ -738,17 +763,18 @@ def diff_matte(
     b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     falloff: float = 0.1,
     tolerance: float = 0.1,
-) -> nt.ProcNode:
+) -> MatteResult:
     """
     Uses a DiffMatte Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/keying/difference_key.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeDiffMatte",
         inputs={"Image 1": a, "Image 2": b},
         attrs={"falloff": falloff, "tolerance": tolerance},
     )
+    return MatteResult(node._output_socket("image"), node._output_socket("matte"))
 
 
 def dilate_erode(
@@ -831,17 +857,18 @@ def distance_matte(
     channel: Literal["RGB", "YCC"] = "RGB",
     falloff: float = 0.1,
     tolerance: float = 0.1,
-) -> nt.ProcNode:
+) -> MatteResult:
     """
     Uses a DistanceMatte Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/keying/distance_key.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeDistanceMatte",
         inputs={"Image": image, "Key Color": key_color},
         attrs={"channel": channel, "falloff": falloff, "tolerance": tolerance},
     )
+    return MatteResult(node._output_socket("image"), node._output_socket("matte"))
 
 
 def double_edge_mask(
@@ -1035,6 +1062,11 @@ def id_mask(
     )
 
 
+class ImageResult(NamedTuple):
+    image: nt.ProcNode[pt.Color]
+    alpha: nt.ProcNode[float]
+
+
 def image(
     frame_duration: int = 1,
     frame_offset: int = 0,
@@ -1045,7 +1077,7 @@ def image(
     use_auto_refresh: bool = True,
     use_cyclic: bool = False,
     use_straight_alpha_output: bool = False,
-) -> nt.ProcNode:
+) -> ImageResult:
     """
     Uses a Image Compositor Node.
 
@@ -1064,11 +1096,12 @@ def image(
         attrs["layer"] = layer
     if view is not None:
         attrs["view"] = view
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeImage",
         inputs={},
         attrs=attrs,
     )
+    return ImageResult(node._output_socket("image"), node._output_socket("alpha"))
 
 
 def inpaint(
@@ -1104,6 +1137,12 @@ def invert(
     )
 
 
+class KeyingResult(NamedTuple):
+    image: nt.ProcNode[pt.Color]
+    matte: nt.ProcNode[float]
+    edges: nt.ProcNode[float]
+
+
 def keying(
     image: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     key_color: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
@@ -1123,13 +1162,13 @@ def keying(
         "SMOOTH", "SPHERE", "ROOT", "INVERSE_SQUARE", "SHARP", "LINEAR"
     ] = "SMOOTH",
     screen_balance: float = 0.5,
-) -> nt.ProcNode:
+) -> KeyingResult:
     """
     Uses a Keying Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/keying/keying.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeKeying",
         inputs={
             "Image": image,
@@ -1151,6 +1190,11 @@ def keying(
             "feather_falloff": feather_falloff,
             "screen_balance": screen_balance,
         },
+    )
+    return KeyingResult(
+        node._output_socket("image"),
+        node._output_socket("matte"),
+        node._output_socket("edges"),
     )
 
 
@@ -1224,39 +1268,46 @@ def lens_distortion(
     )
 
 
+class LevelsResult(NamedTuple):
+    mean: nt.ProcNode[float]
+    std_dev: nt.ProcNode[float]
+
+
 def levels(
     image: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
     channel: Literal[
         "COMBINED_RGB", "RED", "GREEN", "BLUE", "LUMINANCE"
     ] = "COMBINED_RGB",
-) -> nt.ProcNode:
+) -> LevelsResult:
     """
     Uses a Levels Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/utilities/levels.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeLevels",
         inputs={"Image": image},
         attrs={"channel": channel},
     )
+    return LevelsResult(node._output_socket("mean"), node._output_socket("std_dev"))
 
 
 def luma_matte(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     limit_max: float = 1.0,
     limit_min: float = 0.0,
-) -> nt.ProcNode:
+) -> MatteResult:
     """
     Uses a LumaMatte Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/keying/luminance_key.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeLumaMatte",
         inputs={"Image": image},
         attrs={"limit_max": limit_max, "limit_min": limit_min},
     )
+    return MatteResult(node._output_socket("image"), node._output_socket("matte"))
 
 
 def map_uv(
@@ -1402,17 +1453,23 @@ def movie_distortion(
     )
 
 
-def normal(normal: nt.SocketOrVal[pt.Vector] = (0, 0, 1)) -> nt.ProcNode:
+class NormalResult(NamedTuple):
+    normal: nt.ProcNode[pt.Vector]
+    dot: nt.ProcNode[float]
+
+
+def normal(normal: nt.SocketOrVal[pt.Vector] = (0, 0, 1)) -> NormalResult:
     """
     Uses a Normal Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/vector/normal.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeNormal",
         inputs={"Normal": normal},
         attrs={},
     )
+    return NormalResult(node._output_socket("normal"), node._output_socket("dot"))
 
 
 def normalize(value: nt.SocketOrVal[float] = 1.0) -> nt.ProcNode:
@@ -1480,13 +1537,13 @@ def plane_track_deform(
     plane_track_name: str = "",
     tracking_object: str = "",
     use_motion_blur: bool = False,
-) -> nt.ProcNode:
+) -> PlaneResult:
     """
     Uses a PlaneTrackDeform Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/tracking/plane_track_deform.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodePlaneTrackDeform",
         inputs={"Image": image},
         attrs={
@@ -1498,6 +1555,7 @@ def plane_track_deform(
             "use_motion_blur": use_motion_blur,
         },
     )
+    return PlaneResult(node._output_socket("image"), node._output_socket("plane"))
 
 
 def posterize(
@@ -1529,15 +1587,6 @@ def premultiply_key(
         inputs={"Image": image},
         attrs={"mapping": mapping},
     )
-
-
-def rgb() -> nt.ProcNode:
-    """
-    Uses a RGB Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/input/constant/rgb.html
-    """
-    return nt.ProcNode.from_nodetype(node_type="CompositorNodeRGB", inputs={}, attrs={})
 
 
 def rgb_curve(
@@ -1799,22 +1848,28 @@ def switch_view(
     )
 
 
+class TextureResult(NamedTuple):
+    value: nt.ProcNode[float]
+    color: nt.ProcNode[pt.Color]
+
+
 def texture(
     offset: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
     node_output: int = 0,
     texture: Any = None,
-) -> nt.ProcNode:
+) -> TextureResult:
     """
     Uses a Texture Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/input/texture.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeTexture",
         inputs={"Offset": offset, "Scale": scale},
         attrs={"node_output": node_output, "texture": texture},
     )
+    return TextureResult(node._output_socket("value"), node._output_socket("color"))
 
 
 def time(frame_end: int = 250, frame_start: int = 1) -> nt.ProcNode:
@@ -1862,6 +1917,12 @@ def tonemap(
     )
 
 
+class TrackPosResult(NamedTuple):
+    x: nt.ProcNode[float]
+    y: nt.ProcNode[float]
+    speed: nt.ProcNode[pt.Vector]
+
+
 def track_pos(
     clip: Any = None,
     frame_relative: int = 0,
@@ -1870,13 +1931,13 @@ def track_pos(
     ] = "ABSOLUTE",
     track_name: str = "",
     tracking_object: str = "",
-) -> nt.ProcNode:
+) -> TrackPosResult:
     """
     Uses a TrackPos Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/tracking/track_position.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeTrackPos",
         inputs={},
         attrs={
@@ -1886,6 +1947,11 @@ def track_pos(
             "track_name": track_name,
             "tracking_object": tracking_object,
         },
+    )
+    return TrackPosResult(
+        node._output_socket("x"),
+        node._output_socket("y"),
+        node._output_socket("speed"),
     )
 
 
@@ -1930,17 +1996,6 @@ def translate(
             "use_relative": use_relative,
             "wrap_axis": wrap_axis,
         },
-    )
-
-
-def value() -> nt.ProcNode:
-    """
-    Uses a Value Compositor Node.
-
-    See: https://docs.blender.org/manual/en/4.2/compositing/types/input/constant/value.html
-    """
-    return nt.ProcNode.from_nodetype(
-        node_type="CompositorNodeValue", inputs={}, attrs={}
     )
 
 
@@ -1989,6 +2044,11 @@ def viewer(
     )
 
 
+class ZCombineResult(NamedTuple):
+    image: nt.ProcNode[pt.Color]
+    z: nt.ProcNode[float]
+
+
 def z_combine(
     image_a: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     z_a: nt.SocketOrVal[float] = 1.0,
@@ -1996,13 +2056,13 @@ def z_combine(
     z_b: nt.SocketOrVal[float] = 1.0,
     use_alpha: bool = False,
     use_antialias_z: bool = True,
-) -> nt.ProcNode:
+) -> ZCombineResult:
     """
     Uses a Zcombine Compositor Node.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/color/mix/z_combine.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="CompositorNodeZcombine",
         inputs={
             ("Image", 0): image_a,
@@ -2012,3 +2072,4 @@ def z_combine(
         },
         attrs={"use_alpha": use_alpha, "use_antialias_z": use_antialias_z},
     )
+    return ZCombineResult(node._output_socket("image"), node._output_socket("z"))

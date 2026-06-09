@@ -227,11 +227,12 @@ def _repr_function_call(
     node: cg.FunctionCallNode | cg.MethodCallNode | cg.SubgraphCallNode,
     scope_expressions: dict[int, str | list[str]],
     line_limit: int = 80,
+    func_str: str | None = None,
 ) -> list[str]:
     match node:
         case cg.FunctionCallNode():
             func = node.func
-            func_str = scope_expressions[id(func)]
+            func_str = func_str or scope_expressions[id(func)]
         case cg.MethodCallNode(args=(target, *_), method_name=method_name):
             if not isinstance(target, cg.Node):
                 raise ValueError(f"Method call {node=} has non-node target {target=}")
@@ -266,22 +267,44 @@ def _repr_function_call(
         return [f"{func_str}({', '.join(arg_reprs)})"]
 
 
-def _repr_operator_call(
+def _operator_call_operands(
     node: cg.FunctionCallNode,
+    template: str,
+) -> list | None:
+    """Operand values for rendering `node` in infix/operator form, or None to
+    decline it. The operator template only has slots for the operands, so any
+    extra argument beyond them (e.g. a non-default epsilon on func.equal) would
+    be silently dropped by the infix form - decline unless it merely restates
+    the signature default, in which case it is redundant and dropped."""
+    n_slots = template.count("{}")
+    try:
+        sig = inspect.signature(node.func)
+        bound = sig.bind(*node.args, **node.kwargs)
+    except (TypeError, ValueError):
+        return None
+
+    operand_names = list(sig.parameters)[:n_slots]
+    if any(name not in bound.arguments for name in operand_names):
+        return None
+
+    for name, value in bound.arguments.items():
+        if name in operand_names:
+            continue
+        if not _kwarg_matches_default(sig, name, value):
+            return None
+
+    return [bound.arguments[name] for name in operand_names]
+
+
+def _repr_operator_call(
+    operands: list,
+    template: str,
     scope_expressions: dict[int, str | list[str]],
 ) -> list[str]:
-    assert isinstance(node, cg.FunctionCallNode), node
-
-    # Support both positional args and kwargs for operator templates
-    all_args = [
-        _repr_inp(v, scope_expressions, extra_parens=True) for v in node.args
-    ] + [
-        _repr_inp(v, scope_expressions, extra_parens=True) for v in node.kwargs.values()
+    operand_reprs = [
+        _repr_inp(v, scope_expressions, extra_parens=True) for v in operands
     ]
-
-    operator_template = scope_expressions[id(node.func)]
-    assert isinstance(operator_template, str), operator_template
-    return [operator_template.format(*all_args)]
+    return [template.format(*operand_reprs)]
 
 
 def _codegen_for_node(
@@ -298,7 +321,17 @@ def _codegen_for_node(
             elif funcres == OperatorType.NOOP:
                 return []  # no code needed
             elif "{}" in funcres:
-                return _repr_operator_call(node, scope_expressions)
+                operands = _operator_call_operands(node, funcres)
+                if operands is None:
+                    # args the infix form cannot express: emit a named call.
+                    # scope_expressions holds the operator template, so re-derive
+                    # the callsite name (import already present via
+                    # default_func_resolution_map)
+                    _, callsite = _resolve_func(func)
+                    return _repr_function_call(
+                        node, scope_expressions, func_str=callsite
+                    )
+                return _repr_operator_call(operands, funcres, scope_expressions)
             else:
                 return _repr_function_call(node, scope_expressions)
         case cg.MethodCallNode() if node.method_name == "__getitem__":

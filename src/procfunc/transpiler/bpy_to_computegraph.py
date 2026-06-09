@@ -79,6 +79,15 @@ def handle_specialcase_value(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
     return cg_node
 
 
+def handle_specialcase_input_value(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
+    attr_name = bpy_node_info.CONSTANT_NODES[node.bl_idname]
+    cg_node.kwargs.clear()
+    cg_node.kwargs["value"] = _repr_default_value(
+        getattr(node, attr_name), node.outputs[0].type
+    )
+    return cg_node
+
+
 def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
     angle = cg_node.kwargs.pop("angle", None)
 
@@ -153,6 +162,15 @@ SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
     # values with .outputs[0].default_value can share handler
     "ShaderNodeValue": handle_specialcase_value,
     "ShaderNodeRGB": handle_specialcase_value,
+    "CompositorNodeValue": handle_specialcase_value,
+    "CompositorNodeRGB": handle_specialcase_value,
+    # FunctionNodeInput* store the constant on a node property, not a socket
+    "FunctionNodeInputInt": handle_specialcase_input_value,
+    "FunctionNodeInputVector": handle_specialcase_input_value,
+    "FunctionNodeInputColor": handle_specialcase_input_value,
+    "FunctionNodeInputBool": handle_specialcase_input_value,
+    "FunctionNodeInputRotation": handle_specialcase_input_value,
+    "FunctionNodeInputString": handle_specialcase_input_value,
 }
 
 
@@ -440,7 +458,12 @@ def _create_link_input(
 
     if func_default is not None:
         repr_func_default = _repr_default_value(func_default, socket.type)
-        if res == repr_func_default:
+        # float sockets store single precision, so a python-double default like
+        # 0.001 reads back inexactly - compare in float32 space
+        if isinstance(res, float) and isinstance(repr_func_default, float):
+            if np.float32(res) == np.float32(repr_func_default):
+                return None
+        elif res == repr_func_default:
             return None
 
     return res
