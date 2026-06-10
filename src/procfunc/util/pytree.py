@@ -170,6 +170,12 @@ def unflatten(children: list[Any], spec: PyTreeDef, start_idx: int = 0) -> Any:
     return _unflatten_iterative(iter(children), spec)
 
 
+def _num_leaves(spec: PyTreeDef) -> int:
+    if spec.container is None:
+        return 1
+    return sum(_num_leaves(item) for item in spec.items)
+
+
 def _compute_pytree_obj_names(
     obj: Any, separator: str = "_", nocontainer_name: str = ""
 ) -> Iterator[str]:
@@ -257,14 +263,15 @@ class PyTree(Generic[TItem, TChildren]):
     def map(
         self, fn: Callable[[TChildren], TChildrenNew]
     ) -> "PyTree[TItem, TChildrenNew]":
+        # keep the spec; don't reconstruct the object (deferred to .obj())
         children = [fn(child) for child in self.children]
-        return self.from_values(children, self.spec)
+        return self.from_children_spec(children, self.spec)
 
     def map_items(
         self, fn: Callable[[str, TChildren], TChildrenNew]
     ) -> "PyTree[TItem, TChildrenNew]":
         children = [fn(name, child) for name, child in self.items()]
-        return self.from_values(children, self.spec)
+        return self.from_children_spec(children, self.spec)
 
     def is_single(self) -> bool:
         return self.spec.container is None
@@ -273,19 +280,17 @@ class PyTree(Generic[TItem, TChildren]):
         return self.spec.container
 
     def children_one_level(self) -> list[Any]:
-        obj = self.obj()
-
-        container_funcs = _get_container_funcs(self.spec.container)
-
-        child_objs = container_funcs.flatten_func(obj)[0]
+        # split the flat leaves by spec, without reconstructing the object
         new_children = []
-        for child_obj, child_spec in zip(child_objs, self.spec.items):
-            if child_spec.container is not None:
-                child_tree = PyTree(child_obj)
-                new_children.append(child_tree)
+        idx = 0
+        for child_spec in self.spec.items:
+            n = _num_leaves(child_spec)
+            child_leaves = self.children[idx : idx + n]
+            idx += n
+            if child_spec.container is None:
+                new_children.append(child_leaves[0])
             else:
-                new_children.append(child_obj)
-
+                new_children.append(PyTree.from_children_spec(child_leaves, child_spec))
         return new_children
 
     def unflatten_one_level(
@@ -321,7 +326,7 @@ def repr_tree_to_str(
     if tree.spec.container is list:
         return f"[{', '.join(childreprs)}]"
     elif tree.spec.container is dict:
-        keys = list(tree.unflatten_one_level().keys())
+        keys = list(tree.spec.aux)
         return (
             "{" + ", ".join(f"{repr(k)}: {v}" for k, v in zip(keys, childreprs)) + "}"
         )
