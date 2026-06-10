@@ -39,11 +39,15 @@ _IDS = [r.pf_func.__name__ for r in _ROWS]
 # operand_types calls for two *different* dtypes (e.g. vector * scalar).
 _OPERANDS = {
     NodeDataType.FLOAT: (2.0, 3.0),
+    NodeDataType.INT: (2, 3),
+    NodeDataType.STRING: ("a", "b"),
     NodeDataType.FLOAT_VECTOR: ((2.0, 3.0, 4.0), (5.0, 6.0, 7.0)),
     NodeDataType.RGBA: ((0.1, 0.2, 0.3, 1.0), (0.4, 0.5, 0.6, 1.0)),
 }
 _OPERAND_SINGLE = {
     NodeDataType.FLOAT: 2.0,
+    NodeDataType.INT: 2,
+    NodeDataType.STRING: "a",
     NodeDataType.FLOAT_VECTOR: (2.0, 3.0, 4.0),
     NodeDataType.RGBA: (0.1, 0.2, 0.3, 1.0),
 }

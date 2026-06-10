@@ -202,14 +202,14 @@ def test_primary_node_inputs_required():
     cube = pf.nodes.geo.mesh_cube(size=(1, 1, 1)).mesh
 
     with pytest.raises(TypeError):
-        pf.nodes.geo.mesh_boolean(a=cube)
+        pf.nodes.geo.bound_box()
     with pytest.raises(TypeError):
         pf.nodes.func.less_than(a=1)
     with pytest.raises(TypeError):
         pf.nodes.geo.set_material(geometry=cube)
 
-    union = pf.nodes.geo.mesh_boolean(a=None, b=cube, operation="UNION")
-    assert union is not None
+    box = pf.nodes.geo.bound_box(geometry=None)
+    assert box is not None
     rgb = pf.nodes.shader.shader_to_rgb(shader=None)
     assert rgb is not None
 

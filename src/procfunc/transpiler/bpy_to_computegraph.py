@@ -31,6 +31,10 @@ from procfunc.util import bpy_info, log, manifest, pytree
 
 logger = logging.getLogger(__name__)
 
+# True: the graph carries the NodeDataType enum; False: its canonical `.value`
+# string. Either way the raw bpy spelling is normalized away at transpile.
+USE_DTYPE_ENUM = True
+
 _NODES_MANIFEST_INDEXED = NODES_MANIFEST.set_index("bpy_name")
 _OPS_MANIFEST_INDEXED = OPS_MANIFEST.set_index("bpy_name")
 
@@ -233,6 +237,11 @@ def _target_attrs(node: bpy.types.Node) -> dict[str, Any]:
             attr_vals[k] = v
 
     return attr_vals
+
+
+def _is_empty_enum(node: bpy.types.Node, attr: str) -> bool:
+    prop = node.bl_rna.properties.get(attr)
+    return prop is not None and prop.type == "ENUM"
 
 
 def _bpy_node_defaults(
@@ -621,6 +630,33 @@ def _map_inputs_with_arg_map(
     return mapped_inputs
 
 
+def _keep_attr(
+    node: bpy.types.Node,
+    k: str,
+    v: Any,
+    param: str | None,
+    func_defaults: dict[str, Any],
+    attr_defaults: dict[str, Any],
+) -> bool:
+    """Whether to emit attr `k`, or drop it because the binding already reproduces
+    its value: compared against the procfunc default when `k` binds to a parameter
+    that has one (these intentionally diverge from bpy's), else the bpy default.
+    """
+    if k == "data_type" and node.bl_idname == "GeometryNodeInputNamedAttribute":
+        return True
+    if v == "" and _is_empty_enum(node, k):
+        return False  # state-gated enum with no valid member: nothing to set
+    if param in func_defaults:
+        if v == func_defaults[param] and v != attr_defaults.get(k, v):
+            logger.warning(
+                f"Stripping attr {k!r} ({param!r}) on {node.bl_idname}: source "
+                f"value {v!r} equals procfunc default but differs from bpy "
+                f"default {attr_defaults[k]!r}"
+            )
+        return v != func_defaults[param]
+    return v != attr_defaults[k]
+
+
 def parse_standard_node(
     node_tree: bpy.types.NodeTree,
     node: bpy.types.Node,
@@ -640,12 +676,19 @@ def parse_standard_node(
     func_sig = inspect.signature(func)
     arg_names_map = func_spec.get("arg_names_map")
 
+    func_defaults = {
+        param.name: param.default
+        for param in func_sig.parameters.values()
+        if param.default is not param.empty
+    }
+
     attr_defaults = _bpy_node_defaults(node_tree, node, list(attrs.keys()))
-    is_named_attr = node.bl_idname == "GeometryNodeInputNamedAttribute"
     attrs = {
         k: v
         for k, v in attrs.items()
-        if v != attr_defaults[k] or (k == "data_type" and is_named_attr)
+        if _keep_attr(
+            node, k, v, (arg_names_map or {}).get(k, k), func_defaults, attr_defaults
+        )
     }
 
     if arg_names_map is not None:
@@ -668,11 +711,10 @@ def parse_standard_node(
     if "data_type" in attrs and node.bl_idname != "GeometryNodeInputNamedAttribute":
         attrs.pop("data_type")
 
-    func_defaults = {
-        param.name: param.default
-        for param in func_sig.parameters.values()
-        if param.default is not param.empty
-    }
+    # normalize the data_type spelling to the canonical NodeDataType
+    if "data_type" in attrs:
+        canonical = bpy_node_info.datatype_from_bpy_str(attrs["data_type"])
+        attrs["data_type"] = canonical if USE_DTYPE_ENUM else canonical.value
 
     inputs = _create_inputs(node_tree, node, memo, func_defaults=func_defaults)
     arg_names_map = func_spec["arg_names_map"]
@@ -1218,15 +1260,27 @@ def parse_geo_modifier(
 
     node_curr = cg.SubgraphCallNode(subgraph=graph, args=(), kwargs=inputs)
 
+    # ignore unlinked group output sockets: they carry no data
+    output_nodes = [n for n in mod.node_group.nodes if n.bl_idname == "NodeGroupOutput"]
+    active_output = next(
+        (n for n in output_nodes if n.is_active_output), output_nodes[0]
+    )
+    connected_output_ids = {s.identifier for s in active_output.inputs if s.links}
+
+    output_socs = [
+        soc
+        for soc in mod.node_group.interface.items_tree.values()
+        if soc.in_out == "OUTPUT" and soc.identifier in connected_output_ids
+    ]
     geo_output_keys = [
         soc.name.lower()
-        for soc in mod.node_group.interface.items_tree.values()
-        if soc.in_out == "OUTPUT" and soc.socket_type == bni.SocketType.GEOMETRY.value
+        for soc in output_socs
+        if soc.socket_type == bni.SocketType.GEOMETRY.value
     ]
     attribute_output_keys = [
         soc.name.lower()
-        for soc in mod.node_group.interface.items_tree.values()
-        if soc.in_out == "OUTPUT" and soc.socket_type != bni.SocketType.GEOMETRY.value
+        for soc in output_socs
+        if soc.socket_type != bni.SocketType.GEOMETRY.value
     ]
     geo_output_getattrs = {
         k: cg.GetAttributeNode(source=node_curr, attribute_name=k)
@@ -1251,6 +1305,7 @@ def parse_geo_modifier(
             return cg.FunctionCallNode(
                 pf.nodes.to_objects_multi,
                 args=(geo_output_getattrs, attribute_output_getattrs),
+                kwargs={},
             )
         case _:
             raise ValueError(

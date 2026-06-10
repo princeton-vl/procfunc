@@ -213,6 +213,9 @@ TCompareOperation = Literal[
     "LESS_THAN", "LESS_EQUAL", "GREATER_THAN", "GREATER_EQUAL", "EQUAL", "NOT_EQUAL"
 ]
 
+# RGBA-only Compare operations, valid only when data_type is RGBA
+TCompareColorOperation = Literal["EQUAL", "NOT_EQUAL", "BRIGHTER", "DARKER"]
+
 # matches Blender's FunctionNodeCompare Epsilon socket default
 COMPARE_EPSILON_DEFAULT = 0.001
 
@@ -221,7 +224,7 @@ def _compare(
     a: TCompare,
     b: TCompare,
     epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
-    operation: TCompareOperation = "EQUAL",
+    operation: TCompareOperation | TCompareColorOperation = "EQUAL",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode[bool]:
     """
@@ -318,36 +321,90 @@ def not_equal(
     return _compare(a, b, epsilon, operation="NOT_EQUAL")
 
 
-def vector_compare_elementwise(
+# FunctionNodeCompare's ELEMENT-mode VECTOR and RGBA variants gate the Epsilon
+# socket on the operation (enabled only for EQUAL/NOT_EQUAL), so each operation
+# is a separate binding that routes through _compare; the helper omits Epsilon
+# unless it differs from the Blender default, keeping disabled sockets unwired.
+
+
+def vector_elementwise_less_than(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
-    epsilon: nt.SocketOrVal[float] = 0.001,
-    operation: TCompareOperation = "EQUAL",
 ) -> nt.ProcNode[bool]:
-    # TODO merge with math.less_than etc
+    return _compare(a, b, operation="LESS_THAN", data_type=NodeDataType.FLOAT_VECTOR)
 
-    return nt.ProcNode.from_nodetype(
-        node_type="FunctionNodeCompare",
-        inputs={"A": a, "B": b, "Epsilon": epsilon},
-        attrs={
-            "operation": operation,
-            "data_type": NodeDataType.FLOAT_VECTOR,
-            "mode": "ELEMENT",
-        },
+
+def vector_elementwise_less_equal(
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
+) -> nt.ProcNode[bool]:
+    return _compare(a, b, operation="LESS_EQUAL", data_type=NodeDataType.FLOAT_VECTOR)
+
+
+def vector_elementwise_greater_than(
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
+) -> nt.ProcNode[bool]:
+    return _compare(a, b, operation="GREATER_THAN", data_type=NodeDataType.FLOAT_VECTOR)
+
+
+def vector_elementwise_greater_equal(
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
+) -> nt.ProcNode[bool]:
+    return _compare(
+        a, b, operation="GREATER_EQUAL", data_type=NodeDataType.FLOAT_VECTOR
     )
 
 
-def compare_color(
+def vector_elementwise_equal(
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
+    epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
+) -> nt.ProcNode[bool]:
+    return _compare(
+        a, b, epsilon, operation="EQUAL", data_type=NodeDataType.FLOAT_VECTOR
+    )
+
+
+def vector_elementwise_not_equal(
+    a: nt.SocketOrVal[pt.Vector],
+    b: nt.SocketOrVal[pt.Vector],
+    epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
+) -> nt.ProcNode[bool]:
+    return _compare(
+        a, b, epsilon, operation="NOT_EQUAL", data_type=NodeDataType.FLOAT_VECTOR
+    )
+
+
+def color_equal(
     a: nt.SocketOrVal[pt.Color],
     b: nt.SocketOrVal[pt.Color],
-    operation: Literal["EQUAL", "NOT_EQUAL", "BRIGHTER", "DARKER"] = "EQUAL",
-    epsilon: nt.SocketOrVal[float] = 0.001,
+    epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
-    return nt.ProcNode.from_nodetype(
-        node_type="FunctionNodeCompare",
-        inputs={"A": a, "B": b, "Epsilon": epsilon},
-        attrs={"operation": operation},
-    )
+    return _compare(a, b, epsilon, operation="EQUAL", data_type=NodeDataType.RGBA)
+
+
+def color_not_equal(
+    a: nt.SocketOrVal[pt.Color],
+    b: nt.SocketOrVal[pt.Color],
+    epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
+) -> nt.ProcNode[bool]:
+    return _compare(a, b, epsilon, operation="NOT_EQUAL", data_type=NodeDataType.RGBA)
+
+
+def color_brighter(
+    a: nt.SocketOrVal[pt.Color],
+    b: nt.SocketOrVal[pt.Color],
+) -> nt.ProcNode[bool]:
+    return _compare(a, b, operation="BRIGHTER", data_type=NodeDataType.RGBA)
+
+
+def color_darker(
+    a: nt.SocketOrVal[pt.Color],
+    b: nt.SocketOrVal[pt.Color],
+) -> nt.ProcNode[bool]:
+    return _compare(a, b, operation="DARKER", data_type=NodeDataType.RGBA)
 
 
 def euler_to_rotation(
@@ -778,32 +835,56 @@ def rotation_to_quaternion(
     )
 
 
-"""
-def separate_matrix(matrix: t.SocketOrVal[pt.Matrix] = None) -> t.ProcNode[pt.Matrix]:
- 
-    return t.ProcNode.from_nodetype(
+class SeparateMatrixResult(NamedTuple):
+    column_1_row_1: nt.ProcNode[float]
+    column_1_row_2: nt.ProcNode[float]
+    column_1_row_3: nt.ProcNode[float]
+    column_1_row_4: nt.ProcNode[float]
+    column_2_row_1: nt.ProcNode[float]
+    column_2_row_2: nt.ProcNode[float]
+    column_2_row_3: nt.ProcNode[float]
+    column_2_row_4: nt.ProcNode[float]
+    column_3_row_1: nt.ProcNode[float]
+    column_3_row_2: nt.ProcNode[float]
+    column_3_row_3: nt.ProcNode[float]
+    column_3_row_4: nt.ProcNode[float]
+    column_4_row_1: nt.ProcNode[float]
+    column_4_row_2: nt.ProcNode[float]
+    column_4_row_3: nt.ProcNode[float]
+    column_4_row_4: nt.ProcNode[float]
+
+
+def separate_matrix(
+    matrix: nt.SocketOrVal[pt.Matrix],
+) -> SeparateMatrixResult:
+    """
+    Uses a SeparateMatrix Function Node.
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/matrix/separate_matrix.html
+    """
+    node = nt.ProcNode.from_nodetype(
         node_type="FunctionNodeSeparateMatrix",
         inputs={"Matrix": matrix},
         attrs={},
-            "column_1_row_1",
-            "column_1_row_2",
-            "column_1_row_3",
-            "column_1_row_4",
-            "column_2_row_1",
-            "column_2_row_2",
-            "column_2_row_3",
-            "column_2_row_4",
-            "column_3_row_1",
-            "column_3_row_2",
-            "column_3_row_3",
-            "column_3_row_4",
-            "column_4_row_1",
-            "column_4_row_2",
-            "column_4_row_3",
-            "column_4_row_4",
-        ],
     )
-"""
+    return SeparateMatrixResult(
+        node._output_socket("column_1_row_1"),
+        node._output_socket("column_1_row_2"),
+        node._output_socket("column_1_row_3"),
+        node._output_socket("column_1_row_4"),
+        node._output_socket("column_2_row_1"),
+        node._output_socket("column_2_row_2"),
+        node._output_socket("column_2_row_3"),
+        node._output_socket("column_2_row_4"),
+        node._output_socket("column_3_row_1"),
+        node._output_socket("column_3_row_2"),
+        node._output_socket("column_3_row_3"),
+        node._output_socket("column_3_row_4"),
+        node._output_socket("column_4_row_1"),
+        node._output_socket("column_4_row_2"),
+        node._output_socket("column_4_row_3"),
+        node._output_socket("column_4_row_4"),
+    )
 
 
 class SeparateTransformResult(NamedTuple):
@@ -951,10 +1032,17 @@ def index_switch(
             [
                 NodeDataType.BOOLEAN,
                 NodeDataType.INT,
-                NodeDataType.RGBA,
-                NodeDataType.STRING,
                 NodeDataType.FLOAT,
                 NodeDataType.FLOAT_VECTOR,
+                NodeDataType.ROTATION,
+                NodeDataType.FLOAT_MATRIX,
+                NodeDataType.STRING,
+                NodeDataType.RGBA,
+                NodeDataType.OBJECT,
+                NodeDataType.IMAGE,
+                NodeDataType.GEOMETRY,
+                NodeDataType.COLLECTION,
+                NodeDataType.MATERIAL,
             ],
             ["0", "1"],
         )
@@ -984,11 +1072,16 @@ _SWITCH_DATA_TYPES = [
     NodeDataType.BOOLEAN,
     NodeDataType.INT,
     NodeDataType.FLOAT,
-    NodeDataType.STRING,
     NodeDataType.FLOAT_VECTOR,
-    NodeDataType.RGBA,
+    NodeDataType.ROTATION,
     NodeDataType.FLOAT_MATRIX,
+    NodeDataType.STRING,
+    NodeDataType.RGBA,
+    NodeDataType.OBJECT,
+    NodeDataType.IMAGE,
     NodeDataType.GEOMETRY,
+    NodeDataType.COLLECTION,
+    NodeDataType.MATERIAL,
 ]
 
 

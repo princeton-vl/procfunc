@@ -71,6 +71,7 @@ class SocketDType(Enum):
     RGBA = "RGBA"
     BOOLEAN = "BOOLEAN"
     ROTATION = "ROTATION"
+    MATRIX = "MATRIX"
     OBJECT = "OBJECT"
     SHADER = "SHADER"
     COLLECTION = "COLLECTION"
@@ -78,6 +79,21 @@ class SocketDType(Enum):
     GEOMETRY = "GEOMETRY"
     STRING = "STRING"
     IMAGE = "IMAGE"
+
+
+class AttributeType(Enum):
+    """bpy `data_type` strings on attribute nodes; differs from NodeDataType for
+    color/rotation/matrix. Members with no NodeDataType equivalent are omitted."""
+
+    FLOAT = "FLOAT"
+    INT = "INT"
+    FLOAT_VECTOR = "FLOAT_VECTOR"
+    FLOAT_COLOR = "FLOAT_COLOR"
+    FLOAT2 = "FLOAT2"
+    STRING = "STRING"
+    BOOLEAN = "BOOLEAN"
+    QUATERNION = "QUATERNION"
+    FLOAT4X4 = "FLOAT4X4"
 
 
 # Map socket types to data types (from node_info.py)
@@ -96,10 +112,48 @@ SOCKET_DTYPE_TO_DATATYPE: dict[SocketDType, NodeDataType] = {
     SocketDType.GEOMETRY: NodeDataType.GEOMETRY,
     SocketDType.STRING: NodeDataType.STRING,
     SocketDType.IMAGE: NodeDataType.IMAGE,
+    SocketDType.MATRIX: NodeDataType.FLOAT_MATRIX,
 }
 DATATYPE_TO_SOCKET_DTYPE: dict[NodeDataType, SocketDType] = {
     v: k for k, v in SOCKET_DTYPE_TO_DATATYPE.items()
 }
+
+ATTRIBUTE_TYPE_TO_DATATYPE: dict[AttributeType, NodeDataType] = {
+    AttributeType.FLOAT: NodeDataType.FLOAT,
+    AttributeType.INT: NodeDataType.INT,
+    AttributeType.FLOAT_VECTOR: NodeDataType.FLOAT_VECTOR,
+    AttributeType.FLOAT_COLOR: NodeDataType.RGBA,
+    AttributeType.FLOAT2: NodeDataType.FLOAT_VECTOR_2D,
+    AttributeType.STRING: NodeDataType.STRING,
+    AttributeType.BOOLEAN: NodeDataType.BOOLEAN,
+    AttributeType.QUATERNION: NodeDataType.ROTATION,
+    AttributeType.FLOAT4X4: NodeDataType.FLOAT_MATRIX,
+}
+DATATYPE_TO_ATTRIBUTE_TYPE: dict[NodeDataType, AttributeType] = {
+    v: k for k, v in ATTRIBUTE_TYPE_TO_DATATYPE.items()
+}
+
+
+def datatype_from_bpy_str(s: str) -> NodeDataType:
+    """Resolve a bpy `data_type`/`input_type` string to the canonical NodeDataType,
+    normalizing per-family spellings (e.g. matrix is 'FLOAT4X4' on attribute nodes,
+    'MATRIX' on Switch). The conventions are non-overlapping."""
+    try:
+        return NodeDataType(s)
+    except ValueError:
+        pass
+    try:
+        return SOCKET_DTYPE_TO_DATATYPE[SocketDType(s)]
+    except (ValueError, KeyError):
+        pass
+    try:
+        return ATTRIBUTE_TYPE_TO_DATATYPE[AttributeType(s)]
+    except (ValueError, KeyError):
+        pass
+    raise ValueError(
+        f"{s=} is not a recognized bpy data_type in any known naming convention"
+    )
+
 
 SOCKET_CLASS_TO_DATATYPE: dict[str, NodeDataType] = {
     SocketType.FLOAT.value: NodeDataType.FLOAT,

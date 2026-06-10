@@ -219,7 +219,11 @@ def map_data_type_for_differing_node_interface(
     for alias in socket_dtype_aliases:
         if alias in data_type_options:
             return alias
+    # attribute nodes spell rotation/matrix differently from any SocketDType
+    as_attr_type = bni.DATATYPE_TO_ATTRIBUTE_TYPE.get(data_type)
+    if as_attr_type is not None and as_attr_type.value in data_type_options:
+        return as_attr_type.value
     raise ValueError(
-        f"Failed resolve {data_type=} or {socket_dtype_aliases=} to an available "
-        f"{data_type_options=} for {bl_node=} {attr_key=}"
+        f"Failed resolve {data_type=}, {socket_dtype_aliases=} or {as_attr_type=} "
+        f"to an available {data_type_options=} for {bl_node=} {attr_key=}"
     )

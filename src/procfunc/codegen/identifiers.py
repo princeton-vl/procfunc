@@ -36,6 +36,10 @@ def bpy_name_to_pythonid(name: str) -> str:
 
     name = name.lower()
 
+    # drop anything that isn't valid in a python identifier (e.g. parentheses
+    # in socket names like "Joint ID (do not set)")
+    name = re.sub(r"[^0-9a-z_]", "_", name)
+
     name = re.sub(r"_+", "_", name).strip("_")
 
     # move number terms to end
@@ -60,6 +64,8 @@ def is_valid_snake_identifier(name: str) -> bool:
         return False
     if name != name.lower():
         return False  # this is opinionated
+    if not name.isidentifier():
+        return False
     return True
 
 

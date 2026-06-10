@@ -65,6 +65,40 @@ def _float_math_defs() -> list[NodeOperatorResolution]:
     ]
 
 
+def _int_compare_defs() -> list[NodeOperatorResolution]:
+    # FunctionNodeCompare with data_type INT supports all six comparison operators
+    return [
+        NodeOperatorResolution(
+            math.greater_than, bni.NodeDataType.INT, cg.OperatorType.GREATER_THAN
+        ),
+        NodeOperatorResolution(
+            math.less_than, bni.NodeDataType.INT, cg.OperatorType.LESS_THAN
+        ),
+        NodeOperatorResolution(
+            func.less_equal, bni.NodeDataType.INT, cg.OperatorType.LESS_THAN_EQUAL
+        ),
+        NodeOperatorResolution(
+            func.greater_equal, bni.NodeDataType.INT, cg.OperatorType.GREATER_THAN_EQUAL
+        ),
+        NodeOperatorResolution(func.equal, bni.NodeDataType.INT, cg.OperatorType.EQUAL),
+        NodeOperatorResolution(
+            func.not_equal, bni.NodeDataType.INT, cg.OperatorType.NOT_EQUAL
+        ),
+    ]
+
+
+def _string_compare_defs() -> list[NodeOperatorResolution]:
+    # FunctionNodeCompare with data_type STRING supports only EQUAL / NOT_EQUAL.
+    return [
+        NodeOperatorResolution(
+            func.equal, bni.NodeDataType.STRING, cg.OperatorType.EQUAL
+        ),
+        NodeOperatorResolution(
+            func.not_equal, bni.NodeDataType.STRING, cg.OperatorType.NOT_EQUAL
+        ),
+    ]
+
+
 def _vector_math_defs(node_data_type: bni.NodeDataType) -> list[NodeOperatorResolution]:
     return [
         NodeOperatorResolution(math.vector_add, node_data_type, cg.OperatorType.ADD),
@@ -108,6 +142,8 @@ def _color_math_defs() -> list[NodeOperatorResolution]:
 
 NODE_OPERATOR_TABLE = [
     *_float_math_defs(),
+    *_int_compare_defs(),
+    *_string_compare_defs(),
     *_vector_math_defs(bni.NodeDataType.FLOAT_VECTOR),
     # `vector * scalar` (either order) -> VectorMath SCALE.
     NodeOperatorResolution(

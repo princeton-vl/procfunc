@@ -455,8 +455,10 @@ def _construct_procnode_standard(
         )
         specialcase(**specialcase_kwargs)
 
-    for k, v in attrs.items():
-        _set_node_attribute(bl_node, k, v)
+    # data_type / input_type gate which enum values other attrs accept, so set
+    # those selectors first
+    for k in sorted(attrs, key=lambda k: k not in ("data_type", "input_type")):
+        _set_node_attribute(bl_node, k, attrs[k])
 
     for input_name, input_py in kwargs.items():
         input_result = input_results[input_name]

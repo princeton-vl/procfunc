@@ -25,6 +25,7 @@ Other additions and changes:
 - image inputs accept a `pt.Image` datablock or `None` (to disconnect)
 - passing `None` to a value socket now errors; `None` is allowed only on geometry/shader inputs, where it disconnects them. Primary inputs (`mix_shader`, `set_material`, boolean operands, …) are now required.
 - removed `pf.nodes.compositor.value` / `pf.nodes.compositor.rgb` (use `pf.nodes.math.constant`)
+- transpile sanitizes generated Python identifiers — characters other than letters, digits, and underscores are replaced with underscores — and omits unlinked geometry-modifier outputs
 
 # 0.31.0 (develop → main)
 
