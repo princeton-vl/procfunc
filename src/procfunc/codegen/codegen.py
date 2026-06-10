@@ -73,6 +73,11 @@ def _repr_type(x: Any) -> str:
     return x.__name__
 
 
+def _repr_float(value: float) -> str:
+    # float32 socket values: shortest exact round-trip (round(x, 8) would destroy small magnitudes)
+    return str(np.float32(value))
+
+
 def _repr_value(value: Any) -> str:
     if hasattr(value, "__wrapped__"):
         value = value.__wrapped__
@@ -97,8 +102,8 @@ def _repr_value(value: Any) -> str:
     elif isinstance(value, np.dtype):
         return f"np.dtype('{value}')"
     elif isinstance(value, (pf.Color, pf.Vector, pf.Euler, pf.Quaternion, pf.Matrix)):
-        x = tuple(round(x, 8) for x in value)
-        return f"pf.{value.__class__.__name__}({x})"
+        comps = ", ".join(_repr_float(c) for c in value)
+        return f"pf.{value.__class__.__name__}(({comps}))"
     elif isinstance(value, enum.Enum):
         return f"{type(value).__name__}.{value.name}"
     elif isinstance(value, Path):
@@ -115,7 +120,7 @@ def _repr_value(value: Any) -> str:
         inner = ", ".join(_repr_value(x) for x in value)
         return f"({inner},)" if len(value) == 1 else f"({inner})"
     elif isinstance(value, float) and not isinstance(value, bool):
-        return repr(round(value, 8))
+        return _repr_float(value)
     else:
         return repr(value)
 

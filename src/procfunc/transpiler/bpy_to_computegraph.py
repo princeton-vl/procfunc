@@ -108,8 +108,11 @@ def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> 
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
                 pf.nodes.math.combine_xyz, args=(0, 0, angle), kwargs={}
             )
-        case "EULER_XYZ" | "AXIS_ANGLE":
-            pass
+        case "AXIS_ANGLE":
+            # axis-angle has a dedicated Angle socket; restore the popped value
+            cg_node.kwargs["angle"] = angle
+        case "EULER_XYZ":
+            pass  # Euler-vector rotation, no Angle socket
         case _:
             raise ValueError(f"Unknown rotation type {node.rotation_type}")
 

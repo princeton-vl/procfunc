@@ -85,7 +85,8 @@ def connect_multisocket_input(
     assert isinstance(input_result, list)
     assert isinstance(from_py_input, list)
 
-    for input_val, py_input in zip(input_result, from_py_input):
+    # connect reversed: multi-input links consume in reverse of connection order
+    for input_val, py_input in zip(reversed(input_result), reversed(from_py_input)):
         if input_val is None:
             continue
         connect_single_input(node_tree, to_socket, input_val)
@@ -276,6 +277,10 @@ def _construct_operator_call(
 
     spec: cg.Node = op_res.pf_func(*inputs).item()
 
+    # pin resolved data_type so construction doesn't re-infer it and lose .astype hints
+    if "data_type" in spec.attrs:
+        spec.attrs["data_type"] = data_type
+
     # eq/ne/le/ge spec is a contextual Compare node; outside geometry trees it has
     # no FunctionNodeCompare so lower it to an equivalent Math composition. The
     # spec's inputs are already-resolved sockets, so the rewritten graph carries
@@ -286,8 +291,8 @@ def _construct_operator_call(
         node.metadata["lowered_spec"] = lowered
         return construct_procnode_to_bpy(lowered, bl_node_tree, cache)
 
-    inputs_bound = _bind_positional_to_tuple_kwargs(spec, input_results)
-    return _construct_procnode_standard(spec, bl_node_tree, inputs_bound)
+    # bind spec's operands directly; the positional binder collides on ("A",0)/("B",0)
+    return _construct_procnode_standard(spec, bl_node_tree, dict(spec.kwargs))
 
 
 def _set_node_attribute(bl_node: bpy.types.Node, k: str, v: Any):

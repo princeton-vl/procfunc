@@ -19,13 +19,20 @@ Split more functions into per-mode / per-operation bindings:
 Other additions and changes:
 
 - attribute, sample, field, and switch / index_switch nodes accept vector, color, rotation, and matrix data types
-- `func.equal` / `func.not_equal` correctly expose `epsilon` (default 0.001)
-- `mesh_boolean` returns an `intersecting_edges` output (with `mesh`) only when `solver="EXACT"`
 - `curve_set_handles` `mode` is a `set[str]` (default `{"LEFT", "RIGHT"}`)
 - image inputs accept a `pt.Image` datablock or `None` (to disconnect)
 - passing `None` to a value socket now errors; `None` is allowed only on geometry/shader inputs, where it disconnects them. Primary inputs (`mix_shader`, `set_material`, boolean operands, …) are now required.
 - removed `pf.nodes.compositor.value` / `pf.nodes.compositor.rgb` (use `pf.nodes.math.constant`)
+
+Bugfixes:
+
+- `func.equal` / `func.not_equal` correctly expose `epsilon` (default 0.001)
+- `mesh_boolean` returns an `intersecting_edges` output (with `mesh`) only when `solver="EXACT"`
 - transpile sanitizes generated Python identifiers — characters other than letters, digits, and underscores are replaced with underscores — and omits unlinked geometry-modifier outputs
+- inline comparison operators (`==` `!=` `<=` `>=`) dropped their constant operand — `x == 1` was built as `x == x` (operand-binding collision on `FunctionNodeCompare`)
+- `vector_rotate_axis_angle` (transpiled `AXIS_ANGLE` vector rotate) dropped its angle, leaving no rotation
+- multi-input socket links (`join_geometry`, `mesh_boolean`) were built in reversed order, flipping join/winding and reversing boolean operands
+- float socket values were rounded to 8 decimal places in codegen, destroying small magnitudes (e.g. a ~5.96e-08 curve coordinate → 6e-08) and perturbing `EXACT` mesh booleans; now emitted as exact float32 round-trips, making transpiled assets vertex-for-vertex identical to the source where they previously diverged
 
 # 0.31.0 (develop → main)
 
