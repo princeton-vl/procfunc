@@ -4,8 +4,8 @@ import numpy as np
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import ContextualNode
-from procfunc.nodes.bpy_node_info import NodeDataType
+from procfunc.nodes.util.bindings_util import ContextualNode
+from procfunc.nodes.util.bpy_node_info import NodeDataType
 
 TColorMixType = Literal[
     "MIX",
@@ -31,9 +31,9 @@ TColorMixType = Literal[
 
 
 def mix_rgb(
-    factor: nt.SocketOrVal[float] = 0.5,
-    a: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
-    b: nt.SocketOrVal[pt.Color] = (0.5, 0.5, 0.5, 1),
+    factor: nt.SocketOrVal[float],
+    a: nt.SocketOrVal[pt.Color],
+    b: nt.SocketOrVal[pt.Color],
     blend_type: TColorMixType = "MIX",
     clamp_result: bool = False,
     clamp_factor: bool = True,
@@ -227,12 +227,22 @@ def color_ramp(
     points: list[tuple[float, pt.Color]] | None = None,
     mode: Literal["RGB", "HSV", "HSL"] = "RGB",
     interpolation: TRampInterpolationType = "LINEAR",
+    hue_interpolation: Literal["NEAR", "FAR", "CW", "CCW"] = "NEAR",
 ) -> ColorRampResult:
     """
     Uses a ValToRGB (ColorRamp) Shader Node with points support.
 
+    `hue_interpolation` only applies to mode="HSV" / "HSL"; passing a
+    non-default value with mode="RGB" raises rather than being silently unused.
+
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/color_ramp.html
     """
+
+    if mode == "RGB" and hue_interpolation != "NEAR":
+        raise ValueError(
+            f"hue_interpolation={hue_interpolation!r} has no effect with "
+            f"mode='RGB'; it only applies to HSV/HSL color modes"
+        )
 
     res = nt.ProcNode.from_nodetype(
         node_type=ContextualNode.COLOR_RAMP.value,
@@ -241,6 +251,7 @@ def color_ramp(
             "points": points,
             "color_mode": mode,
             "interpolation": interpolation,
+            "hue_interpolation": hue_interpolation,
         },
     )
     return ColorRampResult(
@@ -295,11 +306,11 @@ def gamma(
 
 
 def hue_saturation(
+    color: nt.SocketOrVal[pt.Color],
+    fac: nt.SocketOrVal[float],
     hue: nt.SocketOrVal[float] = 0.5,
     saturation: nt.SocketOrVal[float] = 1.0,
     value: nt.SocketOrVal[float] = 1.0,
-    fac: nt.SocketOrVal[float] = 1.0,
-    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a HueSaturation Shader Node.

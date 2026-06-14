@@ -1,4 +1,69 @@
+# 0.33.0
+
+Interface changes:
+
+- `texture.noise` / `voronoi` / `voronoi_distance` / `voronoi_smooth_f1` now require `vector`; pass `vector=None` to opt into blender's implicit coordinates (gated by `warn_mode_avoid_implicit_vector`)
+- `shader.principled_bsdf` `normal` / `coat_normal` / `tangent` now default to `None` (previously always wired `Normal=(0,0,0)`)
+- `compositor.mix_rgb` now accepts `clamp_result` (exposes the node's `use_clamp`, previously inexpressible)
+- `procfunc.util.bpy_data.removing_new_datablocks` context manager bounds bpy.data growth (suitable for downstream test suites)
+- removed `OperatorType.AND` / `OperatorType.OR` aliases; corrected `__all__` (`sample_collection`, `primitives`)
+- trimmed internal-only `procfunc.tracer` exports (`Patcher`, `PATCHING_FLAG_ATTR`, `add_banned_module`, `add_wrap_target`, `RngSpawnResultProxy`); added `procfunc.compute_graph.__all__`; fixed `procfunc.transpiler.__all__` (`parse_node_tree`)
+- module layout (breaks code importing internals): execute construction split into `construct_operator.py` / `construct_standard.py` with realization helpers in `nodes/execute/realize.py`; transpiler special-cases in `transpiler/parse_special_cases.py` and bpy-default coercion in `parse_default_values.py`; codegen value→source in `codegen/repr.py`; node infra (`bindings_util`, `bpy_node_info`, `node_function`) in `nodes/util/`; `control` and `cli` are now packages (console entrypoint unchanged)
+
+Fixed crashes:
+
+- `from procfunc.nodes import *` (nonexistent `to_material` in `__all__`)
+- `'prefix*'` globs in the transpile CLI (inverted assert)
+- `procfunc transpile --output print`
+- `--add_line_comments` (`NameError` on every use)
+- second execution of a scene-bound compositor graph (Render Layers / Cryptomatte)
+- `transforms.extract_shader_vectors_as_inputs`, `infer_distribution_hypercube`, `distribution_to_mode`, `outlier_distribution`
+- transpiling node groups with matrix or image interface sockets (`KeyError`)
+- `@node_function` with a missing annotation now raises a clear error (was a bare `AttributeError`)
+- `to_mesh_object_with_attributes()` with default `attributes=None`
+- kwargs-form rng calls (`rng.uniform(low=..., high=...)`) in `distribution_to_mode` / `outlier_distribution`
+- `transforms.colors_to_hsv_definition` on positional Color args
+- `primitives.empty()` (asserted MESH on an EMPTY object) and boolean modifiers with `Collection` targets
+- transpiling legacy `use_clamp` nodes (`TextureNodeMixRGB` / `ShaderNodeMixRGB` → `clamp_result`, `TextureNodeMath` → a `clamp()` wrap)
+- compare with a non-default `epsilon` no longer binds the Epsilon socket when it is remapped to a Math node (operator dispatch `<`/`>`) or disabled (INT/STRING compares)
+
+Fixed wrong results:
+
+- codegen now emits valid Python for matrix constants and non-finite floats; matrices travel as numpy arrays and coerce back to `mathutils.Matrix` at execute time, lowering to `FunctionNodeCombineMatrix` where needed
+- ambiguous tuple compares (`func.less_than((1,2,3), b)`) now resolve to FLOAT_VECTOR (was RGBA)
+- `GetAttributeNode` / `ProceduralNode` instances now compare by value and are hashable (previously all compared equal and were unhashable)
+- raw `rng.uniform(...)` calls are now recognized as distributions in transforms
+- transpile no longer emits false values for unlinked implicit-field sockets (e.g. `extrude_mesh(offset=(0,0,0))`)
+- top-level known value types are now recorded for codegen annotations
+- `ops.mesh.transform` now interprets `rotation_euler` as Euler angles (was an exponential-map rotation vector)
+- `random.clip_gaussian` now treats `low=0.0` / `high=0.0` as real bounds (were treated as unset)
+- `infer_nodegroup_distributions` now keeps subgraphs with inferred distributions and drops all-dynamic ones (gate was inverted)
+- `util.pytree` dict specs now snapshot their keys (a live `keys()` view corrupted `unflatten` when the source dict changed)
+- transpile now preserves ColorRamp `color_mode` (HSV/HSL ramps had re-executed as RGB) and gains `hue_interpolation`; codegen renames keyword-named sockets (`Lambda` → `lambda`) instead of emitting `SyntaxError`
+- boolean modifier `threshold` is now forwarded to the EXACT solver (was accepted but ignored)
+
+Errors instead of silent misbehavior:
+
+- mixed scalar+tuple operands and ambiguous length-4 tuples raise a clear `.astype` hint
+- vector/color compares outside geometry trees raise instead of degrading to scalar Math COMPARE, including wired (non-literal) vector operands
+- inputs/attrs a context's legacy node cannot honor raise per-node (e.g. `mix_rgb(clamp_factor=False)` in texture trees, compositor `vector_curve` with `fac != 1.0`)
+- operator dispatch only reorders operands for known-commutative operators
+
+Other:
+
+- no root-logging reconfiguration at import time; CLI scopes verbosity to procfunc loggers
+- `override_globals` / codegen printoptions restored on exception
+- removed dead `is_multi_output` manifest column and dead scaffolding
+- version defined once in `procfunc.__version__`; new tests pin multi-input order and matrix round-trips
+- `requires-python` pinned to `>=3.11,<3.12` (bpy 4.2.0 is cp311-only)
+
 # 0.32.0
+
+Breaking changes:
+
+- multi-output bindings now return NamedTuples (16 compositor, 3 shader, 3 geo bindings); `shader.coord` gained `reflection` (unpack arity)
+- `math.vector_curve` reordered to `(vector, fac=1.0)`; `func.random_value` no longer auto-resolves RGBA
+- `color.mix_rgb` requires `factor, a, b`; `color.hue_saturation` requires `color, fac` (reordered)
 
 Additional Python operator bindings:
 - comparison `== != < > <= >=` on floats (geometry, shader, and compositor graphs) and integers (geometry)

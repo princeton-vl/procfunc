@@ -220,9 +220,11 @@ def graph_nodes_equal(graph1: ComputeGraph, graph2: ComputeGraph) -> bool:
 def transform_nodetree(
     root: Node,
     transform_fn: Callable[[Node], Any],
-    memo: dict[int, Node] = {},
+    memo: dict[int, Node] | None = None,
 ):
-    raise NotImplementedError("Not implemented")
+    raise NotImplementedError(
+        "transform_nodetree is not yet implemented, use transform_compute_graph"
+    )
 
     new_root = transform_fn(root)
 
@@ -251,34 +253,33 @@ def transform_compute_graph(
     compute_graph: ComputeGraph,
     transform_fn: Callable[[Node], Any],
     graph_name: str | None = None,
-):
-    raise NotImplementedError("Not implemented")
+) -> ComputeGraph:
+    id_map: dict[int, Any] = {}
 
-    id_map: dict[int, Node] = {}
+    def lookup(value: Any) -> Any:
+        return id_map[id(value)] if isinstance(value, Node) else value
 
-    def wrapper(node: Node) -> Node:
-        res = transform_fn(node)
+    for node in traverse_depth_first(compute_graph, order="postorder"):
+        new_node = copy.copy(node)
+        new_node.args = pytree.PyTree(node.args).map(lookup).obj()
+        new_node.kwargs = pytree.PyTree(node.kwargs).map(lookup).obj()
+        new_node.metadata = copy.copy(node.metadata)
+
+        res = transform_fn(new_node)
+        if res is None:
+            raise ValueError(f"{transform_fn} returned None for {node=}")
         id_map[id(node)] = res
-        return res
 
-    memo = {}
-
-    new_output_values = [
-        transform_nodetree(v, wrapper, memo) for v in compute_graph.outputs.values()
-    ]
-    new_output = pytree.PyTree.from_values(new_output_values, compute_graph.output.spec)
+    new_outputs = compute_graph.outputs.map(lambda v: id_map.get(id(v), v))
+    new_inputs = compute_graph.inputs.map(lambda v: id_map.get(id(v), v))
 
     new_metadata = copy.copy(compute_graph.metadata)
-    if "operations" not in new_metadata:
-        new_metadata["operations"] = []
     op = (transform_compute_graph, {"transform_fn": transform_fn, "id_map": id_map})
-    new_metadata["operations"].append(op)
-
-    new_inputs = compute_graph.inputs.map(lambda v: id_map[id(v)])
+    new_metadata["operations"] = new_metadata.get("operations", []) + [op]
 
     return ComputeGraph(
         inputs=new_inputs,
-        outputs=new_output,
-        name=compute_graph.name + "_transformed",
+        outputs=new_outputs,
+        name=graph_name or compute_graph.name + "_transformed",
         metadata=new_metadata,
     )

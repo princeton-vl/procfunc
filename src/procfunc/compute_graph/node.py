@@ -1,6 +1,5 @@
 import inspect
 import logging
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 if TYPE_CHECKING:
@@ -71,7 +70,6 @@ class MethodCallNode(Node):
         return f"{self.__class__.__name__}({self.method_name}, ...)"
 
 
-@dataclass
 class GetAttributeNode(Node):
     def __init__(
         self, source: Node, attribute_name: str, metadata: dict[str, Any] = None
@@ -84,7 +82,6 @@ class GetAttributeNode(Node):
         return f"{self.__class__.__name__}({self.attribute_name})"
 
 
-@dataclass
 class ProceduralNode(Node):
     def __init__(
         self,
@@ -184,10 +181,5 @@ def normalize_args_to_kwargs(
             updated_kwargs.update(value)
         else:
             updated_kwargs[param_name] = value
-
-    if False and logger.isEnabledFor(logging.DEBUG):
-        logger.debug(
-            f"normalized {func.__name__} with {args=} {kwargs=} to {remaining_args=} {updated_kwargs=}"
-        )
 
     return remaining_args, updated_kwargs

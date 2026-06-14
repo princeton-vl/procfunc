@@ -11,7 +11,7 @@ from typing import Any, Literal, NamedTuple
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import raise_explicit_noise_vector_error
+from procfunc.nodes.util.bindings_util import raise_explicit_noise_vector_error
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +64,7 @@ def brick(
     """
     Uses a TexBrick Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/brick.html
     """
@@ -106,7 +106,7 @@ def checker(
     """
     Uses a TexChecker Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/checker.html
     """
@@ -132,7 +132,7 @@ def environment(
     """
     Uses a TexEnvironment Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/environment.html
     """
@@ -164,7 +164,7 @@ def gradient(
     """
     Uses a TexGradient Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/gradient.html
     """
@@ -191,7 +191,7 @@ def ies(
     """
     Uses a TexIES Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/ies.html
     """
@@ -216,7 +216,7 @@ def image(
     """
     Uses a TexImage Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/image.html
     """
@@ -248,7 +248,7 @@ def magic(
     """
     Uses a TexMagic Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/magic.html
     """
@@ -266,7 +266,7 @@ def magic(
 
 
 def noise(
-    vector: nt.SocketOrVal[pt.Vector] = (0.0, 0.0, 0.0),
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     detail: nt.SocketOrVal[float] = 2.0,
     roughness: nt.SocketOrVal[float] = 0.5,
@@ -277,7 +277,7 @@ def noise(
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
     normalize: bool = True,
-    w: nt.SocketOrVal[float] = 0.0,
+    w: nt.SocketOrVal[float] | None = None,
 ) -> TextureResult:
     """
 
@@ -288,6 +288,10 @@ def noise(
      - gain: Only supported for RIDGED_MULTIFRACTAL and HYBRID_MULTIFRACTAL noise types
      - distortion: Only supported for RIDGED_MULTIFRACTAL, HYBRID_MULTIFRACTAL, HETERO_TERRAIN noise types
      - w: Only supported for 1D and 4D noise dimensions
+     - vector: The coordinate to evaluate the noise at. Not available in 1D
+       mode (pass vector=None and use w instead). Passing None explicitly
+       falls back to blender's implicit coordinates, gated by
+       pf.context.globals.warn_mode_avoid_implicit_vector.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/noise.html
     """
@@ -300,17 +304,21 @@ def noise(
         "Distortion": distortion,
     }
 
-    if w != 0.0:
+    if w is not None:
         assert noise_dimensions in ["4D", "1D"]
         inputs["W"] = w
     elif noise_dimensions == "1D":
         raise_explicit_noise_vector_error("noise", logger=logger)
 
-    if vector == (0.0, 0.0, 0.0):
-        assert noise_dimensions in ["2D", "3D", "4D"]
-        inputs["Vector"] = vector
-    elif noise_dimensions in ["2D", "3D"]:
+    if noise_dimensions == "1D":
+        if vector is not None:
+            raise ValueError(
+                "noise with noise_dimensions='1D' has no Vector input; use w instead"
+            )
+    elif vector is None:
         raise_explicit_noise_vector_error("noise", logger=logger)
+    else:
+        inputs["Vector"] = vector
 
     _extra_args_modes = ["RIDGED_MULTIFRACTAL", "HYBRID_MULTIFRACTAL"]  # noqa: F841
     if offset != 0.0:
@@ -353,7 +361,7 @@ def point_density(
     """
     Uses a TexPointDensity Shader Node.
 
-    Infinigen requires an explicit `vector` input - node will not default to using texture coordinate or world coordinate like blender
+    procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
 
     TODO: vertex_attribute_name and vertex_color_source are only available for point_source OBJECT
 
@@ -425,7 +433,7 @@ def sky(
 
 
 def voronoi(
-    vector: nt.SocketOrVal[pt.Vector] | None = None,
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     detail: nt.SocketOrVal[float] = 0.0,
     roughness: nt.SocketOrVal[float] = 0.5,
@@ -436,7 +444,7 @@ def voronoi(
     feature: Literal["F1", "F2"] = "F1",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: nt.SocketOrVal[float] = 0.0,
+    w: nt.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
     """
 
@@ -444,7 +452,11 @@ def voronoi(
 
     Args:
         exponent: Only supported for Minkowski distance.
-        vector: Required for 2D/3D/4D modes. Not used in 1D mode (use w instead).
+        vector: The coordinate to evaluate at. Not available in 1D mode (pass
+            vector=None and use w instead). Passing None explicitly falls back
+            to blender's implicit coordinates, gated by
+            pf.context.globals.warn_mode_avoid_implicit_vector.
+        w: Only supported for 1D and 4D dimensions.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/voronoi.html
     """
@@ -457,9 +469,14 @@ def voronoi(
         "Randomness": randomness,
     }
 
-    if voronoi_dimensions != "1D":
-        if vector is None or vector == (0.0, 0.0, 0.0):
-            raise_explicit_noise_vector_error("voronoi", logger=logger)
+    if voronoi_dimensions == "1D":
+        if vector is not None:
+            raise ValueError(
+                "voronoi with voronoi_dimensions='1D' has no Vector input; use w instead"
+            )
+    elif vector is None:
+        raise_explicit_noise_vector_error("voronoi", logger=logger)
+    else:
         inputs["Vector"] = vector
 
     if exponent != 0.0:
@@ -467,9 +484,11 @@ def voronoi(
             f"exponent is only supported for Minkowski distance, got {distance=}"
         )
         inputs["Exponent"] = exponent
-    if w != 0.0:
+    if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
         inputs["W"] = w
+    elif voronoi_dimensions == "1D":
+        raise_explicit_noise_vector_error("voronoi", logger=logger)
 
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",
@@ -493,7 +512,7 @@ def voronoi(
 
 
 def voronoi_distance(
-    vector: nt.SocketOrVal[pt.Vector] | None = None,
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     detail: nt.SocketOrVal[float] = 0.0,
     roughness: nt.SocketOrVal[float] = 0.5,
@@ -501,7 +520,7 @@ def voronoi_distance(
     randomness: nt.SocketOrVal[float] = 1.0,
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: nt.SocketOrVal[float] = 0.0,
+    w: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[float]:
     inputs = {
         "Scale": scale,
@@ -511,14 +530,22 @@ def voronoi_distance(
         "Randomness": randomness,
     }
 
-    if voronoi_dimensions != "1D":
-        if vector is None or vector == (0.0, 0.0, 0.0):
-            raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
+    if voronoi_dimensions == "1D":
+        if vector is not None:
+            raise ValueError(
+                "voronoi_distance with voronoi_dimensions='1D' has no Vector "
+                "input; use w instead"
+            )
+    elif vector is None:
+        raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
+    else:
         inputs["Vector"] = vector
 
-    if w != 0.0:
+    if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
         inputs["W"] = w
+    elif voronoi_dimensions == "1D":
+        raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",
@@ -532,7 +559,7 @@ def voronoi_distance(
 
 
 def voronoi_smooth_f1(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     detail: nt.SocketOrVal[float] = 0.0,
     roughness: nt.SocketOrVal[float] = 0.5,
@@ -542,15 +569,9 @@ def voronoi_smooth_f1(
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: nt.SocketOrVal[float] = 0.0,
+    w: nt.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
-    if vector == (0.0, 0.0, 0.0) and voronoi_dimensions != "1D":
-        raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
-    elif w == 0.0 and voronoi_dimensions != "1D":
-        raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
-
     inputs = {
-        "Vector": vector,
         "Scale": scale,
         "Detail": detail,
         "Roughness": roughness,
@@ -559,9 +580,22 @@ def voronoi_smooth_f1(
         "Smoothness": smoothness,
     }
 
-    if w != 0.0:
+    if voronoi_dimensions == "1D":
+        if vector is not None:
+            raise ValueError(
+                "voronoi_smooth_f1 with voronoi_dimensions='1D' has no Vector "
+                "input; use w instead"
+            )
+    elif vector is None:
+        raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
+    else:
+        inputs["Vector"] = vector
+
+    if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
         inputs["W"] = w
+    elif voronoi_dimensions == "1D":
+        raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
 
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",

@@ -1393,6 +1393,7 @@ def mix_rgb(
     b: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     blend_type: TBlendType = "MIX",
     use_alpha: bool = False,
+    clamp_result: bool = False,
 ) -> nt.ProcNode:
     """
     Uses a MixRGB Compositor Node.
@@ -1402,7 +1403,11 @@ def mix_rgb(
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeMixRGB",
         inputs={"Fac": fac, ("Image", 0): a, ("Image", 1): b},
-        attrs={"blend_type": blend_type, "use_alpha": use_alpha},
+        attrs={
+            "blend_type": blend_type,
+            "use_alpha": use_alpha,
+            "use_clamp": clamp_result,
+        },
     )
 
 

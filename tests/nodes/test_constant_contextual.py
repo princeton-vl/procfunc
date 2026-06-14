@@ -6,7 +6,7 @@ import pytest
 
 import procfunc as pf
 from conftest import realize as _realize
-from procfunc.nodes.bpy_node_info import NodeGroupType
+from procfunc.nodes.util.bpy_node_info import NodeGroupType
 
 
 def _bl_idnames(ng) -> set[str]:

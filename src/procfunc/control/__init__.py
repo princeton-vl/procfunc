@@ -170,5 +170,5 @@ def sample_collection(
 __all__ = [
     "choice",
     "choice_idx",
-    "choice",
+    "sample_collection",
 ]

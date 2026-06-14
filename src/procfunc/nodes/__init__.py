@@ -4,7 +4,7 @@ from procfunc.tracer import autowrap_module as _autowrap
 from procfunc.util.manifest import module_path
 
 from . import color, compositor, func, geo, math, shader, texture
-from .bpy_node_info import NodeDataType, NodeGroupType, SocketType
+from .util.bpy_node_info import NodeDataType, NodeGroupType, SocketType
 
 # ruff: noqa: E402
 _autowrap(color, allow_exec=False)
@@ -27,12 +27,12 @@ from .execute.execute import (
     to_objects_multi,
 )
 from .execute.util import NODE_OPERATOR_TABLE
-from .node_function import function_to_compute_graph, node_function
 from .types import (
     ProcNode,
     Shader,
     SocketOrVal,
 )
+from .util.node_function import function_to_compute_graph, node_function
 
 NODES_MANIFEST_PATH = module_path() / "nodes" / "manifest.json"
 assert NODES_MANIFEST_PATH.exists(), f"Manifest not found at {NODES_MANIFEST_PATH}"
@@ -61,7 +61,6 @@ __all__ = [
     "to_curve_object",
     "to_environment",
     "to_light",
-    "to_material",
     "to_mesh_object",
     "to_mesh_object_with_attributes",
     "to_objects_multi",

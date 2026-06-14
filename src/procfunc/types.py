@@ -49,20 +49,6 @@ class AssetUsageTable:
 _global_usage_table = AssetUsageTable()
 
 
-def _bpy_data_col_for_asset(item: T) -> bpy.types.bpy_prop_collection:
-    match item.bl_rna.name:
-        case "Object":
-            return bpy.data.objects
-        case "Material":
-            return bpy.data.materials
-        case "Image Texture":
-            return bpy.data.textures
-        case _:
-            raise TypeError(
-                f"{BlenderAsset.__name__} doesnt yet support: {item} with type {item.bl_rna.name}"
-            )
-
-
 class Asset(Generic[T]):
     def item(self) -> T:
         raise NotImplementedError("Subclasses of Asset must implement item()")
@@ -72,7 +58,7 @@ class BlenderAsset(Asset, Generic[T]):
     """
     A pythonic wrapper around a blender object,material,texture, or other bpy.data.stuffgoeshere member.
 
-    We reference count the underlying asset and delete it when no python references remain.
+    The underlying bpy datablock is owned by Blender and is not deleted when this wrapper is garbage collected.
     """
 
     def __init__(self, item: T):
@@ -97,62 +83,6 @@ class BlenderAsset(Asset, Generic[T]):
             )
 
         return self._item
-
-
-'''
-    def add_dependency(self, dependency: "Asset"):
-        self._dependencies.append(dependency)
-
-    def extend_dependencies(self, other: "Asset"):
-        self._dependencies.extend(other._dependencies)
-
-    def update(self, other: "Asset"):
-        """
-        Updates this asset to point to the same underlying item as other.
-        """
-
-        self._item = other._item
-        self._dependencies = other._dependencies
-        _global_usage_table.counts[id(self._item)] += 1
-
-    def invalidate(self):
-        self._item = None
-        self._dependencies = []
-        _global_usage_table.counts[id(self._item)] = INVALIDATED_USAGE_ID
-
-    def __del__(self):
-        # return
-
-        if self._item is None:
-            return
-        return  # TODO
-        item_id = id(self._item)
-        count = _global_usage_table.counts.get(item_id, 0)
-
-        count -= 1
-
-        # new bad ref counter
-        if count < 0:
-            raise ValueError(
-                f"Asset ref {id(self)} reached negative ref count for item {self._item.name}"
-            )
-
-        _global_usage_table.counts[item_id] = count
-
-        if count == 0:
-            try:
-                bpy_col = _bpy_data_col_for_asset(self._item)
-                if self._item.name in bpy_col:
-                    bpy_col.remove(self._item, do_unlink=True)
-            except ReferenceError:
-                logger.warning(
-                    f"{self.__class__.__name__} __del__ failed - item already deleted"
-                )
-
-            del _global_usage_table.counts[item_id]
-
-        self._item = None
-'''
 
 
 class ObjectType(Enum):
@@ -294,26 +224,11 @@ class Material:
     volume: Any = None
     _bpy_material: Any = field(default=None, init=False, repr=False)
 
-    def __post_init__(self):
-        # displacement is a connectable node, never a bare literal: None means
-        # "no displacement", otherwise it must be a graph node (a value-domain
-        # ProcNode or a graph-domain cg.Node).
-        if self.displacement is None:
-            return
-        from procfunc import compute_graph as cg
-        from procfunc.nodes import types as nt
-
-        if not isinstance(self.displacement, (nt.ProcNode, cg.Node)):
-            raise TypeError(
-                f"Material.displacement must be a ProcNode or None, not a literal "
-                f"{type(self.displacement).__name__}; wrap it with pf.nodes.math.constant(...)"
-            )
-
     def item(self) -> bpy.types.Material:
         if self._bpy_material is None:
-            from procfunc.nodes.execute.execute import _build_bpy_material
+            from procfunc.nodes.execute.realize import build_bpy_material
 
-            self._bpy_material = _build_bpy_material(
+            self._bpy_material = build_bpy_material(
                 surface=self.surface,
                 displacement=self.displacement,
                 volume=self.volume,

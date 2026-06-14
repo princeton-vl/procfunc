@@ -64,12 +64,12 @@ def mesh_line(
 def empty(
     disp_type: str = "PLAIN_AXES",
     display_size: float = 0.1,
-) -> t.MeshObject:
+) -> t.EmptyObject:
     obj = bpy.data.objects.new(empty.__name__, None)
     bpy.context.scene.collection.objects.link(obj)
     obj.empty_display_size = display_size
     obj.empty_display_type = disp_type
-    return t.MeshObject(obj)
+    return t.EmptyObject(obj)
 
 
 def mesh_uv_sphere(

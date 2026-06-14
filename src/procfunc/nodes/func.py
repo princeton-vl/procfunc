@@ -3,12 +3,12 @@ from typing import Literal, NamedTuple, TypeVar
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import (
+from procfunc.nodes.util.bindings_util import (
     ContextualNode,
     RuntimeResolveDataType,
     raise_io_error,
 )
-from procfunc.nodes.bpy_node_info import NodeDataType
+from procfunc.nodes.util.bpy_node_info import NodeDataType
 
 logger = logging.getLogger(__name__)
 
@@ -232,7 +232,7 @@ def _compare(
     trees (full data_type support incl. INT) and Math nodes elsewhere. Outside
     geometry, LESS_THAN / GREATER_THAN map to a single Math node, while
     EQUAL / NOT_EQUAL / LESS_EQUAL / GREATER_EQUAL lower to a small Math
-    composition (see _lower_compare_outside_geometry). The `data_type` option and
+    composition (see construct_operator._lower_compare_outside_geometry). The `data_type` option and
     non-float operands remain geometry-only. `epsilon` defaults to Blender's own
     Compare node default (0.001) and only applies to EQUAL / NOT_EQUAL.
 
@@ -240,23 +240,24 @@ def _compare(
     """
 
     if data_type is None:
+        # FLOAT_VECTOR before RGBA: ambiguous tuple operands resolve to the
+        # element-wise vector compare (matching the convention in geo.py)
         data_type = RuntimeResolveDataType(
             [
                 NodeDataType.INT,
                 NodeDataType.FLOAT,
+                NodeDataType.FLOAT_VECTOR,
                 NodeDataType.RGBA,
                 NodeDataType.STRING,
-                NodeDataType.FLOAT_VECTOR,
             ],
             ["A", "B"],
         )
-    # tuple keys let inline operator dispatch (`<`, `>`) bind positional args and
-    # let the contextual mapping remap A/B -> Value sockets for ShaderNodeMath
-    inputs: dict[tuple[str, int], nt.SocketOrVal] = {("A", 0): a, ("B", 0): b}
-    # the socket already holds the Blender default, so skip setting it - this also
-    # keeps INT/STRING compares working, whose Epsilon socket is disabled
-    if not (isinstance(epsilon, float) and epsilon == COMPARE_EPSILON_DEFAULT):
-        inputs[("Epsilon", 0)] = epsilon
+    # tuple keys let inline operator dispatch (`<`, `>`) bind positional args.
+    inputs: dict[tuple[str, int], nt.SocketOrVal] = {
+        ("A", 0): a,
+        ("B", 0): b,
+        ("Epsilon", 0): epsilon,
+    }
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.COMPARE.value,
         inputs=inputs,

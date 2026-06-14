@@ -142,6 +142,111 @@ def test_environment_with_volume():
     assert world.item().use_nodes is True
 
 
+def test_scene_bound_compositor_repeat_execution():
+    """Scene-bound graphs (Render Layers) build on the scene's compositing tree,
+    replacing its contents; a second execution in the same session must rebuild
+    from a clean tree rather than crash or accumulate nodes."""
+
+    def fn():
+        rl = pf.nodes.compositor.render_layers()
+        return pf.nodes.compositor.bright_contrast(
+            image=rl.image, bright=0.1, contrast=0.1
+        )
+
+    node_counts = []
+    iface_counts = []
+    for _ in range(2):
+        graph = pf.nodes.function_to_compute_graph(fn)
+        ng = pf.nodes.as_nodegroup(graph, pf.nodes.NodeGroupType.COMPOSITOR)
+        assert ng == bpy.context.scene.node_tree
+        node_counts.append(len(ng.nodes))
+        iface_counts.append(len(ng.interface.items_tree))
+
+    assert node_counts[0] == node_counts[1]
+    assert iface_counts[0] == iface_counts[1]
+
+
+def test_mix_rgb_default_clamp_factor_is_noop_in_texture():
+    """TextureNodeMixRGB unconditionally clamps its factor, so dropping the
+    default clamp_factor=True is silent."""
+
+    def fn():
+        return pf.nodes.color.mix_rgb(factor=0.5, a=(1, 0, 0, 1), b=(0, 1, 0, 1))
+
+    ng = _realize(fn, pf.nodes.NodeGroupType.TEXTURE)
+    assert any(n.bl_idname == "TextureNodeMixRGB" for n in ng.nodes)
+
+
+def test_mix_rgb_clamp_factor_false_raises_in_texture():
+    """clamp_factor=False cannot be honored by TextureNodeMixRGB (it always
+    clamps); it must raise rather than silently change semantics."""
+
+    def fn():
+        return pf.nodes.color.mix_rgb(
+            factor=0.5, a=(1, 0, 0, 1), b=(0, 1, 0, 1), clamp_factor=False
+        )
+
+    with pytest.raises(ValueError, match="clamp_factor"):
+        _realize(fn, pf.nodes.NodeGroupType.TEXTURE)
+
+
+def test_vector_compare_raises_outside_geometry():
+    """A compare with wired vector operands must raise in non-geometry trees,
+    not silently lower to a scalar Math node via implicit conversion."""
+
+    def fn():
+        c = pf.nodes.shader.coord()
+        return pf.nodes.func.equal(c.object, c.generated)
+
+    with pytest.raises(ValueError, match="not.*supported|FLOAT_VECTOR"):
+        _realize(fn, pf.nodes.NodeGroupType.SHADER)
+
+
+def test_float_compare_lowers_in_shader():
+    def fn():
+        return pf.nodes.func.equal(0.5, 0.5)
+
+    ng = _realize(fn, pf.nodes.NodeGroupType.SHADER)
+    assert any(n.bl_idname == "ShaderNodeMath" for n in ng.nodes)
+
+
+def test_to_mesh_object_with_attributes_default():
+    obj, attrs = pf.nodes.to_mesh_object_with_attributes(pf.nodes.geo.mesh_cube().mesh)
+    assert obj.item().type == "MESH"
+    assert attrs == {}
+
+
+def test_to_mesh_object_with_attributes():
+    obj, attrs = pf.nodes.to_mesh_object_with_attributes(
+        pf.nodes.geo.mesh_cube().mesh, attributes={"myval": 0.5}
+    )
+    assert obj.item().type == "MESH"
+    assert set(attrs) == {"myval"}
+
+
+def test_vector_curve_default_fac_is_noop_in_compositor():
+    """CompositorNodeCurveVec has no Fac socket; the default fac=1.0 matches
+    its always-fully-applied behavior so it drops silently."""
+
+    def fn():
+        return pf.nodes.math.vector_curve(vector=(0.5, 0.5, 0.5))
+
+    ng = _realize(fn, pf.nodes.NodeGroupType.COMPOSITOR)
+    assert any(n.bl_idname == "CompositorNodeCurveVec" for n in ng.nodes)
+
+
+def test_vector_curve_nondefault_fac_raises_in_compositor():
+    """fac != 1.0 cannot be honored by CompositorNodeCurveVec (it always
+    applies the curve fully); it must raise rather than silently change
+    semantics."""
+
+    def fn():
+        return pf.nodes.math.vector_curve(vector=(0.5, 0.5, 0.5), fac=0.5)
+
+    with pytest.raises(ValueError, match="Fac"):
+        _realize(fn, pf.nodes.NodeGroupType.COMPOSITOR)
+
+
 def test_multiple_outputs_compositor():
     """Test compositor with multiple output nodes."""
     render_layers = pf.nodes.compositor.render_layers()
@@ -191,9 +296,21 @@ def test_mix_shader_inputs_required():
         pf.nodes.shader.add_shader(a=bsdf)
 
     mixed = pf.nodes.shader.mix_shader(factor=0.5, a=None, b=bsdf)
-    assert mixed is not None
-    added = pf.nodes.shader.add_shader(a=None, b=bsdf)
-    assert added is not None
+    added = pf.nodes.shader.add_shader(a=None, b=mixed)
+    material = pf.Material(surface=added)
+
+    group = next(
+        n for n in material.item().node_tree.nodes if n.type == "GROUP"
+    ).node_tree
+    mix = next(n for n in group.nodes if n.bl_idname == "ShaderNodeMixShader")
+    add = next(n for n in group.nodes if n.bl_idname == "ShaderNodeAddShader")
+    assert not mix.inputs[1].is_linked and mix.inputs[2].is_linked
+    assert not add.inputs[0].is_linked and add.inputs[1].is_linked
+
+
+@pf.nodes.node_function
+def _bound_box_none_geometry() -> pf.ProcNode:
+    return pf.nodes.geo.bound_box(geometry=None).bounding_box
 
 
 def test_primary_node_inputs_required():
@@ -208,10 +325,15 @@ def test_primary_node_inputs_required():
     with pytest.raises(TypeError):
         pf.nodes.geo.set_material(geometry=cube)
 
-    box = pf.nodes.geo.bound_box(geometry=None)
-    assert box is not None
+    ng = _realize(_bound_box_none_geometry, pf.nodes.NodeGroupType.GEOMETRY)
+    bb = next(n for n in ng.nodes if n.bl_idname == "GeometryNodeBoundBox")
+    assert not bb.inputs["Geometry"].is_linked
+
     rgb = pf.nodes.shader.shader_to_rgb(shader=None)
-    assert rgb is not None
+    material = pf.Material(
+        surface=pf.nodes.shader.principled_bsdf(base_color=rgb.color)
+    )
+    assert material.item().use_nodes is True
 
 
 @pf.nodes.node_function

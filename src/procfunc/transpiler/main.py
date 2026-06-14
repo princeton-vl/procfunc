@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Callable, Literal
 
 import bpy
-import pandas as pd
 
 import procfunc as pf
 from procfunc import compute_graph as cg
@@ -21,29 +20,14 @@ from .bpy_to_computegraph import (
     parse_object,
 )
 
-logging.basicConfig(
-    format="[%(asctime)s.%(msecs)03d] [%(module)s] [%(levelname)s] | %(message)s",
-    datefmt="%H:%M:%S",
-    level=logging.INFO,
-)
+LOG_FORMAT = "[%(asctime)s.%(msecs)03d] [%(module)s] [%(levelname)s] | %(message)s"
+LOG_DATEFMT = "%H:%M:%S"
 
 logger = logging.getLogger(__name__)
 
-MODIFIERS_MANIFEST: pd.DataFrame | None = None
-NODES_MANIFEST: pd.DataFrame | None = None
-
-
-BPY_COLLECTIONS = [
-    "scene",
-    "object",
-    "material",
-    # "collections",
-]
-
 RETURN_TYPES = {
-    "object": pf.MeshObject,
-    "material": pf.Material,
-    "collection": pf.Collection,
+    bpy.types.Object: pf.MeshObject,
+    bpy.types.Material: pf.Material,
 }
 
 
@@ -89,7 +73,7 @@ def add_transpile_arguments(parser: argparse.ArgumentParser) -> argparse.Argumen
 
     parser.add_argument(
         "--output",
-        type=Path,
+        type=str,
         default=None,
         help="Output destination: a .py path to write to, 'print' to print to stdout, or omit to discard.",
     )
@@ -180,9 +164,11 @@ def _find_target_str(target: str, col: bpy.types.bpy_prop_collection) -> list:
     if target.isdigit():
         return [col[int(target)]]
     elif "*" in target:
-        assert target.count("*") == 1
-        assert target.endswith("*") == 0
-        prefix = target.replace("*", "")
+        if target.count("*") != 1 or not target.endswith("*"):
+            raise ValueError(
+                f"Invalid glob {target!r}: only a single trailing '*' is supported, e.g. 'prefix*'"
+            )
+        prefix = target[:-1]
         return [v for k, v in col.items() if k.startswith(prefix)]
     else:
         matches = [v for k, v in col.items() if k == target]
@@ -204,15 +190,19 @@ def transpile_targets(
 ) -> str:
     memo = ParseMemo()
 
-    result_graphs = [
-        parse_target(
+    result_graphs = []
+    for target in targets:
+        graph = parse_target(
             target,
             memo,
             object_mode=object_mode,
             include_set_material=include_set_material,
         )
-        for target in targets
-    ]
+        return_type = next(
+            (rt for cls, rt in RETURN_TYPES.items() if isinstance(target, cls)), None
+        )
+        graph.metadata.setdefault("known_value_type", return_type)
+        result_graphs.append(graph)
 
     for tfunc in transforms:
         if logger.isEnabledFor(logging.DEBUG):
@@ -228,7 +218,7 @@ def transpile_targets(
         if result_graph.name.startswith("material_"):
             kwargs["vector"] = vec
 
-        return_type = RETURN_TYPES.get(type(result_graph), None)
+        return_type = result_graph.metadata.get("known_value_type", None)
         call_node = cg.SubgraphCallNode(
             subgraph=result_graph,
             args=(),
@@ -259,24 +249,6 @@ def transpile_targets(
     )
 
     return python
-
-
-def inject_into_python_file(python: list[str], file: Path, target_name: str):
-    """
-    If def <target_name>(): is found in the python file, replace it with the python code.
-    If not, add it to end of the file.
-    """
-
-    text = file.read_text()
-    lines = text.splitlines()
-
-    start_line = next(
-        (i for i, line in enumerate(lines) if line.startswith(f"def {target_name}")),
-        None,
-    )
-
-    if start_line is None:
-        lines.append
 
 
 def _targets_from_args(
@@ -320,8 +292,8 @@ assert set(_transforms_map.keys()) == set(TRANSPILE_TRANSFORM_REFS.keys()), (
 
 
 def run(args: argparse.Namespace):
-    for name in logging.root.manager.loggerDict:
-        logging.getLogger(name).setLevel(args.loglevel)
+    logging.basicConfig(format=LOG_FORMAT, datefmt=LOG_DATEFMT, level=args.loglevel)
+    logging.getLogger("procfunc").setLevel(args.loglevel)
 
     pf.ops.file.load_blend(args.input)
 
@@ -355,9 +327,5 @@ def run(args: argparse.Namespace):
             print(f"Writing transpiled code to path {x}")
             with x.open("w") as f:
                 f.write(python)
-        case x if ":" in x:
-            raise NotImplementedError("Not implemented")
-            module_path, target_name = x.split(":")
-            inject_into_python_file(python.splitlines(), Path(module_path), target_name)
         case _:
             raise ValueError(f"Invalid output type: {args.output}")

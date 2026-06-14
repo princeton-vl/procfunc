@@ -17,13 +17,13 @@ import pytest
 
 from procfunc.compute_graph.operators_info import OPERATOR_TEMPLATES, OperatorType
 from procfunc.nodes import NODE_OPERATOR_TABLE, func
-from procfunc.nodes.bpy_node_info import NodeDataType, NodeGroupType
 from procfunc.nodes.execute.construct_nodes import as_nodegroup
+from procfunc.nodes.util.bpy_node_info import NodeDataType, NodeGroupType
 from procfunc.transpiler.main import transpile_targets
 
 # node_function is re-exported as a name in procfunc.nodes, shadowing the
 # submodule; reach the module (and its graph-builder helper) via importlib.
-_node_function_mod = importlib.import_module("procfunc.nodes.node_function")
+_node_function_mod = importlib.import_module("procfunc.nodes.util.node_function")
 
 # NOOP rows (separate_xyz) have no infix symbol to assert on; RGBA rows lower
 # to Mix nodes and transpile as mix_rgb calls (see module docstring).

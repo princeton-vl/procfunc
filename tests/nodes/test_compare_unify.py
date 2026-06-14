@@ -6,7 +6,7 @@ import pytest
 import procfunc as pf
 from conftest import node_operations as _ops
 from conftest import realize as _realize
-from procfunc.nodes.bpy_node_info import NodeGroupType
+from procfunc.nodes.util.bpy_node_info import NodeGroupType
 
 
 def _set_position_from_scalar(scalar):
@@ -33,6 +33,35 @@ def test_comparison_operators_dispatch_to_compare_in_geometry():
         "LESS_EQUAL",
         "NOT_EQUAL",
     ]
+
+
+def test_compare_wrapper_keeps_default_epsilon_for_contextual_resolution():
+    node = pf.nodes.func.equal(1.0, 1.0).item()
+    assert node.kwargs[("Epsilon", 0)] == pf.nodes.func.COMPARE_EPSILON_DEFAULT
+
+
+def test_int_compare_default_epsilon_is_dropped_by_geometry_context():
+    def fn():
+        idx = pf.nodes.geo.input_index()
+        return _set_position_from_scalar((idx == 3).astype(float))
+
+    ng = _realize(fn, NodeGroupType.GEOMETRY)
+    compare = next(n for n in ng.nodes if n.bl_idname == "FunctionNodeCompare")
+    assert compare.data_type == "INT"
+    assert compare.operation == "EQUAL"
+
+
+def test_float_compare_explicit_epsilon_survives_geometry_context():
+    def fn():
+        idx = pf.nodes.geo.input_index().astype(float)
+        return _set_position_from_scalar(
+            pf.nodes.func.equal(idx, 3.0, epsilon=0.25).astype(float)
+        )
+
+    ng = _realize(fn, NodeGroupType.GEOMETRY)
+    compare = next(n for n in ng.nodes if n.bl_idname == "FunctionNodeCompare")
+    assert compare.data_type == "FLOAT"
+    assert compare.inputs["Epsilon"].default_value == pytest.approx(0.25)
 
 
 def test_less_greater_dispatch_to_math_in_geometry():
@@ -102,6 +131,53 @@ def test_compare_epsilon_kwarg_lowers_to_math():
         if n.bl_idname == "ShaderNodeMath" and n.operation == "COMPARE"
     )
     assert compare.inputs[2].default_value == pytest.approx(0.25)
+
+
+def test_less_than_on_tuples_resolves_to_vector_compare():
+    # ambiguous 3-tuples resolve to FLOAT_VECTOR (not RGBA, whose Compare only
+    # supports EQUAL/NOT_EQUAL/BRIGHTER/DARKER and would fail at execute).
+    def fn():
+        lt = pf.nodes.func.less_than((1.0, 2.0, 3.0), (4.0, 5.0, 6.0)).astype(float)
+        return _set_position_from_scalar(lt)
+
+    ng = _realize(fn, NodeGroupType.GEOMETRY)
+    compare = next(n for n in ng.nodes if n.bl_idname == "FunctionNodeCompare")
+    assert compare.data_type == "VECTOR"
+    assert compare.operation == "LESS_THAN"
+
+
+def test_equal_on_tuples_resolves_to_vector_not_rgba():
+    def fn():
+        eq = pf.nodes.func.equal((1.0, 2.0, 3.0), (1.0, 2.0, 3.0)).astype(float)
+        return _set_position_from_scalar(eq)
+
+    ng = _realize(fn, NodeGroupType.GEOMETRY)
+    compare = next(n for n in ng.nodes if n.bl_idname == "FunctionNodeCompare")
+    assert compare.data_type == "VECTOR"
+
+
+def test_vector_compare_raises_outside_geometry():
+    # the Math-node lowering is scalar-only; vector operands must raise rather
+    # than silently degrade to a scalar Math COMPARE via implicit conversion.
+    def fn():
+        eq = pf.nodes.func.equal((1.0, 2.0, 3.0), (4.0, 5.0, 6.0))
+        return pf.nodes.shader.emission(color=(1, 1, 1, 1), strength=eq)
+
+    with pytest.raises(ValueError, match="scalar"):
+        _realize(fn, NodeGroupType.SHADER)
+
+
+def test_explicit_vector_data_type_compare_raises_outside_geometry():
+    def fn():
+        coord = pf.nodes.shader.coord()
+        sep = pf.nodes.math.separate_xyz(coord.generated)
+        eq = pf.nodes.func._compare(
+            sep.x, 0.5, data_type=pf.nodes.NodeDataType.FLOAT_VECTOR
+        )
+        return pf.nodes.shader.emission(color=(1, 1, 1, 1), strength=eq)
+
+    with pytest.raises(ValueError, match="FLOAT_VECTOR"):
+        _realize(fn, NodeGroupType.SHADER)
 
 
 def test_comparison_operators_lower_to_math_outside_geometry():

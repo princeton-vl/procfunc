@@ -168,6 +168,8 @@ SOCKET_CLASS_TO_DATATYPE: dict[str, NodeDataType] = {
     SocketType.OBJECT.value: NodeDataType.OBJECT,
     SocketType.COLLECTION.value: NodeDataType.COLLECTION,
     SocketType.MATERIAL.value: NodeDataType.MATERIAL,
+    SocketType.MATRIX.value: NodeDataType.FLOAT_MATRIX,
+    SocketType.IMAGE.value: NodeDataType.IMAGE,
 }
 DATATYPE_TO_SOCKET_CLASS: dict[NodeDataType, SocketType] = {
     v: SocketType(k) for k, v in SOCKET_CLASS_TO_DATATYPE.items()
@@ -182,7 +184,8 @@ NODEGROUPTYPE_TO_INSTANCE_NODE = {
 
 # Compositor nodes that poll False inside a standalone node group: they resolve
 # render data and so must live on a scene's compositing node tree. A compositor
-# graph containing any of these is constructed on a throwaway scene's node_tree
+# graph containing any of these is constructed directly on the active scene's
+# node_tree (bpy.context.scene.node_tree), replacing its previous contents,
 # rather than via bpy.data.node_groups.new.
 SCENE_BOUND_NODE_TYPES = frozenset(
     {"CompositorNodeRLayers", "CompositorNodeCryptomatteV2"}
@@ -351,7 +354,6 @@ SPECIAL_CASE_ATTR_NAMES = set(
 )
 
 CONSTANT_NODES = {
-    "ShaderNodeValue": "DEFAULT_VALUE",
     "FunctionNodeInputBool": "boolean",
     "FunctionNodeInputVector": "vector",
     "FunctionNodeInputColor": "value",

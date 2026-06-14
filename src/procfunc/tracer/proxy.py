@@ -28,7 +28,7 @@ class RngProxy(cg.Proxy):
         dirty: bool = False,
     ):
         super().__init__(node)
-        node.metadata["known_type"] = np.random.Generator
+        node.metadata["known_value_type"] = np.random.Generator
         node.metadata["varname"] = "rng"
         self.rng = rng
         self.dirty = dirty

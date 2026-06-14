@@ -18,6 +18,16 @@ def test_pytree_list_dict_tuple():
     assert pytree.unflatten(children, spec) == obj
 
 
+def test_pytree_spec_immune_to_source_mutation():
+    """The spec must snapshot dict keys; a live keys() view would silently
+    corrupt unflatten if the source dict is mutated after flatten."""
+    obj = {"a": 1, "b": 2}
+    children, spec = pytree.flatten(obj)
+    del obj["a"]
+    obj["c"] = 3
+    assert pytree.unflatten(children, spec) == {"a": 1, "b": 2}
+
+
 def test_pytree_namedtuple():
     nt = namedtuple("Test", ["a", "b"])
     obj = nt(1, 2)

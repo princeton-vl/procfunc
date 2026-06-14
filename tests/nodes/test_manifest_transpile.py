@@ -12,8 +12,9 @@ import pytest
 
 import procfunc as pf
 from procfunc.codegen import to_python
-from procfunc.nodes.bindings_util import CONTEXTUAL_NODE_MAPPING
-from procfunc.nodes.bpy_node_info import (
+from procfunc.nodes.execute.construct_nodes import as_nodegroup
+from procfunc.nodes.util.bindings_util import CONTEXTUAL_NODE_MAPPING
+from procfunc.nodes.util.bpy_node_info import (
     DATATYPE_TO_SOCKET_CLASS,
     SOCKET_DTYPE_TO_DATATYPE,
     NodeDataType,
@@ -21,7 +22,6 @@ from procfunc.nodes.bpy_node_info import (
     SocketDType,
     SocketType,
 )
-from procfunc.nodes.execute.construct_nodes import as_nodegroup
 from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import ParseMemo
 from procfunc.util.manifest import filter_manifest
@@ -182,8 +182,11 @@ def test_manifest_row_transpiles(row):
                 row.bpy_mode_args.items(), key=lambda kv: kv[0] != "data_type"
             )
             for attr, val in ordered:
-                if hasattr(node, attr):
-                    setattr(node, attr, val)
+                assert hasattr(node, attr), (
+                    f"manifest row {row.name}: bpy_mode_args key {attr!r} does "
+                    f"not exist on {bl_idname}"
+                )
+                setattr(node, attr, val)
 
         if isinstance(row.data_types, list) and row.data_types:
             chosen = _resolve_data_type(node, row.data_types[0])

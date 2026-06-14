@@ -431,6 +431,35 @@ def test_transform():
     assert (bmax == pf.Vector((2, 2, 2))).all()
 
 
+def test_boolean_collection_target():
+    obj = pf.ops.primitives.mesh_cube()
+    cutter = pf.ops.primitives.mesh_cube()
+    pf.ops.mesh.transform(cutter, location=pf.Vector((1, 1, 1)))
+    collection = pf.types.Collection([cutter], name="cutters")
+
+    before = len(obj.item().data.polygons)
+    pf.ops.modifier.boolean_difference(obj, collection, fast=False)
+    assert len(obj.item().data.polygons) != before
+
+
+def test_empty_primitive():
+    obj = pf.ops.primitives.empty()
+    assert isinstance(obj, pf.types.EmptyObject)
+    assert obj.item().type == "EMPTY"
+
+
+def test_transform_multi_axis_rotation():
+    """rotation_euler must apply as Euler angles, not as an exponential-map
+    rotation vector (single-axis rotations cannot tell the two apart)."""
+    angles = (0.1, 0.2, 0.3)
+    obj = pf.ops.primitives.mesh_cube()
+    before = pf.ops.attr.vertex_positions(obj)
+    pf.ops.mesh.transform(obj, rotation_euler=angles)
+    after = pf.ops.attr.vertex_positions(obj)
+    expected = before @ np.array(pf.Euler(angles).to_matrix()).T
+    assert np.allclose(after, expected, atol=1e-5)
+
+
 def test_separate_loose():
     obj = pf.ops.primitives.mesh_cube()
     obj2 = pf.ops.primitives.mesh_cube()

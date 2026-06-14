@@ -27,22 +27,19 @@ def register_trace_target(
         )
 
     f = inspect.currentframe()
-    while f.f_code.co_name != "<module>":
-        assert hasattr(f, "f_back")
+    while f is not None and f.f_code.co_name != "<module>":
         f = f.f_back
-        assert hasattr(f, "f_code")
+    if f is None:
+        raise ValueError(
+            f"Cannot register {func.__qualname__!r} as a trace target: no enclosing "
+            "module frame found. procfunc decorators must be applied at module top level."
+        )
 
     frame = f.f_globals
     sourcename = f.f_code.co_filename.split("/")[-1][:-3]  # remove .py
 
     assert hasattr(func, "__name__")
     assert isinstance(func.__name__, str)
-
-    # Local functions (defined inside another function) are never in the module
-    # globals frame, so registering them would leave a stale entry that causes
-    # KeyError on every subsequent pf.trace() call.
-    if ".<locals>." in getattr(func, "__qualname__", ""):
-        return
 
     add_wrap_target(
         PatchFunctionTarget(

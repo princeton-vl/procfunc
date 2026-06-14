@@ -120,6 +120,7 @@ def _boolean(
         "BOOLEAN",
         operation=operation,
         solver="FAST" if fast else "EXACT",
+        double_threshold=threshold,
         use_hole_tolerant=hole_tolerant,
         use_self=self_intersect,
         **target_kwargs,

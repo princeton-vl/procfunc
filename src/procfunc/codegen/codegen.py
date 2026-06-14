@@ -5,19 +5,19 @@ import itertools
 import logging
 from collections import OrderedDict, defaultdict
 from pathlib import Path
-from typing import Any, Callable, Generator, Union, get_args, get_origin
+from typing import Any, Callable, Generator
 
 import numpy as np
 
 import procfunc as pf
 from procfunc import compute_graph as cg
 from procfunc.codegen import identifiers
+from procfunc.codegen.repr import repr_type, repr_value
 from procfunc.compute_graph.operators_info import (
     FUNCTIONS_TO_OPERATORS,
     OPERATOR_TEMPLATES,
     OperatorType,
 )
-from procfunc.nodes import types as nt
 from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
@@ -27,102 +27,6 @@ INDENT = "    "
 
 def indent_lines(lines: list[str], indent: str = INDENT) -> list[str]:
     return [indent + line for line in lines]
-
-
-def _repr_type(x: Any) -> str:
-    # TODO: make the user pass in special resolutions for types, or else we will just do verbose types
-
-    if isinstance(x, str):
-        return x
-
-    if x.__name__ == "NoneType":
-        return "None"
-
-    origin = get_origin(x)
-    args = get_args(x)
-
-    if x.__name__ == "ProcNode":
-        if len(args) == 1:
-            return f"pf.ProcNode[{_repr_type(args[0])}]"
-        elif len(args) == 0:
-            return "pf.ProcNode"
-        else:
-            raise ValueError(f"Unsupported ProcNode type: {x} {args=}")
-
-    if hasattr(pf, x.__name__):
-        if len(args):
-            raise ValueError(f"procfunc type had unhandled annotations: {x} {args=}")
-        return f"pf.{x.__name__}"
-
-    if x.__module__ == "builtins":
-        return x.__name__
-
-    origin = get_origin(x)
-    args = get_args(x)
-
-    if origin is Union:
-        args_0 = get_args(args[0])
-        if get_origin(args[0]) is nt.ProcNode and args_0[0] is args[1]:
-            return f"t.SocketOrVal[{_repr_type(args_0[0])}]"
-        else:
-            return " | ".join([_repr_type(a) for a in args])
-
-    if getattr(x, "__module__", None) == "procfunc.nodes.types":
-        return f"t.{x.__name__}"
-
-    return x.__name__
-
-
-def _repr_float(value: float) -> str:
-    # float32 socket values: shortest exact round-trip (round(x, 8) would destroy small magnitudes)
-    return str(np.float32(value))
-
-
-def _repr_value(value: Any) -> str:
-    if hasattr(value, "__wrapped__"):
-        value = value.__wrapped__
-
-    if isinstance(value, cg.Proxy):
-        logger.warning(
-            f"Proxy object {value} should never appear as a raw value in codegen - "
-            f"its underlying node {value.node} was not resolved to a variable"
-        )
-    if isinstance(value, nt.ProcNode):
-        logger.warning(
-            f"Procnode object {value} should never be treated as a raw value in codegen"
-        )
-
-    if isinstance(value, np.random.Generator):
-        return "np.random.default_rng()"
-    elif isinstance(value, type):
-        return _repr_type(value)
-    elif isinstance(value, np.ndarray):
-        nprepr = repr(value).replace("\n", "")
-        return f"np.{nprepr}"
-    elif isinstance(value, np.dtype):
-        return f"np.dtype('{value}')"
-    elif isinstance(value, (pf.Color, pf.Vector, pf.Euler, pf.Quaternion, pf.Matrix)):
-        comps = ", ".join(_repr_float(c) for c in value)
-        return f"pf.{value.__class__.__name__}(({comps}))"
-    elif isinstance(value, enum.Enum):
-        return f"{type(value).__name__}.{value.name}"
-    elif isinstance(value, Path):
-        return f"Path({str(value)!r})"
-    elif dataclasses.is_dataclass(value) and not isinstance(value, type):
-        args_str = ", ".join(
-            f"{f.name}={_repr_value(getattr(value, f.name))}"
-            for f in dataclasses.fields(value)
-        )
-        return f"{type(value).__name__}({args_str})"
-    elif isinstance(value, list):
-        return f"[{', '.join([_repr_value(x) for x in value])}]"
-    elif isinstance(value, tuple):
-        inner = ", ".join(_repr_value(x) for x in value)
-        return f"({inner},)" if len(value) == 1 else f"({inner})"
-    elif isinstance(value, float) and not isinstance(value, bool):
-        return _repr_float(value)
-    else:
-        return repr(value)
 
 
 def _repr_inp(
@@ -137,7 +41,7 @@ def _repr_inp(
             )
         expr = scope_expressions[id(arg)]
     else:
-        expr = _repr_value(arg)
+        expr = repr_value(arg)
 
     if isinstance(expr, list):
         if len(expr) > 1:
@@ -194,7 +98,7 @@ def _repr_args(
 
     argreprs = pytree.PyTree(args).map(lambda x: _repr_inp(x, scope_expressions))
     argreprs = [
-        pytree.repr_tree_to_str(v, type_namer=_repr_type)
+        pytree.repr_tree_to_str(v, type_namer=repr_type)
         for v in argreprs.unflatten_one_level()
     ]
 
@@ -204,7 +108,7 @@ def _repr_args(
         .unflatten_one_level()
     )
     kwargreprs = {
-        k: pytree.repr_tree_to_str(v, type_namer=_repr_type)
+        k: pytree.repr_tree_to_str(v, type_namer=repr_type)
         for k, v in kwargreprs.items()
     }
 
@@ -363,7 +267,7 @@ def _codegen_for_node(
                 )
             return [f"{arg_expr}.{attribute_name}"]
         case cg.ConstantNode(value=value):
-            return [_repr_value(value)]
+            return [repr_value(value)]
         case _:
             raise TypeError(f"Unsupported {node=}")
 
@@ -396,17 +300,17 @@ def _codegen_graph_inputs(
 
         known_value_type = node.metadata.get("known_value_type", None)
         line = (
-            f"{name}: {_repr_type(known_value_type)}"
+            f"{name}: {repr_type(known_value_type)}"
             if known_value_type is not None
             else f"{name}"
         )
 
         if (default := node.kwargs.get("default_value")) is not None:
-            line += f" = {_repr_value(default)}"
+            line += f" = {repr_value(default)}"
 
         args_lines.append(line + ",")
 
-    end_statement = "):" if typename is None else f") -> {typename}: "
+    end_statement = "):" if typename is None else f") -> {typename}:"
 
     return [f"def {func_name}("] + indent_lines(args_lines) + [end_statement]
 
@@ -422,7 +326,7 @@ def _codegen_namedtuple_def(outputs: pytree.PyTree):
         if vt is None:
             type_lines.append(f"{name}: Any")
         else:
-            type_lines.append(f"{name}: {_repr_type(vt)}")
+            type_lines.append(f"{name}: {repr_type(vt)}")
 
     return [f"class {tupletype.__name__}(NamedTuple):"] + indent_lines(type_lines)
 
@@ -438,11 +342,11 @@ def _codegen_for_outputs(
     if len(graph.outputs) == 1:
         single_output = next(graph.outputs.values())
         vt = single_output.metadata.get("known_value_type", None)
-        type_name = _repr_type(vt) if vt is not None else None
+        type_name = repr_type(vt) if vt is not None else None
         return type_name, [], [f"return {_repr_inp(single_output, scope_expressions)}"]
 
     graph_output_type = graph.outputs.toplevel_type()
-    type_name = _repr_type(graph_output_type)
+    type_name = repr_type(graph_output_type)
 
     is_pf_type = hasattr(pf, graph_output_type.__name__)
     if is_pf_type:
@@ -461,7 +365,7 @@ def _codegen_for_outputs(
 
     reprs_tree = graph.outputs.map(lambda node: _repr_inp(node, scope_expressions))
     return_lines = [
-        f"return {pytree.repr_tree_to_str(reprs_tree, type_namer=_repr_type)}"
+        f"return {pytree.repr_tree_to_str(reprs_tree, type_namer=repr_type)}"
     ]
 
     return type_name, type_def, return_lines
@@ -617,6 +521,7 @@ def _code_paragraphing_predicate(
 def _codegen_for_assignment(
     assign_varname: str,
     node_code: list[str] | str,
+    node: cg.Node,
     add_line_comments: bool,
 ) -> list[str]:
     assert isinstance(assign_varname, str)
@@ -627,7 +532,7 @@ def _codegen_for_assignment(
     else:
         node_code = [f"{assign_varname} = {node_code}"]
     if add_line_comments:
-        node_code[0] += f" # {node}"  # noqa: F821
+        node_code[-1] += f"  # {str(node).replace(chr(10), ' ')}"
 
     return node_code
 
@@ -707,7 +612,7 @@ def _codegen_for_graph(
             continue
 
         varname = expressions[id(node)]
-        node_code = _codegen_for_assignment(varname, node_code, add_line_comments)
+        node_code = _codegen_for_assignment(varname, node_code, node, add_line_comments)
         code_lines.extend(node_code)
 
         if last_varname.split("_")[0] != varname.split("_")[0]:
@@ -816,43 +721,46 @@ def graphs_to_python_functions(
     np_linewidth = np.get_printoptions()["linewidth"]
     np.set_printoptions(linewidth=100000)
 
-    targets = _topo_sort_subgraphs(graph)
+    try:
+        targets = _topo_sort_subgraphs(graph)
 
-    def _clean_graph_name(name: str) -> str:
-        for suffix in identifiers.NONDESCRIPTIVE_NODE_NAME_PARTS:
-            if name.endswith("_" + suffix):
-                name = name[: -(len(suffix) + 1)]
-        return name
+        def _clean_graph_name(name: str) -> str:
+            for suffix in identifiers.NONDESCRIPTIVE_NODE_NAME_PARTS:
+                if name.endswith("_" + suffix):
+                    name = name[: -(len(suffix) + 1)]
+            return name
 
-    for subgraph in cg.traverse_nested_graphs(graph):
-        subgraph.name = _clean_graph_name(subgraph.name)
+        for subgraph in cg.traverse_nested_graphs(graph):
+            subgraph.name = _clean_graph_name(subgraph.name)
 
-    subgraph_names = {
-        id(subgraph): subgraph.name for subgraph in cg.traverse_nested_graphs(graph)
-    }
-    subgraph_names = identifiers.dedup_names_with_suffix(subgraph_names, separator="_")
-
-    scope_expressions = subgraph_names.copy()
-    for k, v in func_resolution.items():
-        if isinstance(v, OperatorType):
-            scope_expressions[id(k)] = OPERATOR_TEMPLATES[v]
-        else:
-            scope_expressions[id(k)] = v
-
-    lines_for_modules = []
-    for subgraph in targets:
-        func_name = subgraph_names[id(subgraph)]
-        result = _codegen_for_graph(
-            subgraph,
-            scope_expressions=scope_expressions.copy(),
-            as_maincall=(subgraph is graph and toplevel_as_maincall),
-            add_version_comment=add_version_comment,
-            add_line_comments=add_line_comments,
-            func_name=func_name,
+        subgraph_names = {
+            id(subgraph): subgraph.name for subgraph in cg.traverse_nested_graphs(graph)
+        }
+        subgraph_names = identifiers.dedup_names_with_suffix(
+            subgraph_names, separator="_"
         )
-        lines_for_modules.append((subgraph_names[id(subgraph)], result))
 
-    np.set_printoptions(linewidth=np_linewidth)
+        scope_expressions = subgraph_names.copy()
+        for k, v in func_resolution.items():
+            if isinstance(v, OperatorType):
+                scope_expressions[id(k)] = OPERATOR_TEMPLATES[v]
+            else:
+                scope_expressions[id(k)] = v
+
+        lines_for_modules = []
+        for subgraph in targets:
+            func_name = subgraph_names[id(subgraph)]
+            result = _codegen_for_graph(
+                subgraph,
+                scope_expressions=scope_expressions.copy(),
+                as_maincall=(subgraph is graph and toplevel_as_maincall),
+                add_version_comment=add_version_comment,
+                add_line_comments=add_line_comments,
+                func_name=func_name,
+            )
+            lines_for_modules.append((subgraph_names[id(subgraph)], result))
+    finally:
+        np.set_printoptions(linewidth=np_linewidth)
 
     return OrderedDict(lines_for_modules)
 

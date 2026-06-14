@@ -30,9 +30,9 @@ def _find_procnode_type(t: type) -> type | None:
 
 
 def _procnode_placeholder(func: Callable, k: str, v: inspect.Parameter):
-    if v.annotation is None:
+    if v.annotation is None or v.annotation is inspect.Parameter.empty:
         raise TypeError(
-            f"{func.__name} had argument {k:!r} with non type annotation. "
+            f"{func.__name__} had argument {k!r} with no type annotation. "
             f"All @{node_function.__name__} arguments must have a type annotation."
         )
 

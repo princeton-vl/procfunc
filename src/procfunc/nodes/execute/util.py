@@ -5,9 +5,9 @@ import bpy
 
 from procfunc import compute_graph as cg
 from procfunc import types as t
-from procfunc.nodes import bpy_node_info as bni
 from procfunc.nodes import color, func, math
 from procfunc.nodes import types as nt
+from procfunc.nodes.util import bpy_node_info as bni
 from procfunc.util.log import add_exception_context_msg
 
 
@@ -47,7 +47,7 @@ def _float_math_defs() -> list[NodeOperatorResolution]:
         # <=, >=, ==, != dispatch to the contextual Compare node: FunctionNodeCompare
         # in geometry trees, and a Math-node composition elsewhere (ShaderNodeMath et
         # al. have no eq/ne/le/ge operation, but COMPARE/GREATER_THAN/LESS_THAN express
-        # them exactly - see _lower_compare_outside_geometry in construct_nodes.py).
+        # them exactly - see _lower_compare_outside_geometry in construct_operator.py).
         NodeOperatorResolution(
             func.less_equal, bni.NodeDataType.FLOAT, cg.OperatorType.LESS_THAN_EQUAL
         ),
@@ -327,6 +327,10 @@ def assign_default_value(
             target_socket.default_value = t.Vector(input_val)
         case bni.NodeDataType.FLOAT:
             target_socket.default_value = float(input_val)
+        case bni.NodeDataType.FLOAT_MATRIX:
+            # matrix values travel as numpy arrays in the compute graph;
+            # coerce back to mathutils.Matrix for bpy
+            target_socket.default_value = t.Matrix(input_val)
         case (
             bni.NodeDataType.OBJECT
             | bni.NodeDataType.MATERIAL
