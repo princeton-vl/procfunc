@@ -10,9 +10,9 @@ import numpy as np
 
 import procfunc as pf
 from procfunc.codegen import to_python
-from procfunc.nodes import bpy_node_info as bni
-from procfunc.nodes.bpy_node_info import NodeGroupType
 from procfunc.nodes.execute.construct_nodes import as_nodegroup
+from procfunc.nodes.util import bpy_node_info as bni
+from procfunc.nodes.util.bpy_node_info import NodeGroupType
 from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import ParseMemo
 

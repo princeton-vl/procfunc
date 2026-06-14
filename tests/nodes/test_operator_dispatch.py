@@ -8,9 +8,9 @@ import procfunc as pf
 from conftest import node_operations as _ops
 from conftest import realize as _realize
 from procfunc import compute_graph as cg
-from procfunc.nodes import bpy_node_info as bni
-from procfunc.nodes.bpy_node_info import NodeGroupType
 from procfunc.nodes.execute import construct_operator
+from procfunc.nodes.util import bpy_node_info as bni
+from procfunc.nodes.util.bpy_node_info import NodeGroupType
 
 
 def _set_position(offset):

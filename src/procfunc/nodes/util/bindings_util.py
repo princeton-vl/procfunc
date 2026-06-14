@@ -4,7 +4,7 @@ from enum import Enum
 from typing import Self
 
 import procfunc as pf
-from procfunc.nodes.bpy_node_info import NodeDataType, NodeGroupType
+from procfunc.nodes.util.bpy_node_info import NodeDataType, NodeGroupType
 from procfunc.util.log import raise_error_or_warn
 
 logger = logging.getLogger(__name__)

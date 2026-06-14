@@ -9,6 +9,7 @@ import pytest
 
 import procfunc as pf
 from procfunc.codegen import codegen
+from procfunc.codegen import repr as codegen_repr
 
 _TRANSLATION = (0.1, 2.0, 3.0)
 
@@ -21,7 +22,7 @@ def _transform_by_constant_matrix(geo):
 def test_repr_value_matrix_is_valid_and_exact():
     # stray Matrix values are emitted as np.array constants, not pf.Matrix
     m = pf.Matrix.Translation(_TRANSLATION)
-    src = codegen._repr_value(m)
+    src = codegen_repr.repr_value(m)
 
     ast.parse(src, mode="eval")
     restored = eval(src, {"np": np})  # noqa: S307
@@ -33,7 +34,7 @@ def test_repr_value_matrix_is_valid_and_exact():
 @pytest.mark.parametrize("dtype", [np.float32, np.float64])
 def test_repr_value_ndarray_is_valid_and_exact(dtype):
     arr = np.array(pf.Matrix.Translation(_TRANSLATION), dtype=dtype)
-    src = codegen._repr_value(arr)
+    src = codegen_repr.repr_value(arr)
 
     ast.parse(src, mode="eval")
     restored = eval(src, {"np": np})  # noqa: S307
@@ -44,13 +45,13 @@ def test_repr_value_ndarray_is_valid_and_exact(dtype):
 def test_repr_value_ndarray_exact_beyond_printoptions_precision():
     # repr(arr) truncates to numpy printoptions precision (8); emission must not
     arr = np.array([0.123456789123456, 1e-30])
-    restored = eval(codegen._repr_value(arr), {"np": np})  # noqa: S307
+    restored = eval(codegen_repr.repr_value(arr), {"np": np})  # noqa: S307
     assert np.array_equal(restored, arr)
 
 
 @pytest.mark.parametrize("value", [float("inf"), float("-inf"), float("nan")])
 def test_repr_float_nonfinite_is_valid_python(value):
-    src = codegen._repr_float(value)
+    src = codegen_repr.repr_float(value)
     restored = eval(src)  # noqa: S307
     assert restored == value or (np.isnan(restored) and np.isnan(value))
 

@@ -4,8 +4,8 @@ import numpy as np
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import ContextualNode
-from procfunc.nodes.bpy_node_info import NodeDataType
+from procfunc.nodes.util.bindings_util import ContextualNode
+from procfunc.nodes.util.bpy_node_info import NodeDataType
 
 TColorMixType = Literal[
     "MIX",

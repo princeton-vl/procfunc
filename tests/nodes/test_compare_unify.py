@@ -6,7 +6,7 @@ import pytest
 import procfunc as pf
 from conftest import node_operations as _ops
 from conftest import realize as _realize
-from procfunc.nodes.bpy_node_info import NodeGroupType
+from procfunc.nodes.util.bpy_node_info import NodeGroupType
 
 
 def _set_position_from_scalar(scalar):

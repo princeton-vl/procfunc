@@ -4,8 +4,8 @@ from typing import Generic, Literal, NamedTuple, TypeVar
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import RuntimeResolveDataType, raise_io_error
-from procfunc.nodes.bpy_node_info import NodeDataType
+from procfunc.nodes.util.bindings_util import RuntimeResolveDataType, raise_io_error
+from procfunc.nodes.util.bpy_node_info import NodeDataType
 from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)

@@ -4,7 +4,7 @@ from typing import Any, Literal, NamedTuple
 import procfunc as pf
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import (
+from procfunc.nodes.util.bindings_util import (
     raise_error_or_warn,
     raise_shader_normal_error,
 )

@@ -2,7 +2,7 @@ import pytest
 
 import procfunc as pf
 from procfunc import compute_graph as cg
-from procfunc.nodes import bindings_util as bu
+from procfunc.nodes.util import bindings_util as bu
 
 
 @pytest.fixture

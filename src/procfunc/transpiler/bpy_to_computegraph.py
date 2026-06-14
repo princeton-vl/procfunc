@@ -4,7 +4,6 @@ from collections import namedtuple
 from dataclasses import dataclass, field
 from typing import (
     Any,
-    Callable,
     Literal,
     TypeVar,
     Union,
@@ -14,7 +13,6 @@ from typing import (
 )
 
 import bpy
-import idprop.types
 import numpy as np
 import pandas as pd
 
@@ -22,11 +20,17 @@ import procfunc as pf
 from procfunc import compute_graph as cg
 from procfunc import types as t
 from procfunc.codegen import identifiers
-from procfunc.nodes import NODES_MANIFEST, bpy_node_info
-from procfunc.nodes import bpy_node_info as bni
+from procfunc.nodes import NODES_MANIFEST
 from procfunc.nodes import types as nt
 from procfunc.nodes.execute.util import get_active_sockets, normalize_socket_type
+from procfunc.nodes.util import bpy_node_info
+from procfunc.nodes.util import bpy_node_info as bni
 from procfunc.ops import OPS_MANIFEST
+from procfunc.transpiler.parse_default_values import (
+    SUBCOMPONENT_TYPES,
+    normalize_default_value,
+)
+from procfunc.transpiler.parse_special_cases import SPECIAL_CASE_NODES
 from procfunc.util import bpy_info, log, manifest, pytree
 
 logger = logging.getLogger(__name__)
@@ -34,14 +38,6 @@ logger = logging.getLogger(__name__)
 _NODES_MANIFEST_INDEXED = NODES_MANIFEST.set_index("bpy_name")
 _OPS_MANIFEST_INDEXED = OPS_MANIFEST.set_index("bpy_name")
 
-# TODO replace with nodes/types.py or bpy_info.py?
-SUBCOMPONENT_TYPES = (
-    bpy.types.Material,
-    bpy.types.Object,
-    bpy.types.Collection,
-    bpy.types.Image,
-    bpy.types.Texture,
-)
 MODE_ATTRS = [
     "mode",
     "data_type",
@@ -51,135 +47,6 @@ MODE_ATTRS = [
     "distribute_method",
 ]
 IGNORE_ATTRS = ["color_mapping", "texture_mapping", "active_item", "capture_items"]
-
-
-def handle_specialcase_math(_node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    if cg_node.kwargs.pop("use_clamp", False):
-        # our math funcs wont support inline clamp, so we add an extra node when needed
-        cg_node = cg.FunctionCallNode(
-            func=pf.nodes.math.clamp, args=(cg_node,), kwargs={}
-        )
-    return cg_node
-
-
-def handle_specialcase_color_ramp(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    cg_node.kwargs.pop("color_ramp", None)
-    cg_node.kwargs["interpolation"] = node.color_ramp.interpolation
-    if node.color_ramp.color_mode != "RGB":
-        cg_node.kwargs["mode"] = node.color_ramp.color_mode
-        if node.color_ramp.hue_interpolation != "NEAR":
-            cg_node.kwargs["hue_interpolation"] = node.color_ramp.hue_interpolation
-    cg_node.kwargs["points"] = [
-        (round(point.position, 3), tuple(round(x, 3) for x in point.color))
-        for point in node.color_ramp.elements
-    ]
-    return cg_node
-
-
-def handle_specialcase_value(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    cg_node.kwargs["value"] = _repr_default_value(
-        node.outputs[0].default_value, node.outputs[0].type
-    )
-    return cg_node
-
-
-def handle_specialcase_input_value(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    attr_name = bpy_node_info.CONSTANT_NODES[node.bl_idname]
-    cg_node.kwargs.clear()
-    cg_node.kwargs["value"] = _repr_default_value(
-        getattr(node, attr_name), node.outputs[0].type
-    )
-    return cg_node
-
-
-def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    angle = cg_node.kwargs.pop("angle", None)
-
-    match node.rotation_type:
-        case "X_AXIS":
-            cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.math.combine_xyz, args=(angle, 0, 0), kwargs={}
-            )
-        case "Y_AXIS":
-            cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.math.combine_xyz, args=(0, angle, 0), kwargs={}
-            )
-        case "Z_AXIS":
-            cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.math.combine_xyz, args=(0, 0, angle), kwargs={}
-            )
-        case "AXIS_ANGLE":
-            # axis-angle has a dedicated Angle socket; restore the popped value
-            cg_node.kwargs["angle"] = angle
-        case "EULER_XYZ":
-            pass  # Euler-vector rotation, no Angle socket
-        case _:
-            raise ValueError(f"Unknown rotation type {node.rotation_type}")
-
-    return cg_node
-
-
-SINGLE_CURVE_NODES = {"ShaderNodeFloatCurve"}
-
-
-def handle_specialcase_curve(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    cg_node.kwargs.pop("mapping", None)
-
-    def _repr_point(point):
-        return tuple(round(p, 4) for p in point.location)
-
-    curves = [
-        np.array([_repr_point(point) for point in curve.points])
-        for curve in node.mapping.curves
-    ]
-    if node.bl_idname in SINGLE_CURVE_NODES:
-        cg_node.kwargs["curve"] = curves[0]
-    else:
-        cg_node.kwargs["curves"] = curves
-
-    invalid_handle = next(
-        (
-            point.handle_type
-            for point in node.mapping.curves[0].points
-            if point.handle_type != "AUTO"
-        ),
-        None,
-    )
-    if invalid_handle:
-        logger.warning(
-            f"{node.name=} had curve handle {invalid_handle=}, currently only AUTO is supported. "
-            "Please use a different handle, or contact the developers to add support for it"
-        )
-
-    return cg_node
-
-
-SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
-    "ShaderNodeMath": handle_specialcase_math,
-    "CompositorNodeMath": handle_specialcase_math,
-    "TextureNodeMath": handle_specialcase_math,
-    "ShaderNodeValToRGB": handle_specialcase_color_ramp,
-    "CompositorNodeValToRGB": handle_specialcase_color_ramp,
-    "ShaderNodeVectorRotate": handle_specialcase_vector_rotate,
-    # curves share handler
-    "ShaderNodeFloatCurve": handle_specialcase_curve,
-    "ShaderNodeRGBCurve": handle_specialcase_curve,
-    "CompositorNodeCurveRGB": handle_specialcase_curve,
-    "ShaderNodeVectorCurve": handle_specialcase_curve,
-    "CompositorNodeCurveVec": handle_specialcase_curve,
-    # values with .outputs[0].default_value can share handler
-    "ShaderNodeValue": handle_specialcase_value,
-    "ShaderNodeRGB": handle_specialcase_value,
-    "CompositorNodeValue": handle_specialcase_value,
-    "CompositorNodeRGB": handle_specialcase_value,
-    # FunctionNodeInput* store the constant on a node property, not a socket
-    "FunctionNodeInputInt": handle_specialcase_input_value,
-    "FunctionNodeInputVector": handle_specialcase_input_value,
-    "FunctionNodeInputColor": handle_specialcase_input_value,
-    "FunctionNodeInputBool": handle_specialcase_input_value,
-    "FunctionNodeInputRotation": handle_specialcase_input_value,
-    "FunctionNodeInputString": handle_specialcase_input_value,
-}
 
 
 class InvalidNodeGraph(Exception):
@@ -337,7 +204,7 @@ def _create_link_impl_node(
         inp_vec = link.from_node.inputs[0]
         if len(inp_vec.links) == 0:
             # WARN: creates multiple constants without memoizing
-            default_value = _repr_default_value(inp_vec.default_value, inp_vec.type)
+            default_value = normalize_default_value(inp_vec.default_value, inp_vec.type)
             source = cg.FunctionCallNode(
                 func=pf.nodes.func.constant,
                 args=(default_value,),
@@ -412,25 +279,6 @@ def parse_link(
     return res
 
 
-def _repr_default_value(value: Any, socket_type: str) -> Any:
-    if isinstance(value, SUBCOMPONENT_TYPES):
-        return value.name
-    elif socket_type == "RGBA":
-        if len(value) >= 4 and value[3] != 1.0:
-            return tuple(value)
-        return tuple(value[:3])
-    elif isinstance(value, t.Matrix):
-        # matrix values are carried as numpy arrays in the compute graph
-        # (float32, matching socket storage)
-        return np.array(value, dtype=np.float32)
-    elif isinstance(value, (bpy.types.bpy_prop_array, t.Vector, t.Euler, t.Quaternion)):
-        return tuple(value)
-    elif isinstance(value, idprop.types.IDPropertyArray):
-        return tuple(value)
-    else:
-        return value
-
-
 def _create_link_input(
     node_tree: bpy.types.NodeTree,
     socket: bpy.types.NodeSocket,
@@ -475,10 +323,10 @@ def _create_link_input(
         # and let the binding default express the implicit behavior
         return None
 
-    res = _repr_default_value(getattr(socket, "default_value", None), socket.type)
+    res = normalize_default_value(getattr(socket, "default_value", None), socket.type)
 
     if func_default is not None:
-        repr_func_default = _repr_default_value(func_default, socket.type)
+        repr_func_default = normalize_default_value(func_default, socket.type)
         # float sockets store single precision, so a python-double default like
         # 0.001 reads back inexactly - compare in float32 space
         if isinstance(res, float) and isinstance(repr_func_default, float):
@@ -1041,7 +889,7 @@ def _placeholder_for_graph_input(
     raw_default = getattr(interface, "default_value", None)
     if raw_default is None:
         raw_default = getattr(socket, "default_value", None)
-    default_value = _repr_default_value(raw_default, socket.type)
+    default_value = normalize_default_value(raw_default, socket.type)
 
     norm_soc = normalize_socket_type(socket.bl_idname)
     if default_value is None and norm_soc in [
@@ -1241,7 +1089,7 @@ def _parse_geomod_input(
 
     datatype = bni.SOCKET_CLASS_TO_DATATYPE[socket.socket_type]
     dtype = bni.DATATYPE_TO_SOCKET_DTYPE[datatype].value
-    return _repr_default_value(value, dtype)
+    return normalize_default_value(value, dtype)
 
 
 def parse_geo_modifier(

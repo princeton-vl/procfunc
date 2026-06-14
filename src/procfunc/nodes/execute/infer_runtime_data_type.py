@@ -6,9 +6,9 @@ import bpy
 import numpy as np
 
 from procfunc import compute_graph as cg
-from procfunc.nodes import bpy_node_info as bni
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import (
+from procfunc.nodes.util import bpy_node_info as bni
+from procfunc.nodes.util.bindings_util import (
     RuntimeResolveDataType,
 )
 

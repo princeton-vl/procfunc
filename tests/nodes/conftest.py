@@ -2,7 +2,7 @@
 a real bpy node group of a given context, so bindings can be asserted per-context."""
 
 import procfunc as pf
-from procfunc.nodes.bpy_node_info import NodeGroupType
+from procfunc.nodes.util.bpy_node_info import NodeGroupType
 
 
 def realize(fn, group: NodeGroupType):

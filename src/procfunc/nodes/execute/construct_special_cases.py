@@ -4,9 +4,9 @@ from typing import Any
 import bpy
 
 from procfunc import compute_graph as cg
-from procfunc.nodes import bpy_node_info as bni
 from procfunc.nodes import func as pf_func
 from procfunc.nodes import types as nt
+from procfunc.nodes.util import bpy_node_info as bni
 
 from .util import assign_default_value
 

@@ -11,7 +11,7 @@ from typing import Any, Literal, NamedTuple
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.bindings_util import raise_explicit_noise_vector_error
+from procfunc.nodes.util.bindings_util import raise_explicit_noise_vector_error
 
 logger = logging.getLogger(__name__)
 

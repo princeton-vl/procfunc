@@ -226,9 +226,9 @@ class Material:
 
     def item(self) -> bpy.types.Material:
         if self._bpy_material is None:
-            from procfunc.nodes.execute.execute import _build_bpy_material
+            from procfunc.nodes.execute.realize import build_bpy_material
 
-            self._bpy_material = _build_bpy_material(
+            self._bpy_material = build_bpy_material(
                 surface=self.surface,
                 displacement=self.displacement,
                 volume=self.volume,

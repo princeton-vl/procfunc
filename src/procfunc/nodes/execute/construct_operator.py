@@ -11,10 +11,10 @@ import numpy as np
 
 from procfunc import compute_graph as cg
 from procfunc.compute_graph.operators_info import OPERATORS_TO_FUNCTIONS
-from procfunc.nodes import bpy_node_info as bni
 from procfunc.nodes import func as pf_func
 from procfunc.nodes import math as pf_math
-from procfunc.nodes.bindings_util import ContextualNode, RuntimeResolveDataType
+from procfunc.nodes.util import bpy_node_info as bni
+from procfunc.nodes.util.bindings_util import ContextualNode, RuntimeResolveDataType
 
 from . import construct_standard
 from .infer_runtime_data_type import (
