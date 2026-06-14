@@ -29,6 +29,14 @@ class ContextualNode(Enum):
     COMBINE_XYZ = "ContextualCombineXYZ"
     MAP_RANGE = "ContextualMapRange"
     HUE_SATURATION = "ContextualHueSaturation"
+    COMPARE = "ContextualCompare"
+    VALUE = "ContextualValue"
+    RGB = "ContextualRGB"
+    BOOLEAN = "ContextualBoolean"
+    INT = "ContextualInt"
+    VECTOR = "ContextualVector"
+    ROTATION = "ContextualRotation"
+    STRING = "ContextualString"
 
     @classmethod
     def parse_name(cls, from_name: str) -> Self | None:
@@ -45,6 +53,10 @@ class NodeContextResolution:
     node_type: str
     input_keys_map: dict[str, tuple[str, int] | str | None] | None
     output_keys_map: dict[str, str] | None = None
+    # For inputs dropped (mapped to None) by `input_keys_map`: the no-op constant
+    # the target node implicitly applies for that absent socket. Dropping is only
+    # silent when the user's value equals this no-op; any other value errors.
+    input_drop_noop: dict[str, float] | None = None
 
 
 # Mapping to map unified version of nodes to context-specific blender versions
@@ -118,22 +130,177 @@ CONTEXTUAL_NODE_MAPPING = [
         node_type="GeometryNodeGroup",
         input_keys_map=None,
     ),
+    # MixRGB: shader/geometry use the modern ShaderNodeMix (data_type RGBA);
+    # texture trees only have the legacy TextureNodeMixRGB, whose sockets are
+    # Factor/Color1/Color2 and whose only clamp attr is `use_clamp`. Remap the
+    # modern A/B inputs and clamp_result attr, and drop the attrs that node lacks
+    # (clamp_factor, data_type) by mapping them to None.
     NodeContextResolution(
         contextual_node=ContextualNode.MIX_RGB,
         node_group_type=NodeGroupType.SHADER,
-        node_type="ShaderNodeMixRGB",
+        node_type="ShaderNodeMix",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.MIX_RGB,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="ShaderNodeMix",
         input_keys_map=None,
     ),
     NodeContextResolution(
         contextual_node=ContextualNode.MIX_RGB,
         node_group_type=NodeGroupType.TEXTURE,
         node_type="TextureNodeMixRGB",
-        input_keys_map={"Fac": "Factor"},
+        input_keys_map={
+            "A": "Color1",
+            "B": "Color2",
+            "clamp_result": "use_clamp",
+            "clamp_factor": None,
+            "data_type": None,
+        },
+    ),
+    # Compare: geometry uses FunctionNodeCompare (full data_type support incl.
+    # INT); other contexts reuse the Math node. LESS_THAN / GREATER_THAN map
+    # directly to a Math operation here, while eq/ne/le/ge are lowered earlier to
+    # a Math composition (see _lower_compare_outside_geometry in construct_nodes),
+    # so this entry only ever realizes the LESS_THAN / GREATER_THAN operations.
+    # The A/B -> Value socket remap matches the Math node's two "Value" inputs.
+    # These entries precede the MATH ones so that transpiling a shared Math node
+    # maps it to MATH, not COMPARE (last duplicate wins).
+    NodeContextResolution(
+        contextual_node=ContextualNode.COMPARE,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="FunctionNodeCompare",
+        input_keys_map=None,
     ),
     NodeContextResolution(
-        contextual_node=ContextualNode.MIX_RGB,
+        contextual_node=ContextualNode.COMPARE,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeMath",
+        input_keys_map={("A", 0): ("Value", 0), ("B", 0): ("Value", 1)},
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COMPARE,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeMath",
+        input_keys_map={("A", 0): ("Value", 0), ("B", 0): ("Value", 1)},
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.COMPARE,
+        node_group_type=NodeGroupType.TEXTURE,
+        node_type="TextureNodeMath",
+        input_keys_map={("A", 0): ("Value", 0), ("B", 0): ("Value", 1)},
+    ),
+    # Constant float/int (Value) and color (RGB) inputs. ShaderNodeValue is
+    # accepted in geometry trees; ShaderNodeRGB is not, so geometry color
+    # constants use FunctionNodeInputColor (its color lives on the node `value`
+    # property, not an output default). Texture trees have no such node and are
+    # intentionally unmapped (they error clearly; use a node-group input).
+    NodeContextResolution(
+        contextual_node=ContextualNode.VALUE,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeValue",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VALUE,
         node_group_type=NodeGroupType.GEOMETRY,
-        node_type="ShaderNodeMixRGB",
+        node_type="ShaderNodeValue",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VALUE,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeValue",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.RGB,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeRGB",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.RGB,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="FunctionNodeInputColor",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.RGB,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeRGB",
+        input_keys_map=None,
+    ),
+    # Remaining constant types. Geometry trees use the dedicated
+    # FunctionNodeInput* nodes (constant on a node property, see CONSTANT_NODES).
+    # Outside geometry: int degrades to the float Value node (shader/compositor
+    # sockets are float anyway), vector/rotation lower to a CombineXYZ with the
+    # components as socket defaults, and bool/string are intentionally unmapped.
+    NodeContextResolution(
+        contextual_node=ContextualNode.INT,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="FunctionNodeInputInt",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.INT,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeValue",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.INT,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeValue",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.BOOLEAN,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="FunctionNodeInputBool",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VECTOR,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="FunctionNodeInputVector",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VECTOR,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeCombineXYZ",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.VECTOR,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeCombineXYZ",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.ROTATION,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="FunctionNodeInputRotation",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.ROTATION,
+        node_group_type=NodeGroupType.SHADER,
+        node_type="ShaderNodeCombineXYZ",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.ROTATION,
+        node_group_type=NodeGroupType.COMPOSITOR,
+        node_type="CompositorNodeCombineXYZ",
+        input_keys_map=None,
+    ),
+    NodeContextResolution(
+        contextual_node=ContextualNode.STRING,
+        node_group_type=NodeGroupType.GEOMETRY,
+        node_type="FunctionNodeInputString",
         input_keys_map=None,
     ),
     NodeContextResolution(
@@ -194,11 +361,12 @@ CONTEXTUAL_NODE_MAPPING = [
     NodeContextResolution(
         contextual_node=ContextualNode.VECTOR_CURVE,
         node_group_type=NodeGroupType.COMPOSITOR,
-        # CompositorNodeCurveVec has no Fac input; the wrapper's `fac` arg is dropped
-        # silently in compositor context. Honoring fac would require synthesizing an
-        # extra mix node.
+        # CompositorNodeCurveVec has no Fac input and always applies the curve fully.
+        # `fac` is dropped only at its no-op (1.0); any other value/wiring errors,
+        # since honoring it would require synthesizing an extra mix node.
         node_type="CompositorNodeCurveVec",
         input_keys_map={"Fac": None},
+        input_drop_noop={"Fac": 1.0},
     ),
     NodeContextResolution(
         contextual_node=ContextualNode.COMBINE_XYZ,

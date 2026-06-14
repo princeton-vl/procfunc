@@ -21,16 +21,14 @@ from procfunc.nodes.bpy_node_info import (
     SocketDType,
     SocketType,
 )
+from procfunc.nodes.execute.construct_nodes import as_nodegroup
 from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import ParseMemo
 from procfunc.util.manifest import filter_manifest
 
 _NODES = filter_manifest(
     pf.nodes.NODES_MANIFEST,
-    exclude={
-        "name": ["LATER", "DECLINE", "TODO"],
-        "exclude_from_transpile_test": [True],
-    },
+    exclude={"name": ["LATER", "DECLINE", "TODO"]},
     require_nonempty=["bpy_name", "node_group_type", "name"],
 ).explode("node_group_type")
 
@@ -167,6 +165,7 @@ def test_manifest_row_transpiles(row):
     bl_idname = _resolve_bl_idname(row.bpy_name, group_type)
 
     tree, cleanup = _make_test_tree(group_type)
+    groups_before = set(bpy.data.node_groups)
     try:
         input_node, output_node = _ensure_io_nodes(tree)
 
@@ -208,14 +207,32 @@ def test_manifest_row_transpiles(row):
         if wireable and wired_outputs == 0:
             pytest.skip(
                 f"{bl_idname} in {group_type}: no outputs are wireable in "
-                "isolated test (e.g. all sockets are unsupported types). "
-                "Mark exclude_from_transpile_test if intentional."
+                "isolated test (e.g. all sockets are unsupported types)."
             )
 
         memo = ParseMemo()
         graph, _ = parse_node_tree(tree, memo)
         src = to_python(graph, toplevel_as_maincall=False)
         ast.parse(src)
-        exec(src, {})  # noqa: S102
+
+        ns: dict = {}
+        exec(src, ns)  # noqa: S102
+
+        # Actually construct the generated node trees on real bpy data: each
+        # generated function is a @node_function whose graph we realize via
+        # as_nodegroup. Sink rows generate empty `pass` bodies, which realize
+        # to an input-only group (presence-only, but still exercised).
+        group_enum = NodeGroupType(group_type)
+        generated = [
+            v for v in ns.values() if callable(v) and hasattr(v, "__wrapped__")
+        ]
+        assert generated, f"no generated functions found for {bl_idname}"
+        for fn in generated:
+            subgraph = pf.nodes.function_to_compute_graph(fn)
+            as_nodegroup(subgraph, group_enum)
     finally:
         cleanup()
+        # as_nodegroup creates node groups (scene-bound rows reuse the active
+        # scene's tree); remove those constructed here to bound memory growth.
+        for ng in set(bpy.data.node_groups) - groups_before:
+            bpy.data.node_groups.remove(ng)

@@ -179,6 +179,11 @@ class ProcNode(Generic[T]):
     def z(self: "ProcNode[pt.Vector]") -> "ProcNode[float]":
         return self._getattr_xyz(name="z")
 
+    def __neg__(self) -> "ProcNode[T]":
+        # negation has no dedicated node; multiplying by -1 dispatches to
+        # math.multiply (float) or math.vector_scale (vector) via MUL
+        return self._procnode_operator(OperatorType.MUL, self, -1.0)
+
     def __add__(self, other: "ProcNode[T] | T | tuple") -> "ProcNode[T]":
         return self._procnode_operator(OperatorType.ADD, self, other)
 

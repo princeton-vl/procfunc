@@ -6,7 +6,7 @@ import bpy
 from procfunc import compute_graph as cg
 from procfunc import types as t
 from procfunc.nodes import bpy_node_info as bni
-from procfunc.nodes import math
+from procfunc.nodes import color, func, math
 from procfunc.nodes import types as nt
 from procfunc.util.log import add_exception_context_msg
 
@@ -16,6 +16,10 @@ class NodeOperatorResolution:
     pf_func: Callable[..., Any]
     value_type: bni.NodeDataType
     operator_type: cg.OperatorType
+    # When set, this row matches an operator call whose operands (in any order)
+    # satisfy these dtypes, rather than the single-type `value_type` semantics.
+    # `value_type` then names the row's anchoring/representative type only.
+    operand_types: tuple[bni.NodeDataType, ...] | None = None
 
 
 def _float_math_defs() -> list[NodeOperatorResolution]:
@@ -40,6 +44,58 @@ def _float_math_defs() -> list[NodeOperatorResolution]:
         NodeOperatorResolution(
             math.less_than, bni.NodeDataType.FLOAT, cg.OperatorType.LESS_THAN
         ),
+        # <=, >=, ==, != dispatch to the contextual Compare node: FunctionNodeCompare
+        # in geometry trees, and a Math-node composition elsewhere (ShaderNodeMath et
+        # al. have no eq/ne/le/ge operation, but COMPARE/GREATER_THAN/LESS_THAN express
+        # them exactly - see _lower_compare_outside_geometry in construct_nodes.py).
+        NodeOperatorResolution(
+            func.less_equal, bni.NodeDataType.FLOAT, cg.OperatorType.LESS_THAN_EQUAL
+        ),
+        NodeOperatorResolution(
+            func.greater_equal,
+            bni.NodeDataType.FLOAT,
+            cg.OperatorType.GREATER_THAN_EQUAL,
+        ),
+        NodeOperatorResolution(
+            func.equal, bni.NodeDataType.FLOAT, cg.OperatorType.EQUAL
+        ),
+        NodeOperatorResolution(
+            func.not_equal, bni.NodeDataType.FLOAT, cg.OperatorType.NOT_EQUAL
+        ),
+    ]
+
+
+def _int_compare_defs() -> list[NodeOperatorResolution]:
+    # FunctionNodeCompare with data_type INT supports all six comparison operators
+    return [
+        NodeOperatorResolution(
+            math.greater_than, bni.NodeDataType.INT, cg.OperatorType.GREATER_THAN
+        ),
+        NodeOperatorResolution(
+            math.less_than, bni.NodeDataType.INT, cg.OperatorType.LESS_THAN
+        ),
+        NodeOperatorResolution(
+            func.less_equal, bni.NodeDataType.INT, cg.OperatorType.LESS_THAN_EQUAL
+        ),
+        NodeOperatorResolution(
+            func.greater_equal, bni.NodeDataType.INT, cg.OperatorType.GREATER_THAN_EQUAL
+        ),
+        NodeOperatorResolution(func.equal, bni.NodeDataType.INT, cg.OperatorType.EQUAL),
+        NodeOperatorResolution(
+            func.not_equal, bni.NodeDataType.INT, cg.OperatorType.NOT_EQUAL
+        ),
+    ]
+
+
+def _string_compare_defs() -> list[NodeOperatorResolution]:
+    # FunctionNodeCompare with data_type STRING supports only EQUAL / NOT_EQUAL.
+    return [
+        NodeOperatorResolution(
+            func.equal, bni.NodeDataType.STRING, cg.OperatorType.EQUAL
+        ),
+        NodeOperatorResolution(
+            func.not_equal, bni.NodeDataType.STRING, cg.OperatorType.NOT_EQUAL
+        ),
     ]
 
 
@@ -56,9 +112,48 @@ def _vector_math_defs(node_data_type: bni.NodeDataType) -> list[NodeOperatorReso
     ]
 
 
+def _color_blend(blend_type: str) -> Callable[[Any, Any], Any]:
+    """`+` `-` `*` on RGBA operands have no Math node; lower them to a Mix node
+    at full factor with the matching blend_type. Lowering only - the transpiler
+    keeps such nodes as plain mix_rgb(...) calls rather than recovering the
+    operator."""
+
+    def _blend(a: Any, b: Any) -> Any:
+        return color.mix_rgb(factor=1.0, a=a, b=b, blend_type=blend_type)
+
+    return _blend
+
+
+def _color_math_defs() -> list[NodeOperatorResolution]:
+    return [
+        NodeOperatorResolution(
+            _color_blend(blend_type),
+            bni.NodeDataType.RGBA,
+            operator_type,
+            operand_types=(bni.NodeDataType.RGBA, bni.NodeDataType.RGBA),
+        )
+        for blend_type, operator_type in [
+            ("ADD", cg.OperatorType.ADD),
+            ("SUBTRACT", cg.OperatorType.SUB),
+            ("MULTIPLY", cg.OperatorType.MUL),
+        ]
+    ]
+
+
 NODE_OPERATOR_TABLE = [
     *_float_math_defs(),
+    *_int_compare_defs(),
+    *_string_compare_defs(),
     *_vector_math_defs(bni.NodeDataType.FLOAT_VECTOR),
+    # `vector * scalar` (either order) -> VectorMath SCALE.
+    NodeOperatorResolution(
+        math.vector_scale,
+        bni.NodeDataType.FLOAT_VECTOR,
+        cg.OperatorType.MUL,
+        operand_types=(bni.NodeDataType.FLOAT_VECTOR, bni.NodeDataType.FLOAT),
+    ),
+    # `+` `-` `*` on RGBA operands -> Mix node with the matching blend_type.
+    *_color_math_defs(),
     # *_vector_math_defs(NodeDataType.RGBA), # no longer used, instead we will require explicit conversion to vector before math
     NodeOperatorResolution(
         math.vector_modulo, bni.NodeDataType.FLOAT_VECTOR, cg.OperatorType.MOD
@@ -170,10 +265,11 @@ def get_nth_socket(
     enabled = [s.name for s in sockets if s.enabled]
     disabled = [s.name for s in sockets if not s.enabled]
 
-    if any(d.lower() == socket_spaces for d in disabled):
+    if any(d.lower() in (socket_spaces, socket_name_fuzzy) for d in disabled):
         raise ValueError(
-            f"User attempted to use input {socket_name.lower()!r} for node {debug_node_name} but it is disabled. "
-            "We may have failed to set the node's `data_type` or `mode` input arguments"
+            f"Input {socket_name.lower()!r} for node {debug_node_name} exists but is disabled. "
+            "This is likely a binding bug: we may have failed to set the node's "
+            "`data_type` or `mode` input arguments. Please contact the developers."
         )
 
     raise ValueError(
@@ -235,8 +331,9 @@ def assign_default_value(
             bni.NodeDataType.OBJECT
             | bni.NodeDataType.MATERIAL
             | bni.NodeDataType.COLLECTION
+            | bni.NodeDataType.IMAGE
         ):
-            if isinstance(input_val, (t.Object, t.Material, t.Collection)):
+            if isinstance(input_val, (t.Object, t.Material, t.Collection, t.Image)):
                 target_socket.default_value = input_val.item()
             else:
                 target_socket.default_value = input_val

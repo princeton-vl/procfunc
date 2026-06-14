@@ -27,7 +27,7 @@ from .execute.execute import (
     to_objects_multi,
 )
 from .execute.util import NODE_OPERATOR_TABLE
-from .node_function import node_function
+from .node_function import function_to_compute_graph, node_function
 from .types import (
     ProcNode,
     Shader,
@@ -67,4 +67,5 @@ __all__ = [
     "to_objects_multi",
     # User-facing decorator for custom node functions
     "node_function",
+    "function_to_compute_graph",
 ]

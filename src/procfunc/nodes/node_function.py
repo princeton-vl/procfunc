@@ -88,6 +88,17 @@ def _execute_procnode_func_to_computegraph(func: Callable):
     return graph
 
 
+def function_to_compute_graph(func: Callable) -> cg.ComputeGraph:
+    """Build the ComputeGraph for a node-building callable.
+
+    Accepts either a plain callable that builds ProcNodes or a
+    @node_function-decorated function (whose original is recovered via
+    ``__wrapped__``). The result can be passed to ``as_nodegroup``.
+    """
+    func = getattr(func, "__wrapped__", func)
+    return _execute_procnode_func_to_computegraph(func)
+
+
 def _preprocess_procnode_call_kwargs(kwargs: dict[str, Any]) -> dict[str, Any]:
     result = {}
     for k, v in kwargs.items():

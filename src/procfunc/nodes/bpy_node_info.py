@@ -33,6 +33,7 @@ class NodeDataType(Enum):
     SHADER = "SHADER"
     COLLECTION = "COLLECTION"
     MATERIAL = "MATERIAL"
+    IMAGE = "IMAGE"
 
     @classmethod
     def from_str(cls, s: str) -> "NodeDataType":
@@ -70,12 +71,29 @@ class SocketDType(Enum):
     RGBA = "RGBA"
     BOOLEAN = "BOOLEAN"
     ROTATION = "ROTATION"
+    MATRIX = "MATRIX"
     OBJECT = "OBJECT"
     SHADER = "SHADER"
     COLLECTION = "COLLECTION"
     MATERIAL = "MATERIAL"
     GEOMETRY = "GEOMETRY"
     STRING = "STRING"
+    IMAGE = "IMAGE"
+
+
+class AttributeType(Enum):
+    """bpy `data_type` strings on attribute nodes; differs from NodeDataType for
+    color/rotation/matrix. Members with no NodeDataType equivalent are omitted."""
+
+    FLOAT = "FLOAT"
+    INT = "INT"
+    FLOAT_VECTOR = "FLOAT_VECTOR"
+    FLOAT_COLOR = "FLOAT_COLOR"
+    FLOAT2 = "FLOAT2"
+    STRING = "STRING"
+    BOOLEAN = "BOOLEAN"
+    QUATERNION = "QUATERNION"
+    FLOAT4X4 = "FLOAT4X4"
 
 
 # Map socket types to data types (from node_info.py)
@@ -93,10 +111,49 @@ SOCKET_DTYPE_TO_DATATYPE: dict[SocketDType, NodeDataType] = {
     SocketDType.MATERIAL: NodeDataType.MATERIAL,
     SocketDType.GEOMETRY: NodeDataType.GEOMETRY,
     SocketDType.STRING: NodeDataType.STRING,
+    SocketDType.IMAGE: NodeDataType.IMAGE,
+    SocketDType.MATRIX: NodeDataType.FLOAT_MATRIX,
 }
 DATATYPE_TO_SOCKET_DTYPE: dict[NodeDataType, SocketDType] = {
     v: k for k, v in SOCKET_DTYPE_TO_DATATYPE.items()
 }
+
+ATTRIBUTE_TYPE_TO_DATATYPE: dict[AttributeType, NodeDataType] = {
+    AttributeType.FLOAT: NodeDataType.FLOAT,
+    AttributeType.INT: NodeDataType.INT,
+    AttributeType.FLOAT_VECTOR: NodeDataType.FLOAT_VECTOR,
+    AttributeType.FLOAT_COLOR: NodeDataType.RGBA,
+    AttributeType.FLOAT2: NodeDataType.FLOAT_VECTOR_2D,
+    AttributeType.STRING: NodeDataType.STRING,
+    AttributeType.BOOLEAN: NodeDataType.BOOLEAN,
+    AttributeType.QUATERNION: NodeDataType.ROTATION,
+    AttributeType.FLOAT4X4: NodeDataType.FLOAT_MATRIX,
+}
+DATATYPE_TO_ATTRIBUTE_TYPE: dict[NodeDataType, AttributeType] = {
+    v: k for k, v in ATTRIBUTE_TYPE_TO_DATATYPE.items()
+}
+
+
+def datatype_from_bpy_str(s: str) -> NodeDataType:
+    """Resolve a bpy `data_type`/`input_type` string to the canonical NodeDataType,
+    normalizing per-family spellings (e.g. matrix is 'FLOAT4X4' on attribute nodes,
+    'MATRIX' on Switch). The conventions are non-overlapping."""
+    try:
+        return NodeDataType(s)
+    except ValueError:
+        pass
+    try:
+        return SOCKET_DTYPE_TO_DATATYPE[SocketDType(s)]
+    except (ValueError, KeyError):
+        pass
+    try:
+        return ATTRIBUTE_TYPE_TO_DATATYPE[AttributeType(s)]
+    except (ValueError, KeyError):
+        pass
+    raise ValueError(
+        f"{s=} is not a recognized bpy data_type in any known naming convention"
+    )
+
 
 SOCKET_CLASS_TO_DATATYPE: dict[str, NodeDataType] = {
     SocketType.FLOAT.value: NodeDataType.FLOAT,
@@ -123,6 +180,14 @@ NODEGROUPTYPE_TO_INSTANCE_NODE = {
     "TextureNodeTree": "TextureNodeGroup",
 }
 
+# Compositor nodes that poll False inside a standalone node group: they resolve
+# render data and so must live on a scene's compositing node tree. A compositor
+# graph containing any of these is constructed on a throwaway scene's node_tree
+# rather than via bpy.data.node_groups.new.
+SCENE_BOUND_NODE_TYPES = frozenset(
+    {"CompositorNodeRLayers", "CompositorNodeCryptomatteV2"}
+)
+
 PYTHON_TYPE_TO_SOCKET_TYPE = {
     int: SocketType.INT,
     float: SocketType.FLOAT,
@@ -139,6 +204,9 @@ PYTHON_TYPE_TO_SOCKET_TYPE = {
     pt.Collection: SocketType.COLLECTION,
     pt.Material: SocketType.MATERIAL,
     nt.Shader: SocketType.SHADER,
+    pt.Matrix: SocketType.MATRIX,
+    pt.Object: SocketType.OBJECT,
+    pt.Image: SocketType.IMAGE,
 }
 SOCKET_TYPE_TO_PYTHON_TYPE = {
     SocketType.FLOAT: float,
@@ -157,6 +225,15 @@ SOCKET_TYPE_TO_PYTHON_TYPE = {
     SocketType.MATRIX: pt.Matrix,
     SocketType.IMAGE: pt.Image,
 }
+
+
+def value_type_to_socket_type(py_type: type) -> "SocketType | None":
+    """PYTHON_TYPE_TO_SOCKET_TYPE lookup honoring subclasses (e.g. an Object subclass resolves to its registered base)."""
+    for base in py_type.__mro__:
+        if base in PYTHON_TYPE_TO_SOCKET_TYPE:
+            return PYTHON_TYPE_TO_SOCKET_TYPE[base]
+    return None
+
 
 # Socket types that can be implicitly converted between each other
 COMPATIBLE_SCALARLIKE_SOCKETTYPES = {
@@ -277,11 +354,8 @@ CONSTANT_NODES = {
     "ShaderNodeValue": "DEFAULT_VALUE",
     "FunctionNodeInputBool": "boolean",
     "FunctionNodeInputVector": "vector",
-    "FunctionNodeInputColor": "color",
+    "FunctionNodeInputColor": "value",
     "FunctionNodeInputInt": "integer",
-    # TODO: unsure what the attr names are for these
-    # "FunctionNodeInputRotation": "rotation",
-    # "FunctionNodeInputSpecialCharacters": "specialcharacters",
-    # "FunctionNodeInputString": "string",
-    # "FunctionNodeInputActiveCamera": "active_camera",
+    "FunctionNodeInputRotation": "rotation_euler",
+    "FunctionNodeInputString": "string",
 }

@@ -6,12 +6,42 @@ from procfunc import types as pt
 from procfunc.nodes import types as nt
 from procfunc.nodes.bindings_util import RuntimeResolveDataType, raise_io_error
 from procfunc.nodes.bpy_node_info import NodeDataType
+from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
 
 TDomain = Literal["POINT", "EDGE", "FACE", "CORNER", "CURVE", "INSTANCE", "LAYER"]
 
 TAttribute = TypeVar("TAttribute", int, float, bool)
+
+# data_type values the generic attribute nodes (Store/Input Named Attribute,
+# Sample Curve, ...) genuinely support, for runtime data-type resolution.
+# FLOAT_VECTOR precedes RGBA so an ambiguous tuple resolves to a vector, not a color.
+_ATTRIBUTE_NODE_DATA_TYPES = [
+    NodeDataType.BOOLEAN,
+    NodeDataType.INT,
+    NodeDataType.FLOAT,
+    NodeDataType.FLOAT_VECTOR,
+    NodeDataType.RGBA,
+    NodeDataType.FLOAT_VECTOR_2D,
+    NodeDataType.ROTATION,
+    NodeDataType.FLOAT_MATRIX,
+    NodeDataType.STRING,
+]
+
+# data_type values the geometry sample/transfer nodes (Sample Index/Nearest
+# Surface/UV Surface, Field at Index, Evaluate on Domain, Raycast) genuinely
+# support. Unlike the named-attribute nodes these omit FLOAT2 and STRING.
+# FLOAT_VECTOR precedes RGBA so an ambiguous tuple resolves to a vector.
+_SAMPLE_NODE_DATA_TYPES = [
+    NodeDataType.BOOLEAN,
+    NodeDataType.INT,
+    NodeDataType.FLOAT,
+    NodeDataType.FLOAT_VECTOR,
+    NodeDataType.RGBA,
+    NodeDataType.ROTATION,
+    NodeDataType.FLOAT_MATRIX,
+]
 
 TMeshOrCurve = TypeVar(
     "TMeshOrCurve",
@@ -210,6 +240,37 @@ class CaptureAttributeResult(Generic[TAnyGeometry]):
             return object.__getattribute__(self, name)
 
 
+# CaptureAttribute has one fixed output (geometry) plus a dynamic set of captured
+# attribute outputs keyed by user-chosen names, so it can't be a NamedTuple like
+# the other multi-output bindings. Register it as a pytree container instead so
+# the computegraph builder flattens it into its geometry + attribute sockets.
+def _capture_result_flatten(
+    obj: CaptureAttributeResult,
+) -> tuple[list[nt.ProcNode], list[str]]:
+    return [obj.geometry, *obj.attributes.values()], list(obj.attributes.keys())
+
+
+def _capture_result_unflatten(
+    children: list[nt.ProcNode], spec: pytree.PyTreeDef
+) -> CaptureAttributeResult:
+    geometry, *attrs = children
+    return CaptureAttributeResult(
+        geometry=geometry, attributes=dict(zip(spec.aux, attrs))
+    )
+
+
+def _capture_result_names(obj: CaptureAttributeResult) -> list[str]:
+    return ["geometry", *obj.attributes.keys()]
+
+
+pytree.register_pytree_container(
+    CaptureAttributeResult,
+    flatten_func=_capture_result_flatten,
+    unflatten_func=_capture_result_unflatten,
+    names_func=_capture_result_names,
+)
+
+
 def capture_attribute(
     geometry: nt.ProcNode[TAnyGeometry] | None,
     # active_index: int = 0, # TODO unsure how active_* function
@@ -351,10 +412,10 @@ def curve_arc(
     sweep_angle: nt.SocketOrVal[float] = 5.497787,
     connect_center: nt.SocketOrVal[bool] = False,
     invert_arc: nt.SocketOrVal[bool] = False,
-    mode: Literal["POINTS", "RADIUS"] = "RADIUS",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
-    Uses a CurveArc Geometry Node.
+    Uses a CurveArc Geometry Node in RADIUS mode (the arc is defined by a
+    radius and a start/sweep angle, and produces a single curve output).
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/arc.html
     """
@@ -368,7 +429,50 @@ def curve_arc(
             "Connect Center": connect_center,
             "Invert Arc": invert_arc,
         },
-        attrs={"mode": mode},
+        attrs={"mode": "RADIUS"},
+    )
+
+
+class CurveArcFromPointsResult(NamedTuple):
+    curve: nt.ProcNode[pt.CurveObject]
+    center: nt.ProcNode[pt.Vector]
+    normal: nt.ProcNode[pt.Vector]
+    radius: nt.ProcNode[float]
+
+
+def curve_arc_from_points(
+    start: nt.SocketOrVal[pt.Vector],
+    middle: nt.SocketOrVal[pt.Vector],
+    end: nt.SocketOrVal[pt.Vector],
+    resolution: nt.SocketOrVal[int] = 16,
+    offset_angle: nt.SocketOrVal[float] = 0.0,
+    connect_center: nt.SocketOrVal[bool] = False,
+    invert_arc: nt.SocketOrVal[bool] = False,
+) -> CurveArcFromPointsResult:
+    """
+    Uses a CurveArc Geometry Node in POINTS mode (the arc passes through three
+    points, additionally exposing the fitted center, normal and radius).
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/arc.html
+    """
+    node = nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeCurveArc",
+        inputs={
+            "Resolution": resolution,
+            "Start": start,
+            "Middle": middle,
+            "End": end,
+            "Offset Angle": offset_angle,
+            "Connect Center": connect_center,
+            "Invert Arc": invert_arc,
+        },
+        attrs={"mode": "POINTS"},
+    )
+    return CurveArcFromPointsResult(
+        node._output_socket("curve"),
+        node._output_socket("center"),
+        node._output_socket("normal"),
+        node._output_socket("radius"),
     )
 
 
@@ -466,17 +570,50 @@ def curve_bezier_segment(
 def curve_circle(
     resolution: nt.SocketOrVal[int] = 32,
     radius: nt.SocketOrVal[float] = 1.0,
-    mode: Literal["POINTS", "RADIUS"] = "RADIUS",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
-    Uses a CurvePrimitiveCircle Geometry Node.
+    Uses a CurvePrimitiveCircle Geometry Node in RADIUS mode (the circle is
+    defined by a radius and produces a single curve output).
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/curve_circle.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeCurvePrimitiveCircle",
         inputs={"Resolution": resolution, "Radius": radius},
-        attrs={"mode": mode},
+        attrs={"mode": "RADIUS"},
+    )
+
+
+class CurveCircleFromPointsResult(NamedTuple):
+    curve: nt.ProcNode[pt.CurveObject]
+    center: nt.ProcNode[pt.Vector]
+
+
+def curve_circle_from_points(
+    point_1: nt.SocketOrVal[pt.Vector],
+    point_2: nt.SocketOrVal[pt.Vector],
+    point_3: nt.SocketOrVal[pt.Vector],
+    resolution: nt.SocketOrVal[int] = 32,
+) -> CurveCircleFromPointsResult:
+    """
+    Uses a CurvePrimitiveCircle Geometry Node in POINTS mode (the circle passes
+    through three points, additionally exposing the fitted center).
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/curve_circle.html
+    """
+    node = nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeCurvePrimitiveCircle",
+        inputs={
+            "Resolution": resolution,
+            "Point 1": point_1,
+            "Point 2": point_2,
+            "Point 3": point_3,
+        },
+        attrs={"mode": "POINTS"},
+    )
+    return CurveCircleFromPointsResult(
+        node._output_socket("curve"),
+        node._output_socket("center"),
     )
 
 
@@ -507,7 +644,7 @@ def curve_line_from_direction(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/curve_line.html
     """
     return nt.ProcNode.from_nodetype(
-        node_type="GeometryNodeCurveLineFromDirection",
+        node_type="GeometryNodeCurvePrimitiveLine",
         inputs={"Start": start, "Direction": direction, "Length": length},
         attrs={"mode": "DIRECTION"},
     )
@@ -516,19 +653,100 @@ def curve_line_from_direction(
 def curve_quadrilateral(
     width: nt.SocketOrVal[float] = 2.0,
     height: nt.SocketOrVal[float] = 2.0,
-    mode: Literal[
-        "RECTANGLE", "PARALLELOGRAM", "TRAPEZOID", "KITE", "POINTS"
-    ] = "RECTANGLE",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
-    Uses a CurvePrimitiveQuadrilateral Geometry Node.
+    Uses a CurvePrimitiveQuadrilateral Geometry Node in RECTANGLE mode.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/quadrilateral.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeCurvePrimitiveQuadrilateral",
         inputs={"Width": width, "Height": height},
-        attrs={"mode": mode},
+        attrs={"mode": "RECTANGLE"},
+    )
+
+
+def curve_quadrilateral_parallelogram(
+    width: nt.SocketOrVal[float] = 2.0,
+    height: nt.SocketOrVal[float] = 2.0,
+    offset: nt.SocketOrVal[float] = 1.0,
+) -> nt.ProcNode[pt.CurveObject]:
+    """
+    Uses a CurvePrimitiveQuadrilateral Geometry Node in PARALLELOGRAM mode.
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/quadrilateral.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeCurvePrimitiveQuadrilateral",
+        inputs={"Width": width, "Height": height, "Offset": offset},
+        attrs={"mode": "PARALLELOGRAM"},
+    )
+
+
+def curve_quadrilateral_trapezoid(
+    bottom_width: nt.SocketOrVal[float] = 4.0,
+    top_width: nt.SocketOrVal[float] = 2.0,
+    height: nt.SocketOrVal[float] = 2.0,
+    offset: nt.SocketOrVal[float] = 1.0,
+) -> nt.ProcNode[pt.CurveObject]:
+    """
+    Uses a CurvePrimitiveQuadrilateral Geometry Node in TRAPEZOID mode.
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/quadrilateral.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeCurvePrimitiveQuadrilateral",
+        inputs={
+            "Bottom Width": bottom_width,
+            "Top Width": top_width,
+            "Height": height,
+            "Offset": offset,
+        },
+        attrs={"mode": "TRAPEZOID"},
+    )
+
+
+def curve_quadrilateral_kite(
+    width: nt.SocketOrVal[float] = 2.0,
+    bottom_height: nt.SocketOrVal[float] = 3.0,
+    top_height: nt.SocketOrVal[float] = 1.0,
+) -> nt.ProcNode[pt.CurveObject]:
+    """
+    Uses a CurvePrimitiveQuadrilateral Geometry Node in KITE mode.
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/quadrilateral.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeCurvePrimitiveQuadrilateral",
+        inputs={
+            "Width": width,
+            "Bottom Height": bottom_height,
+            "Top Height": top_height,
+        },
+        attrs={"mode": "KITE"},
+    )
+
+
+def curve_quadrilateral_points(
+    point_1: nt.SocketOrVal[pt.Vector],
+    point_2: nt.SocketOrVal[pt.Vector],
+    point_3: nt.SocketOrVal[pt.Vector],
+    point_4: nt.SocketOrVal[pt.Vector],
+) -> nt.ProcNode[pt.CurveObject]:
+    """
+    Uses a CurvePrimitiveQuadrilateral Geometry Node in POINTS mode.
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/quadrilateral.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeCurvePrimitiveQuadrilateral",
+        inputs={
+            "Point 1": point_1,
+            "Point 2": point_2,
+            "Point 3": point_3,
+            "Point 4": point_4,
+        },
+        attrs={"mode": "POINTS"},
     )
 
 
@@ -554,10 +772,13 @@ def curve_set_handles(
     curve: nt.ProcNode[pt.CurveObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     handle_type: Literal["FREE", "AUTO", "VECTOR", "ALIGN"] = "AUTO",
-    mode: Literal["LEFT", "RIGHT"] = "RIGHT",
+    mode: set[str] = frozenset({"LEFT", "RIGHT"}),
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a CurveSetHandles Geometry Node.
+
+    `mode` is a flag set whose members are any of "LEFT", "RIGHT" (which curve
+    handles to affect); defaults to both, matching Blender's default.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/write/set_handle_type.html
     """
@@ -1080,15 +1301,26 @@ def extrude_mesh(
     individual: nt.SocketOrVal[bool] = True,
     mode: Literal["VERTICES", "EDGES", "FACES"] = "FACES",
 ) -> ExtrudeMeshResult:
+    # The node's Individual socket only exists in FACES mode; in other modes a
+    # passed value would be silently ignored, so reject it loudly.
+    if mode != "FACES" and individual is not True:
+        raise ValueError(
+            f"individual is only meaningful with mode='FACES', got {mode=}"
+        )
+    inputs = {
+        "Mesh": mesh,
+        "Selection": selection,
+        "Offset Scale": offset_scale,
+    }
+    # A disconnected Offset extrudes along the normal (implicit field), so we
+    # omit the input entirely when None rather than passing None to a value socket.
+    if offset is not None:
+        inputs["Offset"] = offset
+    if mode == "FACES":
+        inputs["Individual"] = individual
     node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeExtrudeMesh",
-        inputs={
-            "Mesh": mesh,
-            "Selection": selection,
-            "Offset": offset,
-            "Offset Scale": offset_scale,
-            "Individual": individual,
-        },
+        inputs=inputs,
         attrs={"mode": mode},
     )
     return ExtrudeMeshResult(
@@ -1131,10 +1363,7 @@ def field_at_index(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/field/evaluate_at_index.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
+        data_type = RuntimeResolveDataType(_SAMPLE_NODE_DATA_TYPES, ["Value"])
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeFieldAtIndex",
         inputs={"Index": index, "Value": value},
@@ -1161,10 +1390,7 @@ def field_on_domain(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/field/evaluate_on_domain.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
+        data_type = RuntimeResolveDataType(_SAMPLE_NODE_DATA_TYPES, ["Value"])
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeFieldOnDomain",
         inputs={"Value": value},
@@ -1266,20 +1492,28 @@ def geometry_to_instance(
     )
 
 
+class GetNamedGridResult(NamedTuple):
+    volume: nt.ProcNode[nt.Geometry]
+    grid: nt.ProcNode[float]
+
+
 def get_named_grid(
     volume: nt.ProcNode[nt.Geometry] | None,
     name: nt.SocketOrVal[str] = "",
     remove: nt.SocketOrVal[bool] = True,
-) -> nt.ProcNode:
+) -> GetNamedGridResult:
     """
     Uses a GetNamedGrid Geometry Node.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/volume/index.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeGetNamedGrid",
         inputs={"Name": name, "Remove": remove, "Volume": volume},
         attrs={},
+    )
+    return GetNamedGridResult(
+        node._output_socket("volume"), node._output_socket("grid")
     )
 
 
@@ -1345,38 +1579,54 @@ def image_info(
     )
 
 
+class ImageTextureResult(NamedTuple):
+    color: nt.ProcNode[pt.Color]
+    alpha: nt.ProcNode[float]
+
+
 def image_texture(
     image: nt.SocketOrVal[pt.Image],
     vector: nt.SocketOrVal[nt.pt.Vector],
     frame: nt.SocketOrVal[int] = 0,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
     interpolation: Literal["Linear", "Closest", "Cubic"] = "Linear",
-) -> nt.ProcNode:
+) -> ImageTextureResult:
     """
     Uses a ImageTexture Geometry Node.
 
-    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/scene/image_info.html
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/texture/image.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeImageTexture",
-        inputs={"Image": image, "pt.Vector": vector, "Frame": frame},
+        inputs={"Image": image, "Vector": vector, "Frame": frame},
         attrs={"extension": extension, "interpolation": interpolation},
     )
+    return ImageTextureResult(
+        node._output_socket("color"), node._output_socket("alpha")
+    )
+
+
+class IndexOfNearestResult(NamedTuple):
+    index: nt.ProcNode[int]
+    has_neighbor: nt.ProcNode[bool]
 
 
 def index_of_nearest(
     position: nt.SocketOrVal[nt.pt.Vector],
     group_id: nt.SocketOrVal[int] = 0,
-) -> nt.ProcNode[int]:
+) -> IndexOfNearestResult:
     """
     Uses a IndexOfNearest Geometry Node.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/geometry/sample/index_of_nearest.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeIndexOfNearest",
         inputs={"Position": position, "Group ID": group_id},
         attrs={},
+    )
+    return IndexOfNearestResult(
+        node._output_socket("index"), node._output_socket("has_neighbor")
     )
 
 
@@ -1455,7 +1705,7 @@ def input_id() -> nt.ProcNode[int]:
     )
 
 
-def input_image(image: pt.Image) -> nt.ProcNode[pt.Image]:
+def input_image(image: pt.Image | None = None) -> nt.ProcNode[pt.Image]:
     """
     Uses a InputImage Geometry Node.
 
@@ -1509,7 +1759,7 @@ def input_instance_scale() -> nt.ProcNode[pt.Vector]:
     )
 
 
-def input_material(material: pt.Material) -> nt.ProcNode[pt.Material]:
+def input_material(material: pt.Material | None = None) -> nt.ProcNode[pt.Material]:
     """
     Uses a InputMaterial Geometry Node.
 
@@ -1911,7 +2161,7 @@ def instance_transform() -> nt.ProcNode:
 
 def instances_to_points(
     position: nt.SocketOrVal[nt.pt.Vector],
-    instances: nt.ProcNode[nt.Instances] | None = None,
+    instances: nt.ProcNode[nt.Instances] | None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.05,
 ) -> nt.ProcNode[nt.Points]:
@@ -2002,7 +2252,7 @@ def join_geometry(
 
 
 def material_selection(
-    material: nt.SocketOrVal[pt.Material] = None,
+    material: nt.SocketOrVal[pt.Material],
 ) -> nt.ProcNode[bool]:
     """
     Uses a MaterialSelection Geometry Node.
@@ -2077,28 +2327,91 @@ def merge_by_distance(
     )
 
 
+class MeshBooleanResult(NamedTuple):
+    mesh: nt.ProcNode[pt.MeshObject]
+    # edges where the inputs cut each other; only the EXACT solver outputs this,
+    # so it is None when solver="FLOAT"
+    intersecting_edges: nt.ProcNode[bool] | None
+
+
 def mesh_boolean(
-    a: nt.ProcNode[nt.Geometry] | None = None,
-    b: nt.ProcNode[nt.Geometry] | None = None,
+    mesh_1: nt.ProcNode[nt.Geometry] | None,
+    mesh_2: nt.ProcNode[nt.Geometry] | None,
     self_intersection: nt.SocketOrVal[bool] = False,
     hole_tolerant: nt.SocketOrVal[bool] = False,
-    operation: Literal["INTERSECT", "UNION", "DIFFERENCE"] = "DIFFERENCE",
     solver: Literal["EXACT", "FLOAT"] = "FLOAT",
-) -> nt.ProcNode[pt.MeshObject]:
+) -> MeshBooleanResult:
     """
-    Uses a MeshBoolean Geometry Node.
+    Uses a MeshBoolean Geometry Node in DIFFERENCE mode (mesh_1 minus mesh_2).
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/operations/mesh_boolean.html
     """
-    return nt.ProcNode.from_nodetype(
+    node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshBoolean",
         inputs={
-            "Mesh 1": a,
-            "Mesh 2": b,
+            "Mesh 1": mesh_1,
+            "Mesh 2": mesh_2,
             "Self Intersection": self_intersection,
             "Hole Tolerant": hole_tolerant,
         },
-        attrs={"operation": operation, "solver": solver},
+        attrs={"operation": "DIFFERENCE", "solver": solver},
+    )
+    return MeshBooleanResult(
+        node._output_socket("mesh"),
+        node._output_socket("intersecting_edges") if solver == "EXACT" else None,
+    )
+
+
+def mesh_boolean_union(
+    mesh: nt.ProcNode[nt.Geometry] | list[nt.ProcNode[nt.Geometry]] | None,
+    self_intersection: nt.SocketOrVal[bool] = False,
+    hole_tolerant: nt.SocketOrVal[bool] = False,
+    solver: Literal["EXACT", "FLOAT"] = "FLOAT",
+) -> MeshBooleanResult:
+    """
+    Uses a MeshBoolean Geometry Node in UNION mode (combines the input meshes).
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/operations/mesh_boolean.html
+    """
+    node = nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeMeshBoolean",
+        inputs={
+            "Mesh 2": mesh,
+            "Self Intersection": self_intersection,
+            "Hole Tolerant": hole_tolerant,
+        },
+        attrs={"operation": "UNION", "solver": solver},
+    )
+    return MeshBooleanResult(
+        node._output_socket("mesh"),
+        node._output_socket("intersecting_edges") if solver == "EXACT" else None,
+    )
+
+
+def mesh_boolean_intersect(
+    mesh: nt.ProcNode[nt.Geometry] | list[nt.ProcNode[nt.Geometry]] | None,
+    self_intersection: nt.SocketOrVal[bool] = False,
+    hole_tolerant: nt.SocketOrVal[bool] = False,
+    solver: Literal["EXACT", "FLOAT"] = "FLOAT",
+) -> MeshBooleanResult:
+    """
+    Uses a MeshBoolean Geometry Node in INTERSECT mode (keeps the volume shared
+    by all input meshes).
+
+    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/operations/mesh_boolean.html
+    """
+    node = nt.ProcNode.from_nodetype(
+        node_type="GeometryNodeMeshBoolean",
+        inputs={
+            "Mesh 2": mesh,
+            "Self Intersection": self_intersection,
+            "Hole Tolerant": hole_tolerant,
+        },
+        attrs={"operation": "INTERSECT", "solver": solver},
+    )
+    return MeshBooleanResult(
+        node._output_socket("mesh"),
+        node._output_socket("intersecting_edges") if solver == "EXACT" else None,
     )
 
 
@@ -2712,10 +3025,7 @@ def raycast(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/geometry/sample/raycast.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Attribute"],
-        )
+        data_type = RuntimeResolveDataType(_SAMPLE_NODE_DATA_TYPES, ["Attribute"])
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeRaycast",
         inputs={
@@ -2922,10 +3232,7 @@ def sample_curve(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/sample/sample_curve.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
+        data_type = RuntimeResolveDataType(_ATTRIBUTE_NODE_DATA_TYPES, ["Value"])
     inputs = {
         "Curves": curves,
         "Factor": factor,
@@ -3074,10 +3381,7 @@ def sample_index(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/geometry/sample/sample_index.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
+        data_type = RuntimeResolveDataType(_SAMPLE_NODE_DATA_TYPES, ["Value"])
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSampleIndex",
         inputs={"Geometry": geometry, "Index": index, "Value": value},
@@ -3125,10 +3429,7 @@ def sample_nearest_surface(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/sample/sample_nearest_surface.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
+        data_type = RuntimeResolveDataType(_SAMPLE_NODE_DATA_TYPES, ["Value"])
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSampleNearestSurface",
         inputs={
@@ -3161,10 +3462,7 @@ def sample_uv_surface(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/sample/sample_uv_surface.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
+        data_type = RuntimeResolveDataType(_SAMPLE_NODE_DATA_TYPES, ["Value"])
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSampleUVSurface",
         inputs={"Mesh": mesh, "Sample UV": sample_uv, "UV Map": uv_map, "Value": value},
@@ -3328,18 +3626,28 @@ def set_curve_handle_positions(
 
 def set_curve_normal(
     curve: nt.ProcNode[pt.CurveObject] | None,
-    normal: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    normal: nt.SocketOrVal[pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
     mode: Literal["MINIMUM_TWIST", "Z_UP", "FREE"] = "MINIMUM_TWIST",
 ) -> nt.ProcNode[pt.CurveObject]:
     """
     Uses a SetCurveNormal Geometry Node.
 
+    The Normal socket only exists in FREE mode; MINIMUM_TWIST and Z_UP compute
+    normals themselves, so `normal` is required for FREE and rejected otherwise.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/write/set_curve_normal.html
     """
+    if mode == "FREE" and normal is None:
+        raise ValueError("normal is required when mode='FREE'")
+    if mode != "FREE" and normal is not None:
+        raise ValueError(f"normal is only meaningful when mode='FREE', got {mode=}")
+    inputs = {"Curve": curve, "Selection": selection}
+    if mode == "FREE":
+        inputs["Normal"] = normal
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSetCurveNormal",
-        inputs={"Curve": curve, "Selection": selection, "Normal": normal},
+        inputs=inputs,
         attrs={"mode": mode},
     )
 
@@ -3414,8 +3722,8 @@ def set_instance_transform(
 
 def set_material(
     geometry: nt.ProcNode[pt.MeshObject] | None,
-    material: nt.SocketOrVal[pt.Material] = None,
-    selection: nt.SocketOrVal[bool] = None,
+    material: nt.SocketOrVal[pt.Material],
+    selection: nt.SocketOrVal[bool] = True,
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a SetMaterial Geometry Node.
@@ -3476,16 +3784,20 @@ def set_position(
     """
     Uses a SetPosition Geometry Node.
 
+    A disconnected Position keeps the geometry's existing position; a disconnected
+    Offset applies no offset. We therefore omit these inputs entirely when None
+    rather than passing None to a value socket (see strict-None policy).
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/geometry/write/set_position.html
     """
+    inputs = {"Geometry": geometry, "Selection": selection}
+    if position is not None:
+        inputs["Position"] = position
+    if offset is not None:
+        inputs["Offset"] = offset
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeSetPosition",
-        inputs={
-            "Geometry": geometry,
-            "Selection": selection,
-            "Position": position,
-            "Offset": offset,
-        },
+        inputs=inputs,
         attrs={},
     )
 
@@ -3671,10 +3983,7 @@ def store_named_attribute(
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/attribute/store_named_attribute.html
     """
     if data_type is None:
-        data_type = RuntimeResolveDataType(
-            [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-            ["Value"],
-        )
+        data_type = RuntimeResolveDataType(_ATTRIBUTE_NODE_DATA_TYPES, ["Value"])
 
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeStoreNamedAttribute",
@@ -4018,10 +4327,10 @@ def transform_by_matrix(
     matrix: nt.SocketOrVal[pt.Matrix],
 ):
     return nt.ProcNode.from_nodetype(
-        node_type="GeometryNodeTransformByMatrix",
+        node_type="GeometryNodeTransform",
         inputs={
             "Geometry": geometry,
-            "Matrix": matrix,
+            "Transform": matrix,
         },
         attrs={"mode": "MATRIX"},
     )

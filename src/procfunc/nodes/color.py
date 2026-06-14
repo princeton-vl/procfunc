@@ -46,7 +46,7 @@ def mix_rgb(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/mix.html
     """
     return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeMix",
+        node_type=ContextualNode.MIX_RGB.value,
         inputs={"Factor": factor, "A": a, "B": b},
         attrs={
             "blend_type": blend_type,
@@ -307,7 +307,7 @@ def hue_saturation(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/hue_saturation.html
     """
     return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeHueSaturation",
+        node_type=ContextualNode.HUE_SATURATION.value,
         inputs={
             "Hue": hue,
             "Saturation": saturation,

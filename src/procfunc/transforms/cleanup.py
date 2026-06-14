@@ -120,6 +120,7 @@ def coerce_shaders_to_materialresult(
     surface = outputs.get("surface") or outputs.get("bsdf")
     if surface is None:
         return subgraph
+    # a missing displacement output is left as None ("no displacement")
     shader_outputs = {
         "surface": surface,
         "displacement": outputs.get("displacement"),

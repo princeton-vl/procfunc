@@ -100,6 +100,11 @@ def _build_bpy_material(
     displacement: nt.ProcNode[pt.Vector] | None = None,
     volume: nt.ProcNode[nt.Shader] | None = None,
 ) -> bpy.types.Material:
+    # optimization: a constant zero displacement has no effect, so drop it and
+    # leave the output socket disconnected rather than emitting a dead subgraph
+    if displacement is not None and pt.is_zero_displacement(displacement):
+        displacement = None
+
     if all(x is None for x in [surface, displacement, volume]):
         raise ValueError(
             "at least one of surface, displacement, or volume must be provided"
