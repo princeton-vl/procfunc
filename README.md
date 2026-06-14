@@ -1,6 +1,6 @@
 # ProcFunc: Function-Oriented Abstractions for Procedural 3D Generation in Python
 
-[**Documentation**](#documentation)
+[**Documentation**](https://procfunc.readthedocs.io)
 | [**Research Paper**](https://arxiv.org/abs/2604.26943)
 | [**Transpiling**](#transpile-a-blender-file-to-procfunc-code)
 | [**Experiments**](#experiments)
