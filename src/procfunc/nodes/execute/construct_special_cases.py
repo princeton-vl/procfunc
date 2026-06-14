@@ -5,6 +5,7 @@ import bpy
 
 from procfunc import compute_graph as cg
 from procfunc.nodes import bpy_node_info as bni
+from procfunc.nodes import func as pf_func
 from procfunc.nodes import types as nt
 
 from .util import assign_default_value
@@ -296,6 +297,27 @@ def special_case_input_constant(
     setattr(bl_node, bni.CONSTANT_NODES[bl_node.bl_idname], value)
 
 
+def special_case_compare(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    inputs: dict[str, Any],
+    kwargs: dict[str, Any],
+    **_kwargs,
+):
+    for attr_key in ("data_type", "operation"):
+        if attr_key in attrs:
+            setattr(bl_node, attr_key, attrs[attr_key])
+
+    epsilon_key = ("Epsilon", 0)
+    if inputs.get(epsilon_key) != pf_func.COMPARE_EPSILON_DEFAULT:
+        return
+
+    epsilon_socket = next((s for s in bl_node.inputs if s.name == "Epsilon"), None)
+    if epsilon_socket is not None and not epsilon_socket.enabled:
+        inputs.pop(epsilon_key, None)
+        kwargs.pop(epsilon_key, None)
+
+
 def special_case_combine_xyz_constant(
     bl_node: bpy.types.Node,
     attrs: dict[str, Any],
@@ -333,6 +355,7 @@ NODE_SPECIAL_CASES = {
     "FunctionNodeInputRotation": special_case_input_constant,
     "FunctionNodeInputString": special_case_input_constant,
     "FunctionNodeInputVector": special_case_input_constant,
+    "FunctionNodeCompare": special_case_compare,
     "ShaderNodeCombineXYZ": special_case_combine_xyz_constant,
     "CompositorNodeCombineXYZ": special_case_combine_xyz_constant,
 }

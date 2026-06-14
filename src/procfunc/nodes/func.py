@@ -252,13 +252,12 @@ def _compare(
             ],
             ["A", "B"],
         )
-    # tuple keys let inline operator dispatch (`<`, `>`) bind positional args and
-    # let the contextual mapping remap A/B -> Value sockets for ShaderNodeMath
-    inputs: dict[tuple[str, int], nt.SocketOrVal] = {("A", 0): a, ("B", 0): b}
-    # the socket already holds the Blender default, so skip setting it - this also
-    # keeps INT/STRING compares working, whose Epsilon socket is disabled
-    if not (isinstance(epsilon, float) and epsilon == COMPARE_EPSILON_DEFAULT):
-        inputs[("Epsilon", 0)] = epsilon
+    # tuple keys let inline operator dispatch (`<`, `>`) bind positional args.
+    inputs: dict[tuple[str, int], nt.SocketOrVal] = {
+        ("A", 0): a,
+        ("B", 0): b,
+        ("Epsilon", 0): epsilon,
+    }
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.COMPARE.value,
         inputs=inputs,

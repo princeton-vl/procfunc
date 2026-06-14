@@ -35,6 +35,35 @@ def test_comparison_operators_dispatch_to_compare_in_geometry():
     ]
 
 
+def test_compare_wrapper_keeps_default_epsilon_for_contextual_resolution():
+    node = pf.nodes.func.equal(1.0, 1.0).item()
+    assert node.kwargs[("Epsilon", 0)] == pf.nodes.func.COMPARE_EPSILON_DEFAULT
+
+
+def test_int_compare_default_epsilon_is_dropped_by_geometry_context():
+    def fn():
+        idx = pf.nodes.geo.input_index()
+        return _set_position_from_scalar((idx == 3).astype(float))
+
+    ng = _realize(fn, NodeGroupType.GEOMETRY)
+    compare = next(n for n in ng.nodes if n.bl_idname == "FunctionNodeCompare")
+    assert compare.data_type == "INT"
+    assert compare.operation == "EQUAL"
+
+
+def test_float_compare_explicit_epsilon_survives_geometry_context():
+    def fn():
+        idx = pf.nodes.geo.input_index().astype(float)
+        return _set_position_from_scalar(
+            pf.nodes.func.equal(idx, 3.0, epsilon=0.25).astype(float)
+        )
+
+    ng = _realize(fn, NodeGroupType.GEOMETRY)
+    compare = next(n for n in ng.nodes if n.bl_idname == "FunctionNodeCompare")
+    assert compare.data_type == "FLOAT"
+    assert compare.inputs["Epsilon"].default_value == pytest.approx(0.25)
+
+
 def test_less_greater_dispatch_to_math_in_geometry():
     # `<` / `>` keep their ShaderNodeMath implementation (contextual MATH path).
     def fn():

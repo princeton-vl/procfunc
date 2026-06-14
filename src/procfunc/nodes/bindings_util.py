@@ -55,7 +55,7 @@ class NodeContextResolution:
         default_factory=dict
     )
     output_keys_map: dict[str, str] = field(default_factory=dict)
-    drop_keys: frozenset[str] = frozenset()
+    drop_keys: frozenset[str | tuple[str, int]] = frozenset()
 
     def __post_init__(self):
         if any(v is None for v in self.input_keys_map.values()):
@@ -165,18 +165,21 @@ CONTEXTUAL_NODE_MAPPING = [
         node_group_type=NodeGroupType.SHADER,
         node_type="ShaderNodeMath",
         input_keys_map={("A", 0): ("Value", 0), ("B", 0): ("Value", 1)},
+        drop_keys=frozenset({("Epsilon", 0)}),
     ),
     NodeContextResolution(
         contextual_node=ContextualNode.COMPARE,
         node_group_type=NodeGroupType.COMPOSITOR,
         node_type="CompositorNodeMath",
         input_keys_map={("A", 0): ("Value", 0), ("B", 0): ("Value", 1)},
+        drop_keys=frozenset({("Epsilon", 0)}),
     ),
     NodeContextResolution(
         contextual_node=ContextualNode.COMPARE,
         node_group_type=NodeGroupType.TEXTURE,
         node_type="TextureNodeMath",
         input_keys_map={("A", 0): ("Value", 0), ("B", 0): ("Value", 1)},
+        drop_keys=frozenset({("Epsilon", 0)}),
     ),
     # Constant float/int (Value) and color (RGB) inputs. ShaderNodeValue is
     # accepted in geometry trees; ShaderNodeRGB is not, so geometry color
