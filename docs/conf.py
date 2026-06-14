@@ -8,6 +8,9 @@ from sphinx.util.nodes import make_refnode as _make_refnode
 
 import procfunc
 
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+_SRC_ROOT = _PROJECT_ROOT / "src"
+
 project = "procfunc"
 author = "Princeton Vision & Learning Lab"
 release = procfunc.__version__
@@ -59,13 +62,18 @@ linkcheck_ignore: list[str] = []
 DOC_PACKAGES = {
     "top_level": ("procfunc", "procfunc"),
     "compute_graph": ("procfunc.compute_graph", "pf.compute_graph"),
+    "control": ("procfunc.control", "pf.control"),
+    "context": ("procfunc.context", "pf.context"),
+    "color": ("procfunc.color", "pf.color"),
     "nodes": ("procfunc.nodes", "pf.nodes"),
     "ops": ("procfunc.ops", "pf.ops"),
+    "random": ("procfunc.random", "pf.random"),
     "tracer": ("procfunc.tracer", "pf.tracer"),
     "transforms": ("procfunc.transforms", "pf.transforms"),
     "transpiler": ("procfunc.transpiler", "pf.transpiler"),
     "codegen": ("procfunc.codegen", "pf.codegen"),
     "types": ("procfunc.types", "pf.types"),
+    "util": ("procfunc.util", "pf.util"),
 }
 
 # Command-line entry points rendered with sphinx-argparse on a dedicated
@@ -433,6 +441,10 @@ _DUNDER_SKIP_ALWAYS = frozenset(
 def _skip_private(app, what, name, obj, skip, options):  # noqa: ARG001
     if skip:
         return skip
+    if _is_result_namedtuple_class(obj):
+        return True
+    if _is_namedtuple_field(obj):
+        return True
     if name.startswith("_") and not (name.startswith("__") and name.endswith("__")):
         return True
     is_dunder = name.startswith("__") and name.endswith("__")
@@ -446,18 +458,51 @@ _OBJECT_DUNDERS = frozenset(
 )
 
 
+def _is_namedtuple_class(obj) -> bool:
+    return (
+        inspect.isclass(obj)
+        and issubclass(obj, tuple)
+        and isinstance(getattr(obj, "_fields", None), tuple)
+    )
+
+
+def _is_result_namedtuple_class(obj) -> bool:
+    return _is_namedtuple_class(obj) and obj.__name__.endswith("Result")
+
+
+def _is_namedtuple_field(obj) -> bool:
+    doc = inspect.getdoc(obj)
+    return doc is not None and doc.startswith("Alias for field number ")
+
+
+def _is_locally_defined_dunder(cls, name: str) -> bool:
+    value = cls.__dict__.get(name)
+    if value is None:
+        return False
+    try:
+        source = inspect.getfile(value)
+    except TypeError:
+        return False
+    if source.startswith("<"):
+        return False
+    try:
+        return Path(source).resolve().is_relative_to(_SRC_ROOT)
+    except OSError:
+        return False
+
+
 def _append_dunder_summary(app, what, name, obj, options, lines):  # noqa: ARG001
     if what != "class" or not inspect.isclass(obj):
         return
     dunders = sorted(
         n
-        for n in dir(obj)
+        for n in obj.__dict__
         if n.startswith("__")
         and n.endswith("__")
         and n not in _DUNDER_KEEP
         and n not in _DUNDER_SKIP_ALWAYS
         and n not in _OBJECT_DUNDERS
-        and callable(getattr(obj, n, None))
+        and _is_locally_defined_dunder(obj, n)
     )
     if not dunders:
         return
