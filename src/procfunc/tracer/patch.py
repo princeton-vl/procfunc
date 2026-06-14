@@ -253,23 +253,6 @@ class Patcher:
 
         return func
 
-        # call_wrapper = _create_module_call_wrapper(self)
-        # module_call_patch = PatchSetAttr(
-        #     frame=Module,
-        #     fn_name=_MODULE_CALLFUNC,
-        #     orig_fn=_ORIG_MODULE_CALL,
-        #     patched_fn=call_wrapper,
-        # )
-        # self.patch(module_call_patch)
-
-        # module_getattr_patch = PatchSetAttr(
-        #    frame=Module,
-        #    fn_name="__getattribute__",
-        #    orig_fn=_ORIG_MODULE_GETATTR,
-        #    patched_fn=_create_module_getattr_wrapper(),
-        # )
-        # patcher.patch(module_getattr_patch)
-
     def create_wrapper(
         self,
         func: Callable,

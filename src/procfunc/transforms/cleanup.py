@@ -176,7 +176,9 @@ def extract_as_input(
     arg_type: type,
 ):
     inp = cg.InputPlaceholderNode(
-        default_value=None, metadata={"known_value_type": arg_type, "varname": name}
+        name=name,
+        default_value=None,
+        metadata={"known_value_type": arg_type, "varname": name},
     )
 
     inputs = graph.inputs.obj()

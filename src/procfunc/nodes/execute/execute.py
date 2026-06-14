@@ -370,13 +370,13 @@ def to_mesh_object_with_attributes(
     geometry: nt.ProcNode[pt.MeshObject],
     attributes: dict[str, nt.ProcNode[nt.AnyDataVal]] | None = None,
 ) -> tuple[pt.MeshObject, dict[str, Any]]:
+    if attributes is None:
+        attributes = {}
+
     for k, v in attributes.items():
         geometry = store_named_attribute(geometry, name=k, value=v)
 
     obj = to_mesh_object(geometry)
-
-    if attributes is None:
-        return obj, {}
 
     attr_dict = {k: obj.item().data.attributes[k] for k in attributes.keys()}
     return obj, attr_dict

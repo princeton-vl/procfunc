@@ -61,3 +61,16 @@ def test_traverse_arg_has_list_of_nodes():
     assert nodes[0] is geom1
     assert nodes[1] is geom2
     assert nodes[2] is func_node
+
+
+def test_nodes_identity_equality_and_hashable():
+    source = cg.ConstantNode(value=1.0)
+    a = cg.GetAttributeNode(source, "x")
+    b = cg.GetAttributeNode(source, "x")
+    assert a != b
+    assert len({a, b}) == 2
+
+    p = cg.ProceduralNode(node_type="ShaderNodeValue", attrs={}, kwargs={})
+    q = cg.ProceduralNode(node_type="ShaderNodeValue", attrs={}, kwargs={})
+    assert p != q
+    assert len({p, q}) == 2

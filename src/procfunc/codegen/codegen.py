@@ -3,6 +3,7 @@ import enum
 import inspect
 import itertools
 import logging
+import math
 from collections import OrderedDict, defaultdict
 from pathlib import Path
 from typing import Any, Callable, Generator, Union, get_args, get_origin
@@ -74,6 +75,8 @@ def _repr_type(x: Any) -> str:
 
 
 def _repr_float(value: float) -> str:
+    if not math.isfinite(value):
+        return f'float("{value}")'
     # float32 socket values: shortest exact round-trip (round(x, 8) would destroy small magnitudes)
     return str(np.float32(value))
 
@@ -97,11 +100,20 @@ def _repr_value(value: Any) -> str:
     elif isinstance(value, type):
         return _repr_type(value)
     elif isinstance(value, np.ndarray):
-        nprepr = repr(value).replace("\n", "")
-        return f"np.{nprepr}"
+        # tolist + per-element repr is exact, unlike repr(value) which truncates
+        # to numpy printoptions precision
+        body = (
+            _repr_value(value.tolist())
+            if value.dtype == np.float32
+            else repr(value.tolist())
+        )
+        return f"np.array({body}, dtype=np.{value.dtype.name})"
     elif isinstance(value, np.dtype):
         return f"np.dtype('{value}')"
-    elif isinstance(value, (pf.Color, pf.Vector, pf.Euler, pf.Quaternion, pf.Matrix)):
+    elif isinstance(value, pf.Matrix):
+        # matrix constants travel as numpy arrays; stray Matrix values delegate
+        return _repr_value(np.array(value, dtype=np.float32))
+    elif isinstance(value, (pf.Color, pf.Vector, pf.Euler, pf.Quaternion)):
         comps = ", ".join(_repr_float(c) for c in value)
         return f"pf.{value.__class__.__name__}(({comps}))"
     elif isinstance(value, enum.Enum):
@@ -406,7 +418,7 @@ def _codegen_graph_inputs(
 
         args_lines.append(line + ",")
 
-    end_statement = "):" if typename is None else f") -> {typename}: "
+    end_statement = "):" if typename is None else f") -> {typename}:"
 
     return [f"def {func_name}("] + indent_lines(args_lines) + [end_statement]
 
@@ -617,6 +629,7 @@ def _code_paragraphing_predicate(
 def _codegen_for_assignment(
     assign_varname: str,
     node_code: list[str] | str,
+    node: cg.Node,
     add_line_comments: bool,
 ) -> list[str]:
     assert isinstance(assign_varname, str)
@@ -627,7 +640,7 @@ def _codegen_for_assignment(
     else:
         node_code = [f"{assign_varname} = {node_code}"]
     if add_line_comments:
-        node_code[0] += f" # {node}"  # noqa: F821
+        node_code[-1] += f"  # {str(node).replace(chr(10), ' ')}"
 
     return node_code
 
@@ -707,7 +720,7 @@ def _codegen_for_graph(
             continue
 
         varname = expressions[id(node)]
-        node_code = _codegen_for_assignment(varname, node_code, add_line_comments)
+        node_code = _codegen_for_assignment(varname, node_code, node, add_line_comments)
         code_lines.extend(node_code)
 
         if last_varname.split("_")[0] != varname.split("_")[0]:
@@ -816,43 +829,46 @@ def graphs_to_python_functions(
     np_linewidth = np.get_printoptions()["linewidth"]
     np.set_printoptions(linewidth=100000)
 
-    targets = _topo_sort_subgraphs(graph)
+    try:
+        targets = _topo_sort_subgraphs(graph)
 
-    def _clean_graph_name(name: str) -> str:
-        for suffix in identifiers.NONDESCRIPTIVE_NODE_NAME_PARTS:
-            if name.endswith("_" + suffix):
-                name = name[: -(len(suffix) + 1)]
-        return name
+        def _clean_graph_name(name: str) -> str:
+            for suffix in identifiers.NONDESCRIPTIVE_NODE_NAME_PARTS:
+                if name.endswith("_" + suffix):
+                    name = name[: -(len(suffix) + 1)]
+            return name
 
-    for subgraph in cg.traverse_nested_graphs(graph):
-        subgraph.name = _clean_graph_name(subgraph.name)
+        for subgraph in cg.traverse_nested_graphs(graph):
+            subgraph.name = _clean_graph_name(subgraph.name)
 
-    subgraph_names = {
-        id(subgraph): subgraph.name for subgraph in cg.traverse_nested_graphs(graph)
-    }
-    subgraph_names = identifiers.dedup_names_with_suffix(subgraph_names, separator="_")
-
-    scope_expressions = subgraph_names.copy()
-    for k, v in func_resolution.items():
-        if isinstance(v, OperatorType):
-            scope_expressions[id(k)] = OPERATOR_TEMPLATES[v]
-        else:
-            scope_expressions[id(k)] = v
-
-    lines_for_modules = []
-    for subgraph in targets:
-        func_name = subgraph_names[id(subgraph)]
-        result = _codegen_for_graph(
-            subgraph,
-            scope_expressions=scope_expressions.copy(),
-            as_maincall=(subgraph is graph and toplevel_as_maincall),
-            add_version_comment=add_version_comment,
-            add_line_comments=add_line_comments,
-            func_name=func_name,
+        subgraph_names = {
+            id(subgraph): subgraph.name for subgraph in cg.traverse_nested_graphs(graph)
+        }
+        subgraph_names = identifiers.dedup_names_with_suffix(
+            subgraph_names, separator="_"
         )
-        lines_for_modules.append((subgraph_names[id(subgraph)], result))
 
-    np.set_printoptions(linewidth=np_linewidth)
+        scope_expressions = subgraph_names.copy()
+        for k, v in func_resolution.items():
+            if isinstance(v, OperatorType):
+                scope_expressions[id(k)] = OPERATOR_TEMPLATES[v]
+            else:
+                scope_expressions[id(k)] = v
+
+        lines_for_modules = []
+        for subgraph in targets:
+            func_name = subgraph_names[id(subgraph)]
+            result = _codegen_for_graph(
+                subgraph,
+                scope_expressions=scope_expressions.copy(),
+                as_maincall=(subgraph is graph and toplevel_as_maincall),
+                add_version_comment=add_version_comment,
+                add_line_comments=add_line_comments,
+                func_name=func_name,
+            )
+            lines_for_modules.append((subgraph_names[id(subgraph)], result))
+    finally:
+        np.set_printoptions(linewidth=np_linewidth)
 
     return OrderedDict(lines_for_modules)
 

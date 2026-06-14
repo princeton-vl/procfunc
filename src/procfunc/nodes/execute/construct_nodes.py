@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 import bpy
+import numpy as np
 
 from procfunc import compute_graph as cg
 from procfunc import types as pt
@@ -64,6 +65,18 @@ def connect_single_input(
             )
         case _ if hasattr(to_socket, "default_value"):
             assign_default_value(to_socket, input_val)
+        case np.ndarray() | pt.Matrix() if to_socket.type == "MATRIX":
+            value = np.asarray(input_val, dtype=float)
+            if value.shape != (4, 4):
+                raise ValueError(
+                    f"Expected a 4x4 matrix for MATRIX socket "
+                    f"{to_socket.name!r}, got shape {value.shape}"
+                )
+            combine = node_tree.nodes.new("FunctionNodeCombineMatrix")
+            for row, col in np.ndindex(4, 4):
+                socket = combine.inputs[f"Column {col + 1} Row {row + 1}"]
+                socket.default_value = float(value[row, col])
+            node_tree.links.new(combine.outputs[0], to_socket)
         case _:
             raise ValueError(
                 f"Could not handle {input_val=} as input to {to_socket.name=}"
@@ -74,7 +87,6 @@ def connect_multisocket_input(
     node_tree: bpy.types.NodeTree,
     to_socket: bpy.types.NodeSocket,
     input_result: list[bpy.types.NodeSocket | Any | None],
-    from_py_input: list[cg.Node],
 ):
     if not to_socket.is_multi_input:
         raise ValueError(
@@ -83,10 +95,9 @@ def connect_multisocket_input(
         )
 
     assert isinstance(input_result, list)
-    assert isinstance(from_py_input, list)
 
     # connect reversed: multi-input links consume in reverse of connection order
-    for input_val, py_input in zip(reversed(input_result), reversed(from_py_input)):
+    for input_val in reversed(input_result):
         if input_val is None:
             continue
         connect_single_input(node_tree, to_socket, input_val)
@@ -160,30 +171,22 @@ def _find_operator_row(
     return op_row
 
 
-def _bind_positional_to_tuple_kwargs(
-    node: cg.Node, input_results: dict[str | int, Any]
-) -> dict[str | int, Any]:
-    """
-    operator call recieved input_results with anonymous positional args, which have keys 0, 1, 2
-    we need to match these up against the node's expected tuple input keys e.g. ("Value", 0) uses the 0th positional arg
-    """
-
-    inputs_bound = {}
-    for k, v in node.kwargs.items():
-        assert isinstance(k, tuple)
-        assert isinstance(k[1], int)
-        if v is None:
-            inputs_bound[k] = None
-        else:
-            inputs_bound[k] = input_results[k[1]]
-
-    return inputs_bound
-
-
 _VECTORLIKE_BY_LENGTH = {
     3: bni.NodeDataType.FLOAT_VECTOR,
     4: bni.NodeDataType.RGBA,
 }
+
+# Operator types whose operands may be matched in any order against a
+# NODE_OPERATOR_TABLE row's operand_types. Permuted matches for any other
+# operator would silently swap operands, so they raise instead.
+_COMMUTATIVE_OPERATORS = frozenset(
+    {
+        cg.OperatorType.ADD,
+        cg.OperatorType.MUL,
+        cg.OperatorType.EQUAL,
+        cg.OperatorType.NOT_EQUAL,
+    }
+)
 
 
 def _operand_matches(
@@ -201,12 +204,14 @@ def _operand_matches(
 def _match_operand_permutation(
     operand_dtypes: list[bni.NodeDataType | VectorLike | None],
     row_dtypes: tuple[bni.NodeDataType, ...],
+    operator_type: cg.OperatorType,
 ) -> list[int] | None:
     """Order-insensitive greedy match: for each required row dtype, claim the
     first unused operand that satisfies it. Returns the permutation of operand
     indices (in row order) on success, else None. At least one claimed operand
     must be a concrete dtype (an anchor) — an all-VectorLike match is too
-    ambiguous to commit to."""
+    ambiguous to commit to. A non-identity permutation is only sound for
+    commutative operators and raises otherwise."""
     if len(operand_dtypes) != len(row_dtypes):
         return None
 
@@ -232,6 +237,16 @@ def _match_operand_permutation(
     )
     if not has_anchor:
         return None
+
+    if (
+        permutation != list(range(len(permutation)))
+        and operator_type not in _COMMUTATIVE_OPERATORS
+    ):
+        raise ValueError(
+            f"Operands {operand_dtypes} match the operator table row "
+            f"{row_dtypes} for {operator_type} only after reordering, but "
+            f"{operator_type} is not commutative so operands cannot be swapped."
+        )
 
     return permutation
 
@@ -261,15 +276,15 @@ def _construct_operator_call(
             continue
         if OPERATORS_TO_FUNCTIONS[row.operator_type] is not node.func:
             continue
-        permutation = _match_operand_permutation(operand_dtypes, row.operand_types)
+        permutation = _match_operand_permutation(
+            operand_dtypes, row.operand_types, row.operator_type
+        )
         if permutation is None:
             continue
         permuted = [inputs[i] for i in permutation]
         spec: cg.Node = row.pf_func(*permuted).item()
-        # The spec already records the resolved operands as its kwarg values, so
-        # bind them directly rather than via _bind_positional_to_tuple_kwargs
-        # (vector_scale's ("Vector", 0)/("Scale", 0) keys share sub-index 0 and
-        # would collide in that binder's positional logic).
+        # the spec already records the resolved operands as its kwarg values,
+        # so bind them directly
         return _construct_procnode_standard(spec, bl_node_tree, dict(spec.kwargs))
 
     data_type = infer_operation_type(node, inputs, do_coerce_integers)
@@ -287,11 +302,15 @@ def _construct_operator_call(
     # them through construct_procnode_to_bpy unchanged. The rewrite is anchored
     # on the graph-owned node: results are cached by id(), so a garbage-collected
     # spec would let a later node alias its cache entry.
-    if (lowered := _lower_compare_outside_geometry(spec, bl_node_tree)) is not None:
+    if (
+        lowered := _lower_compare_outside_geometry(
+            spec, bl_node_tree, dict(spec.kwargs)
+        )
+    ) is not None:
         node.metadata["lowered_spec"] = lowered
         return construct_procnode_to_bpy(lowered, bl_node_tree, cache)
 
-    # bind spec's operands directly; the positional binder collides on ("A",0)/("B",0)
+    # bind spec's operands directly from its kwargs
     return _construct_procnode_standard(spec, bl_node_tree, dict(spec.kwargs))
 
 
@@ -321,8 +340,8 @@ def _set_node_attribute(bl_node: bpy.types.Node, k: str, v: Any):
         ) from e
 
 
-def _map_keys(d: dict, map: dict) -> dict:
-    return {map.get(k, k): v for k, v in d.items() if map.get(k, k) is not None}
+def _map_keys(d: dict, map: dict, drop: frozenset = frozenset()) -> dict:
+    return {map.get(k, k): v for k, v in d.items() if k not in drop}
 
 
 def _resolve_output_socket_name(
@@ -335,7 +354,7 @@ def _resolve_output_socket_name(
     if ctx is None:
         return attribute_name
     group_type = bni.NodeGroupType(bl_node_tree.bl_idname)
-    output_keys_map = resolve_contextual_node(ctx, group_type).output_keys_map or {}
+    output_keys_map = resolve_contextual_node(ctx, group_type).output_keys_map
     return output_keys_map.get(attribute_name, attribute_name)
 
 
@@ -383,6 +402,38 @@ def _resolve_data_type(
             )
 
 
+def _resolve_contextual_node_type(
+    node_type: str,
+    bl_node_tree: bpy.types.NodeTree,
+    kwargs: dict,
+    input_results: dict[str | int, Any],
+    attrs: dict,
+) -> tuple[str, dict, dict[str | int, Any], dict]:
+    """Resolve a contextual `node_type` (one whose concrete blender node differs
+    between shader/geometry/compositor/texture trees) to the node type for this
+    tree's context, remapping inputs/attrs per the resolution's keymap."""
+    contextual = ContextualNode.parse_name(node_type)
+    if contextual is None:
+        return node_type, kwargs, input_results, attrs
+
+    group_type = bni.NodeGroupType(bl_node_tree.bl_idname)
+    resolution = resolve_contextual_node(contextual, group_type)
+    keymap = resolution.input_keys_map
+    drop = resolution.drop_keys
+    if not keymap and not drop:
+        return resolution.node_type, kwargs, input_results, attrs
+
+    logger.debug(
+        f"Applying keymap {keymap} (dropping {drop}) to {input_results.keys()=} for context {resolution.node_type=} {group_type=}"
+    )
+    return (
+        resolution.node_type,
+        _map_keys(kwargs, keymap, drop),
+        _map_keys(input_results, keymap, drop),
+        _map_keys(attrs, keymap, drop),
+    )
+
+
 def _construct_procnode_standard(
     node: cg.ProceduralNode,
     bl_node_tree: bpy.types.NodeTree,
@@ -397,41 +448,13 @@ def _construct_procnode_standard(
 
     assert isinstance(node, cg.ProceduralNode), node
 
-    node_type = node.node_type
-    kwargs = node.kwargs.copy()
-    attrs = node.attrs.copy()
-
-    # logger.debug(
-    #    f"{_construct_procnode_standard.__name__} for {node=} with {kwargs=} {attrs=} {input_results=}"
-    # )
-
-    #  resolve cases when the `node_type` is not known precisely in advance
-    #   difference happens when we are using a given operation for shader vs geometry vs compositor - the same op has a different name via the bl4.2 api
-    if nt := ContextualNode.parse_name(node_type):
-        group_type = bni.NodeGroupType(bl_node_tree.bl_idname)
-        resolution = resolve_contextual_node(nt, group_type)
-        node_type = resolution.node_type
-        if keymap := resolution.input_keys_map:
-            logger.debug(
-                f"Applying keymap {keymap} to {input_results.keys()=} for context {node_type=} {group_type=}"
-            )
-            noop = resolution.input_drop_noop or {}
-            for dropped in (k for k, v in keymap.items() if v is None):
-                if dropped not in noop or dropped not in input_results:
-                    continue
-                value = input_results[dropped]
-                wired = isinstance(
-                    value, (bpy.types.NodeSocket, bpy.types.NodeInternal)
-                )
-                if wired or value != noop[dropped]:
-                    raise ValueError(
-                        f"{node_type} has no {dropped} socket; {dropped.lower()}="
-                        f"{value!r} cannot be honored (only the no-op {noop[dropped]}). "
-                        "Synthesizing a mix node would be needed to support this."
-                    )
-            kwargs = _map_keys(kwargs, keymap)
-            input_results = _map_keys(input_results, keymap)
-            attrs = _map_keys(attrs, keymap)
+    node_type, kwargs, input_results, attrs = _resolve_contextual_node_type(
+        node.node_type,
+        bl_node_tree,
+        node.kwargs.copy(),
+        input_results,
+        node.attrs.copy(),
+    )
 
     bl_node = bl_node_tree.nodes.new(node_type)
 
@@ -494,7 +517,7 @@ def _construct_procnode_standard(
         )
         if to_socket.is_multi_input and isinstance(input_py, list):
             assert isinstance(input_result, list), (input_result, to_socket.node.name)
-            connect_multisocket_input(bl_node_tree, to_socket, input_result, input_py)
+            connect_multisocket_input(bl_node_tree, to_socket, input_result)
         else:
             assert not isinstance(input_result, list), (
                 input_result,
@@ -544,18 +567,11 @@ def _dispatch_construct_procnode_by_type(
     cache: dict[int, bpy.types.Node],
     input_results: dict[str | int, Any],
 ):
-    if isinstance(node, cg.GetAttributeNode):
-        base_node = construct_procnode_to_bpy(node.source, bl_node_tree, cache)
-        socket_name = _resolve_output_socket_name(
-            node.source, node.attribute_name, bl_node_tree
-        )
-        return get_nth_socket(base_node.outputs, socket_name, 0, base_node.type)
-
     match node:
-        case cg.GetAttributeNode(args=(source,), attribute_name=socket_name):
-            base_node = construct_procnode_to_bpy(source, bl_node_tree, cache)
-            socket_name = _resolve_output_socket_name(source, socket_name, bl_node_tree)
-            return get_nth_socket(base_node.outputs, socket_name, 0, base_node.type)
+        case cg.GetAttributeNode():
+            raise ValueError(
+                f"{node=} must be resolved by construct_procnode_to_bpy before dispatch"
+            )
         case cg.ProceduralNode():
             return _construct_procnode_standard(node, bl_node_tree, input_results)
         case cg.FunctionCallNode():
@@ -572,28 +588,10 @@ def _dispatch_construct_procnode_by_type(
             raise ValueError(f"Got misconfigured {node=}")
 
 
-def _construct_inputs(
-    node: cg.Node,
-    bl_node_tree: bpy.types.NodeTree,
-    cache: dict[int, bpy.types.Node] | None = None,
-) -> dict[int | str, bpy.types.NodeSocket | bpy.types.NodeInternal]:
-    assert isinstance(node, cg.Node), node
-
-    input_results: dict[str | int, Any] = {}
-    for k, input_val in node.kwargs.items():
-        input_results[k] = construct_input(input_val, bl_node_tree, cache)  # noqa: F821
-    for i, input_val in enumerate(node.args):
-        input_results[i] = construct_input(input_val, bl_node_tree, cache)  # noqa: F821
-
-    # any raw Node types indicate the user declined to specify a specific socket,
-    #   so we will use the primary/first socket on that node
-
-    return input_results
-
-
 def _lower_compare_outside_geometry(
     node: cg.Node,
     bl_node_tree: bpy.types.NodeTree,
+    input_results: dict[str | int, Any],
 ) -> cg.Node | None:
     """`==` / `!=` / `<=` / `>=` lower to FunctionNodeCompare in geometry trees,
     but that node does not exist in shader/compositor/texture trees. There a Math
@@ -608,7 +606,16 @@ def _lower_compare_outside_geometry(
     le/ge are derived exactly without eps, matching FunctionNodeCompare whose
     LESS_EQUAL/GREATER_EQUAL ignore the Epsilon socket. The eps for eq/ne comes
     from the Compare node's own Epsilon input if given, else Blender's Compare
-    node default. Returns the replacement cg.Node, or None if no rewrite applies."""
+    node default. Returns the replacement cg.Node, or None if no rewrite applies.
+
+    The Math lowering is scalar-only: vector/color compares would silently
+    degrade to per-float implicit conversion, so those data types raise here.
+    An unpinned data_type is resolved from the operands in `input_results`
+    before that check, so wired vector operands raise rather than lower.
+
+    CAVEAT: Blender's Math COMPARE clamps its epsilon to >= 1e-5 while
+    FunctionNodeCompare does not, so equal(a, b, epsilon=0) can differ between
+    geometry and non-geometry trees."""
     if (
         not isinstance(node, cg.ProceduralNode)
         or ContextualNode.parse_name(node.node_type) is not ContextualNode.COMPARE
@@ -622,6 +629,34 @@ def _lower_compare_outside_geometry(
 
     a = node.kwargs[("A", 0)]
     b = node.kwargs[("B", 0)]
+
+    data_type = node.attrs.get("data_type")
+    if isinstance(data_type, RuntimeResolveDataType):
+        data_type = resolve_operation_data_type(
+            node,
+            input_results,
+            data_type,
+            coerce_integers=bl_node_tree.bl_idname == bni.NodeGroupType.SHADER.value,
+        )
+    scalar_compare_types = (
+        bni.NodeDataType.FLOAT,
+        bni.NodeDataType.INT,
+        bni.NodeDataType.BOOLEAN,
+    )
+    nonscalar_dtype = (
+        isinstance(data_type, bni.NodeDataType)
+        and data_type not in scalar_compare_types
+    )
+    nonscalar_operand = any(isinstance(v, (tuple, list, np.ndarray)) for v in (a, b))
+    if nonscalar_dtype or nonscalar_operand:
+        described = data_type if nonscalar_dtype else "tuple/vector"
+        raise ValueError(
+            f"Compare (operation={operation}) on {described} operands is not "
+            f"supported in a {bl_node_tree.bl_idname}: only geometry trees have "
+            f"FunctionNodeCompare, and the Math-node lowering used elsewhere is "
+            f"scalar (FLOAT/INT/BOOLEAN) only. Build this compare in a geometry "
+            f"node context instead."
+        )
 
     match operation:
         case "EQUAL":
@@ -648,14 +683,6 @@ def construct_procnode_to_bpy(
         cache = {}
     elif cached := cache.get(id(node), None):
         return cached
-
-    if (lowered := _lower_compare_outside_geometry(node, bl_node_tree)) is not None:
-        # anchored on the graph-owned node: results are cached by id(), so a
-        # garbage-collected spec would let a later node alias its cache entry
-        node.metadata["lowered_spec"] = lowered
-        result = construct_procnode_to_bpy(lowered, bl_node_tree, cache)
-        cache[id(node)] = result
-        return result
 
     if isinstance(node, cg.GetAttributeNode):
         assert len(node.args) == 1, node.args
@@ -689,7 +716,6 @@ def construct_procnode_to_bpy(
         k: v.item() if isinstance(v, pt.Material) else v for k, v in node.kwargs.items()
     }
 
-    # construct any inputs inside lists/dicts e.g. for join_geometry
     input_sockets: dict = pytree.PyTree(kwargs_for_tree).map(_construct_leaf).obj()
     input_sockets.update(
         {
@@ -697,6 +723,14 @@ def construct_procnode_to_bpy(
             for i, v in enumerate(pytree.PyTree(node.args).map(_construct_leaf).obj())
         }
     )
+
+    if (
+        lowered := _lower_compare_outside_geometry(node, bl_node_tree, input_sockets)
+    ) is not None:
+        node.metadata["lowered_spec"] = lowered
+        result = construct_procnode_to_bpy(lowered, bl_node_tree, cache)
+        cache[id(node)] = result
+        return result
 
     with add_exception_context_msg(
         f"While instantiating {nt.node_definition_context_message(node)}{node=}:\n"
@@ -743,10 +777,8 @@ def _construct_nodegroup(
         )
         nodegroup = bpy.data.node_groups.new(name, node_tree_type.value)
 
-    for k in nodegroup.interface.items_tree.keys():
-        nodegroup.interface.items_tree.remove(k)
-    for k in nodegroup.nodes:
-        nodegroup.nodes.remove(k)
+    nodegroup.interface.clear()
+    nodegroup.nodes.clear()
 
     input_node = nodegroup.nodes.new("NodeGroupInput")
     output_node = nodegroup.nodes.new("NodeGroupOutput")

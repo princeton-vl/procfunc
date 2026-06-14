@@ -145,21 +145,25 @@ def infer_operation_type(
         )
 
     if (
-        len(specific_types) > 0
-        and any(isinstance(v, VectorLike) for v in specific_types)
-        and data_type not in [bni.NodeDataType.FLOAT_VECTOR, bni.NodeDataType.RGBA]
+        any(isinstance(v, VectorLike) for v in input_data_types)
+        and data_type not in _vectorlike_types
     ):
         raise ValueError(
-            f"{input_data_types=} has compatibile types EXCEPT that {data_type=} "
-            "is not compatible with unspecified tuples/lists (shown as VectorLike)."
+            f"{input_data_types=} mixes {data_type} operands with unspecified "
+            "tuples/lists (shown as VectorLike), which is ambiguous. Use .astype "
+            "to disambiguate, e.g. .astype(float) or .astype(pf.Color)."
+        )
+
+    if has_length4 and data_type is bni.NodeDataType.FLOAT_VECTOR:
+        raise ValueError(
+            f"{node=} got a length-4 tuple/list alongside FLOAT_VECTOR (a "
+            "3-component type) operands, which is ambiguous. Pass a 3-tuple or "
+            "use pf.Color/.astype to disambiguate."
         )
 
     logger.debug(f"inferred {data_type=} for {node=}")
 
     return data_type
-
-
-_vectorlike_types = {bni.NodeDataType.FLOAT_VECTOR, bni.NodeDataType.RGBA}
 
 
 def resolve_operation_data_type(

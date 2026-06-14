@@ -31,10 +31,6 @@ from procfunc.util import bpy_info, log, manifest, pytree
 
 logger = logging.getLogger(__name__)
 
-# True: the graph carries the NodeDataType enum; False: its canonical `.value`
-# string. Either way the raw bpy spelling is normalized away at transpile.
-USE_DTYPE_ENUM = True
-
 _NODES_MANIFEST_INDEXED = NODES_MANIFEST.set_index("bpy_name")
 _OPS_MANIFEST_INDEXED = OPS_MANIFEST.set_index("bpy_name")
 
@@ -69,6 +65,10 @@ def handle_specialcase_math(_node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
 def handle_specialcase_color_ramp(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
     cg_node.kwargs.pop("color_ramp", None)
     cg_node.kwargs["interpolation"] = node.color_ramp.interpolation
+    if node.color_ramp.color_mode != "RGB":
+        cg_node.kwargs["mode"] = node.color_ramp.color_mode
+        if node.color_ramp.hue_interpolation != "NEAR":
+            cg_node.kwargs["hue_interpolation"] = node.color_ramp.hue_interpolation
     cg_node.kwargs["points"] = [
         (round(point.position, 3), tuple(round(x, 3) for x in point.color))
         for point in node.color_ramp.elements
@@ -157,6 +157,7 @@ def handle_specialcase_curve(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
 SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
     "ShaderNodeMath": handle_specialcase_math,
     "CompositorNodeMath": handle_specialcase_math,
+    "TextureNodeMath": handle_specialcase_math,
     "ShaderNodeValToRGB": handle_specialcase_color_ramp,
     "CompositorNodeValToRGB": handle_specialcase_color_ramp,
     "ShaderNodeVectorRotate": handle_specialcase_vector_rotate,
@@ -418,9 +419,11 @@ def _repr_default_value(value: Any, socket_type: str) -> Any:
         if len(value) >= 4 and value[3] != 1.0:
             return tuple(value)
         return tuple(value[:3])
-    elif isinstance(
-        value, (bpy.types.bpy_prop_array, t.Vector, t.Euler, t.Quaternion, t.Matrix)
-    ):
+    elif isinstance(value, t.Matrix):
+        # matrix values are carried as numpy arrays in the compute graph
+        # (float32, matching socket storage)
+        return np.array(value, dtype=np.float32)
+    elif isinstance(value, (bpy.types.bpy_prop_array, t.Vector, t.Euler, t.Quaternion)):
         return tuple(value)
     elif isinstance(value, idprop.types.IDPropertyArray):
         return tuple(value)
@@ -466,6 +469,12 @@ def _create_link_input(
     if not hasattr(socket, "default_value"):
         return None
 
+    if socket.hide_value:
+        # hidden-value sockets are implicit fields (e.g. extrude_mesh Offset =
+        # extrude along normal); their stored default is meaningless, so omit it
+        # and let the binding default express the implicit behavior
+        return None
+
     res = _repr_default_value(getattr(socket, "default_value", None), socket.type)
 
     if func_default is not None:
@@ -474,6 +483,9 @@ def _create_link_input(
         # 0.001 reads back inexactly - compare in float32 space
         if isinstance(res, float) and isinstance(repr_func_default, float):
             if np.float32(res) == np.float32(repr_func_default):
+                return None
+        elif isinstance(res, np.ndarray) or isinstance(repr_func_default, np.ndarray):
+            if np.array_equal(res, repr_func_default):
                 return None
         elif res == repr_func_default:
             return None
@@ -651,7 +663,7 @@ def _keep_attr(
         return False  # state-gated enum with no valid member: nothing to set
     if param in func_defaults:
         if v == func_defaults[param] and v != attr_defaults.get(k, v):
-            logger.warning(
+            logger.debug(
                 f"Stripping attr {k!r} ({param!r}) on {node.bl_idname}: source "
                 f"value {v!r} equals procfunc default but differs from bpy "
                 f"default {attr_defaults[k]!r}"
@@ -716,8 +728,7 @@ def parse_standard_node(
 
     # normalize the data_type spelling to the canonical NodeDataType
     if "data_type" in attrs:
-        canonical = bpy_node_info.datatype_from_bpy_str(attrs["data_type"])
-        attrs["data_type"] = canonical if USE_DTYPE_ENUM else canonical.value
+        attrs["data_type"] = bpy_node_info.datatype_from_bpy_str(attrs["data_type"])
 
     inputs = _create_inputs(node_tree, node, memo, func_defaults=func_defaults)
     arg_names_map = func_spec["arg_names_map"]
@@ -1309,10 +1320,6 @@ def parse_geo_modifier(
                 pf.nodes.to_objects_multi,
                 args=(geo_output_getattrs, attribute_output_getattrs),
                 kwargs={},
-            )
-        case _:
-            raise ValueError(
-                f"Expected 1 geo output and 0 or 1 attribute output, found {len(geo_output_keys)} and {len(attribute_output_keys)}"
             )
 
 

@@ -240,13 +240,15 @@ def _compare(
     """
 
     if data_type is None:
+        # FLOAT_VECTOR before RGBA: ambiguous tuple operands resolve to the
+        # element-wise vector compare (matching the convention in geo.py)
         data_type = RuntimeResolveDataType(
             [
                 NodeDataType.INT,
                 NodeDataType.FLOAT,
+                NodeDataType.FLOAT_VECTOR,
                 NodeDataType.RGBA,
                 NodeDataType.STRING,
-                NodeDataType.FLOAT_VECTOR,
             ],
             ["A", "B"],
         )

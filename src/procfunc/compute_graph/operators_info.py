@@ -16,8 +16,6 @@ class OperatorType(Enum):
     GREATER_THAN_EQUAL = "ge"
     EQUAL = "eq"
     NOT_EQUAL = "ne"
-    AND = "and"
-    OR = "or"
     NOT = "invert"
     LSHIFT = "lshift"
     RSHIFT = "rshift"

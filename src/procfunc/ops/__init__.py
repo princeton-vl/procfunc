@@ -31,5 +31,6 @@ __all__ = [
     "object",
     "attr",
     "curve",
+    "primitives",
     "uv",
 ]

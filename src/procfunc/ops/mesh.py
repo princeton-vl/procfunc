@@ -54,8 +54,12 @@ def transform(
     if location is not None:
         obj.location += t.Vector(location)
     if rotation_euler is not None:
+        if not isinstance(rotation_euler, t.Euler):
+            rotation_euler = t.Euler(rotation_euler)
         obj.rotation_mode = "QUATERNION"
-        obj.rotation_quaternion = obj.rotation_quaternion @ t.Quaternion(rotation_euler)
+        obj.rotation_quaternion = (
+            obj.rotation_quaternion @ rotation_euler.to_quaternion()
+        )
     if scale is not None:
         obj.scale = obj.scale * t.Vector(scale)
 

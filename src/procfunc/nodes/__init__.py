@@ -61,7 +61,6 @@ __all__ = [
     "to_curve_object",
     "to_environment",
     "to_light",
-    "to_material",
     "to_mesh_object",
     "to_mesh_object_with_attributes",
     "to_objects_multi",

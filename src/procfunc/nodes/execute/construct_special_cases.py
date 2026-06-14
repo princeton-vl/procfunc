@@ -20,6 +20,7 @@ def special_case_color_ramp(
     color_ramp = bl_node.color_ramp  # colorramp actually starts with 2 elements already
     color_ramp.interpolation = attrs.pop("interpolation", "LINEAR")
     color_ramp.color_mode = attrs.pop("color_mode", "RGB")
+    color_ramp.hue_interpolation = attrs.pop("hue_interpolation", "NEAR")
 
     points = attrs.pop("points", None)
     if points is None:
@@ -114,6 +115,45 @@ def special_case_vector_curves(
     if curves is None:
         return
     _apply_curves(bl_node, curves)
+
+
+def special_case_compositor_vector_curves(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    inputs: dict[str, Any],
+    kwargs: dict[str, Any],
+    **_kwargs,
+):
+    """CompositorNodeCurveVec has no Fac socket and always applies the curve
+    fully, so `fac` is accepted only at its no-op value 1.0."""
+
+    fac = inputs.get("Fac", 1.0)
+    wired = isinstance(fac, (bpy.types.NodeSocket, bpy.types.NodeInternal))
+    if wired or fac != 1.0:
+        raise ValueError(
+            f"CompositorNodeCurveVec has no Fac socket; fac={fac!r} cannot be "
+            "honored (only the no-op 1.0). Synthesizing a mix node would be "
+            "needed to support this."
+        )
+    inputs.pop("Fac", None)
+    kwargs.pop("Fac", None)
+    special_case_vector_curves(bl_node=bl_node, attrs=attrs)
+
+
+def special_case_texture_mix_rgb(
+    attrs: dict[str, Any],
+    **_kwargs,
+):
+    """TextureNodeMixRGB has no clamp_factor attr and unconditionally clamps
+    its factor to [0, 1] (verified via Texture.evaluate: factor 2.0 / -1.0
+    behave as 1.0 / 0.0), so only clamp_factor=True is representable."""
+
+    if not attrs.pop("clamp_factor", True):
+        raise ValueError(
+            "TextureNodeMixRGB always clamps its factor; clamp_factor=False "
+            "cannot be honored. Synthesizing extra nodes would be needed to "
+            "support this."
+        )
 
 
 def special_case_file_output(
@@ -278,7 +318,8 @@ NODE_SPECIAL_CASES = {
     "ShaderNodeRGBCurve": special_case_rgb_curves,
     "CompositorNodeCurveRGB": special_case_rgb_curves,
     "ShaderNodeVectorCurve": special_case_vector_curves,
-    "CompositorNodeCurveVec": special_case_vector_curves,
+    "CompositorNodeCurveVec": special_case_compositor_vector_curves,
+    "TextureNodeMixRGB": special_case_texture_mix_rgb,
     "CompositorNodeOutputFile": special_case_file_output,
     nt.INPUT_NODE_TYPE: special_case_input,
     "GeometryNodeCaptureAttribute": special_case_capture_attribute,

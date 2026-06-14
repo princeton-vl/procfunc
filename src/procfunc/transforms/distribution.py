@@ -65,7 +65,7 @@ def as_distribution(
     match node:
         case cg.FunctionCallNode(func=x) if x in random_distrib_funcs:
             return x
-        case cg.MethodCallNode(method_name=method, args=(arg_0,)) if (
+        case cg.MethodCallNode(method_name=method, args=(arg_0, *_)) if (
             method in FUNCNAME_TO_DISTRIB
             and isinstance(arg_0, cg.Node)
             and arg_0.metadata.get("known_value_type") is np.random.Generator
@@ -73,6 +73,16 @@ def as_distribution(
             return FUNCNAME_TO_DISTRIB[method]
         case _:
             return None
+
+
+def _distrib_param(node: cg.Node, name: str, position: int, default: float):
+    """Fetch a distribution parameter from a traced call, whether it was
+    passed by keyword, positionally (args[0] is the generator), or omitted."""
+    if name in node.kwargs:
+        return node.kwargs[name]
+    if position < len(node.args):
+        return node.args[position]
+    return default
 
 
 def distribution_to_mode(
@@ -86,11 +96,8 @@ def distribution_to_mode(
     def map_to_mode(node: cg.Node) -> cg.Node | float:
         match as_distribution(node):
             case NumpyRandomDistrib.UNIFORM:
-                assert len(node.args) == 1 or len(node.kwargs) == 0, (
-                    "implementation may be errored for mix of args and kwargs"
-                )
-                low = node.kwargs.get("low", node.args[1])
-                high = node.kwargs.get("high", node.args[2])
+                low = _distrib_param(node, "low", 1, 0.0)
+                high = _distrib_param(node, "high", 2, 1.0)
                 if isinstance(low, cg.Node) or isinstance(high, cg.Node):
                     logger.warning(
                         f"Uniform mode not implemented for {node=} with non-constant {low=} {high=}"
@@ -98,11 +105,7 @@ def distribution_to_mode(
                     return node
                 return (low + high) / 2
             case NumpyRandomDistrib.NORMAL:
-                assert len(node.args) == 1 or len(node.kwargs) == 0, (
-                    "implementation may be errored for mix of args and kwargs"
-                )
-                mean = node.kwargs.get("mean", node.args[1])
-                _std = node.kwargs.get("std", node.args[2])
+                mean = _distrib_param(node, "loc", 1, 0.0)
                 if isinstance(mean, cg.Node):
                     logger.warning(
                         f"Normal mode not implemented for {node=} with non-constant {mean=}"
@@ -127,14 +130,11 @@ def map_to_outlier(
 
     match as_distribution(node):
         case NumpyRandomDistrib.UNIFORM:
-            assert len(node.args) == 1 or len(node.kwargs) == 0, (
-                "cant handle arg/kwarg mix"
-            )
-            low = node.kwargs.get("low", node.args[1])
-            high = node.kwargs.get("high", node.args[2])
+            low = _distrib_param(node, "low", 1, 0.0)
+            high = _distrib_param(node, "high", 2, 1.0)
             if isinstance(low, cg.Node) or isinstance(high, cg.Node):
                 logger.warning(
-                    f"outlier not implemented for {node=} with {min=} {max=}"
+                    f"outlier not implemented for {node=} with {low=} {high=}"
                 )
                 return node
             rng = node.args[0]
@@ -143,16 +143,15 @@ def map_to_outlier(
                 func=pf.random.uniform_tails,
                 args=(rng,),
                 kwargs=dict(low=low, high=high, tail_pct=pct),
-                varname=varname,
+                metadata={"varname": varname} if varname else None,
             )
         case NumpyRandomDistrib.NORMAL:
-            assert len(node.args) == 1 or len(node.kwargs) == 0, (
-                "cant handle arg/kwarg mix"
-            )
-            mean = node.kwargs.get("mean", node.args[1])
-            std = node.kwargs.get("std", node.args[2])
-            if isinstance(mean, cg.Node):
-                logger.warning(f"outlier not implemented for {node=} with {mean=}")
+            mean = _distrib_param(node, "loc", 1, 0.0)
+            std = _distrib_param(node, "scale", 2, 1.0)
+            if isinstance(mean, cg.Node) or isinstance(std, cg.Node):
+                logger.warning(
+                    f"outlier not implemented for {node=} with {mean=} {std=}"
+                )
                 return node
             rng = node.args[0]
             return cg.FunctionCallNode(
@@ -163,7 +162,7 @@ def map_to_outlier(
                     low=mean - normal_clip_std * std,
                     high=mean + normal_clip_std * std,
                 ),
-                varname=varname,
+                metadata={"varname": varname} if varname else None,
             )
         case func if func in pf.random.random_distrib_funcs:
             logger.warning(

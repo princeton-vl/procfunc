@@ -1,3 +1,4 @@
+import keyword
 import logging
 import re
 from collections import Counter, defaultdict
@@ -50,6 +51,9 @@ def bpy_name_to_pythonid(name: str) -> str:
 
     name = "_".join(parts)
 
+    if keyword.iskeyword(name):
+        name = name + "_"
+
     return name
 
 
@@ -64,7 +68,7 @@ def is_valid_snake_identifier(name: str) -> bool:
         return False
     if name != name.lower():
         return False  # this is opinionated
-    if not name.isidentifier():
+    if not name.isidentifier() or keyword.iskeyword(name):
         return False
     return True
 

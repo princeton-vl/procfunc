@@ -4,8 +4,6 @@ import logging
 from pathlib import Path
 from typing import Any, Generic, TypeVar, Union
 
-import bpy
-
 from procfunc import compute_graph as cg
 from procfunc import types as pt
 from procfunc.compute_graph.operators_info import (
@@ -122,13 +120,6 @@ class ProcNode(Generic[T]):
 
     def item(self) -> cg.Node:
         return object.__getattribute__(self, "_node")
-
-    def __post_init__(self):
-        for k, v in self.attrs.items():
-            if isinstance(v, (bpy.types.NodeInternal, ProcNode)):
-                raise ValueError(
-                    f"Node {self.type} has a {k} attribute that is a Node, which is not allowed. Must specify a constant."
-                )
 
     def _output_socket(self, name: str) -> "ProcNode":
         node = cg.GetAttributeNode(source=self.item(), attribute_name=name)

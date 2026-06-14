@@ -324,7 +324,7 @@ def principled_bsdf(
     roughness: nt.SocketOrVal[float] = 0.5,
     ior: nt.SocketOrVal[float] = 1.5,
     alpha: nt.SocketOrVal[float] = 1.0,
-    normal: nt.SocketOrVal[pt.Vector] = (0.0, 0.0, 0.0),
+    normal: nt.SocketOrVal[pt.Vector] | None = None,
     # subsurface scattering
     subsurface_method: TSubsurfaceMethod = "RANDOM_WALK",
     subsurface_weight: nt.SocketOrVal[float] = 0.0,
@@ -338,13 +338,13 @@ def principled_bsdf(
     specular_tint: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     anisotropic: nt.SocketOrVal[float] = 0.0,
     anisotropic_rotation: nt.SocketOrVal[float] = 0.0,
-    tangent: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    tangent: nt.SocketOrVal[pt.Vector] | None = None,
     transmission_weight: nt.SocketOrVal[float] = 0.0,
     coat_weight: nt.SocketOrVal[float] = 0.0,
     coat_roughness: nt.SocketOrVal[float] = 0.03,
     coat_ior: nt.SocketOrVal[float] = 1.5,
     coat_tint: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    coat_normal: nt.SocketOrVal[pt.Vector] = (0.0, 0.0, 0.0),
+    coat_normal: nt.SocketOrVal[pt.Vector] | None = None,
     sheen_weight: nt.SocketOrVal[float] = 0.0,
     sheen_roughness: nt.SocketOrVal[float] = 0.5,
     sheen_tint: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
@@ -364,7 +364,7 @@ def principled_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/principled.html
     """
 
-    if normal is not None:
+    if normal is not None or coat_normal is not None:
         raise_shader_normal_error("principled_bsdf", logger=logger)
 
     inputs = {
@@ -380,13 +380,11 @@ def principled_bsdf(
         "Specular Tint": specular_tint,
         "Anisotropic": anisotropic,
         "Anisotropic Rotation": anisotropic_rotation,
-        "Tangent": tangent,
         "Transmission Weight": transmission_weight,
         "Coat Weight": coat_weight,
         "Coat Roughness": coat_roughness,
         "Coat IOR": coat_ior,
         "Coat Tint": coat_tint,
-        "Coat Normal": coat_normal,
         "Sheen Weight": sheen_weight,
         "Sheen Roughness": sheen_roughness,
         "Sheen Tint": sheen_tint,
@@ -398,6 +396,10 @@ def principled_bsdf(
 
     if normal is not None:
         inputs["Normal"] = normal
+    if coat_normal is not None:
+        inputs["Coat Normal"] = coat_normal
+    if tangent is not None:
+        inputs["Tangent"] = tangent
     if subsurface_ior is not None:
         assert subsurface_method == "RANDOM_WALK_SKIN"
         inputs["Subsurface IOR"] = subsurface_ior

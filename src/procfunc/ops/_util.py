@@ -249,7 +249,7 @@ def modify(
     for key, value in setattr_keyvals.items():
         if isinstance(value, t.Object):
             objs.append(value)
-        if isinstance(value, t.Asset):
+        if isinstance(value, (t.Asset, t.Collection)):
             value = value.item()
 
         if hasattr(modifier, key):

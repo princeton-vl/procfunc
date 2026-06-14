@@ -59,8 +59,10 @@ def clip_gaussian(
     high: float | None = None,
     max_tries: int = 20,
 ) -> float:
-    low = low or mean - 3 * std
-    high = high or mean + 3 * std
+    if low is None:
+        low = mean - 3 * std
+    if high is None:
+        high = mean + 3 * std
 
     for _ in range(max_tries):
         val = rng.normal(mean, std)

@@ -51,7 +51,7 @@ def _tuple_unflatten(objs: list[Any], spec: Any) -> tuple:
 
 
 def _list_flatten(obj: list) -> tuple[list[Any], Any]:
-    return obj, None
+    return list(obj), None
 
 
 def _list_unflatten(objs: list[Any], spec: Any) -> list:
@@ -59,11 +59,11 @@ def _list_unflatten(objs: list[Any], spec: Any) -> list:
 
 
 def _dict_flatten(obj: dict) -> tuple[list[Any], Any]:
-    return list(obj.values()), obj.keys()
+    return list(obj.values()), list(obj.keys())
 
 
 def _dict_unflatten(objs: list[Any], spec: Any) -> dict:
-    return dict(zip(spec, objs))
+    return dict(zip(spec.aux, objs, strict=True))
 
 
 def _namedtuple_flatten(obj: tuple) -> tuple[list[Any], Any]:
@@ -80,20 +80,20 @@ def _namedtuple_names(obj: tuple) -> list[str]:
 
 register_pytree_container(
     list,
-    flatten_func=lambda x: (x, None),
-    unflatten_func=lambda x, spec: x,
+    flatten_func=_list_flatten,
+    unflatten_func=_list_unflatten,
     names_func=lambda x: [str(i) for i in range(len(x))],
 )
 register_pytree_container(
     dict,
-    flatten_func=lambda x: (list(x.values()), x.keys()),
-    unflatten_func=lambda x, spec: dict(zip(spec.aux, x)),
+    flatten_func=_dict_flatten,
+    unflatten_func=_dict_unflatten,
     names_func=lambda x: list(x.keys()),
 )
 register_pytree_container(
     tuple,
-    flatten_func=lambda x: (list(x), None),
-    unflatten_func=lambda x, spec: tuple(x),
+    flatten_func=_tuple_flatten,
+    unflatten_func=_tuple_unflatten,
     names_func=lambda x: [str(i) for i in range(len(x))],
 )
 

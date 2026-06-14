@@ -327,6 +327,10 @@ def assign_default_value(
             target_socket.default_value = t.Vector(input_val)
         case bni.NodeDataType.FLOAT:
             target_socket.default_value = float(input_val)
+        case bni.NodeDataType.FLOAT_MATRIX:
+            # matrix values travel as numpy arrays in the compute graph;
+            # coerce back to mathutils.Matrix for bpy
+            target_socket.default_value = t.Matrix(input_val)
         case (
             bni.NodeDataType.OBJECT
             | bni.NodeDataType.MATERIAL

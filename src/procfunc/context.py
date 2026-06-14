@@ -15,19 +15,19 @@ class ProcfuncContext:
 
     warn_mode_avoid_normal_bump: Literal["ignore", "warn", "throw"]
     """
-    Set to 'throw' for infinigen best practices. Using a normal map / bump map / BSDF vector input _can_ be useful,
+    Set to 'throw' for strict usage. Using a normal map / bump map / BSDF vector input _can_ be useful,
     but its always better to do it via the Displacement output of the shader (so that it at least can also be done as displacement)
     """
 
     warn_mode_avoid_implicit_vector: Literal["ignore", "warn", "throw"]
     """
-    Set to 'throw' for default infinigen usage - we force the user to specify exactly what vector to sample
+    Set to 'throw' to force the user to specify exactly what vector to sample.
     This prevents materials from being incorrect when on a moving object, or ignoring uv coordinates
     """
 
     warn_mode_avoid_io_nodes: Literal["ignore", "warn", "throw"]
     """
-    Set to 'throw' for infinigen, prevents floating Value Vector Color nodes, or strange output nodes like AOV in shader
+    Set to 'throw' to prevent floating Value Vector Color nodes, or strange output nodes like AOV in shader
     Intent is to force nodegroups to be more functional - all inputs and outputs go through nodegroup interface
     """
 
@@ -109,7 +109,8 @@ def override_globals(
         for key, value in overrides.items():
             setattr(globals, key, value)
 
-    yield
-
-    for key, value in asdict(orig).items():
-        setattr(globals, key, value)
+    try:
+        yield
+    finally:
+        for key, value in asdict(orig).items():
+            setattr(globals, key, value)

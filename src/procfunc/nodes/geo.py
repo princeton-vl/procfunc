@@ -2335,22 +2335,22 @@ class MeshBooleanResult(NamedTuple):
 
 
 def mesh_boolean(
-    mesh_1: nt.ProcNode[nt.Geometry] | None,
-    mesh_2: nt.ProcNode[nt.Geometry] | None,
+    a: nt.ProcNode[nt.Geometry] | None,
+    b: nt.ProcNode[nt.Geometry] | None,
     self_intersection: nt.SocketOrVal[bool] = False,
     hole_tolerant: nt.SocketOrVal[bool] = False,
     solver: Literal["EXACT", "FLOAT"] = "FLOAT",
 ) -> MeshBooleanResult:
     """
-    Uses a MeshBoolean Geometry Node in DIFFERENCE mode (mesh_1 minus mesh_2).
+    Uses a MeshBoolean Geometry Node in DIFFERENCE mode (a minus b).
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/operations/mesh_boolean.html
     """
     node = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshBoolean",
         inputs={
-            "Mesh 1": mesh_1,
-            "Mesh 2": mesh_2,
+            "Mesh 1": a,
+            "Mesh 2": b,
             "Self Intersection": self_intersection,
             "Hole Tolerant": hole_tolerant,
         },

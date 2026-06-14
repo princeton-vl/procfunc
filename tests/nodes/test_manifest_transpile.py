@@ -182,8 +182,11 @@ def test_manifest_row_transpiles(row):
                 row.bpy_mode_args.items(), key=lambda kv: kv[0] != "data_type"
             )
             for attr, val in ordered:
-                if hasattr(node, attr):
-                    setattr(node, attr, val)
+                assert hasattr(node, attr), (
+                    f"manifest row {row.name}: bpy_mode_args key {attr!r} does "
+                    f"not exist on {bl_idname}"
+                )
+                setattr(node, attr, val)
 
         if isinstance(row.data_types, list) and row.data_types:
             chosen = _resolve_data_type(node, row.data_types[0])

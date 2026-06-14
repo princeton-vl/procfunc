@@ -1,3 +1,4 @@
+import copy
 import logging
 from collections import defaultdict
 from typing import Any
@@ -34,6 +35,16 @@ _REDUCE_TYPES = (
     t.Color,
     np.ndarray,
 )
+
+# attribute distinguishing what operation a node of each kind performs
+_NODE_TARGET_ATTRS = {
+    cg.FunctionCallNode: "func",
+    cg.MethodCallNode: "method_name",
+    cg.GetAttributeNode: "attribute_name",
+    cg.ProceduralNode: "node_type",
+    cg.SubgraphCallNode: "subgraph",
+    cg.InputPlaceholderNode: "input_name",
+}
 
 
 def _minmax_arraylike(
@@ -95,11 +106,26 @@ def infer_hypercube_differing_node(
         )
         return todo()
 
-    targets = {node.target for node in nodes}
-    if len(targets) > 1:
-        logger.debug(
-            f"{infer_hypercube_differing_node=} exiting for mismatching {targets=}"
-        )
+    if isinstance(nodes[0], cg.ConstantNode):
+        res = _infer_hypercube_differing(rng_node, "value", [n.value for n in nodes])
+        if not isinstance(res, cg.Node):
+            res = nodes[0]
+        memo[id(nodes[0])] = res
+        return res
+
+    target_attr = _NODE_TARGET_ATTRS.get(type(nodes[0]))
+    if target_attr is not None:
+        targets = {getattr(node, target_attr) for node in nodes}
+        if len(targets) > 1:
+            logger.debug(
+                f"{infer_hypercube_differing_node=} exiting for mismatching {targets=}"
+            )
+            return todo()
+
+    if isinstance(nodes[0], cg.ProceduralNode) and any(
+        node.attrs != nodes[0].attrs for node in nodes[1:]
+    ):
+        logger.debug(f"{infer_hypercube_differing_node=} exiting for differing attrs")
         return todo()
 
     nargs = set(len(node.args) for node in nodes)
@@ -127,7 +153,10 @@ def infer_hypercube_differing_node(
         for k in nodes[0].kwargs.keys()
     }
 
-    res = cg.Node(nodes[0].target, nodes[0].kind, tuple(args), kwargs)
+    res = copy.copy(nodes[0])
+    res.args = tuple(args)
+    res.kwargs = kwargs
+    res.metadata = copy.copy(nodes[0].metadata)
     memo[id(nodes[0])] = res
 
     return res
@@ -140,6 +169,7 @@ def infer_distribution_hypercube(
     memo = {}
 
     rng_node = cg.InputPlaceholderNode(
+        name="rng",
         default_value=None,
         metadata={
             "varname": "rng",
@@ -278,7 +308,7 @@ def _infer_distribution_from_callnodes(
         {k: v for k, v in new_inputs.items() if isinstance(v, cg.InputPlaceholderNode)}
     )
 
-    if len(placeholders) == len(new_inputs):
+    if len(placeholders) == len(new_inputs) + 1:
         return None
 
     graph = cg.ComputeGraph(
