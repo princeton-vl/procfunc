@@ -1,4 +1,4 @@
-"""Tests for operator dispatch added to NODE_OPERATOR_TABLE / construct_nodes:
+"""Tests for operator dispatch added to NODE_OPERATOR_TABLE / construct_operator:
 unary minus (`-x`), mixed `vector * scalar` -> VectorMath SCALE, and RGBA
 `+` `-` `*` -> Mix with the matching blend_type."""
 
@@ -10,7 +10,7 @@ from conftest import realize as _realize
 from procfunc import compute_graph as cg
 from procfunc.nodes import bpy_node_info as bni
 from procfunc.nodes.bpy_node_info import NodeGroupType
-from procfunc.nodes.execute import construct_nodes
+from procfunc.nodes.execute import construct_operator
 
 
 def _set_position(offset):
@@ -116,10 +116,12 @@ def test_permuted_operand_match_requires_commutative_operator():
     operands = [bni.NodeDataType.FLOAT, bni.NodeDataType.FLOAT_VECTOR]
     row = (bni.NodeDataType.FLOAT_VECTOR, bni.NodeDataType.FLOAT)
 
-    permutation = construct_nodes._match_operand_permutation(
+    permutation = construct_operator._match_operand_permutation(
         operands, row, cg.OperatorType.MUL
     )
     assert permutation == [1, 0]
 
     with pytest.raises(ValueError, match="not commutative"):
-        construct_nodes._match_operand_permutation(operands, row, cg.OperatorType.DIV)
+        construct_operator._match_operand_permutation(
+            operands, row, cg.OperatorType.DIV
+        )

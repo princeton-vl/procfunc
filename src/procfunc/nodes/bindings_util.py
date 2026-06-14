@@ -150,7 +150,7 @@ CONTEXTUAL_NODE_MAPPING = [
     # Compare: geometry uses FunctionNodeCompare (full data_type support incl.
     # INT); other contexts reuse the Math node. LESS_THAN / GREATER_THAN map
     # directly to a Math operation here, while eq/ne/le/ge are lowered earlier to
-    # a Math composition (see _lower_compare_outside_geometry in construct_nodes),
+    # a Math composition (see _lower_compare_outside_geometry in construct_operator),
     # so this entry only ever realizes the LESS_THAN / GREATER_THAN operations.
     # The A/B -> Value socket remap matches the Math node's two "Value" inputs.
     # These entries precede the MATH ones so that transpiling a shared Math node

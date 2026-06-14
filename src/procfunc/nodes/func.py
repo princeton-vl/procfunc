@@ -232,7 +232,7 @@ def _compare(
     trees (full data_type support incl. INT) and Math nodes elsewhere. Outside
     geometry, LESS_THAN / GREATER_THAN map to a single Math node, while
     EQUAL / NOT_EQUAL / LESS_EQUAL / GREATER_EQUAL lower to a small Math
-    composition (see _lower_compare_outside_geometry). The `data_type` option and
+    composition (see construct_operator._lower_compare_outside_geometry). The `data_type` option and
     non-float operands remain geometry-only. `epsilon` defaults to Blender's own
     Compare node default (0.001) and only applies to EQUAL / NOT_EQUAL.
 

@@ -12,18 +12,13 @@ Public API
 
    top_level
    compute_graph
-   control
-   context
-   color
    nodes
    ops
-   random
    tracer
    transforms
    transpiler
    codegen
    types
-   util
    cli
 
 Index

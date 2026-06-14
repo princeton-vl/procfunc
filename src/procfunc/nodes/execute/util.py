@@ -47,7 +47,7 @@ def _float_math_defs() -> list[NodeOperatorResolution]:
         # <=, >=, ==, != dispatch to the contextual Compare node: FunctionNodeCompare
         # in geometry trees, and a Math-node composition elsewhere (ShaderNodeMath et
         # al. have no eq/ne/le/ge operation, but COMPARE/GREATER_THAN/LESS_THAN express
-        # them exactly - see _lower_compare_outside_geometry in construct_nodes.py).
+        # them exactly - see _lower_compare_outside_geometry in construct_operator.py).
         NodeOperatorResolution(
             func.less_equal, bni.NodeDataType.FLOAT, cg.OperatorType.LESS_THAN_EQUAL
         ),

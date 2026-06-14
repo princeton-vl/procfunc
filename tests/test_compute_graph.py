@@ -1,5 +1,8 @@
+import inspect
+
 import procfunc as pf
 from procfunc import compute_graph as cg
+from procfunc.compute_graph import node as node_mod
 from procfunc.util import pytree
 
 
@@ -74,3 +77,12 @@ def test_nodes_identity_equality_and_hashable():
     q = cg.ProceduralNode(node_type="ShaderNodeValue", attrs={}, kwargs={})
     assert p != q
     assert len({p, q}) == 2
+
+
+def test_all_node_classes_identity_hashable():
+    """The bpy construction cache keys by node object; an eq=True dataclass
+    node (hash=None) or structural __eq__/__hash__ would break it."""
+    for name, cls in inspect.getmembers(node_mod, inspect.isclass):
+        if issubclass(cls, cg.Node):
+            assert cls.__hash__ is object.__hash__, name
+            assert cls.__eq__ is object.__eq__, name
