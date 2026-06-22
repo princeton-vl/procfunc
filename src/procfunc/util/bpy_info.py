@@ -124,22 +124,26 @@ NODEGROUP_TYPE_TO_INPUT_NODE = {
 }
 
 
+# Blender datablock names are capped at 63 chars; reserve N hex chars + 1 separator.
+BPY_NAME_CAP = 63
+NOCOLLIDE_HEX_LEN = 8
+NOCOLLIDE_PREFIX_LEN = BPY_NAME_CAP - 1 - NOCOLLIDE_HEX_LEN
+
+
 def bpy_nocollide_data_name(
     x: Any,
     bpy_data: bpy.types.bpy_prop_collection,
-    retries: int = 30,
+    retries: int = 4,
 ) -> str:
-    name = uuid.uuid4().hex[:12]
-    if name not in bpy_data:
-        return name
+    base = x if isinstance(x, str) else getattr(x, "name", None)
+    prefix = base[:NOCOLLIDE_PREFIX_LEN] if base else ""
 
-    for i in range(retries):
-        newname = f"{name}_{len(bpy_data) + i}"
-        if newname not in bpy_data:
-            return newname
-    else:
-        logger.warning(
-            f"Could not find a unique name for {x} in {bpy_data} after {retries=}"
-        )
+    for _ in range(retries):
+        hexpart = uuid.uuid4().hex[:NOCOLLIDE_HEX_LEN]
+        name = f"{prefix}_{hexpart}" if prefix else hexpart
+        if name not in bpy_data:
+            return name
 
-    return newname
+    raise RuntimeError(
+        f"Could not find a unique name for {x} in {bpy_data} after {retries=}"
+    )

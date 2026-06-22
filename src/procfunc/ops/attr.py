@@ -114,6 +114,7 @@ def write_attribute(
         "POINT": len(obj.data.vertices),
         "EDGE": len(obj.data.edges),
         "FACE": len(obj.data.polygons),
+        "CORNER": len(obj.data.loops),
     }
 
     if isinstance(data, (bool, int, float)):
@@ -123,9 +124,11 @@ def write_attribute(
     data_type = bpy_info.PYTYPE_TO_DATATYPE.get(data.dtype)
     if data_type is None:
         raise ValueError(
-            f"{write_attribute.__name__} does not currently support {data.dtype}, "
-            f"understood dtype to bpy mappings are {bpy_info.PYTYPE_TO_DATATYPE.keys()}. "
-            "Please contact the developers if you believe this should be added."
+            f"{write_attribute.__name__} cannot write array of dtype {data.dtype}: "
+            "Blender has no matching attribute type (e.g. there is no 64-bit integer "
+            "attribute, INT is 32-bit). Cast explicitly before providing the array, "
+            "e.g. arr.astype(np.int32), after confirming the values fit the target "
+            f"range. Supported dtypes are {list(bpy_info.PYTYPE_TO_DATATYPE.keys())}."
         )
 
     data_type = _promote_data_type_for_shape(data_type, data.shape)
