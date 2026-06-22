@@ -566,6 +566,7 @@ def voronoi_smooth_f1(
     lacunarity: nt.SocketOrVal[float] = 2.0,
     smoothness: nt.SocketOrVal[float] = 0.5,
     randomness: nt.SocketOrVal[float] = 1.0,
+    exponent: nt.SocketOrVal[float] = 0.0,
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
@@ -590,6 +591,12 @@ def voronoi_smooth_f1(
         raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
     else:
         inputs["Vector"] = vector
+
+    if exponent != 0.0:
+        assert distance == "MINKOWSKI", (
+            f"exponent is only supported for Minkowski distance, got {distance=}"
+        )
+        inputs["Exponent"] = exponent
 
     if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
