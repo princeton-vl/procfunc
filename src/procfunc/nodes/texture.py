@@ -448,7 +448,7 @@ def voronoi(
 ) -> VoronoiResult:
     """
 
-    Uses a TexVoronoi Shader Node.
+    Uses a TexVoronoi Shader Node with feature='F1' or 'F2'.
 
     Args:
         exponent: Only supported for Minkowski distance.
@@ -522,6 +522,7 @@ def voronoi_distance(
     voronoi_dimensions: TNoiseDimensions = "3D",
     w: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[float]:
+    """Uses a TexVoronoi Shader Node with feature='DISTANCE_TO_EDGE'."""
     inputs = {
         "Scale": scale,
         "Detail": detail,
@@ -572,6 +573,7 @@ def voronoi_smooth_f1(
     voronoi_dimensions: TNoiseDimensions = "3D",
     w: nt.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
+    """Uses a TexVoronoi Shader Node with feature='SMOOTH_F1'."""
     inputs = {
         "Scale": scale,
         "Detail": detail,
@@ -631,6 +633,7 @@ def voronoi_n_spheres_distance(
     randomness: nt.SocketOrVal[float] = 1.0,
     normalize: bool = False,
 ) -> nt.ProcNode[float]:
+    """Uses a TexVoronoi Shader Node with feature='N_SPHERE_RADIUS'."""
     if vector is None:
         raise_explicit_noise_vector_error("voronoi_spheres_distance", logger=logger)
 

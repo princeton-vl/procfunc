@@ -92,6 +92,7 @@ def boolean_or(
     a: nt.SocketOrVal[bool],
     b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
+    """Uses a BooleanMath Function Node with operation='OR'."""
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
         inputs={("Boolean", 0): a, ("Boolean", 1): b},
@@ -103,6 +104,7 @@ def boolean_and(
     a: nt.SocketOrVal[bool],
     b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
+    """Uses a BooleanMath Function Node with operation='AND'."""
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
         inputs={("Boolean", 0): a, ("Boolean", 1): b},
@@ -114,6 +116,7 @@ def boolean_xor(
     a: nt.SocketOrVal[bool],
     b: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
+    """Uses a BooleanMath Function Node with operation='XOR'."""
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeBooleanMath",
         inputs={("Boolean", 0): a, ("Boolean", 1): b},
@@ -125,7 +128,7 @@ def boolean_not(
     a: nt.SocketOrVal[bool],
 ) -> nt.ProcNode[bool]:
     """
-    Uses a BooleanNot Function Node.
+    Uses a BooleanMath Function Node with operation='NOT'.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/math/boolean_math.html
     """
@@ -275,6 +278,7 @@ def less_than(
     a: TCompareNumeric,
     b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with operation='LESS_THAN'."""
     return _compare(a, b, operation="LESS_THAN")
 
 
@@ -282,6 +286,7 @@ def less_equal(
     a: TCompareNumeric,
     b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with operation='LESS_EQUAL'."""
     return _compare(a, b, operation="LESS_EQUAL")
 
 
@@ -289,6 +294,7 @@ def greater_than(
     a: TCompareNumeric,
     b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with operation='GREATER_THAN'."""
     return _compare(a, b, operation="GREATER_THAN")
 
 
@@ -296,6 +302,7 @@ def greater_equal(
     a: TCompareNumeric,
     b: TCompareNumeric,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with operation='GREATER_EQUAL'."""
     return _compare(a, b, operation="GREATER_EQUAL")
 
 
@@ -311,6 +318,7 @@ def equal(
     b: TCompareEqual,
     epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with operation='EQUAL'."""
     return _compare(a, b, epsilon, operation="EQUAL")
 
 
@@ -319,6 +327,7 @@ def not_equal(
     b: TCompareEqual,
     epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with operation='NOT_EQUAL'."""
     return _compare(a, b, epsilon, operation="NOT_EQUAL")
 
 
@@ -332,6 +341,7 @@ def vector_elementwise_less_than(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='VECTOR', mode='ELEMENT', operation='LESS_THAN'."""
     return _compare(a, b, operation="LESS_THAN", data_type=NodeDataType.FLOAT_VECTOR)
 
 
@@ -339,6 +349,7 @@ def vector_elementwise_less_equal(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='VECTOR', mode='ELEMENT', operation='LESS_EQUAL'."""
     return _compare(a, b, operation="LESS_EQUAL", data_type=NodeDataType.FLOAT_VECTOR)
 
 
@@ -346,6 +357,7 @@ def vector_elementwise_greater_than(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='VECTOR', mode='ELEMENT', operation='GREATER_THAN'."""
     return _compare(a, b, operation="GREATER_THAN", data_type=NodeDataType.FLOAT_VECTOR)
 
 
@@ -353,6 +365,7 @@ def vector_elementwise_greater_equal(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='VECTOR', mode='ELEMENT', operation='GREATER_EQUAL'."""
     return _compare(
         a, b, operation="GREATER_EQUAL", data_type=NodeDataType.FLOAT_VECTOR
     )
@@ -363,6 +376,7 @@ def vector_elementwise_equal(
     b: nt.SocketOrVal[pt.Vector],
     epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='VECTOR', mode='ELEMENT', operation='EQUAL'."""
     return _compare(
         a, b, epsilon, operation="EQUAL", data_type=NodeDataType.FLOAT_VECTOR
     )
@@ -373,6 +387,7 @@ def vector_elementwise_not_equal(
     b: nt.SocketOrVal[pt.Vector],
     epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='VECTOR', mode='ELEMENT', operation='NOT_EQUAL'."""
     return _compare(
         a, b, epsilon, operation="NOT_EQUAL", data_type=NodeDataType.FLOAT_VECTOR
     )
@@ -383,6 +398,7 @@ def color_equal(
     b: nt.SocketOrVal[pt.Color],
     epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='RGBA', operation='EQUAL'."""
     return _compare(a, b, epsilon, operation="EQUAL", data_type=NodeDataType.RGBA)
 
 
@@ -391,6 +407,7 @@ def color_not_equal(
     b: nt.SocketOrVal[pt.Color],
     epsilon: nt.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='RGBA', operation='NOT_EQUAL'."""
     return _compare(a, b, epsilon, operation="NOT_EQUAL", data_type=NodeDataType.RGBA)
 
 
@@ -398,6 +415,7 @@ def color_brighter(
     a: nt.SocketOrVal[pt.Color],
     b: nt.SocketOrVal[pt.Color],
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='RGBA', operation='BRIGHTER'."""
     return _compare(a, b, operation="BRIGHTER", data_type=NodeDataType.RGBA)
 
 
@@ -405,6 +423,7 @@ def color_darker(
     a: nt.SocketOrVal[pt.Color],
     b: nt.SocketOrVal[pt.Color],
 ) -> nt.ProcNode[bool]:
+    """Uses a Compare Function Node with data_type='RGBA', operation='DARKER'."""
     return _compare(a, b, operation="DARKER", data_type=NodeDataType.RGBA)
 
 
@@ -693,7 +712,7 @@ def random_boolean(
     seed: nt.SocketOrVal[int] = 0,
 ) -> nt.ProcNode[bool]:
     """
-    Uses a RandomBoolean Function Node.
+    Uses a RandomValue Function Node with data_type='BOOLEAN'.
     """
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeRandomValue",

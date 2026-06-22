@@ -65,14 +65,17 @@ def _math(
 
 # Basic Math Operations
 def add(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='ADD'."""
     return _math(a, b, operation="ADD")
 
 
 def subtract(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SUBTRACT'."""
     return _math(a, b, operation="SUBTRACT")
 
 
 def multiply(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='MULTIPLY'."""
     return _math(a, b, operation="MULTIPLY")
 
 
@@ -81,63 +84,76 @@ def multiply_add(
     b: nt.SocketOrVal[float],
     addend: nt.SocketOrVal[float],
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='MULTIPLY_ADD'."""
     return _math(a, b, addend, operation="MULTIPLY_ADD")
 
 
 def divide(
     numerator: nt.SocketOrVal[float], denominator: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='DIVIDE'."""
     return _math(numerator, denominator, operation="DIVIDE")
 
 
 def power(
     base: nt.SocketOrVal[float], exponent: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='POWER'."""
     return _math(base, exponent, operation="POWER")
 
 
 def logarithm(
     value: nt.SocketOrVal[float], base: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='LOGARITHM'."""
     return _math(value, base, operation="LOGARITHM")
 
 
 def sqrt(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SQRT'."""
     return _math(value, operation="SQRT")
 
 
 def inverse_sqrt(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='INVERSE_SQRT'."""
     return _math(value, operation="INVERSE_SQRT")
 
 
 def absolute(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='ABSOLUTE'."""
     return _math(value, operation="ABSOLUTE")
 
 
 def exponent(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='EXPONENT'."""
     return _math(value, operation="EXPONENT")
 
 
 # Comparison Operations
 def minimum(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='MINIMUM'."""
     return _math(a, b, operation="MINIMUM")
 
 
 def maximum(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='MAXIMUM'."""
     return _math(a, b, operation="MAXIMUM")
 
 
 def less_than(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='LESS_THAN'."""
     return _math(a, b, operation="LESS_THAN")
 
 
 def greater_than(
     a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='GREATER_THAN'."""
     return _math(a, b, operation="GREATER_THAN")
 
 
 def sign(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SIGN'."""
     return _math(value, operation="SIGN")
 
 
@@ -146,6 +162,7 @@ def compare(
     b: nt.SocketOrVal[float],
     epsilon: nt.SocketOrVal[float] = 0.001,
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='COMPARE'."""
     return _math(a, b, epsilon, operation="COMPARE")
 
 
@@ -154,6 +171,7 @@ def smooth_minimum(
     b: nt.SocketOrVal[float],
     distance: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SMOOTH_MIN'."""
     return _math(a, b, distance, operation="SMOOTH_MIN")
 
 
@@ -162,34 +180,42 @@ def smooth_maximum(
     b: nt.SocketOrVal[float],
     distance: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SMOOTH_MAX'."""
     return _math(a, b, distance, operation="SMOOTH_MAX")
 
 
 def round(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='ROUND'."""
     return _math(value, operation="ROUND")
 
 
 def floor(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='FLOOR'."""
     return _math(value, operation="FLOOR")
 
 
 def ceil(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='CEIL'."""
     return _math(value, operation="CEIL")
 
 
 def truncate(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='TRUNC'."""
     return _math(value, operation="TRUNC")
 
 
 def fraction(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='FRACT'."""
     return _math(value, operation="FRACT")
 
 
 def modulo(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='MODULO'."""
     return _math(a, b, operation="MODULO")
 
 
 def floor_mod(a: nt.SocketOrVal[float], b: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='FLOORED_MODULO'."""
     return _math(a, b, operation="FLOORED_MODULO")
 
 
@@ -198,68 +224,83 @@ def wrap(
     max_val: nt.SocketOrVal[float] = 1.0,
     min_val: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='WRAP'."""
     return _math(value, max_val, min_val, operation="WRAP")
 
 
 def snap(
     value: nt.SocketOrVal[float], increment: nt.SocketOrVal[float] = 1.0
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SNAP'."""
     return _math(value, increment, operation="SNAP")
 
 
 def pingpong(
     value: nt.SocketOrVal[float], scale: nt.SocketOrVal[float] = 1.0
 ) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='PINGPONG'."""
     return _math(value, scale, operation="PINGPONG")
 
 
 # Trigonometric Operations
 def sin(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SINE'."""
     return _math(value, operation="SINE")
 
 
 def cos(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='COSINE'."""
     return _math(value, operation="COSINE")
 
 
 def tan(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='TANGENT'."""
     return _math(value, operation="TANGENT")
 
 
 def asin(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='ARCSINE'."""
     return _math(value, operation="ARCSINE")
 
 
 def acos(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='ARCCOSINE'."""
     return _math(value, operation="ARCCOSINE")
 
 
 def atan(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='ARCTANGENT'."""
     return _math(value, operation="ARCTANGENT")
 
 
 def atan2(y: nt.SocketOrVal[float], x: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='ARCTAN2'."""
     return _math(y, x, operation="ARCTAN2")
 
 
 def sinh(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='SINH'."""
     return _math(value, operation="SINH")
 
 
 def cosh(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='COSH'."""
     return _math(value, operation="COSH")
 
 
 def tanh(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='TANH'."""
     return _math(value, operation="TANH")
 
 
 # Conversion Operations
 def deg_to_rad(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='RADIANS'."""
     return _math(value, operation="RADIANS")
 
 
 def rad_to_deg(value: nt.SocketOrVal[float]) -> nt.ProcNode[float]:
+    """Uses a Math node with operation='DEGREES'."""
     return _math(value, operation="DEGREES")
 
 
@@ -268,7 +309,7 @@ def vector_add(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
-    """Add two vectors."""
+    """Uses a VectorMath Shader Node with operation='ADD'."""
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -281,6 +322,7 @@ def vector_subtract(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='SUBTRACT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -292,6 +334,7 @@ def vector_multiply(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='MULTIPLY'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -304,6 +347,7 @@ def vector_multiply_add(
     b: nt.SocketOrVal[pt.Vector],
     addend: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='MULTIPLY_ADD'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         attrs={"operation": "MULTIPLY_ADD"},
@@ -315,6 +359,7 @@ def vector_divide(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='DIVIDE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -326,6 +371,7 @@ def vector_cross_product(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='CROSS_PRODUCT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -337,6 +383,7 @@ def vector_project(
     vector: nt.SocketOrVal[pt.Vector],
     onto: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[float]:
+    """Uses a VectorMath Shader Node with operation='PROJECT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector, ("Vector", 1): onto},
@@ -348,6 +395,7 @@ def vector_reflect(
     a: nt.SocketOrVal[pt.Vector],
     normal: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='REFLECT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): normal},
@@ -360,6 +408,7 @@ def vector_refract(
     normal: nt.SocketOrVal[pt.Vector],
     ior: nt.SocketOrVal[float] = 1.0,
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='REFRACT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): incident, ("Vector", 1): normal, "Scale": ior},
@@ -372,6 +421,7 @@ def vector_faceforward(
     surface: nt.SocketOrVal[pt.Vector],
     normal: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='FACEFORWARD'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={
@@ -387,6 +437,7 @@ def vector_dot_product(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='DOT_PRODUCT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -398,6 +449,7 @@ def vector_distance(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='DISTANCE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -406,6 +458,7 @@ def vector_distance(
 
 
 def vector_length(vector: nt.SocketOrVal[pt.Vector]) -> nt.ProcNode[float]:
+    """Uses a VectorMath Shader Node with operation='LENGTH'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -416,6 +469,7 @@ def vector_length(vector: nt.SocketOrVal[pt.Vector]) -> nt.ProcNode[float]:
 def vector_scale(
     vector: nt.SocketOrVal[pt.Vector], scale: nt.SocketOrVal[float]
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='SCALE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector, ("Scale", 0): scale},
@@ -426,6 +480,7 @@ def vector_scale(
 def vector_normalize(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='NORMALIZE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -438,6 +493,7 @@ def vector_wrap(
     max_val: nt.SocketOrVal[pt.Vector],
     min_val: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='WRAP'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector, ("Vector", 1): max_val, ("Vector", 2): min_val},
@@ -449,6 +505,7 @@ def vector_snap(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='SNAP'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -459,6 +516,7 @@ def vector_snap(
 def vector_floor(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='FLOOR'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -469,6 +527,7 @@ def vector_floor(
 def vector_ceil(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='CEIL'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -480,6 +539,7 @@ def vector_modulo(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='MODULO'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -490,6 +550,7 @@ def vector_modulo(
 def vector_fraction(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='FRACTION'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -500,6 +561,7 @@ def vector_fraction(
 def vector_absolute(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='ABSOLUTE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -511,6 +573,7 @@ def vector_minimum(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='MINIMUM'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -522,6 +585,7 @@ def vector_maximum(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='MAXIMUM'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): a, ("Vector", 1): b},
@@ -532,6 +596,7 @@ def vector_maximum(
 def vector_sine(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='SINE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -542,6 +607,7 @@ def vector_sine(
 def vector_cosine(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='COSINE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -552,6 +618,7 @@ def vector_cosine(
 def vector_tangent(
     vector: nt.SocketOrVal[pt.Vector],
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorMath Shader Node with operation='TANGENT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
         inputs={("Vector", 0): vector},
@@ -567,7 +634,7 @@ def vector_rotate_axis_angle(
     invert: bool = False,
 ) -> nt.ProcNode[pt.Vector]:
     """
-    Uses a VectorRotate Shader Node.
+    Uses a VectorRotate Shader Node with rotation_type='AXIS_ANGLE'.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/vector_rotate.html
     """
@@ -584,6 +651,7 @@ def vector_rotate_euler(
     rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     invert: bool = False,
 ) -> nt.ProcNode[pt.Vector]:
+    """Uses a VectorRotate Shader Node with rotation_type in {'EULER_XYZ', 'X_AXIS', 'Y_AXIS', 'Z_AXIS'}."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorRotate",
         inputs={"Vector": vector, "Center": center, "Rotation": rotation},

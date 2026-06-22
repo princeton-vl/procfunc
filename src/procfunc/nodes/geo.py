@@ -622,7 +622,7 @@ def curve_line(
     end: nt.SocketOrVal[nt.pt.Vector],
 ) -> nt.ProcNode[pt.CurveObject]:
     """
-    Uses a CurvePrimitiveLine Geometry Node.
+    Uses a CurvePrimitiveLine Geometry Node in POINTS mode.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/curve_line.html
     """
@@ -639,7 +639,7 @@ def curve_line_from_direction(
     length: nt.SocketOrVal[float] = 1.0,
 ) -> nt.ProcNode[pt.CurveObject]:
     """
-    Uses a CurveLineFromDirection Geometry Node.
+    Uses a CurvePrimitiveLine Geometry Node in DIRECTION mode.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/primitives/curve_line.html
     """
@@ -2633,6 +2633,7 @@ def mesh_line_from_endpoints(
     count: nt.SocketOrVal[int] = 10,
     count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
 ) -> nt.ProcNode[pt.MeshObject]:
+    """Uses a MeshLine Geometry Node with mode='END_POINTS'."""
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshLine",
         inputs={
@@ -3227,7 +3228,7 @@ def sample_curve(
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleCurveResult:
     """
-    Uses a SampleCurve Geometry Node.
+    Uses a SampleCurve Geometry Node with FACTOR mode.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/sample/sample_curve.html
     """
@@ -4306,7 +4307,7 @@ def transform(
     scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
 ) -> nt.ProcNode[TMeshOrCurve]:
     """
-    Uses a Transform Geometry Node.
+    Uses a Transform Geometry Node with mode='COMPONENTS'.
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/geometry/operations/transform_geometry.html
     """
@@ -4326,6 +4327,7 @@ def transform_by_matrix(
     geometry: nt.ProcNode[TMeshOrCurve],
     matrix: nt.SocketOrVal[pt.Matrix],
 ):
+    """Uses a Transform Geometry Node with mode='MATRIX'."""
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeTransform",
         inputs={

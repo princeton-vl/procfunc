@@ -39,7 +39,7 @@ def mix_rgb(
     clamp_factor: bool = True,
 ) -> nt.ProcNode[pt.Color]:
     """
-    Uses a Mix Node with datatype Color
+    Uses a Mix Shader Node with data_type='RGBA'.
 
     NOTE: separated from float/vector mix() due to extra arguments
 
@@ -80,7 +80,7 @@ def combine_rgb(
     blue: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.Color]:
     """
-    Uses a CombineColor Shader Node.
+    Uses a CombineColor Shader Node in RGB mode.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
     """
@@ -97,7 +97,7 @@ def combine_hsv(
     value: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.Color]:
     """
-    Uses a CombineColor Shader Node.
+    Uses a CombineColor Shader Node in HSV mode.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
     """
@@ -115,7 +115,7 @@ def combine_hsl(
     lightness: nt.SocketOrVal[float] = 0.0,
 ) -> nt.ProcNode[pt.Color]:
     """
-    Uses a CombineHSV Shader Node.
+    Uses a CombineColor Shader Node in HSL mode.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/combine_color.html
     """
