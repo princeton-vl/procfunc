@@ -35,13 +35,47 @@ def _add_input(graph: cg.ComputeGraph, name: str) -> cg.InputPlaceholderNode:
 
 def _build_parent_map(
     top_graph: cg.ComputeGraph,
-) -> dict[int, tuple[cg.ComputeGraph, cg.SubgraphCallNode]]:
+) -> dict[int, list[tuple[cg.ComputeGraph, cg.SubgraphCallNode]]]:
     parent_map = {}
-    for call_node, graph in cg.traverse_nested_graphs(top_graph, yield_call_nodes=True):
+    for _call_node, graph in cg.traverse_nested_graphs(
+        top_graph, yield_call_nodes=True
+    ):
         for node in cg.traverse_depth_first(graph):
             if isinstance(node, cg.SubgraphCallNode):
-                parent_map[id(node.subgraph)] = (graph, node)
+                parent_map.setdefault(id(node.subgraph), []).append((graph, node))
     return parent_map
+
+
+def _plumb_material_to_callers(
+    graph: cg.ComputeGraph,
+    mat_call: cg.SubgraphCallNode,
+    input_name: str,
+    parent_map: dict[int, list[tuple[cg.ComputeGraph, cg.SubgraphCallNode]]],
+) -> None:
+    added_inputs: dict[int, cg.InputPlaceholderNode] = {}
+    visited = {id(graph)}
+    worklist = [graph]
+
+    while worklist:
+        current_graph = worklist.pop()
+        for parent_graph, call_node in parent_map.get(id(current_graph), []):
+            if not parent_graph.metadata.get("is_node_function", False):
+                if input_name not in call_node.kwargs:
+                    item_node = cg.MethodCallNode(mat_call, "item", args=(), kwargs={})
+                    call_node.kwargs[input_name] = item_node
+                continue
+
+            parent_inp = added_inputs.get(id(parent_graph))
+            if parent_inp is None:
+                parent_inp = _add_input(parent_graph, input_name)
+                added_inputs[id(parent_graph)] = parent_inp
+
+            if input_name not in call_node.kwargs:
+                call_node.kwargs[input_name] = parent_inp
+
+            if id(parent_graph) not in visited:
+                visited.add(id(parent_graph))
+                worklist.append(parent_graph)
 
 
 def _replace_node_in_graph(
@@ -82,19 +116,7 @@ def extract_materials_from_graph(
             inp = _add_input(graph, input_name)
             _replace_node_in_graph(graph, mat_call, inp)
 
-            current_graph = graph
-            while id(current_graph) in parent_map:
-                parent_graph, call_node = parent_map[id(current_graph)]
-
-                if not parent_graph.metadata.get("is_node_function", False):
-                    item_node = cg.MethodCallNode(mat_call, "item", args=(), kwargs={})
-                    call_node.kwargs[input_name] = item_node
-                    break
-
-                if input_name not in call_node.kwargs:
-                    parent_inp = _add_input(parent_graph, input_name)
-                    call_node.kwargs[input_name] = parent_inp
-                current_graph = parent_graph
+            _plumb_material_to_callers(graph, mat_call, input_name, parent_map)
 
             extracted_materials[input_name] = mat_call
             logger.debug(

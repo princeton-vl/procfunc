@@ -57,7 +57,7 @@ def transpile_blendergym_task_blendfile(blend_path: Path, code_path: Path, task_
         objects_arg = "Cube"
 
     cmd = (
-        "uv run --no-sync python -m procfunc.cli transpile".split()
+        "uv run --no-sync procfunc transpile".split()
         + [str(blend_path)]
         + ["--objects", objects_arg]
         + ["--output", str(code_path)]

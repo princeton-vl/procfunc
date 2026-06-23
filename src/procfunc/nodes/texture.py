@@ -448,7 +448,7 @@ def voronoi(
 ) -> VoronoiResult:
     """
 
-    Uses a TexVoronoi Shader Node.
+    Uses a TexVoronoi Shader Node with feature='F1' or 'F2'.
 
     Args:
         exponent: Only supported for Minkowski distance.
@@ -522,6 +522,7 @@ def voronoi_distance(
     voronoi_dimensions: TNoiseDimensions = "3D",
     w: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[float]:
+    """Uses a TexVoronoi Shader Node with feature='DISTANCE_TO_EDGE'."""
     inputs = {
         "Scale": scale,
         "Detail": detail,
@@ -566,11 +567,13 @@ def voronoi_smooth_f1(
     lacunarity: nt.SocketOrVal[float] = 2.0,
     smoothness: nt.SocketOrVal[float] = 0.5,
     randomness: nt.SocketOrVal[float] = 1.0,
+    exponent: nt.SocketOrVal[float] = 0.0,
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
     w: nt.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
+    """Uses a TexVoronoi Shader Node with feature='SMOOTH_F1'."""
     inputs = {
         "Scale": scale,
         "Detail": detail,
@@ -590,6 +593,12 @@ def voronoi_smooth_f1(
         raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
     else:
         inputs["Vector"] = vector
+
+    if exponent != 0.0:
+        assert distance == "MINKOWSKI", (
+            f"exponent is only supported for Minkowski distance, got {distance=}"
+        )
+        inputs["Exponent"] = exponent
 
     if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
@@ -624,6 +633,7 @@ def voronoi_n_spheres_distance(
     randomness: nt.SocketOrVal[float] = 1.0,
     normalize: bool = False,
 ) -> nt.ProcNode[float]:
+    """Uses a TexVoronoi Shader Node with feature='N_SPHERE_RADIUS'."""
     if vector is None:
         raise_explicit_noise_vector_error("voronoi_spheres_distance", logger=logger)
 

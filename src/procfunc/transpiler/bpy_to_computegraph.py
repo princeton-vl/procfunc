@@ -191,22 +191,32 @@ def _create_link_impl_node(
             f"has {link.from_node.bl_idname=}, which should have been avoided from parsing via {len(memo.links)=}"
         )
     elif link.from_node.bl_idname == "NodeReroute":
-        if len(link.from_node.inputs[0].links) == 0:
+        reroute_input = link.from_node.inputs[0]
+        if len(reroute_input.links) > 0:
+            # pass through to_socket to avoid potentially having wrong type inference
+            res = parse_link(node_tree, reroute_input.links[0], memo)
+            assert res is not None, link
+            return res
+        if not hasattr(reroute_input, "default_value"):
             raise ValueError(
-                f"Node {link.from_node.bl_idname} {link.from_node.name=} in {node_tree.name=} has no inputs"
+                f"Node {link.from_node.bl_idname} {link.from_node.name=} in "
+                f"{node_tree.name=} is dangling with no synthesizable default"
             )
-
-        # pass through to_socket to avoid potentially having wrong type inference
-        res = parse_link(node_tree, link.from_node.inputs[0].links[0], memo)
-        assert res is not None, link
-        return res
+        default_value = normalize_default_value(
+            reroute_input.default_value, reroute_input.type
+        )
+        return cg.FunctionCallNode(
+            func=pf.nodes.math.constant,
+            args=(default_value,),
+            kwargs={},
+        )
     elif link.from_node.bl_idname == "ShaderNodeSeparateXYZ":
         inp_vec = link.from_node.inputs[0]
         if len(inp_vec.links) == 0:
             # WARN: creates multiple constants without memoizing
             default_value = normalize_default_value(inp_vec.default_value, inp_vec.type)
             source = cg.FunctionCallNode(
-                func=pf.nodes.func.constant,
+                func=pf.nodes.math.constant,
                 args=(default_value,),
                 kwargs={},
             )

@@ -89,3 +89,55 @@ def test_transpile_keyword_socket_name_emits_valid_python():
     src = to_python(graph, toplevel_as_maincall=False)
     ast.parse(src)
     assert "lambda_" in src
+
+
+def test_transpile_1d_noise_supplies_vector_none():
+    """A 1D texture node disables its Vector input socket. The binding still
+    requires `vector`, so codegen must emit vector=None - omitting it produces
+    a call missing a required positional argument."""
+    tree = bpy.data.node_groups.new(f"noise1d_{uuid.uuid4().hex[:8]}", "ShaderNodeTree")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Fac", in_out="OUTPUT", socket_type="NodeSocketFloat")
+
+    noise = tree.nodes.new("ShaderNodeTexNoise")
+    noise.noise_dimensions = "1D"
+    tree.links.new(noise.outputs["Fac"], out.inputs["Fac"])
+
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    assert "noise_dimensions='1D'" in src
+    assert "vector=None" in src
+    exec(compile(src, "<noise1d>", "exec"), {})  # noqa: S102
+
+
+def test_transpile_1d_white_noise_round_trips():
+    tree = bpy.data.node_groups.new(f"white1d_{uuid.uuid4().hex[:8]}", "ShaderNodeTree")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Fac", in_out="OUTPUT", socket_type="NodeSocketFloat")
+
+    white = tree.nodes.new("ShaderNodeTexWhiteNoise")
+    white.noise_dimensions = "1D"
+    tree.links.new(white.outputs["Value"], out.inputs["Fac"])
+
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    assert "noise_dimensions='1D'" in src
+    exec(compile(src, "<white1d>", "exec"), {})  # noqa: S102
+
+
+def test_transpile_dangling_reroute_resolves_to_default():
+    """A reroute whose input is unconnected but whose output is wired downstream
+    must resolve to its input socket's default (how blender evaluates it), not
+    raise."""
+    tree = bpy.data.node_groups.new(f"reroute_{uuid.uuid4().hex[:8]}", "ShaderNodeTree")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Value", in_out="OUTPUT", socket_type="NodeSocketFloat")
+
+    reroute = tree.nodes.new("NodeReroute")
+    tree.links.new(reroute.outputs[0], out.inputs["Value"])
+    reroute.inputs[0].default_value = 0.25
+
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    assert "0.25" in src
+    exec(compile(src, "<reroute>", "exec"), {})  # noqa: S102

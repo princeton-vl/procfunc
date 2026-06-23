@@ -1,3 +1,32 @@
+# 0.33.2
+
+Interface changes:
+
+- `texture.voronoi_smooth_f1` now exposes `exponent` (Minkowski distance), matching `voronoi`
+
+Fixed crashes:
+
+- transpiling 1D `noise` / `voronoi` / `white_noise` now emits an explicit `vector=None` (the Vector socket is disabled in 1D); previously generated a call missing the required `vector`
+- transpiling a dangling reroute (unconnected input, wired output) now resolves to its input socket default instead of raising; also fixes a `pf.nodes.func.constant` NameError in the Separate XYZ disconnected-input path
+- `ops.attr.write_attribute` now handles the CORNER domain (was a `KeyError`) and broadcasts scalar values across it
+
+Fixed wrong results:
+
+- compute-graph subgraph deduplication now compares nodes structurally (node type, value, attr identity), so distinct nodes are no longer merged and identical subgraphs dedup correctly
+- graph BFS marks nodes visited on enqueue, so a multi-parent node is reported once (was reported per parent)
+- `transforms.extract_materials` tracks all callers in its parent map (previously missed some)
+- nocollide datablock naming applies its prefix+uuid immediately, avoiding name collisions
+
+Errors instead of silent misbehavior:
+
+- `ops.attr.write_attribute` raises a clear cast hint for dtypes with no Blender attribute type (e.g. 64-bit int)
+- `color.hsv_color` / `rgb_color` validate their arguments (require `hsv=`/`rgb=` or all components)
+
+Other:
+
+- multi-binding docstrings now name the target Blender node and mode
+- fixed CLI docs argparse reference and README documentation link; refreshed the transpile example output
+
 # 0.33.0
 
 Interface changes:

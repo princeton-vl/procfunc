@@ -10,6 +10,8 @@ def hsv_color(
     saturation: float | None = None,
     value: float | None = None,
 ) -> t.Color:
+    if hsv is None and (hue is None or saturation is None or value is None):
+        raise ValueError("provide hsv=... or all of hue/saturation/value")
     color = t.Color()
     if hsv is not None:
         color.hsv = hsv
@@ -27,6 +29,8 @@ def rgb_color(
     b: float | None = None,
     rgb: np.ndarray | None = None,
 ) -> t.Color:
+    if rgb is None and (r is None or g is None or b is None):
+        raise ValueError("provide rgb=... or all of r/g/b")
     color = t.Color()
     if rgb is not None:
         color.r, color.g, color.b = rgb

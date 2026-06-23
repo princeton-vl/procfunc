@@ -377,6 +377,34 @@ def test_all_attr_types_and_domains():
             )
 
 
+def test_write_int32_roundtrip_exact():
+    obj = pf.ops.primitives.mesh_cube()
+    data = np.array([-3, 0, 1, 7, 100, -42, 5, 9], dtype=np.int32)
+    pf.ops.attr.write_attribute(data=data, obj=obj, key="int32_exact", domain="POINT")
+    result = pf.ops.attr.read_attribute(obj, "int32_exact")
+    assert result.dtype == data.dtype
+    np.testing.assert_array_equal(result, data)
+
+
+def test_write_int64_rejected_with_cast_guidance():
+    obj = pf.ops.primitives.mesh_cube()
+    data = np.arange(8, dtype=np.int64)
+    with pytest.raises(ValueError) as excinfo:
+        pf.ops.attr.write_attribute(data=data, obj=obj, key="int64_bad", domain="POINT")
+    msg = str(excinfo.value)
+    assert "int64" in msg
+    assert "astype" in msg
+
+
+def test_write_corner_scalar_broadcast():
+    obj = pf.ops.primitives.mesh_cube()
+    n_corners = len(obj.item().data.loops)
+    pf.ops.attr.write_attribute(data=2.5, obj=obj, key="corner_scalar", domain="CORNER")
+    result = pf.ops.attr.read_attribute(obj, "corner_scalar")
+    assert result.shape == (n_corners,)
+    np.testing.assert_array_almost_equal(result, np.full(n_corners, 2.5))
+
+
 def test_add_material_basic():
     cube = pf.ops.primitives.mesh_cube()
     mat = devmat(1.0)

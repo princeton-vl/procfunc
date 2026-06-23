@@ -14,30 +14,30 @@ def shader_bone(nw: NodeWrangler):
     texture_coordinate = nw.new_node(Nodes.TextureCoord)
     
     mapping = nw.new_node(Nodes.Mapping,
-        input_kwargs={'Vector': texture_coordinate.outputs["Object"], 'Location': (1.6829, 0.3078, 0.0418)})
+        input_kwargs={'Vector': texture_coordinate.outputs["Object"], 'Location': (1.7315, 0.3225, 0.0310)})
     
     noise_texture = nw.new_node(Nodes.NoiseTexture,
-        input_kwargs={'Vector': mapping, 'Scale': 10.4943, 'Detail': 15.0000, 'Roughness': 0.7667})
+        input_kwargs={'Vector': mapping, 'Scale': 8.6326, 'Detail': 15.0000, 'Roughness': 0.7667})
     
     voronoi_texture = nw.new_node(Nodes.VoronoiTexture, input_kwargs={'Vector': noise_texture.outputs["Fac"], 'Scale': 10.0000})
     
     color_ramp = nw.new_node(Nodes.ColorRamp, input_kwargs={'Fac': voronoi_texture.outputs["Color"]})
-    color_ramp.color_ramp.elements[0].position = 0.4484
+    color_ramp.color_ramp.elements[0].position = 0.4689
     color_ramp.color_ramp.elements[0].color = [0.0000, 0.0000, 0.0000, 1.0000]
-    color_ramp.color_ramp.elements[1].position = 0.5451
+    color_ramp.color_ramp.elements[1].position = 0.5859
     color_ramp.color_ramp.elements[1].color = [1.0000, 1.0000, 1.0000, 1.0000]
     
     mapping_1 = nw.new_node(Nodes.Mapping, input_kwargs={'Vector': texture_coordinate.outputs["Object"]})
     
     noise_texture_1 = nw.new_node(Nodes.NoiseTexture,
-        input_kwargs={'Vector': mapping_1, 'Scale': 92.0644, 'Detail': 15.0000, 'Roughness': 0.7667})
+        input_kwargs={'Vector': mapping_1, 'Scale': 124.2583, 'Detail': 15.0000, 'Roughness': 0.7667})
     
-    voronoi_texture_1 = nw.new_node(Nodes.VoronoiTexture, input_kwargs={'Vector': noise_texture_1.outputs["Fac"], 'Scale': 10.0362})
+    voronoi_texture_1 = nw.new_node(Nodes.VoronoiTexture, input_kwargs={'Vector': noise_texture_1.outputs["Fac"], 'Scale': 10.0248})
     
     color_ramp_1 = nw.new_node(Nodes.ColorRamp, input_kwargs={'Fac': voronoi_texture_1.outputs["Color"]})
-    color_ramp_1.color_ramp.elements[0].position = 0.3117
+    color_ramp_1.color_ramp.elements[0].position = 0.2866
     color_ramp_1.color_ramp.elements[0].color = [0.0000, 0.0000, 0.0000, 1.0000]
-    color_ramp_1.color_ramp.elements[1].position = 0.6845
+    color_ramp_1.color_ramp.elements[1].position = 0.7192
     color_ramp_1.color_ramp.elements[1].color = [1.0000, 1.0000, 1.0000, 1.0000]
     
     multiply = nw.new_node(Nodes.VectorMath,
@@ -47,12 +47,12 @@ def shader_bone(nw: NodeWrangler):
     mapping_2 = nw.new_node(Nodes.Mapping,
         input_kwargs={'Vector': texture_coordinate.outputs["UV"], 'Scale': (1.0000, 1.0000, 0.0000)})
     
-    noise_texture_2 = nw.new_node(Nodes.NoiseTexture, input_kwargs={'Vector': mapping_2, 'Scale': 6.0377})
+    noise_texture_2 = nw.new_node(Nodes.NoiseTexture, input_kwargs={'Vector': mapping_2, 'Scale': 7.2055})
     
     color_ramp_2 = nw.new_node(Nodes.ColorRamp, input_kwargs={'Fac': noise_texture_2.outputs["Fac"]})
-    color_ramp_2.color_ramp.elements[0].position = 0.3864
+    color_ramp_2.color_ramp.elements[0].position = 0.3457
     color_ramp_2.color_ramp.elements[0].color = [0.3813, 0.2384, 0.1183, 1.0000]
-    color_ramp_2.color_ramp.elements[1].position = 0.7645
+    color_ramp_2.color_ramp.elements[1].position = 0.7344
     color_ramp_2.color_ramp.elements[1].color = [0.4969, 0.5029, 0.4678, 1.0000]
     
     mix = nw.new_node(Nodes.Mix,

@@ -3,10 +3,21 @@ import logging
 from collections import defaultdict, deque
 from typing import Any, Callable, Generator, Literal, TypeVar
 
+import numpy as np
+
 from procfunc.util import pytree
 
 from .compute_graph import ComputeGraph
-from .node import Node, SubgraphCallNode
+from .node import (
+    ConstantNode,
+    FunctionCallNode,
+    GetAttributeNode,
+    InputPlaceholderNode,
+    MethodCallNode,
+    Node,
+    ProceduralNode,
+    SubgraphCallNode,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +51,7 @@ def traverse_breadth_first(
 
     visited = set()
     frontier = deque((None, name, node) for name, node in graph.outputs.items())
+    visited.update(id(node) for _, _, node in frontier)
     # logger.debug(f"{traverse_breadth_first.__name__} {graph.name} {len(frontier)=}")
 
     def res(parent, name, child):
@@ -61,10 +73,6 @@ def traverse_breadth_first(
         if not isinstance(node, Node):
             continue
 
-        if id(node) in visited:
-            continue
-        visited.add(id(node))
-
         yield res(parent, name, node)
 
         children = list(pytree.PyTree(node.args).items()) + list(
@@ -75,6 +83,7 @@ def traverse_breadth_first(
                 continue
             if id(arg) in visited:
                 continue
+            visited.add(id(arg))
             frontier.append((node, key, arg))
 
 
@@ -201,20 +210,93 @@ def usages_per_node(
     return dict(usages)
 
 
+def _value_equal(a: Any, b: Any) -> bool:
+    """Array-safe equality for non-node values (constants, attrs, defaults)."""
+    if a is b:
+        return True
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+        return np.array_equal(a, b)
+    if isinstance(a, dict) and isinstance(b, dict):
+        return a.keys() == b.keys() and all(_value_equal(a[k], b[k]) for k in a)
+    if isinstance(a, (list, tuple)) and isinstance(b, (list, tuple)):
+        return (
+            type(a) is type(b)
+            and len(a) == len(b)
+            and all(_value_equal(x, y) for x, y in zip(a, b))
+        )
+    try:
+        return bool(a == b)
+    except (ValueError, TypeError):
+        return False
+
+
+def _args_equal(a: Any, b: Any, memo: dict[tuple[int, int], bool]) -> bool:
+    """Structural equality of an args/kwargs tree: same container shape, with
+    node-valued leaves compared recursively and other leaves by value."""
+    tree_a = pytree.PyTree(a)
+    tree_b = pytree.PyTree(b)
+    if tree_a.spec != tree_b.spec:
+        return False
+    for leaf_a, leaf_b in zip(tree_a.values(), tree_b.values()):
+        a_is_node = isinstance(leaf_a, Node)
+        b_is_node = isinstance(leaf_b, Node)
+        if a_is_node != b_is_node:
+            return False
+        if a_is_node:
+            if not _nodes_equal(leaf_a, leaf_b, memo):
+                return False
+        elif not _value_equal(leaf_a, leaf_b):
+            return False
+    return True
+
+
+def _nodes_equal(node1: Node, node2: Node, memo: dict[tuple[int, int], bool]) -> bool:
+    if node1 is node2:
+        return True
+    if type(node1) is not type(node2):
+        return False
+
+    key = (id(node1), id(node2))
+    cached = memo.get(key)
+    if cached is not None:
+        return cached
+    memo[key] = True  # optimistic, breaks cycles in shared DAGs
+
+    result = True
+    if isinstance(node1, SubgraphCallNode):
+        result = graph_nodes_equal(node1.subgraph, node2.subgraph)
+    if result and isinstance(node1, FunctionCallNode):
+        result = node1.func is node2.func
+    if result and isinstance(node1, MethodCallNode):
+        result = node1.method_name == node2.method_name
+    if result and isinstance(node1, GetAttributeNode):
+        result = node1.attribute_name == node2.attribute_name
+    if result and isinstance(node1, ProceduralNode):
+        result = node1.node_type == node2.node_type and _value_equal(
+            node1.attrs, node2.attrs
+        )
+    if result and isinstance(node1, ConstantNode):
+        result = _value_equal(node1.value, node2.value)
+    if result and isinstance(node1, InputPlaceholderNode):
+        result = node1.input_name == node2.input_name and _value_equal(
+            node1.default_value, node2.default_value
+        )
+    if result:
+        result = _args_equal(node1.args, node2.args, memo) and _args_equal(
+            node1.kwargs, node2.kwargs, memo
+        )
+
+    memo[key] = result
+    return result
+
+
 def graph_nodes_equal(graph1: ComputeGraph, graph2: ComputeGraph) -> bool:
     nodes1 = list(traverse_depth_first(graph1))
     nodes2 = list(traverse_depth_first(graph2))
     if len(nodes1) != len(nodes2):
         return False
-    for node1, node2 in zip(nodes1, nodes2):
-        if type(node1) is not type(node2):
-            return False
-        if isinstance(node1, SubgraphCallNode):
-            if not graph_nodes_equal(node1.subgraph, node2.subgraph):
-                return False
-        elif node1.args != node2.args or node1.kwargs != node2.kwargs:
-            return False
-    return True
+    memo: dict[tuple[int, int], bool] = {}
+    return all(_nodes_equal(node1, node2, memo) for node1, node2 in zip(nodes1, nodes2))
 
 
 def transform_nodetree(

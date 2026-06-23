@@ -3,7 +3,7 @@
 
 
 def clamp(
-    value: pf.SocketOrVal[float] = 1.0,
+    value: pf.SocketOrVal[float],
     min: pf.SocketOrVal[float] = 0.0,
     max: pf.SocketOrVal[float] = 1.0,
     clamp_type: Literal["MINMAX", "RANGE"] = "MINMAX",
@@ -13,279 +13,253 @@ def clamp(
 
 
 # Basic Math Operations
-def add(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def add(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def subtract(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def subtract(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def multiply(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def multiply(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def multiply_add(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
-    addend: pf.SocketOrVal[float] = 0.0,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
+    addend: pf.SocketOrVal[float],
 ) -> pf.ProcNode[float]:
     pass
 def divide(
-    numerator: pf.SocketOrVal[float] = 0.5, denominator: pf.SocketOrVal[float] = 0.5
+    numerator: pf.SocketOrVal[float], denominator: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
 def power(
-    base: pf.SocketOrVal[float] = 0.5, exponent: pf.SocketOrVal[float] = 0.5
+    base: pf.SocketOrVal[float], exponent: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
 def logarithm(
-    value: pf.SocketOrVal[float] = 0.5, base: pf.SocketOrVal[float] = 0.5
+    value: pf.SocketOrVal[float], base: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
-def sqrt(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sqrt(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def inverse_sqrt(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def inverse_sqrt(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def absolute(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def absolute(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def exponent(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def exponent(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 # Comparison Operations
-def minimum(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def minimum(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def maximum(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def maximum(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def less_than(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def less_than(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def greater_than(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
+    a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
-def sign(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sign(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def compare(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
     epsilon: pf.SocketOrVal[float] = 0.001,
 ) -> pf.ProcNode[float]:
     pass
 def smooth_minimum(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
     distance: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
 def smooth_maximum(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
     distance: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
-def round(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def round(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def floor(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def floor(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def ceil(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def ceil(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def truncate(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def truncate(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def fraction(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def fraction(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def modulo(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def modulo(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def floor_mod(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def floor_mod(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def wrap(
-    value: pf.SocketOrVal[float] = 0.5,
+    value: pf.SocketOrVal[float],
     max_val: pf.SocketOrVal[float] = 1.0,
     min_val: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
 def snap(
-    value: pf.SocketOrVal[float] = 0.5, increment: pf.SocketOrVal[float] = 1.0
+    value: pf.SocketOrVal[float], increment: pf.SocketOrVal[float] = 1.0
 ) -> pf.ProcNode[float]:
     pass
 def pingpong(
-    value: pf.SocketOrVal[float] = 0.5, scale: pf.SocketOrVal[float] = 1.0
+    value: pf.SocketOrVal[float], scale: pf.SocketOrVal[float] = 1.0
 ) -> pf.ProcNode[float]:
     pass
 # Trigonometric Operations
-def sin(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sin(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def cos(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def cos(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def tan(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def tan(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def asin(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def asin(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def acos(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def acos(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def atan(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def atan(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def atan2(
-    y: pf.SocketOrVal[float] = 0.5, x: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def atan2(y: pf.SocketOrVal[float], x: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def sinh(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sinh(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def cosh(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def cosh(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def tanh(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def tanh(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 # Conversion Operations
-def deg_to_rad(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def deg_to_rad(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def rad_to_deg(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def rad_to_deg(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 # Vector Math Operations
 def vector_add(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_subtract(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_multiply(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_multiply_add(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    addend: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
+    addend: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_divide(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_cross_product(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_project(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    onto: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
+    onto: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[float]:
     pass
 def vector_reflect(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    normal: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    normal: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_refract(
-    incident: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    normal: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    incident: pf.SocketOrVal[pf.Vector],
+    normal: pf.SocketOrVal[pf.Vector],
     ior: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_faceforward(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    surface: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    normal: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
+    surface: pf.SocketOrVal[pf.Vector],
+    normal: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_dot_product(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_distance(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
-def vector_length(vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0)) -> pf.ProcNode[float]:
+def vector_length(vector: pf.SocketOrVal[pf.Vector]) -> pf.ProcNode[float]:
     pass
 def vector_scale(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0), scale: pf.SocketOrVal[float] = 1.0
+    vector: pf.SocketOrVal[pf.Vector], scale: pf.SocketOrVal[float]
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_normalize(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_wrap(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    max_val: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
-    min_val: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
+    max_val: pf.SocketOrVal[pf.Vector],
+    min_val: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_snap(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_floor(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_ceil(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_modulo(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_fraction(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-) -> pf.ProcNode[pf.Vector]:
-    pass
-def vector_round(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-) -> pf.ProcNode[pf.Vector]:
-    pass
-def vector_truncate(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_absolute(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_minimum(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_maximum(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_sine(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_cosine(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_tangent(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_rotate_axis_angle(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
     center: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     axis: pf.SocketOrVal[pf.Vector] = (0, 0, 1),
     angle: pf.SocketOrVal[float] = 0.0,
@@ -293,7 +267,7 @@ def vector_rotate_axis_angle(
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_rotate_euler(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
     center: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     invert: bool = False,
@@ -303,7 +277,7 @@ def vector_rotate_euler(
 
 
 def vector_transform(
-    vector: pf.SocketOrVal[pf.Vector] = (0.5, 0.5, 0.5),
+    vector: pf.SocketOrVal[pf.Vector],
     convert_from: Literal["WORLD", "OBJECT", "CAMERA"] = "WORLD",
     convert_to: Literal["WORLD", "OBJECT", "CAMERA"] = "OBJECT",
     vector_type: Literal["POINT", "VECTOR", "NORMAL"] = "VECTOR",
@@ -311,7 +285,19 @@ def vector_transform(
     pass
 # ---- Constants / inputs ----------------------------------------------------
 
-TConstant = TypeVar("TConstant", int, float, bool, pf.Vector, pf.Euler, pf.Color)
+TConstant = TypeVar("TConstant", int, float, bool, str, pf.Vector, pf.Euler, pf.Color)
+
+_CONSTANT_CONTEXTUAL_BY_TYPE = [
+    # bool before int: bool is a subclass of int
+    (bool, ContextualNode.BOOLEAN),
+    (int, ContextualNode.INT),
+    (float, ContextualNode.VALUE),
+    (pf.Euler, ContextualNode.ROTATION),
+    (pf.Vector, ContextualNode.VECTOR),
+    (tuple, ContextualNode.VECTOR),
+    (pf.Color, ContextualNode.RGB),
+    (str, ContextualNode.STRING),
+]
 
 
 def constant(
@@ -320,88 +306,97 @@ def constant(
     pass
 # ---- Mix -------------------------------------------------------------------
 
-TMix = TypeVar("TMix", pf.SocketOrVal[float], pf.SocketOrVal[pf.Vector])
+TMix = TypeVar(
+    "TMix",
+    pf.SocketOrVal[float],
+    pf.SocketOrVal[pf.Vector],
+    pf.SocketOrVal[pf.Color],
+)
 
 
 def mix(
-    a: TMix | None = None,
-    b: TMix | None = None,
-    factor: pf.SocketOrVal[float] = 0.5,
+    a: TMix,
+    b: TMix,
+    factor: pf.SocketOrVal[float],
     clamp_factor: bool = True,
     factor_mode: Literal["UNIFORM", "NON_UNIFORM"] = "UNIFORM",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> pf.ProcNode[TMix]:
     pass
-TColorMixType = Literal[
-    "MIX",
-    "DARKEN",
-    "MULTIPLY",
-    "BURN",
-    "LIGHTEN",
-    "SCREEN",
-    "DODGE",
-    "ADD",
-    "OVERLAY",
-    "SOFT_LIGHT",
-    "LINEAR_LIGHT",
-    "DIFFERENCE",
-    "EXCLUSION",
-    "SUBTRACT",
-    "DIVIDE",
-    "HUE",
-    "SATURATION",
-    "COLOR",
-    "VALUE",
-]
-
-
-def mix_rgb(
-    factor: pf.SocketOrVal[float] = 0.5,
-    a: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
-    b: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
-    blend_type: TColorMixType = "MIX",
-    clamp_result: bool = False,
-    clamp_factor: bool = True,
-) -> pf.ProcNode[pf.Color]:
-    pass
 # ---- Curves ----------------------------------------------------------------
 
 
-def rgb_curve(
-    fac: pf.SocketOrVal[float] = 1.0,
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    curves: list[np.ndarray] | None = None,
-) -> pf.ProcNode:
-    pass
 def float_curve(
-    factor: pf.SocketOrVal[float] = 1.0,
-    value: pf.SocketOrVal[float] = 1.0,
+    factor: pf.SocketOrVal[float],
+    value: pf.SocketOrVal[float],
     curve: np.ndarray | None = None,
     handle_type: str = "AUTO",
     use_clip: bool = True,
 ) -> pf.ProcNode[float]:
     pass
 def vector_curve(
+    vector: pf.SocketOrVal[pf.Vector],
     fac: pf.SocketOrVal[float] = 1.0,
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    curves: np.ndarray | None = None,
+    curves: list[np.ndarray] | np.ndarray | None = None,
 ) -> pf.ProcNode[pf.Vector]:
     pass
-# ---- Combine / Separate (color, vector) ------------------------------------
+# ---- Combine / Separate ------------------------------------
 
 
-def combine_color(
-    red: pf.SocketOrVal[float] = 0.0,
-    green: pf.SocketOrVal[float] = 0.0,
-    blue: pf.SocketOrVal[float] = 0.0,
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
+def combine_xyz(
+    x: pf.SocketOrVal[float] = 0.0,
+    y: pf.SocketOrVal[float] = 0.0,
+    z: pf.SocketOrVal[float] = 0.0,
+) -> pf.ProcNode[pf.Vector]:
+    pass
+class SeparateXyzResult(NamedTuple):
+    x: pf.ProcNode[float]
+    y: pf.ProcNode[float]
+    z: pf.ProcNode[float]
+
+
+def separate_xyz(vector: pf.SocketOrVal[pf.Vector]) -> SeparateXyzResult:
+    pass
+# ---- MapRange --------------------------------------------------------------
+
+
+TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
+
+
+def map_range(
+    value: pf.SocketOrVal[float],
+    from_max: pf.SocketOrVal[float] = 1.0,
+    from_min: pf.SocketOrVal[float] = 0.0,
+    to_max: pf.SocketOrVal[float] = 1.0,
+    to_min: pf.SocketOrVal[float] = 0.0,
+    clamp: bool = True,
+    interpolation_type: TInterpolationType = "LINEAR",
+    data_type: NodeDataType | RuntimeResolveDataType | None = None,
+) -> pf.ProcNode:
+    pass
+
+###MODULE procfunc.nodes.color
+
+
+def mix_rgb(
+    factor: pf.SocketOrVal[float],
+    a: pf.SocketOrVal[pf.Color],
+    b: pf.SocketOrVal[pf.Color],
+    blend_type: TColorMixType = "MIX",
+    clamp_result: bool = False,
+    clamp_factor: bool = True,
 ) -> pf.ProcNode[pf.Color]:
+    pass
+def rgb_curve(
+    fac: pf.SocketOrVal[float],
+    color: pf.SocketOrVal[pf.Color],
+    curves: list[np.ndarray] | np.ndarray | None = None,
+) -> pf.ProcNode:
     pass
 def combine_rgb(
     red: pf.SocketOrVal[float] = 0.0,
     green: pf.SocketOrVal[float] = 0.0,
     blue: pf.SocketOrVal[float] = 0.0,
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
 ) -> pf.ProcNode[pf.Color]:
     pass
 def combine_hsv(
@@ -415,25 +410,6 @@ def combine_hsl(
     saturation: pf.SocketOrVal[float] = 0.0,
     lightness: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[pf.Color]:
-    pass
-def combine_xyz(
-    x: pf.SocketOrVal[float] = 0.0,
-    y: pf.SocketOrVal[float] = 0.0,
-    z: pf.SocketOrVal[float] = 0.0,
-) -> pf.ProcNode[pf.Vector]:
-    pass
-class SeparateColorResult(NamedTuple):
-    red: pf.ProcNode[float]
-    green: pf.ProcNode[float]
-    blue: pf.ProcNode[float]
-    alpha: pf.ProcNode[float]
-
-
-def separate_color(
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
-    ycc_mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
-) -> SeparateColorResult:
     pass
 class SeparateRgbResult(NamedTuple):
     red: pf.ProcNode[float]
@@ -468,31 +444,6 @@ def separate_hsl(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
 ) -> SeparateHslResult:
     pass
-class SeparateXyzResult(NamedTuple):
-    x: pf.ProcNode[float]
-    y: pf.ProcNode[float]
-    z: pf.ProcNode[float]
-
-
-def separate_xyz(vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0)) -> SeparateXyzResult:
-    pass
-# ---- MapRange --------------------------------------------------------------
-
-
-TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
-
-
-def map_range(
-    value: pf.SocketOrVal[float] = 1.0,
-    from_max: pf.SocketOrVal[float] = 1.0,
-    from_min: pf.SocketOrVal[float] = 0.0,
-    to_max: pf.SocketOrVal[float] = 1.0,
-    to_min: pf.SocketOrVal[float] = 0.0,
-    clamp: bool = True,
-    interpolation_type: TInterpolationType = "LINEAR",
-    data_type: NodeDataType | RuntimeResolveDataType | None = None,
-) -> pf.ProcNode:
-    pass
 # ---- ColorRamp -------------------------------------------------------------
 
 
@@ -509,56 +460,82 @@ def color_ramp(
     points: list[tuple[float, pf.Color]] | None = None,
     mode: Literal["RGB", "HSV", "HSL"] = "RGB",
     interpolation: TRampInterpolationType = "LINEAR",
+    hue_interpolation: Literal["NEAR", "FAR", "CW", "CCW"] = "NEAR",
 ) -> ColorRampResult:
+    pass
+def blackbody(temperature: pf.SocketOrVal[float] = 1500.0) -> pf.ProcNode[pf.Color]:
+    pass
+def bright_contrast(
+    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
+    bright: pf.SocketOrVal[float] = 0.0,
+    contrast: pf.SocketOrVal[float] = 0.0,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def gamma(
+    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1), gamma: pf.SocketOrVal[float] = 1.0
+) -> pf.ProcNode[pf.Color]:
+    pass
+def hue_saturation(
+    color: pf.SocketOrVal[pf.Color],
+    fac: pf.SocketOrVal[float],
+    hue: pf.SocketOrVal[float] = 0.5,
+    saturation: pf.SocketOrVal[float] = 1.0,
+    value: pf.SocketOrVal[float] = 1.0,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def rgb_to_bw(
+    color: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
+) -> pf.ProcNode[float]:
     pass
 
 ###MODULE procfunc.nodes.func
 
 
 def align_euler_to_vector(
+    factor: pf.SocketOrVal[float],
+    vector: pf.SocketOrVal[pf.Vector],
     rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    factor: pf.SocketOrVal[float] = 1.0,
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 1),
     axis: Literal["X", "Y", "Z"] = "X",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def align_rotation_to_vector(
-    rotation: Any = (0, 0, 0),
-    factor: pf.SocketOrVal[float] = 1.0,
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 1),
+    factor: pf.SocketOrVal[float],
+    vector: pf.SocketOrVal[pf.Vector],
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
     axis: Literal["X", "Y", "Z"] = "Z",
     pivot_axis: Literal["AUTO", "X", "Y", "Z"] = "AUTO",
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def axes_to_rotation(
-    primary_axis_vector: pf.SocketOrVal[pf.Vector] = (0, 0, 1),
-    secondary_axis_vector: pf.SocketOrVal[pf.Vector] = (1, 0, 0),
+    primary_axis_vector: pf.SocketOrVal[pf.Vector],
+    secondary_axis_vector: pf.SocketOrVal[pf.Vector],
     primary_axis: Literal["X", "Y", "Z"] = "X",
     secondary_axis: Literal["X", "Y", "Z"] = "Y",
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def axis_angle_to_rotation(
-    axis: pf.SocketOrVal[pf.Vector] = (0, 0, 1), angle: pf.SocketOrVal[float] = 0.0
+    axis: pf.SocketOrVal[pf.Vector] = (0, 0, 1),
+    angle: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def boolean_or(
-    a: pf.SocketOrVal[bool] = False,
-    b: pf.SocketOrVal[bool] = False,
+    a: pf.SocketOrVal[bool],
+    b: pf.SocketOrVal[bool],
 ) -> pf.ProcNode[bool]:
     pass
 def boolean_and(
-    a: pf.SocketOrVal[bool] = False,
-    b: pf.SocketOrVal[bool] = False,
+    a: pf.SocketOrVal[bool],
+    b: pf.SocketOrVal[bool],
 ) -> pf.ProcNode[bool]:
     pass
 def boolean_xor(
-    a: pf.SocketOrVal[bool] = False,
-    b: pf.SocketOrVal[bool] = False,
+    a: pf.SocketOrVal[bool],
+    b: pf.SocketOrVal[bool],
 ) -> pf.ProcNode[bool]:
     pass
 def boolean_not(
-    a: pf.SocketOrVal[bool] = False,
+    a: pf.SocketOrVal[bool],
 ) -> pf.ProcNode[bool]:
     pass
 def combine_matrix(
@@ -582,7 +559,7 @@ def combine_matrix(
     pass
 def combine_transform(
     translation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    rotation: Any = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
     scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
 ) -> pf.ProcNode[pf.Matrix]:
     pass
@@ -599,28 +576,34 @@ TCompareOperation = Literal[
     "LESS_THAN", "LESS_EQUAL", "GREATER_THAN", "GREATER_EQUAL", "EQUAL", "NOT_EQUAL"
 ]
 
+# RGBA-only Compare operations, valid only when data_type is RGBA
+TCompareColorOperation = Literal["EQUAL", "NOT_EQUAL", "BRIGHTER", "DARKER"]
+
+# matches Blender's FunctionNodeCompare Epsilon socket default
+COMPARE_EPSILON_DEFAULT = 0.001
+
 
 TCompareNumeric = TypeVar("TCompareNumeric", pf.SocketOrVal[int], pf.SocketOrVal[float])
 
 
 def less_than(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> pf.ProcNode[bool]:
     pass
 def less_equal(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> pf.ProcNode[bool]:
     pass
 def greater_than(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> pf.ProcNode[bool]:
     pass
 def greater_equal(
-    a: TCompareNumeric = None,
-    b: TCompareNumeric = None,
+    a: TCompareNumeric,
+    b: TCompareNumeric,
 ) -> pf.ProcNode[bool]:
     pass
 TCompareEqual = TypeVar(
@@ -631,29 +614,75 @@ TCompareEqual = TypeVar(
 
 
 def equal(
-    a: TCompareEqual = None,
-    b: TCompareEqual = None,
-    epsilon: pf.SocketOrVal[float] | None = None,
+    a: TCompareEqual,
+    b: TCompareEqual,
+    epsilon: pf.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> pf.ProcNode[bool]:
     pass
 def not_equal(
-    a: TCompareEqual = None,
-    b: TCompareEqual = None,
-    epsilon: pf.SocketOrVal[float] | None = None,
+    a: TCompareEqual,
+    b: TCompareEqual,
+    epsilon: pf.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
 ) -> pf.ProcNode[bool]:
     pass
-def vector_compare_elementwise(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    epsilon: pf.SocketOrVal[float] = 0.001,
-    operation: TCompareOperation = "EQUAL",
+# FunctionNodeCompare's ELEMENT-mode VECTOR and RGBA variants gate the Epsilon
+# socket on the operation (enabled only for EQUAL/NOT_EQUAL), so each operation
+# is a separate binding that routes through _compare; the helper omits Epsilon
+# unless it differs from the Blender default, keeping disabled sockets unwired.
+
+
+def vector_elementwise_less_than(
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[bool]:
     pass
-def compare_color(
+def vector_elementwise_less_equal(
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
+) -> pf.ProcNode[bool]:
+    pass
+def vector_elementwise_greater_than(
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
+) -> pf.ProcNode[bool]:
+    pass
+def vector_elementwise_greater_equal(
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
+) -> pf.ProcNode[bool]:
+    pass
+def vector_elementwise_equal(
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
+    epsilon: pf.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
+) -> pf.ProcNode[bool]:
+    pass
+def vector_elementwise_not_equal(
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
+    epsilon: pf.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
+) -> pf.ProcNode[bool]:
+    pass
+def color_equal(
     a: pf.SocketOrVal[pf.Color],
     b: pf.SocketOrVal[pf.Color],
-    operation: Literal["EQUAL", "NOT_EQUAL", "BRIGHTER", "DARKER"],
-    epsilon: pf.SocketOrVal[float] = 0.001,
+    epsilon: pf.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
+) -> pf.ProcNode[bool]:
+    pass
+def color_not_equal(
+    a: pf.SocketOrVal[pf.Color],
+    b: pf.SocketOrVal[pf.Color],
+    epsilon: pf.SocketOrVal[float] = COMPARE_EPSILON_DEFAULT,
+) -> pf.ProcNode[bool]:
+    pass
+def color_brighter(
+    a: pf.SocketOrVal[pf.Color],
+    b: pf.SocketOrVal[pf.Color],
+) -> pf.ProcNode[bool]:
+    pass
+def color_darker(
+    a: pf.SocketOrVal[pf.Color],
+    b: pf.SocketOrVal[pf.Color],
 ) -> pf.ProcNode[bool]:
     pass
 def euler_to_rotation(
@@ -661,7 +690,7 @@ def euler_to_rotation(
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def float_to_int(
-    float: pf.SocketOrVal[float] = 0.0,
+    float: pf.SocketOrVal[float],
     rounding_mode: Literal["ROUND", "FLOOR", "CEILING", "TRUNCATE"] = "ROUND",
 ) -> pf.ProcNode[int]:
     pass
@@ -681,20 +710,20 @@ class InvertMatrixResult(NamedTuple):
     invertible: pf.ProcNode[bool]
 
 
-def invert_matrix(matrix: pf.SocketOrVal[pf.Matrix] = None) -> InvertMatrixResult:
+def invert_matrix(matrix: pf.SocketOrVal[pf.Matrix]) -> InvertMatrixResult:
     pass
 def invert_rotation(
-    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def matrix_multiply(
-    matrix_0: pf.SocketOrVal[pf.Matrix] = None,
-    matrix_1: pf.SocketOrVal[pf.Matrix] = None,
+    a: pf.SocketOrVal[pf.Matrix],
+    b: pf.SocketOrVal[pf.Matrix],
 ) -> pf.ProcNode[pf.Matrix]:
     pass
 def project_point(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    transform: pf.SocketOrVal[pf.Matrix] = None,
+    vector: pf.SocketOrVal[pf.Vector],
+    transform: pf.SocketOrVal[pf.Matrix],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def quaternion_to_rotation(
@@ -722,9 +751,9 @@ def random_boolean(
 ) -> pf.ProcNode[bool]:
     pass
 def replace_string(
-    string: pf.SocketOrVal[str] = "",
-    find: pf.SocketOrVal[str] = "",
-    replace: pf.SocketOrVal[str] = "",
+    string: pf.SocketOrVal[str],
+    find: pf.SocketOrVal[str],
+    replace: pf.SocketOrVal[str],
 ) -> pf.ProcNode[str]:
     pass
 def rotate_euler(
@@ -735,13 +764,14 @@ def rotate_euler(
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def rotate_rotation(
-    rotation: Any = (0, 0, 0),
-    rotate_by: Any = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
+    rotate_by: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
     rotation_space: Literal["GLOBAL", "LOCAL"] = "GLOBAL",
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def rotate_vector(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0), rotation: Any = (0, 0, 0)
+    vector: pf.SocketOrVal[pf.Vector],
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
 ) -> pf.ProcNode[pf.Vector]:
     pass
 class RotationToAxisAngleResult(NamedTuple):
@@ -750,11 +780,11 @@ class RotationToAxisAngleResult(NamedTuple):
 
 
 def rotation_to_axis_angle(
-    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
 ) -> RotationToAxisAngleResult:
     pass
 def rotation_to_euler(
-    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
 ) -> pf.ProcNode[pf.Vector]:
     pass
 class RotationToQuaternionResult(NamedTuple):
@@ -765,8 +795,31 @@ class RotationToQuaternionResult(NamedTuple):
 
 
 def rotation_to_quaternion(
-    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
 ) -> RotationToQuaternionResult:
+    pass
+class SeparateMatrixResult(NamedTuple):
+    column_1_row_1: pf.ProcNode[float]
+    column_1_row_2: pf.ProcNode[float]
+    column_1_row_3: pf.ProcNode[float]
+    column_1_row_4: pf.ProcNode[float]
+    column_2_row_1: pf.ProcNode[float]
+    column_2_row_2: pf.ProcNode[float]
+    column_2_row_3: pf.ProcNode[float]
+    column_2_row_4: pf.ProcNode[float]
+    column_3_row_1: pf.ProcNode[float]
+    column_3_row_2: pf.ProcNode[float]
+    column_3_row_3: pf.ProcNode[float]
+    column_3_row_4: pf.ProcNode[float]
+    column_4_row_1: pf.ProcNode[float]
+    column_4_row_2: pf.ProcNode[float]
+    column_4_row_3: pf.ProcNode[float]
+    column_4_row_4: pf.ProcNode[float]
+
+
+def separate_matrix(
+    matrix: pf.SocketOrVal[pf.Matrix],
+) -> SeparateMatrixResult:
     pass
 class SeparateTransformResult(NamedTuple):
     translation: pf.ProcNode[pf.Vector]
@@ -775,33 +828,33 @@ class SeparateTransformResult(NamedTuple):
 
 
 def separate_transform(
-    transform: pf.SocketOrVal[pf.Matrix] = None,
+    transform: pf.SocketOrVal[pf.Matrix],
 ) -> SeparateTransformResult:
     pass
 def slice_string(
-    string: pf.SocketOrVal[str] = "",
+    string: pf.SocketOrVal[str],
     position: pf.SocketOrVal[int] = 0,
     length: pf.SocketOrVal[int] = 10,
 ) -> pf.ProcNode[str]:
     pass
-def string_length(string: pf.SocketOrVal[str] = "") -> pf.ProcNode[int]:
+def string_length(string: pf.SocketOrVal[str]) -> pf.ProcNode[int]:
     pass
 def transform_direction(
-    direction: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    transform: pf.SocketOrVal[pf.Matrix] = None,
+    direction: pf.SocketOrVal[pf.Vector],
+    transform: pf.SocketOrVal[pf.Matrix],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def transform_point(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    transform: pf.SocketOrVal[pf.Matrix] = None,
+    vector: pf.SocketOrVal[pf.Vector],
+    transform: pf.SocketOrVal[pf.Matrix],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def transpose_matrix(
-    matrix: pf.SocketOrVal[pf.Matrix] = None,
+    matrix: pf.SocketOrVal[pf.Matrix],
 ) -> pf.ProcNode[pf.Matrix]:
     pass
 def value_to_string(
-    value: pf.SocketOrVal[float] = 0.0, decimals: pf.SocketOrVal[int] = 0
+    value: pf.SocketOrVal[float], decimals: pf.SocketOrVal[int] = 0
 ) -> pf.ProcNode[str]:
     pass
 TIndexSwitch = TypeVar(
@@ -816,8 +869,8 @@ TIndexSwitch = TypeVar(
 
 
 def index_switch(
-    val_0: TIndexSwitch = 0,
-    val_1: TIndexSwitch = 0,
+    a: TIndexSwitch = 0,
+    b: TIndexSwitch = 0,
     index: pf.SocketOrVal[int] = 0,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> pf.ProcNode:
@@ -839,11 +892,16 @@ _SWITCH_DATA_TYPES = [
     NodeDataType.BOOLEAN,
     NodeDataType.INT,
     NodeDataType.FLOAT,
-    NodeDataType.STRING,
     NodeDataType.FLOAT_VECTOR,
-    NodeDataType.RGBA,
+    NodeDataType.ROTATION,
     NodeDataType.FLOAT_MATRIX,
+    NodeDataType.STRING,
+    NodeDataType.RGBA,
+    NodeDataType.OBJECT,
+    NodeDataType.IMAGE,
     NodeDataType.GEOMETRY,
+    NodeDataType.COLLECTION,
+    NodeDataType.MATERIAL,
 ]
 
 
@@ -859,8 +917,8 @@ def switch(
 
 
 def add_shader(
-    shader_0: pf.ProcNode[pf.Shader] | None = None,
-    shader_1: pf.ProcNode[pf.Shader] | None = None,
+    a: pf.ProcNode[pf.Shader] | None,
+    b: pf.ProcNode[pf.Shader] | None,
 ) -> pf.ProcNode[pf.Shader]:
     pass
 class AmbientOcclusionResult(NamedTuple):
@@ -901,14 +959,6 @@ def bevel(
     normal: pf.SocketOrVal[pf.Vector] = None,
     samples: int = 4,
 ) -> pf.ProcNode[pf.Vector]:
-    pass
-def blackbody(temperature: pf.SocketOrVal[float] = 1500.0) -> pf.ProcNode[pf.Color]:
-    pass
-def bright_contrast(
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    bright: pf.SocketOrVal[float] = 0.0,
-    contrast: pf.SocketOrVal[float] = 0.0,
-) -> pf.ProcNode[pf.Color]:
     pass
 def anisotropic_bsdf(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
@@ -967,7 +1017,7 @@ def principled_bsdf(
     roughness: pf.SocketOrVal[float] = 0.5,
     ior: pf.SocketOrVal[float] = 1.5,
     alpha: pf.SocketOrVal[float] = 1.0,
-    normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+    normal: pf.SocketOrVal[pf.Vector] | None = None,
     # subsurface scattering
     subsurface_method: TSubsurfaceMethod = "RANDOM_WALK",
     subsurface_weight: pf.SocketOrVal[float] = 0.0,
@@ -981,13 +1031,13 @@ def principled_bsdf(
     specular_tint: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
     anisotropic: pf.SocketOrVal[float] = 0.0,
     anisotropic_rotation: pf.SocketOrVal[float] = 0.0,
-    tangent: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    tangent: pf.SocketOrVal[pf.Vector] | None = None,
     transmission_weight: pf.SocketOrVal[float] = 0.0,
     coat_weight: pf.SocketOrVal[float] = 0.0,
     coat_roughness: pf.SocketOrVal[float] = 0.03,
     coat_ior: pf.SocketOrVal[float] = 1.5,
     coat_tint: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    coat_normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+    coat_normal: pf.SocketOrVal[pf.Vector] | None = None,
     sheen_weight: pf.SocketOrVal[float] = 0.0,
     sheen_roughness: pf.SocketOrVal[float] = 0.5,
     sheen_tint: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
@@ -1055,7 +1105,7 @@ def displacement(
     height: pf.SocketOrVal[float] = 0.0,
     midlevel: pf.SocketOrVal[float] = 0.5,
     scale: pf.SocketOrVal[float] = 1.0,
-    normal: pf.SocketOrVal[pf.Vector] = None,
+    normal: pf.SocketOrVal[pf.Vector] | None = None,
     space: Literal["OBJECT", "WORLD"] = "OBJECT",
 ) -> pf.ProcNode[pf.Vector]:
     pass
@@ -1080,10 +1130,6 @@ def fresnel(
     ior: pf.SocketOrVal[float] = 1.5, normal: pf.SocketOrVal[pf.Vector] = None
 ) -> pf.ProcNode[float]:
     pass
-def gamma(
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1), gamma: pf.SocketOrVal[float] = 1.0
-) -> pf.ProcNode[pf.Color]:
-    pass
 class HairInfoResult(NamedTuple):
     is_strand: pf.ProcNode[float]
     intercept: pf.ProcNode[float]
@@ -1096,14 +1142,6 @@ class HairInfoResult(NamedTuple):
 def hair_info() -> HairInfoResult:
     pass
 def holdout() -> pf.ProcNode[pf.Shader]:
-    pass
-def hue_saturation(
-    hue: pf.SocketOrVal[float] = 0.5,
-    saturation: pf.SocketOrVal[float] = 1.0,
-    value: pf.SocketOrVal[float] = 1.0,
-    fac: pf.SocketOrVal[float] = 1.0,
-    color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
-) -> pf.ProcNode[pf.Color]:
     pass
 def invert(
     fac: pf.SocketOrVal[float] = 1.0, color: pf.SocketOrVal[pf.Color] = (0, 0, 0, 1)
@@ -1156,9 +1194,9 @@ def mapping(
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def mix_shader(
-    factor: pf.SocketOrVal[float] = 0.5,
-    a: pf.ProcNode[pf.Shader] | None = None,
-    b: pf.ProcNode[pf.Shader] | None = None,
+    factor: pf.SocketOrVal[float],
+    a: pf.ProcNode[pf.Shader] | None,
+    b: pf.ProcNode[pf.Shader] | None,
 ) -> pf.ProcNode[pf.Shader]:
     pass
 class NormalResult(NamedTuple):
@@ -1213,12 +1251,6 @@ class PointInfoResult(NamedTuple):
 
 def point_info() -> PointInfoResult:
     pass
-def rgb() -> pf.ProcNode[pf.Color]:
-    pass
-def rgb_to_bw(
-    color: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
-) -> pf.ProcNode[float]:
-    pass
 def script(
     bytecode: str = "",
     bytecode_hash: str = "",
@@ -1228,9 +1260,14 @@ def script(
     use_auto_update: bool = False,
 ) -> pf.ProcNode[pf.Shader]:
     pass
+class ShaderToRGBResult(NamedTuple):
+    color: pf.ProcNode[pf.Color]
+    alpha: pf.ProcNode[float]
+
+
 def shader_to_rgb(
-    shader: pf.ProcNode[pf.Shader] | None = None,
-) -> pf.ProcNode[pf.Color]:
+    shader: pf.ProcNode[pf.Shader] | None,
+) -> ShaderToRGBResult:
     pass
 def squeeze(
     value: pf.SocketOrVal[float] = 0.0,
@@ -1262,6 +1299,7 @@ class CoordResult(NamedTuple):
     object: pf.ProcNode[pf.Vector]
     camera: pf.ProcNode[pf.Vector]
     window: pf.ProcNode[pf.Vector]
+    reflection: pf.ProcNode[pf.Vector]
 
 
 def coord(from_instancer: bool = False, object: Any = None) -> CoordResult:
@@ -1284,8 +1322,6 @@ def uv_along_stroke(use_tips: bool = False) -> pf.ProcNode[pf.Vector]:
     pass
 def uv_map(from_instancer: bool = False, uv_map: str = "") -> pf.ProcNode[pf.Vector]:
     pass
-def value() -> pf.ProcNode[float]:
-    pass
 def vector_displacement(
     vector: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     midlevel: pf.SocketOrVal[float] = 0.0,
@@ -1293,14 +1329,26 @@ def vector_displacement(
     space: Literal["TANGENT", "OBJECT", "WORLD"] = "TANGENT",
 ) -> pf.ProcNode[pf.Vector]:
     pass
-def vertex_color(layer_name: str = "") -> pf.ProcNode[pf.Color]:
+class VertexColorResult(NamedTuple):
+    color: pf.ProcNode[pf.Color]
+    alpha: pf.ProcNode[float]
+
+
+def vertex_color(layer_name: str = "") -> VertexColorResult:
     pass
 def volume_absorption(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     density: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.Shader]:
     pass
-def volume_info() -> pf.ProcNode:
+class VolumeInfoResult(NamedTuple):
+    color: pf.ProcNode[pf.Color]
+    density: pf.ProcNode[float]
+    flame: pf.ProcNode[float]
+    temperature: pf.ProcNode[float]
+
+
+def volume_info() -> VolumeInfoResult:
     pass
 def volume_principled(
     color: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
@@ -1356,7 +1404,7 @@ class AttributeDomainSizeResult(NamedTuple):
 
 
 def attribute_domain_size(
-    geometry: pf.ProcNode[pf.Geometry],
+    geometry: pf.ProcNode[pf.Geometry] | None,
     component: Literal["MESH", "POINTCLOUD", "CURVE", "INSTANCES"] = "MESH",
 ) -> AttributeDomainSizeResult:
     pass
@@ -1372,7 +1420,7 @@ class AttributeStatisticResult(NamedTuple, Generic[TAttribute]):
 
 
 def attribute_statistic(
-    geometry: pf.ProcNode[pf.Geometry],
+    geometry: pf.ProcNode[pf.Geometry] | None,
     attribute: pf.ProcNode[TAttribute] | None = None,
     selection: pf.SocketOrVal[bool] = True,
     domain: TDomain = "POINT",
@@ -1392,7 +1440,7 @@ class BoundBoxResult(NamedTuple):
     max: pf.ProcNode[pf.Vector]
 
 
-def bound_box(geometry: pf.ProcNode[pf.Geometry]) -> BoundBoxResult:
+def bound_box(geometry: pf.ProcNode[pf.Geometry] | None) -> BoundBoxResult:
     pass
 @dataclass
 class CaptureAttributeResult(Generic[TAnyGeometry]):
@@ -1406,10 +1454,22 @@ class CaptureAttributeResult(Generic[TAnyGeometry]):
             return object.__getattribute__(self, name)
 
 
+# CaptureAttribute has one fixed output (geometry) plus a dynamic set of captured
+# attribute outputs keyed by user-chosen names, so it can't be a NamedTuple like
+# the other multi-output bindings. Register it as a pytree container instead so
+# the computegraph builder flattens it into its geometry + attribute sockets.
+pytree.register_pytree_container(
+    CaptureAttributeResult,
+    flatten_func=_capture_result_flatten,
+    unflatten_func=_capture_result_unflatten,
+    names_func=_capture_result_names,
+)
+
+
 def capture_attribute(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
     # active_index: int = 0, # TODO unsure how active_* function
-    # active_item: Any = None,
+    # active_item: pf.NodeItem | None = None,
     domain: TDomain = "POINT",
     **attributes: pf.SocketOrVal[TAttribute],
 ) -> CaptureAttributeResult[TAnyGeometry]:
@@ -1421,7 +1481,9 @@ def collection_info(
     transform_space: Literal["ORIGINAL", "RELATIVE"] = "ORIGINAL",
 ) -> pf.ProcNode[pf.Instances]:
     pass
-def convex_hull(geometry: pf.ProcNode[pf.Geometry]) -> pf.ProcNode[pf.MeshObject]:
+def convex_hull(
+    geometry: pf.ProcNode[pf.Geometry] | None,
+) -> pf.ProcNode[pf.MeshObject]:
     pass
 class CornerResult(NamedTuple):
     corner_index: pf.ProcNode[int]
@@ -1453,8 +1515,24 @@ def curve_arc(
     sweep_angle: pf.SocketOrVal[float] = 5.497787,
     connect_center: pf.SocketOrVal[bool] = False,
     invert_arc: pf.SocketOrVal[bool] = False,
-    mode: Literal["POINTS", "RADIUS"] = "RADIUS",
 ) -> pf.ProcNode[pf.CurveObject]:
+    pass
+class CurveArcFromPointsResult(NamedTuple):
+    curve: pf.ProcNode[pf.CurveObject]
+    center: pf.ProcNode[pf.Vector]
+    normal: pf.ProcNode[pf.Vector]
+    radius: pf.ProcNode[float]
+
+
+def curve_arc_from_points(
+    start: pf.SocketOrVal[pf.Vector],
+    middle: pf.SocketOrVal[pf.Vector],
+    end: pf.SocketOrVal[pf.Vector],
+    resolution: pf.SocketOrVal[int] = 16,
+    offset_angle: pf.SocketOrVal[float] = 0.0,
+    connect_center: pf.SocketOrVal[bool] = False,
+    invert_arc: pf.SocketOrVal[bool] = False,
+) -> CurveArcFromPointsResult:
     pass
 def curve_endpoint_selection(
     start_size: pf.SocketOrVal[int] = 1, end_size: pf.SocketOrVal[int] = 1
@@ -1476,7 +1554,7 @@ def curve_endpoint_selection(
 #    )
 
 
-def curve_length(curve: pf.ProcNode[pf.CurveObject]) -> pf.ProcNode[float]:
+def curve_length(curve: pf.ProcNode[pf.CurveObject] | None) -> pf.ProcNode[float]:
     pass
 class CurveOfPointResult(NamedTuple):
     curve_index: pf.ProcNode[int]
@@ -1486,51 +1564,85 @@ class CurveOfPointResult(NamedTuple):
 def curve_of_point(point_index: pf.SocketOrVal[int] = 0) -> CurveOfPointResult:
     pass
 def curve_bezier_segment(
+    start: pf.SocketOrVal[pf.pf.Vector],
+    start_handle: pf.SocketOrVal[pf.pf.Vector],
+    end_handle: pf.SocketOrVal[pf.pf.Vector],
+    end: pf.SocketOrVal[pf.pf.Vector],
     resolution: pf.SocketOrVal[int] = 16,
-    start: pf.SocketOrVal[pf.pf.Vector] = (-1, 0, 0),
-    start_handle: pf.SocketOrVal[pf.pf.Vector] = (-0.5, 0.5, 0),
-    end_handle: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    end: pf.SocketOrVal[pf.pf.Vector] = (1, 0, 0),
     mode: Literal["POSITION", "OFFSET"] = "POSITION",
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_circle(
     resolution: pf.SocketOrVal[int] = 32,
     radius: pf.SocketOrVal[float] = 1.0,
-    mode: Literal["POINTS", "RADIUS"] = "RADIUS",
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
+class CurveCircleFromPointsResult(NamedTuple):
+    curve: pf.ProcNode[pf.CurveObject]
+    center: pf.ProcNode[pf.Vector]
+
+
+def curve_circle_from_points(
+    point_1: pf.SocketOrVal[pf.Vector],
+    point_2: pf.SocketOrVal[pf.Vector],
+    point_3: pf.SocketOrVal[pf.Vector],
+    resolution: pf.SocketOrVal[int] = 32,
+) -> CurveCircleFromPointsResult:
+    pass
 def curve_line(
-    start: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    end: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 1),
+    start: pf.SocketOrVal[pf.pf.Vector],
+    end: pf.SocketOrVal[pf.pf.Vector],
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_line_from_direction(
-    start: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    direction: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 1),
+    start: pf.SocketOrVal[pf.pf.Vector],
+    direction: pf.SocketOrVal[pf.pf.Vector],
     length: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_quadrilateral(
     width: pf.SocketOrVal[float] = 2.0,
     height: pf.SocketOrVal[float] = 2.0,
-    mode: Literal[
-        "RECTANGLE", "PARALLELOGRAM", "TRAPEZOID", "KITE", "POINTS"
-    ] = "RECTANGLE",
+) -> pf.ProcNode[pf.CurveObject]:
+    pass
+def curve_quadrilateral_parallelogram(
+    width: pf.SocketOrVal[float] = 2.0,
+    height: pf.SocketOrVal[float] = 2.0,
+    offset: pf.SocketOrVal[float] = 1.0,
+) -> pf.ProcNode[pf.CurveObject]:
+    pass
+def curve_quadrilateral_trapezoid(
+    bottom_width: pf.SocketOrVal[float] = 4.0,
+    top_width: pf.SocketOrVal[float] = 2.0,
+    height: pf.SocketOrVal[float] = 2.0,
+    offset: pf.SocketOrVal[float] = 1.0,
+) -> pf.ProcNode[pf.CurveObject]:
+    pass
+def curve_quadrilateral_kite(
+    width: pf.SocketOrVal[float] = 2.0,
+    bottom_height: pf.SocketOrVal[float] = 3.0,
+    top_height: pf.SocketOrVal[float] = 1.0,
+) -> pf.ProcNode[pf.CurveObject]:
+    pass
+def curve_quadrilateral_points(
+    point_1: pf.SocketOrVal[pf.Vector],
+    point_2: pf.SocketOrVal[pf.Vector],
+    point_3: pf.SocketOrVal[pf.Vector],
+    point_4: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_bezier(
+    start: pf.SocketOrVal[pf.pf.Vector],
+    middle: pf.SocketOrVal[pf.pf.Vector],
+    end: pf.SocketOrVal[pf.pf.Vector],
     resolution: pf.SocketOrVal[int] = 16,
-    start: pf.SocketOrVal[pf.pf.Vector] = (-1, 0, 0),
-    middle: pf.SocketOrVal[pf.pf.Vector] = (0, 2, 0),
-    end: pf.SocketOrVal[pf.pf.Vector] = (1, 0, 0),
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_set_handles(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     handle_type: Literal["FREE", "AUTO", "VECTOR", "ALIGN"] = "AUTO",
-    mode: Literal["LEFT", "RIGHT"] = "RIGHT",
+    mode: set[str] = frozenset({"LEFT", "RIGHT"}),
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_spiral(
@@ -1543,7 +1655,7 @@ def curve_spiral(
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_spline_type(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     spline_type: Literal["CATMULL_ROM", "POLY", "BEZIER", "NURBS"] = "POLY",
 ) -> pf.ProcNode[pf.CurveObject]:
@@ -1561,7 +1673,7 @@ def curve_star(
 ) -> CurveStarResult:
     pass
 def curve_to_mesh(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     profile_curve: pf.ProcNode[pf.CurveObject] | None = None,
     fill_caps: pf.SocketOrVal[bool] = False,
 ) -> pf.ProcNode[pf.MeshObject]:
@@ -1574,28 +1686,28 @@ class CurveToPointsResult(NamedTuple):
 
 
 def curve_to_points(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     count: pf.SocketOrVal[int] = 10,
     length: pf.SocketOrVal[float] = 1.0,
     mode: Literal["EVALUATED", "COUNT", "LENGTH"] = "COUNT",
 ) -> CurveToPointsResult:
     pass
 def curve_to_points_evaluated(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
 ) -> CurveToPointsResult:
     pass
 def curve_to_points_count(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     count: pf.SocketOrVal[int] = 10,
 ) -> CurveToPointsResult:
     pass
 def curve_to_points_length(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     length: pf.SocketOrVal[float] = 0.1,
 ) -> CurveToPointsResult:
     pass
 def deform_curves_on_surface(
-    curves: pf.ProcNode[pf.HairObject],
+    curves: pf.ProcNode[pf.HairObject] | None,
 ) -> pf.ProcNode[pf.HairObject]:
     pass
 TDeleteGeometry = TypeVar(
@@ -1606,7 +1718,7 @@ TDeleteGeometry = TypeVar(
 
 
 def delete_geometry(
-    geometry: pf.ProcNode[TDeleteGeometry],
+    geometry: pf.ProcNode[TDeleteGeometry] | None,
     selection: pf.SocketOrVal[bool] = True,
     domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
     mode: Literal["ALL", "EDGE_FACE", "ONLY_FACE"] = "ALL",
@@ -1620,7 +1732,7 @@ def distribute_points_in_grid(
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def distribute_points_in_volume(
-    volume: pf.ProcNode[pf.VolumeObject],
+    volume: pf.ProcNode[pf.VolumeObject] | None,
     density: pf.SocketOrVal[float] = 1.0,
     seed: pf.SocketOrVal[int] = 0,
     mode: Literal["DENSITY_RANDOM", "DENSITY_GRID"] = "DENSITY_RANDOM",
@@ -1633,7 +1745,7 @@ class DistributePointsOnFacesResult(NamedTuple):
 
 
 def distribute_points_on_faces(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     density: pf.SocketOrVal[float] | None = None,
     seed: pf.SocketOrVal[int] = 0,
@@ -1641,17 +1753,18 @@ def distribute_points_on_faces(
 ) -> DistributePointsOnFacesResult:
     pass
 def distribute_points_on_faces_poisson(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
+    density_factor: pf.SocketOrVal[float],
     selection: pf.SocketOrVal[bool] = True,
     distance_min: pf.SocketOrVal[float] = 0.0,
     density_max: pf.SocketOrVal[float] = 10.0,
-    density_factor: pf.SocketOrVal[float] = 1.0,
     seed: pf.SocketOrVal[int] = 0,
     use_legacy_normal: bool = False,
 ) -> DistributePointsOnFacesResult:
     pass
 def dual_mesh(
-    mesh: pf.ProcNode[pf.MeshObject], keep_boundaries: pf.SocketOrVal[bool] = False
+    mesh: pf.ProcNode[pf.MeshObject] | None,
+    keep_boundaries: pf.SocketOrVal[bool] = False,
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 class DuplicateElementsResult(NamedTuple, Generic[TAnyGeometry]):
@@ -1660,14 +1773,14 @@ class DuplicateElementsResult(NamedTuple, Generic[TAnyGeometry]):
 
 
 def duplicate_elements(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
     selection: pf.SocketOrVal[bool] = True,
     amount: pf.SocketOrVal[int] = 1,
     domain: Literal["POINT", "EDGE", "FACE", "SPLINE", "INSTANCE"] = "POINT",
 ) -> DuplicateElementsResult[TAnyGeometry]:
     pass
 def edge_paths_to_curves(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
     start_vertices: pf.SocketOrVal[bool] = True,
     next_vertex_index: pf.SocketOrVal[int] = -1,
 ) -> pf.ProcNode[pf.CurveObject]:
@@ -1706,9 +1819,9 @@ class ExtrudeMeshResult(NamedTuple):
 
 
 def extrude_mesh(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
+    offset: pf.SocketOrVal[pf.pf.Vector] | None = None,
     selection: pf.SocketOrVal[bool] = True,
-    offset: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     offset_scale: pf.SocketOrVal[float] = 1.0,
     individual: pf.SocketOrVal[bool] = True,
     mode: Literal["VERTICES", "EDGES", "FACES"] = "FACES",
@@ -1740,32 +1853,42 @@ def field_on_domain(
 ) -> pf.ProcNode[TFieldOnDomain]:
     pass
 def fill_curve(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     group_id: pf.SocketOrVal[int] = 0,
     mode: Literal["TRIANGLES", "NGONS"] = "TRIANGLES",
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
-def fillet_curve(
-    curve: pf.ProcNode[pf.CurveObject],
+def fillet_curve_bezier(
+    curve: pf.ProcNode[pf.CurveObject] | None,
     radius: pf.SocketOrVal[float] = 0.25,
     limit_radius: pf.SocketOrVal[bool] = False,
+) -> pf.ProcNode[pf.CurveObject]:
+    pass
+def fillet_curve_poly(
+    curve: pf.ProcNode[pf.CurveObject] | None,
+    radius: pf.SocketOrVal[float] = 0.25,
     count: pf.SocketOrVal[int] = 1,
-    mode: Literal["BEZIER", "POLY"] = "BEZIER",
+    limit_radius: pf.SocketOrVal[bool] = False,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def flip_faces(
-    mesh: pf.ProcNode[pf.MeshObject], selection: pf.SocketOrVal[bool] = True
+    mesh: pf.ProcNode[pf.MeshObject] | None, selection: pf.SocketOrVal[bool] = True
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def geometry_to_instance(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
 ) -> pf.ProcNode[pf.Instances]:
     pass
+class GetNamedGridResult(NamedTuple):
+    volume: pf.ProcNode[pf.Geometry]
+    grid: pf.ProcNode[float]
+
+
 def get_named_grid(
-    volume: pf.ProcNode[pf.Geometry],
+    volume: pf.ProcNode[pf.Geometry] | None,
     name: pf.SocketOrVal[str] = "",
     remove: pf.SocketOrVal[bool] = True,
-) -> pf.ProcNode:
+) -> GetNamedGridResult:
     pass
 def grid_to_mesh(
     grid: pf.SocketOrVal[float] = 0.0,
@@ -1785,18 +1908,28 @@ def image_info(
     image: pf.SocketOrVal[pf.Image], frame: pf.SocketOrVal[int] = 0
 ) -> ImageInfoResult:
     pass
+class ImageTextureResult(NamedTuple):
+    color: pf.ProcNode[pf.Color]
+    alpha: pf.ProcNode[float]
+
+
 def image_texture(
     image: pf.SocketOrVal[pf.Image],
-    vector: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.pf.Vector],
     frame: pf.SocketOrVal[int] = 0,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
     interpolation: Literal["Linear", "Closest", "Cubic"] = "Linear",
-) -> pf.ProcNode:
+) -> ImageTextureResult:
     pass
+class IndexOfNearestResult(NamedTuple):
+    index: pf.ProcNode[int]
+    has_neighbor: pf.ProcNode[bool]
+
+
 def index_of_nearest(
-    position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
+    position: pf.SocketOrVal[pf.pf.Vector],
     group_id: pf.SocketOrVal[int] = 0,
-) -> pf.ProcNode[int]:
+) -> IndexOfNearestResult:
     pass
 def input_active_camera() -> pf.ProcNode[pf.Object]:
     pass
@@ -1815,7 +1948,7 @@ def input_edge_smooth() -> pf.ProcNode[bool]:
     pass
 def input_id() -> pf.ProcNode[int]:
     pass
-def input_image(image: Any = None) -> pf.ProcNode[pf.Image]:
+def input_image(image: pf.Image | None = None) -> pf.ProcNode[pf.Image]:
     pass
 def input_index() -> pf.ProcNode[int]:
     pass
@@ -1823,7 +1956,7 @@ def input_instance_rotation() -> pf.ProcNode[pf.Vector]:
     pass
 def input_instance_scale() -> pf.ProcNode[pf.Vector]:
     pass
-def input_material(material: Any = None) -> pf.ProcNode[pf.Material]:
+def input_material(material: pf.Material | None = None) -> pf.ProcNode[pf.Material]:
     pass
 def input_material_index() -> pf.ProcNode[int]:
     pass
@@ -1915,21 +2048,21 @@ def input_spline_resolution() -> pf.ProcNode[int]:
 def input_tangent() -> pf.ProcNode[pf.Vector]:
     pass
 def instance_on_points(
-    points: pf.ProcNode[pf.Geometry] | None = None,
-    instance: pf.ProcNode[pf.Geometry] | None = None,
+    points: pf.ProcNode[pf.Geometry] | None,
+    instance: pf.ProcNode[pf.Geometry] | None,
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
     selection: pf.SocketOrVal[bool] = True,
     pick_instance: pf.SocketOrVal[bool] = False,
     instance_index: pf.SocketOrVal[int] = 0,
-    rotation: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    scale: pf.SocketOrVal[pf.pf.Vector] = (1, 1, 1),
 ) -> pf.ProcNode[pf.Instances]:
     pass
 def instance_transform() -> pf.ProcNode:
     pass
 def instances_to_points(
-    instances: pf.ProcNode[pf.Instances] | None = None,
+    position: pf.SocketOrVal[pf.pf.Vector],
+    instances: pf.ProcNode[pf.Instances] | None,
     selection: pf.SocketOrVal[bool] = True,
-    position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     radius: pf.SocketOrVal[float] = 0.05,
 ) -> pf.ProcNode[pf.Points]:
     pass
@@ -1940,11 +2073,11 @@ class InterpolateCurvesResult(NamedTuple):
 
 
 def interpolate_curves(
-    guide_curves: pf.ProcNode[pf.HairObject],
-    points: pf.ProcNode[pf.Geometry],
-    guide_up: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
+    guide_curves: pf.ProcNode[pf.HairObject] | None,
+    points: pf.ProcNode[pf.Geometry] | None,
+    guide_up: pf.SocketOrVal[pf.pf.Vector],
+    point_up: pf.SocketOrVal[pf.pf.Vector],
     guide_group_id: pf.SocketOrVal[int] = 0,
-    point_up: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     point_group_id: pf.SocketOrVal[int] = 0,
     max_neighbors: pf.SocketOrVal[int] = 4,
 ) -> InterpolateCurvesResult:
@@ -1956,24 +2089,44 @@ def join_geometry(
 ) -> pf.ProcNode[TAnyGeometry]:
     pass
 def material_selection(
-    material: pf.SocketOrVal[pf.Material] = None,
+    material: pf.SocketOrVal[pf.Material],
 ) -> pf.ProcNode[bool]:
     pass
 def merge_by_distance(
-    geometry: pf.ProcNode[pf.Geometry],
+    geometry: pf.ProcNode[pf.Geometry] | None,
     selection: pf.SocketOrVal[bool] = True,
     distance: pf.SocketOrVal[float] = 0.001,
     mode: Literal["ALL", "CONNECTED"] = "ALL",
 ) -> pf.ProcNode[pf.Geometry]:
     pass
+class MeshBooleanResult(NamedTuple):
+    mesh: pf.ProcNode[pf.MeshObject]
+    # edges where the inputs cut each other; only the EXACT solver outputs this,
+    # so it is None when solver="FLOAT"
+    intersecting_edges: pf.ProcNode[bool] | None
+
+
 def mesh_boolean(
-    mesh_1: pf.ProcNode[pf.Geometry] | None = None,
-    mesh_2: pf.ProcNode[pf.Geometry] | None = None,
+    a: pf.ProcNode[pf.Geometry] | None,
+    b: pf.ProcNode[pf.Geometry] | None,
     self_intersection: pf.SocketOrVal[bool] = False,
     hole_tolerant: pf.SocketOrVal[bool] = False,
-    operation: Literal["INTERSECT", "UNION", "DIFFERENCE"] = "DIFFERENCE",
     solver: Literal["EXACT", "FLOAT"] = "FLOAT",
-) -> pf.ProcNode[pf.MeshObject]:
+) -> MeshBooleanResult:
+    pass
+def mesh_boolean_union(
+    mesh: pf.ProcNode[pf.Geometry] | list[pf.ProcNode[pf.Geometry]] | None,
+    self_intersection: pf.SocketOrVal[bool] = False,
+    hole_tolerant: pf.SocketOrVal[bool] = False,
+    solver: Literal["EXACT", "FLOAT"] = "FLOAT",
+) -> MeshBooleanResult:
+    pass
+def mesh_boolean_intersect(
+    mesh: pf.ProcNode[pf.Geometry] | list[pf.ProcNode[pf.Geometry]] | None,
+    self_intersection: pf.SocketOrVal[bool] = False,
+    hole_tolerant: pf.SocketOrVal[bool] = False,
+    solver: Literal["EXACT", "FLOAT"] = "FLOAT",
+) -> MeshBooleanResult:
     pass
 def mesh_circle(
     vertices: pf.SocketOrVal[int] = 32,
@@ -2044,8 +2197,8 @@ def mesh_icosphere(
 ) -> MeshResult:
     pass
 def mesh_line(
-    start_location: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    offset: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 1),
+    start_location: pf.SocketOrVal[pf.pf.Vector],
+    offset: pf.SocketOrVal[pf.pf.Vector],
     count: pf.SocketOrVal[int] = 10,
     count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
 ) -> pf.ProcNode[pf.MeshObject]:
@@ -2058,32 +2211,32 @@ def mesh_line_from_endpoints(
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def mesh_to_curve(
-    mesh: pf.ProcNode[pf.MeshObject], selection: pf.SocketOrVal[bool] = True
+    mesh: pf.ProcNode[pf.MeshObject] | None, selection: pf.SocketOrVal[bool] = True
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def mesh_to_density_grid(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
     density: pf.SocketOrVal[float] = 1.0,
     voxel_size: pf.SocketOrVal[float] = 0.3,
     gradient_width: pf.SocketOrVal[float] = 0.2,
 ) -> pf.ProcNode:
     pass
 def mesh_to_points(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
+    position: pf.SocketOrVal[pf.pf.Vector],
     selection: pf.SocketOrVal[bool] = True,
-    position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     radius: pf.SocketOrVal[float] = 0.05,
     mode: Literal["VERTICES", "EDGES", "FACES", "CORNERS"] = "VERTICES",
 ) -> pf.ProcNode[pf.Points]:
     pass
 def mesh_to_sdf_grid(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
     voxel_size: pf.SocketOrVal[float] = 0.3,
     band_width: pf.SocketOrVal[int] = 3,
 ) -> pf.ProcNode:
     pass
 def mesh_to_volume(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
     density: pf.SocketOrVal[float] = 1.0,
     voxel_amount: pf.SocketOrVal[float] = 64.0,
     interior_band_width: pf.SocketOrVal[float] = 0.2,
@@ -2127,8 +2280,8 @@ def offset_point_in_curve(
 ) -> OffsetPointInCurveResult:
     pass
 def points(
+    position: pf.SocketOrVal[pf.pf.Vector],
     count: pf.SocketOrVal[int] = 1,
-    position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     radius: pf.SocketOrVal[float] = 0.1,
 ) -> pf.ProcNode[pf.Points]:
     pass
@@ -2144,23 +2297,23 @@ def points_of_curve(
 ) -> PointsOfCurveResult:
     pass
 def points_to_curves(
-    points: pf.ProcNode[pf.Geometry],
+    points: pf.ProcNode[pf.Geometry] | None,
     curve_group_id: pf.SocketOrVal[int] = 0,
     weight: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def points_to_sdf_grid(
-    points: pf.ProcNode[pf.Points],
+    points: pf.ProcNode[pf.Points] | None,
     radius: pf.SocketOrVal[float] = 0.5,
     voxel_size: pf.SocketOrVal[float] = 0.3,
 ) -> pf.ProcNode:
     pass
 def points_to_vertices(
-    points: pf.ProcNode[pf.Points], selection: pf.SocketOrVal[bool] = True
+    points: pf.ProcNode[pf.Points] | None, selection: pf.SocketOrVal[bool] = True
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def points_to_volume(
-    points: pf.ProcNode[pf.Points],
+    points: pf.ProcNode[pf.Points] | None,
     density: pf.SocketOrVal[float] = 1.0,
     voxel_amount: pf.SocketOrVal[float] = 64.0,
     radius: pf.SocketOrVal[float] = 0.5,
@@ -2174,9 +2327,9 @@ class ProximityResult(NamedTuple):
 
 
 def proximity(
-    geometry: pf.ProcNode[pf.MeshObject],
+    geometry: pf.ProcNode[pf.MeshObject] | None,
+    sample_position: pf.SocketOrVal[pf.pf.Vector],
     group_id: pf.SocketOrVal[int] = 0,
-    sample_position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     sample_group_id: pf.SocketOrVal[int] = 0,
     target_element: Literal["POINTS", "EDGES", "FACES"] = "FACES",
 ) -> ProximityResult:
@@ -2195,65 +2348,65 @@ class RaycastResult(NamedTuple):
 
 
 def raycast(
-    geometry: pf.ProcNode[pf.MeshObject],
+    geometry: pf.ProcNode[pf.MeshObject] | None,
+    source_position: pf.SocketOrVal[pf.pf.Vector],
+    ray_direction: pf.SocketOrVal[pf.pf.Vector],
     attribute: TRaycast = 0,
-    ray_direction: pf.SocketOrVal[pf.pf.Vector] = (0, 0, -1),
     ray_length: pf.SocketOrVal[float] = 100.0,
-    source_position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     mapping: Literal["INTERPOLATED", "NEAREST"] = "INTERPOLATED",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> RaycastResult:
     pass
 def realize_instances(
-    geometry: pf.ProcNode[pf.Geometry] | pf.ProcNode[pf.Instances],
+    geometry: pf.ProcNode[pf.Geometry] | None | pf.ProcNode[pf.Instances],
     selection: pf.SocketOrVal[bool] = True,
     realize_all: pf.SocketOrVal[bool] = True,
     depth: pf.SocketOrVal[int] = 0,
 ) -> pf.ProcNode[pf.Geometry]:
     pass
 def remove_attribute(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
     name: pf.SocketOrVal[str] = "",
     pattern_mode: Literal["EXACT", "WILDCARD"] = "EXACT",
 ) -> pf.ProcNode[TAnyGeometry]:
     pass
 def replace_material(
-    geometry: pf.ProcNode[pf.MeshObject],
+    geometry: pf.ProcNode[pf.MeshObject] | None,
     old: pf.SocketOrVal[pf.Material] | None = None,
     new: pf.SocketOrVal[pf.Material] | None = None,
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def resample_curve_evaluated(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def resample_curve_count(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     count: pf.SocketOrVal[int] = 10,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def resample_curve_length(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     length: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def reverse_curve(
-    curve: pf.ProcNode[pf.CurveObject], selection: pf.SocketOrVal[bool] = True
+    curve: pf.ProcNode[pf.CurveObject] | None, selection: pf.SocketOrVal[bool] = True
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def rotate_instances(
-    instances: pf.ProcNode[pf.Instances],
+    instances: pf.ProcNode[pf.Instances] | None,
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
+    pivot_point: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     selection: pf.SocketOrVal[bool] = True,
-    rotation: Any = (0, 0, 0),
-    pivot_point: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     local_space: pf.SocketOrVal[bool] = True,
 ) -> pf.ProcNode[pf.Instances]:
     pass
 def sdf_grid_boolean(
-    grid_1: pf.SocketOrVal[float] = 0.0, grid_2: pf.SocketOrVal[float] = 0.0
+    a: pf.SocketOrVal[float] = 0.0, b: pf.SocketOrVal[float] = 0.0
 ) -> pf.ProcNode[pf.Geometry]:
     pass
 class SampleCurveResult(NamedTuple):
@@ -2264,9 +2417,9 @@ class SampleCurveResult(NamedTuple):
 
 
 def sample_curve(
-    curves: pf.ProcNode[pf.Geometry],
+    curves: pf.ProcNode[pf.Geometry] | None,
+    factor: pf.SocketOrVal[float],
     curve_index: pf.SocketOrVal[int] = 0,
-    factor: pf.SocketOrVal[float] = 0.0,
     value: pf.SocketOrVal[TAttribute] | None = None,
     mode: Literal["FACTOR", "LENGTH"] = "FACTOR",
     use_all_curves: bool = False,
@@ -2274,7 +2427,7 @@ def sample_curve(
 ) -> SampleCurveResult:
     pass
 def sample_curve_length(
-    curves: pf.ProcNode[pf.Geometry],
+    curves: pf.ProcNode[pf.Geometry] | None,
     length: pf.SocketOrVal[float] = 0.0,
     curve_index: pf.SocketOrVal[int] = 0,
     value: pf.SocketOrVal[TAttribute] | None = None,
@@ -2283,7 +2436,7 @@ def sample_curve_length(
 ) -> SampleCurveResult:
     pass
 def sample_index(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
     index: pf.SocketOrVal[int] = 0,
     value: pf.ProcNode[TAttribute] | None = None,
     clamp: bool = False,
@@ -2292,8 +2445,8 @@ def sample_index(
 ) -> pf.ProcNode[TAttribute]:
     pass
 def sample_nearest(
-    geometry: pf.ProcNode[pf.Points],
-    sample_position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
+    geometry: pf.ProcNode[pf.Points] | None,
+    sample_position: pf.SocketOrVal[pf.pf.Vector],
     domain: Literal["POINT", "EDGE", "FACE", "CORNER"] = "POINT",
 ) -> pf.ProcNode[int]:
     pass
@@ -2303,37 +2456,37 @@ class SampleResult(NamedTuple, Generic[TAttribute]):
 
 
 def sample_nearest_surface(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
+    sample_position: pf.SocketOrVal[pf.pf.Vector],
     value: pf.ProcNode[TAttribute] | None = None,
     group_id: pf.SocketOrVal[int] = 0,
     sample_group_id: pf.SocketOrVal[int] = 0,
-    sample_position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleResult[TAttribute]:
     pass
 def sample_uv_surface(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
+    sample_uv: pf.SocketOrVal[pf.pf.Vector],
+    uv_map: pf.SocketOrVal[pf.pf.Vector],
     value: pf.ProcNode[TAttribute] | None = None,
-    sample_uv: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    uv_map: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleResult[TAttribute]:
     pass
 def scale_elements(
-    geometry: pf.ProcNode[pf.Geometry],
+    geometry: pf.ProcNode[pf.Geometry] | None,
+    scale: pf.SocketOrVal[float],
+    center: pf.SocketOrVal[pf.pf.Vector],
     selection: pf.SocketOrVal[bool] = True,
-    scale: pf.SocketOrVal[float] = 1.0,
-    center: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     axis: pf.SocketOrVal[pf.pf.Vector] | None = None,
     domain: Literal["FACE", "EDGE"] = "FACE",
     scale_mode: Literal["UNIFORM", "SINGLE_AXIS"] = "UNIFORM",
 ) -> pf.ProcNode[pf.Geometry]:
     pass
 def scale_instances(
-    instances: pf.ProcNode[pf.Instances],
+    instances: pf.ProcNode[pf.Instances] | None,
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+    center: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     selection: pf.SocketOrVal[bool] = True,
-    scale: pf.SocketOrVal[pf.pf.Vector] = (1, 1, 1),
-    center: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     local_space: pf.SocketOrVal[bool] = True,
 ) -> pf.ProcNode[pf.Instances]:
     pass
@@ -2348,7 +2501,7 @@ class SeparateComponentsResult(NamedTuple):
 
 
 def separate_components(
-    geometry: pf.ProcNode[pf.Geometry],
+    geometry: pf.ProcNode[pf.Geometry] | None,
 ) -> SeparateComponentsResult:
     pass
 class SeparateGeometryResult(NamedTuple, Generic[TMeshOrCurve]):
@@ -2363,90 +2516,90 @@ def separate_geometry(
 ) -> SeparateGeometryResult[TMeshOrCurve]:
     pass
 def set_curve_handle_positions(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
+    position: pf.SocketOrVal[pf.pf.Vector],
+    offset: pf.SocketOrVal[pf.pf.Vector],
     selection: pf.SocketOrVal[bool] = True,
-    position: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    offset: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     mode: Literal["LEFT", "RIGHT"] = "LEFT",
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def set_curve_normal(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
+    normal: pf.SocketOrVal[pf.Vector] | None = None,
     selection: pf.SocketOrVal[bool] = True,
     mode: Literal["MINIMUM_TWIST", "Z_UP", "FREE"] = "MINIMUM_TWIST",
-    normal: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 1),
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def set_curve_radius(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     radius: pf.SocketOrVal[float] = 0.005,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def set_curve_tilt(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     tilt: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def set_id(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
     selection: pf.SocketOrVal[bool] = True,
     id: pf.SocketOrVal[int] = 0,
 ) -> pf.ProcNode[TAnyGeometry]:
     pass
 def set_instance_transform(
-    instances: pf.ProcNode[pf.Instances],
+    instances: pf.ProcNode[pf.Instances] | None,
     transform: pf.SocketOrVal[pf.Matrix] | None = None,
     selection: pf.SocketOrVal[bool] = True,
 ) -> pf.ProcNode[pf.Instances]:
     pass
 def set_material(
-    geometry: pf.ProcNode[pf.MeshObject],
-    material: pf.SocketOrVal[pf.Material] = None,
-    selection: pf.SocketOrVal[bool] = None,
+    geometry: pf.ProcNode[pf.MeshObject] | None,
+    material: pf.SocketOrVal[pf.Material],
+    selection: pf.SocketOrVal[bool] = True,
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def set_material_index(
-    geometry: pf.ProcNode[pf.MeshObject],
+    geometry: pf.ProcNode[pf.MeshObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     material_index: pf.SocketOrVal[int] = 0,
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def set_point_radius(
-    points: pf.ProcNode[pf.PointCloudObject],
+    points: pf.ProcNode[pf.PointCloudObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     radius: pf.SocketOrVal[float] = 0.05,
 ) -> pf.ProcNode[pf.PointCloudObject]:
     pass
 def set_position(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
+    position: pf.SocketOrVal[pf.Vector] | None = None,
+    offset: pf.SocketOrVal[pf.Vector] | None = None,
     selection: pf.SocketOrVal[bool] = True,
-    position: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    offset: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
 ) -> pf.ProcNode[TAnyGeometry]:
     pass
 def set_shade_smooth(
-    geometry: pf.ProcNode[pf.MeshObject],
+    geometry: pf.ProcNode[pf.MeshObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     shade_smooth: pf.SocketOrVal[bool] = True,
     domain: Literal["EDGE", "FACE"] = "FACE",
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def set_spline_cyclic(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     cyclic: pf.SocketOrVal[bool] = False,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def set_spline_resolution(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     resolution: pf.SocketOrVal[int] = 12,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def sort_elements(
-    geometry: pf.ProcNode[TAnyGeometry],
+    geometry: pf.ProcNode[TAnyGeometry] | None,
     selection: pf.SocketOrVal[bool] = True,
     group_id: pf.SocketOrVal[int] = 0,
     sort_weight: pf.SocketOrVal[float] = 0.0,
@@ -2469,7 +2622,7 @@ class SplineParameterResult(NamedTuple):
 def spline_parameter() -> SplineParameterResult:
     pass
 def split_edges(
-    mesh: pf.ProcNode[pf.MeshObject], selection: pf.SocketOrVal[bool] = True
+    mesh: pf.ProcNode[pf.MeshObject] | None, selection: pf.SocketOrVal[bool] = True
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 class SplitToInstancesResult(NamedTuple):
@@ -2478,7 +2631,7 @@ class SplitToInstancesResult(NamedTuple):
 
 
 def split_to_instances(
-    geometry: pf.ProcNode[pf.MeshObject],
+    geometry: pf.ProcNode[pf.MeshObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     group_id: pf.SocketOrVal[int] = 0,
     domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
@@ -2494,7 +2647,7 @@ def store_named_attribute(
 ) -> pf.ProcNode[TMeshOrCurve]:
     pass
 def store_named_grid(
-    volume: pf.ProcNode[pf.Geometry],
+    volume: pf.ProcNode[pf.Geometry] | None,
     grid: pf.SocketOrVal[float] = 0.0,
     name: pf.SocketOrVal[str] = "",
 ) -> pf.ProcNode:
@@ -2534,15 +2687,15 @@ def string_to_curves(
 ) -> StringToCurvesResult:
     pass
 def subdivide_curve(
-    curve: pf.ProcNode[pf.CurveObject], cuts: pf.SocketOrVal[int] = 1
+    curve: pf.ProcNode[pf.CurveObject] | None, cuts: pf.SocketOrVal[int] = 1
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def subdivide_mesh(
-    mesh: pf.ProcNode[pf.MeshObject], level: pf.SocketOrVal[int] = 1
+    mesh: pf.ProcNode[pf.MeshObject] | None, level: pf.SocketOrVal[int] = 1
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def subdivision_surface(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
     level: pf.SocketOrVal[int] = 1,
     edge_crease: pf.SocketOrVal[float] = 0.0,
     vertex_crease: pf.SocketOrVal[float] = 0.0,
@@ -2578,9 +2731,9 @@ _SWITCH_DATA_TYPES = [
 
 def transform(
     geometry: pf.ProcNode[TMeshOrCurve],
-    translation: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
-    rotation: Any = (0, 0, 0),
-    scale: pf.SocketOrVal[pf.pf.Vector] = (1, 1, 1),
+    translation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Euler] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
 ) -> pf.ProcNode[TMeshOrCurve]:
     pass
 def transform_by_matrix(
@@ -2589,14 +2742,14 @@ def transform_by_matrix(
 ):
     pass
 def translate_instances(
-    instances: pf.ProcNode[pf.Instances],
+    instances: pf.ProcNode[pf.Instances] | None,
+    translation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     selection: pf.SocketOrVal[bool] = True,
-    translation: pf.SocketOrVal[pf.pf.Vector] = (0, 0, 0),
     local_space: pf.SocketOrVal[bool] = True,
 ) -> pf.ProcNode[pf.Instances]:
     pass
 def triangulate(
-    mesh: pf.ProcNode[pf.MeshObject],
+    mesh: pf.ProcNode[pf.MeshObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     minimum_vertices: pf.SocketOrVal[int] = 4,
     ngon_method: Literal["BEAUTY", "CLIP"] = "BEAUTY",
@@ -2606,7 +2759,7 @@ def triangulate(
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def trim_curve(
-    curve: pf.ProcNode[pf.CurveObject],
+    curve: pf.ProcNode[pf.CurveObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     start: pf.SocketOrVal[float] = 0.0,
     end: pf.SocketOrVal[float] = 1.0,
@@ -2614,7 +2767,7 @@ def trim_curve(
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def uv_pack_islands(
-    uv: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    uv: pf.SocketOrVal[pf.Vector],
     selection: pf.SocketOrVal[bool] = True,
     margin: pf.SocketOrVal[float] = 0.001,
     rotate: pf.SocketOrVal[bool] = True,
@@ -2635,6 +2788,30 @@ TViewer = TypeVar(
 )
 
 
+# def viewer(
+#     geometry: t.ProcNode[t.Geometry],
+#     value: TViewer = 0,
+#     domain: TDomain = "AUTO",
+#     data_type: NodeDataType | RuntimeResolveDataType | None = None,
+# ) -> t.ProcNode:
+#     """
+#     Uses a Viewer Geometry Node.
+#
+#     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
+#     """
+#     if data_type is None:
+#         data_type = RuntimeResolveDataType(
+#             [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
+#             ["Value"],
+#         )
+#     return t.ProcNode.from_nodetype(
+#         node_type="GeometryNodeViewer",
+#         inputs={"Geometry": geometry, "Value": value},
+#         attrs={
+#             "domain": domain,
+#             "data_type": data_type,
+#         },
+#     )
 
 
 class ViewportTransformResult(NamedTuple):
@@ -2656,7 +2833,7 @@ def volume_cube(
 ) -> pf.ProcNode[pf.VolumeObject]:
     pass
 def volume_to_mesh(
-    volume: pf.ProcNode[pf.VolumeObject],
+    volume: pf.ProcNode[pf.VolumeObject] | None,
     threshold: pf.SocketOrVal[float] = 0.1,
     adaptivity: pf.SocketOrVal[float] = 0.0,
     resolution_mode: Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"] = "GRID",
@@ -2749,10 +2926,11 @@ def ies(
     pass
 def image(
     vector: pf.SocketOrVal[pf.Vector],
+    # None mirrors a bare ShaderNodeTexImage; attr not socket, strict-None doesnt apply
+    image: pf.Image | None = None,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
-    image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
-    projection: Literal["FLAT", "BOX", "SPHERE", "CUBE"] = "FLAT",
+    projection: Literal["FLAT", "BOX", "SPHERE", "TUBE"] = "FLAT",
     projection_blend: float = 0.0,
 ) -> TextureResult:
     pass
@@ -2764,7 +2942,7 @@ def magic(
 ) -> TextureResult:
     pass
 def noise(
-    vector: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 2.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -2775,7 +2953,7 @@ def noise(
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
     normalize: bool = True,
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> TextureResult:
     pass
 def point_density(
@@ -2813,7 +2991,7 @@ def sky(
 ) -> pf.ProcNode[pf.Color]:
     pass
 def voronoi(
-    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 0.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -2824,11 +3002,11 @@ def voronoi(
     feature: Literal["F1", "F2"] = "F1",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
     pass
 def voronoi_distance(
-    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 0.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -2836,11 +3014,11 @@ def voronoi_distance(
     randomness: pf.SocketOrVal[float] = 1.0,
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> pf.ProcNode[float]:
     pass
 def voronoi_smooth_f1(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 0.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -2850,7 +3028,7 @@ def voronoi_smooth_f1(
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
     pass
 def voronoi_n_spheres_distance(
