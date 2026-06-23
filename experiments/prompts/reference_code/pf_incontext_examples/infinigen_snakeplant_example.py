@@ -7,68 +7,65 @@ import procfunc as pf
 
 
 def shader_snake_plant():
-    color_ramp = pf.nodes.shader.color_ramp(
-        fac=0.001 * 0.0,
-        points=[(0.366, (1.0, 1.0, 1.0, 1.0)), (0.386, (0.0, 0.0, 0.0, 1.0))],
+    surface_base_color_factor = pf.nodes.color.color_ramp(
+        fac=0.001 * 2.0,
+        points=[(0.374, (1.0, 1.0, 1.0, 1.0)), (0.394, (0.0, 0.0, 0.0, 1.0))],
     )
     
     coord = pf.nodes.shader.coord()
     
     mapping = pf.nodes.shader.mapping(coord.object)
     
-    noise = pf.nodes.shader.noise(vector=mapping, scale=0.530729, roughness=1.0)
+    surface_2 = pf.nodes.texture.noise(vector=mapping, scale=0.6966707, roughness=1.0)
     
-    wave_vector = noise.fac.astype(dtype=pf.Vector) * (1.0, 1.0, 0.6)
-    
-    wave = pf.nodes.shader.wave(
-        vector=wave_vector + mapping,
-        scale=1.784055,
-        distortion=2.673235,
-        detail_scale=5.038811,
+    surface_0_vector = surface_2.fac.astype(dtype=pf.Vector) * (1.0, 1.0, 0.6)
+    surface_1 = pf.nodes.texture.wave(
+        vector=surface_0_vector + mapping,
+        scale=2.3754084,
+        distortion=3.7571707,
+        detail_scale=3.011885,
         detail_roughness=2.0,
         bands_direction='Z',
     )
-    color_a = wave.fac > 0.226164
-    
+    surface_a = surface_1.fac > 0.51349914
     mapping_1 = pf.nodes.shader.mapping(vector=coord.object, scale=(7.0, 7.0, 0.05))
     
-    noise_1 = pf.nodes.shader.noise(vector=mapping_1, scale=32.977795)
+    surface_b = pf.nodes.texture.noise(vector=mapping_1, scale=39.196106)
     
-    color_ramp_1 = pf.nodes.shader.color_ramp(
-        fac=color_a * noise_1.fac,
-        points=[(0.232, (0.0, 0.0, 0.0, 1.0)), (0.58, (1.0, 1.0, 1.0, 1.0))],
+    surface_0_a = pf.nodes.color.color_ramp(
+        fac=surface_a * surface_b.fac,
+        points=[(0.232, (0.0, 0.0, 0.0, 1.0)), (0.616, (1.0, 1.0, 1.0, 1.0))],
     )
-    
-    color_ramp_2 = pf.nodes.shader.color_ramp(
-        fac=wave.fac,
-        points=[(0.616, (0.0, 0.0, 0.0, 1.0)), (0.744, (1.0, 1.0, 1.0, 1.0))],
+    surface_0_b = pf.nodes.color.color_ramp(
+        fac=surface_1.fac,
+        points=[(0.788, (0.0, 0.0, 0.0, 1.0)), (0.821, (1.0, 1.0, 1.0, 1.0))],
     )
-    color = pf.nodes.func.mix_rgb(
-        factor=0.81574,
-        a=color_ramp_1.color,
-        b=color_ramp_2.color,
+    surface_0 = pf.nodes.color.mix_rgb(
+        factor=0.89756054,
+        a=surface_0_a.color,
+        b=surface_0_b.color,
         blend_type='ADD',
     )
-    color_ramp_3 = pf.nodes.shader.color_ramp(
-        fac=color.astype(dtype=float),
-        points=[(0.0, (0.172, 0.395, 0.181, 1.0)), (1.0, (0.007, 0.031, 0.009, 1.0))],
+    surface_base_color_b = pf.nodes.color.color_ramp(
+        fac=surface_0.astype(dtype=float),
+        points=[(0.0, (0.13, 0.272, 0.132, 1.0)), (1.0, (0.02, 0.047, 0.015, 1.0))],
     )
-    surface_base_color = pf.nodes.func.mix_rgb(
-        factor=color_ramp.color.astype(dtype=float),
-        a=pf.Color((0.374098, 0.388528, 0.057165)),
-        b=color_ramp_3.color,
+    surface_base_color = pf.nodes.color.mix_rgb(
+        factor=surface_base_color_factor.color.astype(dtype=float),
+        a=(0.4951206, 0.5739398, 0.10857947),
+        b=surface_base_color_b.color,
     )
-    
     principled = pf.nodes.shader.principled_bsdf(
         base_color=surface_base_color,
-        roughness=8.206116,
+        roughness=9.803732,
         ior=1.45,
         subsurface_method='RANDOM_WALK_SKIN',
+        subsurface_radius=(1.0, 0.2, 0.1),
         subsurface_ior=1.4,
         subsurface_anisotropy=0.0,
         distribution='GGX',
         coat_roughness=0.0,
-        emission_color=pf.Color((0.0, 0.0, 0.0)),
+        emission_color=(0.0, 0.0, 0.0),
         emission_strength=1.0,
     )
     

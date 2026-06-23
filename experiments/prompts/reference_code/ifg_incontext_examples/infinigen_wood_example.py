@@ -14,7 +14,7 @@ def shader_wood(nw: NodeWrangler):
     texture_coordinate = nw.new_node(Nodes.TextureCoord)
     
     mapping = nw.new_node(Nodes.Mapping,
-        input_kwargs={'Vector': texture_coordinate.outputs["Generated"], 'Rotation': (5.4664, 1.1366, 2.6948)})
+        input_kwargs={'Vector': texture_coordinate.outputs["Generated"], 'Rotation': (2.1682, 1.0910, 3.1178)})
     
     mapping_1 = nw.new_node(Nodes.Mapping, input_kwargs={'Vector': mapping, 'Scale': (0.5000, 3.0000, 0.5000)})
     

@@ -3,7 +3,7 @@
 
 
 def clamp(
-    value: pf.SocketOrVal[float] = 1.0,
+    value: pf.SocketOrVal[float],
     min: pf.SocketOrVal[float] = 0.0,
     max: pf.SocketOrVal[float] = 1.0,
     clamp_type: Literal["MINMAX", "RANGE"] = "MINMAX",
@@ -13,279 +13,253 @@ def clamp(
 
 
 # Basic Math Operations
-def add(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def add(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def subtract(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def subtract(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def multiply(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def multiply(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def multiply_add(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
-    addend: pf.SocketOrVal[float] = 0.0,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
+    addend: pf.SocketOrVal[float],
 ) -> pf.ProcNode[float]:
     pass
 def divide(
-    numerator: pf.SocketOrVal[float] = 0.5, denominator: pf.SocketOrVal[float] = 0.5
+    numerator: pf.SocketOrVal[float], denominator: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
 def power(
-    base: pf.SocketOrVal[float] = 0.5, exponent: pf.SocketOrVal[float] = 0.5
+    base: pf.SocketOrVal[float], exponent: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
 def logarithm(
-    value: pf.SocketOrVal[float] = 0.5, base: pf.SocketOrVal[float] = 0.5
+    value: pf.SocketOrVal[float], base: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
-def sqrt(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sqrt(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def inverse_sqrt(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def inverse_sqrt(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def absolute(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def absolute(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def exponent(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def exponent(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 # Comparison Operations
-def minimum(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def minimum(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def maximum(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def maximum(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def less_than(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def less_than(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def greater_than(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
+    a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]
 ) -> pf.ProcNode[float]:
     pass
-def sign(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sign(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def compare(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
     epsilon: pf.SocketOrVal[float] = 0.001,
 ) -> pf.ProcNode[float]:
     pass
 def smooth_minimum(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
     distance: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
 def smooth_maximum(
-    a: pf.SocketOrVal[float] = 0.5,
-    b: pf.SocketOrVal[float] = 0.5,
+    a: pf.SocketOrVal[float],
+    b: pf.SocketOrVal[float],
     distance: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
-def round(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def round(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def floor(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def floor(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def ceil(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def ceil(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def truncate(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def truncate(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def fraction(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def fraction(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def modulo(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def modulo(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def floor_mod(
-    a: pf.SocketOrVal[float] = 0.5, b: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def floor_mod(a: pf.SocketOrVal[float], b: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 def wrap(
-    value: pf.SocketOrVal[float] = 0.5,
+    value: pf.SocketOrVal[float],
     max_val: pf.SocketOrVal[float] = 1.0,
     min_val: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
 def snap(
-    value: pf.SocketOrVal[float] = 0.5, increment: pf.SocketOrVal[float] = 1.0
+    value: pf.SocketOrVal[float], increment: pf.SocketOrVal[float] = 1.0
 ) -> pf.ProcNode[float]:
     pass
 def pingpong(
-    value: pf.SocketOrVal[float] = 0.5, scale: pf.SocketOrVal[float] = 1.0
+    value: pf.SocketOrVal[float], scale: pf.SocketOrVal[float] = 1.0
 ) -> pf.ProcNode[float]:
     pass
 # Trigonometric Operations
-def sin(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sin(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def cos(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def cos(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def tan(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def tan(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def asin(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def asin(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def acos(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def acos(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def atan(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def atan(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def atan2(
-    y: pf.SocketOrVal[float] = 0.5, x: pf.SocketOrVal[float] = 0.5
-) -> pf.ProcNode[float]:
+def atan2(y: pf.SocketOrVal[float], x: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def sinh(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def sinh(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def cosh(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def cosh(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def tanh(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def tanh(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 # Conversion Operations
-def deg_to_rad(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def deg_to_rad(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
-def rad_to_deg(value: pf.SocketOrVal[float] = 0.5) -> pf.ProcNode[float]:
+def rad_to_deg(value: pf.SocketOrVal[float]) -> pf.ProcNode[float]:
     pass
 # Vector Math Operations
 def vector_add(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_subtract(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_multiply(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_multiply_add(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    addend: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
+    addend: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_divide(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_cross_product(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_project(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    onto: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
+    onto: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[float]:
     pass
 def vector_reflect(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    normal: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    normal: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_refract(
-    incident: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    normal: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    incident: pf.SocketOrVal[pf.Vector],
+    normal: pf.SocketOrVal[pf.Vector],
     ior: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_faceforward(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    surface: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    normal: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
+    surface: pf.SocketOrVal[pf.Vector],
+    normal: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_dot_product(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_distance(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
-def vector_length(vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0)) -> pf.ProcNode[float]:
+def vector_length(vector: pf.SocketOrVal[pf.Vector]) -> pf.ProcNode[float]:
     pass
 def vector_scale(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0), scale: pf.SocketOrVal[float] = 1.0
+    vector: pf.SocketOrVal[pf.Vector], scale: pf.SocketOrVal[float]
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_normalize(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_wrap(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    max_val: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
-    min_val: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
+    max_val: pf.SocketOrVal[pf.Vector],
+    min_val: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_snap(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_floor(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_ceil(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_modulo(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_fraction(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-) -> pf.ProcNode[pf.Vector]:
-    pass
-def vector_round(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-) -> pf.ProcNode[pf.Vector]:
-    pass
-def vector_truncate(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_absolute(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_minimum(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_maximum(
-    a: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    b: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    a: pf.SocketOrVal[pf.Vector],
+    b: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_sine(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_cosine(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_tangent(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_rotate_axis_angle(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
     center: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     axis: pf.SocketOrVal[pf.Vector] = (0, 0, 1),
     angle: pf.SocketOrVal[float] = 0.0,
@@ -293,7 +267,7 @@ def vector_rotate_axis_angle(
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def vector_rotate_euler(
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    vector: pf.SocketOrVal[pf.Vector],
     center: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     invert: bool = False,
@@ -303,7 +277,7 @@ def vector_rotate_euler(
 
 
 def vector_transform(
-    vector: pf.SocketOrVal[pf.Vector] = (0.5, 0.5, 0.5),
+    vector: pf.SocketOrVal[pf.Vector],
     convert_from: Literal["WORLD", "OBJECT", "CAMERA"] = "WORLD",
     convert_to: Literal["WORLD", "OBJECT", "CAMERA"] = "OBJECT",
     vector_type: Literal["POINT", "VECTOR", "NORMAL"] = "VECTOR",
@@ -311,7 +285,19 @@ def vector_transform(
     pass
 # ---- Constants / inputs ----------------------------------------------------
 
-TConstant = TypeVar("TConstant", int, float, bool, pf.Vector, pf.Euler, pf.Color)
+TConstant = TypeVar("TConstant", int, float, bool, str, pf.Vector, pf.Euler, pf.Color)
+
+_CONSTANT_CONTEXTUAL_BY_TYPE = [
+    # bool before int: bool is a subclass of int
+    (bool, ContextualNode.BOOLEAN),
+    (int, ContextualNode.INT),
+    (float, ContextualNode.VALUE),
+    (pf.Euler, ContextualNode.ROTATION),
+    (pf.Vector, ContextualNode.VECTOR),
+    (tuple, ContextualNode.VECTOR),
+    (pf.Color, ContextualNode.RGB),
+    (str, ContextualNode.STRING),
+]
 
 
 def constant(
@@ -320,88 +306,97 @@ def constant(
     pass
 # ---- Mix -------------------------------------------------------------------
 
-TMix = TypeVar("TMix", pf.SocketOrVal[float], pf.SocketOrVal[pf.Vector])
+TMix = TypeVar(
+    "TMix",
+    pf.SocketOrVal[float],
+    pf.SocketOrVal[pf.Vector],
+    pf.SocketOrVal[pf.Color],
+)
 
 
 def mix(
-    a: TMix | None = None,
-    b: TMix | None = None,
-    factor: pf.SocketOrVal[float] = 0.5,
+    a: TMix,
+    b: TMix,
+    factor: pf.SocketOrVal[float],
     clamp_factor: bool = True,
     factor_mode: Literal["UNIFORM", "NON_UNIFORM"] = "UNIFORM",
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> pf.ProcNode[TMix]:
     pass
-TColorMixType = Literal[
-    "MIX",
-    "DARKEN",
-    "MULTIPLY",
-    "BURN",
-    "LIGHTEN",
-    "SCREEN",
-    "DODGE",
-    "ADD",
-    "OVERLAY",
-    "SOFT_LIGHT",
-    "LINEAR_LIGHT",
-    "DIFFERENCE",
-    "EXCLUSION",
-    "SUBTRACT",
-    "DIVIDE",
-    "HUE",
-    "SATURATION",
-    "COLOR",
-    "VALUE",
-]
-
-
-def mix_rgb(
-    factor: pf.SocketOrVal[float] = 0.5,
-    a: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
-    b: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
-    blend_type: TColorMixType = "MIX",
-    clamp_result: bool = False,
-    clamp_factor: bool = True,
-) -> pf.ProcNode[pf.Color]:
-    pass
 # ---- Curves ----------------------------------------------------------------
 
 
-def rgb_curve(
-    fac: pf.SocketOrVal[float] = 1.0,
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    curves: list[np.ndarray] | None = None,
-) -> pf.ProcNode:
-    pass
 def float_curve(
-    factor: pf.SocketOrVal[float] = 1.0,
-    value: pf.SocketOrVal[float] = 1.0,
+    factor: pf.SocketOrVal[float],
+    value: pf.SocketOrVal[float],
     curve: np.ndarray | None = None,
     handle_type: str = "AUTO",
     use_clip: bool = True,
 ) -> pf.ProcNode[float]:
     pass
 def vector_curve(
+    vector: pf.SocketOrVal[pf.Vector],
     fac: pf.SocketOrVal[float] = 1.0,
-    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    curves: np.ndarray | None = None,
+    curves: list[np.ndarray] | np.ndarray | None = None,
 ) -> pf.ProcNode[pf.Vector]:
     pass
-# ---- Combine / Separate (color, vector) ------------------------------------
+# ---- Combine / Separate ------------------------------------
 
 
-def combine_color(
-    red: pf.SocketOrVal[float] = 0.0,
-    green: pf.SocketOrVal[float] = 0.0,
-    blue: pf.SocketOrVal[float] = 0.0,
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
+def combine_xyz(
+    x: pf.SocketOrVal[float] = 0.0,
+    y: pf.SocketOrVal[float] = 0.0,
+    z: pf.SocketOrVal[float] = 0.0,
+) -> pf.ProcNode[pf.Vector]:
+    pass
+class SeparateXyzResult(NamedTuple):
+    x: pf.ProcNode[float]
+    y: pf.ProcNode[float]
+    z: pf.ProcNode[float]
+
+
+def separate_xyz(vector: pf.SocketOrVal[pf.Vector]) -> SeparateXyzResult:
+    pass
+# ---- MapRange --------------------------------------------------------------
+
+
+TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
+
+
+def map_range(
+    value: pf.SocketOrVal[float],
+    from_max: pf.SocketOrVal[float] = 1.0,
+    from_min: pf.SocketOrVal[float] = 0.0,
+    to_max: pf.SocketOrVal[float] = 1.0,
+    to_min: pf.SocketOrVal[float] = 0.0,
+    clamp: bool = True,
+    interpolation_type: TInterpolationType = "LINEAR",
+    data_type: NodeDataType | RuntimeResolveDataType | None = None,
+) -> pf.ProcNode:
+    pass
+
+###MODULE procfunc.nodes.color
+
+
+def mix_rgb(
+    factor: pf.SocketOrVal[float],
+    a: pf.SocketOrVal[pf.Color],
+    b: pf.SocketOrVal[pf.Color],
+    blend_type: TColorMixType = "MIX",
+    clamp_result: bool = False,
+    clamp_factor: bool = True,
 ) -> pf.ProcNode[pf.Color]:
+    pass
+def rgb_curve(
+    fac: pf.SocketOrVal[float],
+    color: pf.SocketOrVal[pf.Color],
+    curves: list[np.ndarray] | np.ndarray | None = None,
+) -> pf.ProcNode:
     pass
 def combine_rgb(
     red: pf.SocketOrVal[float] = 0.0,
     green: pf.SocketOrVal[float] = 0.0,
     blue: pf.SocketOrVal[float] = 0.0,
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
 ) -> pf.ProcNode[pf.Color]:
     pass
 def combine_hsv(
@@ -415,25 +410,6 @@ def combine_hsl(
     saturation: pf.SocketOrVal[float] = 0.0,
     lightness: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[pf.Color]:
-    pass
-def combine_xyz(
-    x: pf.SocketOrVal[float] = 0.0,
-    y: pf.SocketOrVal[float] = 0.0,
-    z: pf.SocketOrVal[float] = 0.0,
-) -> pf.ProcNode[pf.Vector]:
-    pass
-class SeparateColorResult(NamedTuple):
-    red: pf.ProcNode[float]
-    green: pf.ProcNode[float]
-    blue: pf.ProcNode[float]
-    alpha: pf.ProcNode[float]
-
-
-def separate_color(
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    mode: Literal["RGB", "HSV", "HSL"] = "RGB",
-    ycc_mode: Literal["ITUBT601", "ITUBT709", "JFIF"] = "ITUBT709",
-) -> SeparateColorResult:
     pass
 class SeparateRgbResult(NamedTuple):
     red: pf.ProcNode[float]
@@ -468,31 +444,6 @@ def separate_hsl(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
 ) -> SeparateHslResult:
     pass
-class SeparateXyzResult(NamedTuple):
-    x: pf.ProcNode[float]
-    y: pf.ProcNode[float]
-    z: pf.ProcNode[float]
-
-
-def separate_xyz(vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0)) -> SeparateXyzResult:
-    pass
-# ---- MapRange --------------------------------------------------------------
-
-
-TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
-
-
-def map_range(
-    value: pf.SocketOrVal[float] = 1.0,
-    from_max: pf.SocketOrVal[float] = 1.0,
-    from_min: pf.SocketOrVal[float] = 0.0,
-    to_max: pf.SocketOrVal[float] = 1.0,
-    to_min: pf.SocketOrVal[float] = 0.0,
-    clamp: bool = True,
-    interpolation_type: TInterpolationType = "LINEAR",
-    data_type: NodeDataType | RuntimeResolveDataType | None = None,
-) -> pf.ProcNode:
-    pass
 # ---- ColorRamp -------------------------------------------------------------
 
 
@@ -509,15 +460,40 @@ def color_ramp(
     points: list[tuple[float, pf.Color]] | None = None,
     mode: Literal["RGB", "HSV", "HSL"] = "RGB",
     interpolation: TRampInterpolationType = "LINEAR",
+    hue_interpolation: Literal["NEAR", "FAR", "CW", "CCW"] = "NEAR",
 ) -> ColorRampResult:
+    pass
+def blackbody(temperature: pf.SocketOrVal[float] = 1500.0) -> pf.ProcNode[pf.Color]:
+    pass
+def bright_contrast(
+    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
+    bright: pf.SocketOrVal[float] = 0.0,
+    contrast: pf.SocketOrVal[float] = 0.0,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def gamma(
+    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1), gamma: pf.SocketOrVal[float] = 1.0
+) -> pf.ProcNode[pf.Color]:
+    pass
+def hue_saturation(
+    color: pf.SocketOrVal[pf.Color],
+    fac: pf.SocketOrVal[float],
+    hue: pf.SocketOrVal[float] = 0.5,
+    saturation: pf.SocketOrVal[float] = 1.0,
+    value: pf.SocketOrVal[float] = 1.0,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def rgb_to_bw(
+    color: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
+) -> pf.ProcNode[float]:
     pass
 
 ###MODULE procfunc.nodes.shader
 
 
 def add_shader(
-    shader_0: pf.ProcNode[pf.Shader] | None = None,
-    shader_1: pf.ProcNode[pf.Shader] | None = None,
+    a: pf.ProcNode[pf.Shader] | None,
+    b: pf.ProcNode[pf.Shader] | None,
 ) -> pf.ProcNode[pf.Shader]:
     pass
 class AmbientOcclusionResult(NamedTuple):
@@ -558,14 +534,6 @@ def bevel(
     normal: pf.SocketOrVal[pf.Vector] = None,
     samples: int = 4,
 ) -> pf.ProcNode[pf.Vector]:
-    pass
-def blackbody(temperature: pf.SocketOrVal[float] = 1500.0) -> pf.ProcNode[pf.Color]:
-    pass
-def bright_contrast(
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    bright: pf.SocketOrVal[float] = 0.0,
-    contrast: pf.SocketOrVal[float] = 0.0,
-) -> pf.ProcNode[pf.Color]:
     pass
 def anisotropic_bsdf(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
@@ -624,7 +592,7 @@ def principled_bsdf(
     roughness: pf.SocketOrVal[float] = 0.5,
     ior: pf.SocketOrVal[float] = 1.5,
     alpha: pf.SocketOrVal[float] = 1.0,
-    normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+    normal: pf.SocketOrVal[pf.Vector] | None = None,
     # subsurface scattering
     subsurface_method: TSubsurfaceMethod = "RANDOM_WALK",
     subsurface_weight: pf.SocketOrVal[float] = 0.0,
@@ -638,13 +606,13 @@ def principled_bsdf(
     specular_tint: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
     anisotropic: pf.SocketOrVal[float] = 0.0,
     anisotropic_rotation: pf.SocketOrVal[float] = 0.0,
-    tangent: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    tangent: pf.SocketOrVal[pf.Vector] | None = None,
     transmission_weight: pf.SocketOrVal[float] = 0.0,
     coat_weight: pf.SocketOrVal[float] = 0.0,
     coat_roughness: pf.SocketOrVal[float] = 0.03,
     coat_ior: pf.SocketOrVal[float] = 1.5,
     coat_tint: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
-    coat_normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+    coat_normal: pf.SocketOrVal[pf.Vector] | None = None,
     sheen_weight: pf.SocketOrVal[float] = 0.0,
     sheen_roughness: pf.SocketOrVal[float] = 0.5,
     sheen_tint: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1),
@@ -712,7 +680,7 @@ def displacement(
     height: pf.SocketOrVal[float] = 0.0,
     midlevel: pf.SocketOrVal[float] = 0.5,
     scale: pf.SocketOrVal[float] = 1.0,
-    normal: pf.SocketOrVal[pf.Vector] = None,
+    normal: pf.SocketOrVal[pf.Vector] | None = None,
     space: Literal["OBJECT", "WORLD"] = "OBJECT",
 ) -> pf.ProcNode[pf.Vector]:
     pass
@@ -737,10 +705,6 @@ def fresnel(
     ior: pf.SocketOrVal[float] = 1.5, normal: pf.SocketOrVal[pf.Vector] = None
 ) -> pf.ProcNode[float]:
     pass
-def gamma(
-    color: pf.SocketOrVal[pf.Color] = (1, 1, 1, 1), gamma: pf.SocketOrVal[float] = 1.0
-) -> pf.ProcNode[pf.Color]:
-    pass
 class HairInfoResult(NamedTuple):
     is_strand: pf.ProcNode[float]
     intercept: pf.ProcNode[float]
@@ -753,14 +717,6 @@ class HairInfoResult(NamedTuple):
 def hair_info() -> HairInfoResult:
     pass
 def holdout() -> pf.ProcNode[pf.Shader]:
-    pass
-def hue_saturation(
-    hue: pf.SocketOrVal[float] = 0.5,
-    saturation: pf.SocketOrVal[float] = 1.0,
-    value: pf.SocketOrVal[float] = 1.0,
-    fac: pf.SocketOrVal[float] = 1.0,
-    color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
-) -> pf.ProcNode[pf.Color]:
     pass
 def invert(
     fac: pf.SocketOrVal[float] = 1.0, color: pf.SocketOrVal[pf.Color] = (0, 0, 0, 1)
@@ -813,9 +769,9 @@ def mapping(
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def mix_shader(
-    factor: pf.SocketOrVal[float] = 0.5,
-    a: pf.ProcNode[pf.Shader] | None = None,
-    b: pf.ProcNode[pf.Shader] | None = None,
+    factor: pf.SocketOrVal[float],
+    a: pf.ProcNode[pf.Shader] | None,
+    b: pf.ProcNode[pf.Shader] | None,
 ) -> pf.ProcNode[pf.Shader]:
     pass
 class NormalResult(NamedTuple):
@@ -870,12 +826,6 @@ class PointInfoResult(NamedTuple):
 
 def point_info() -> PointInfoResult:
     pass
-def rgb() -> pf.ProcNode[pf.Color]:
-    pass
-def rgb_to_bw(
-    color: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
-) -> pf.ProcNode[float]:
-    pass
 def script(
     bytecode: str = "",
     bytecode_hash: str = "",
@@ -885,9 +835,14 @@ def script(
     use_auto_update: bool = False,
 ) -> pf.ProcNode[pf.Shader]:
     pass
+class ShaderToRGBResult(NamedTuple):
+    color: pf.ProcNode[pf.Color]
+    alpha: pf.ProcNode[float]
+
+
 def shader_to_rgb(
-    shader: pf.ProcNode[pf.Shader] | None = None,
-) -> pf.ProcNode[pf.Color]:
+    shader: pf.ProcNode[pf.Shader] | None,
+) -> ShaderToRGBResult:
     pass
 def squeeze(
     value: pf.SocketOrVal[float] = 0.0,
@@ -919,6 +874,7 @@ class CoordResult(NamedTuple):
     object: pf.ProcNode[pf.Vector]
     camera: pf.ProcNode[pf.Vector]
     window: pf.ProcNode[pf.Vector]
+    reflection: pf.ProcNode[pf.Vector]
 
 
 def coord(from_instancer: bool = False, object: Any = None) -> CoordResult:
@@ -941,8 +897,6 @@ def uv_along_stroke(use_tips: bool = False) -> pf.ProcNode[pf.Vector]:
     pass
 def uv_map(from_instancer: bool = False, uv_map: str = "") -> pf.ProcNode[pf.Vector]:
     pass
-def value() -> pf.ProcNode[float]:
-    pass
 def vector_displacement(
     vector: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     midlevel: pf.SocketOrVal[float] = 0.0,
@@ -950,14 +904,26 @@ def vector_displacement(
     space: Literal["TANGENT", "OBJECT", "WORLD"] = "TANGENT",
 ) -> pf.ProcNode[pf.Vector]:
     pass
-def vertex_color(layer_name: str = "") -> pf.ProcNode[pf.Color]:
+class VertexColorResult(NamedTuple):
+    color: pf.ProcNode[pf.Color]
+    alpha: pf.ProcNode[float]
+
+
+def vertex_color(layer_name: str = "") -> VertexColorResult:
     pass
 def volume_absorption(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     density: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.Shader]:
     pass
-def volume_info() -> pf.ProcNode:
+class VolumeInfoResult(NamedTuple):
+    color: pf.ProcNode[pf.Color]
+    density: pf.ProcNode[float]
+    flame: pf.ProcNode[float]
+    temperature: pf.ProcNode[float]
+
+
+def volume_info() -> VolumeInfoResult:
     pass
 def volume_principled(
     color: pf.SocketOrVal[pf.Color] = (0.5, 0.5, 0.5, 1),
@@ -1073,10 +1039,11 @@ def ies(
     pass
 def image(
     vector: pf.SocketOrVal[pf.Vector],
+    # None mirrors a bare ShaderNodeTexImage; attr not socket, strict-None doesnt apply
+    image: pf.Image | None = None,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
-    image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
-    projection: Literal["FLAT", "BOX", "SPHERE", "CUBE"] = "FLAT",
+    projection: Literal["FLAT", "BOX", "SPHERE", "TUBE"] = "FLAT",
     projection_blend: float = 0.0,
 ) -> TextureResult:
     pass
@@ -1088,7 +1055,7 @@ def magic(
 ) -> TextureResult:
     pass
 def noise(
-    vector: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 2.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -1099,7 +1066,7 @@ def noise(
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
     normalize: bool = True,
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> TextureResult:
     pass
 def point_density(
@@ -1137,7 +1104,7 @@ def sky(
 ) -> pf.ProcNode[pf.Color]:
     pass
 def voronoi(
-    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 0.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -1148,11 +1115,11 @@ def voronoi(
     feature: Literal["F1", "F2"] = "F1",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
     pass
 def voronoi_distance(
-    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 0.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -1160,11 +1127,11 @@ def voronoi_distance(
     randomness: pf.SocketOrVal[float] = 1.0,
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> pf.ProcNode[float]:
     pass
 def voronoi_smooth_f1(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     detail: pf.SocketOrVal[float] = 0.0,
     roughness: pf.SocketOrVal[float] = 0.5,
@@ -1174,7 +1141,7 @@ def voronoi_smooth_f1(
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
-    w: pf.SocketOrVal[float] = 0.0,
+    w: pf.SocketOrVal[float] | None = None,
 ) -> VoronoiResult:
     pass
 def voronoi_n_spheres_distance(

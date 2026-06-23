@@ -97,11 +97,11 @@ INCONTEXT_FILES="blendergym/system/blender_scripts/material_examples/infinigen_b
 
 # infinigen examples (execute to concretify random values, then re-transpile to infinigen)
 uv run python scripts/reexecute_ifg_examples.py prompts/reference_code/ifg_incontext_examples/ outputs/bench_data_pf_fromscratch/material1/blender_file.blend $INCONTEXT_FILES --blender_bgym_path ./blender_3_6.sh
-cat prompts/reference_code/ifg_incontext_examples/*.py | grep -v import > prompts/reference_code/infinigenv1_incontext_examples.py
+for f in prompts/reference_code/ifg_incontext_examples/*.py; do cat "$f"; echo; done | grep -v import > prompts/reference_code/infinigenv1_incontext_examples.py
 
 # procfunc examples
 uv run python scripts/executable_materials_to_procfunc.py prompts/reference_code/pf_incontext_examples/ outputs/bench_data_pf_fromscratch/material1/blender_file.blend $INCONTEXT_FILES --blender_bgym_path ./blender_3_6.sh
-cat prompts/reference_code/pf_incontext_examples/*.py | grep -v import > prompts/reference_code/pf_incontext_examples.py
+for f in prompts/reference_code/pf_incontext_examples/*.py; do cat "$f"; echo; done | grep -v import > prompts/reference_code/pf_incontext_examples.py
 ```
 
 ### API Keys
