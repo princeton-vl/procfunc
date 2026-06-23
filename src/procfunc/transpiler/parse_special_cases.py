@@ -78,6 +78,15 @@ def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> 
     return cg_node
 
 
+def handle_specialcase_1d_texture(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
+    dims = getattr(node, "noise_dimensions", None) or getattr(
+        node, "voronoi_dimensions", None
+    )
+    if dims == "1D":
+        cg_node.kwargs["vector"] = None
+    return cg_node
+
+
 SINGLE_CURVE_NODES = {"ShaderNodeFloatCurve"}
 
 
@@ -120,6 +129,10 @@ SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
     "ShaderNodeValToRGB": handle_specialcase_color_ramp,
     "CompositorNodeValToRGB": handle_specialcase_color_ramp,
     "ShaderNodeVectorRotate": handle_specialcase_vector_rotate,
+    # 1D noise/voronoi need an explicit vector=None (Vector socket is disabled)
+    "ShaderNodeTexNoise": handle_specialcase_1d_texture,
+    "ShaderNodeTexVoronoi": handle_specialcase_1d_texture,
+    "ShaderNodeTexWhiteNoise": handle_specialcase_1d_texture,
     # curves share handler
     "ShaderNodeFloatCurve": handle_specialcase_curve,
     "ShaderNodeRGBCurve": handle_specialcase_curve,
