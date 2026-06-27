@@ -40,12 +40,12 @@ def test_noise_explicit_none_vector_raises_in_strict_mode(strict_vector_mode):
         pf.nodes.texture.noise(vector=None, scale=5.0)
 
 
-def test_noise_explicit_none_vector_omits_socket_in_ignore_mode():
+def test_noise_explicit_none_vector_passes_through_in_ignore_mode():
     prev = pf.context.globals.warn_mode_avoid_implicit_vector
     pf.context.globals.warn_mode_avoid_implicit_vector = "ignore"
     try:
         res = pf.nodes.texture.noise(vector=None, scale=5.0)
-        assert "Vector" not in _proc_node(res.fac).kwargs
+        assert _proc_node(res.fac).kwargs["Vector"] is None
     finally:
         pf.context.globals.warn_mode_avoid_implicit_vector = prev
 

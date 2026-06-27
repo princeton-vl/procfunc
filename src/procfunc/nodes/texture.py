@@ -49,7 +49,7 @@ class PointDensityResult(NamedTuple):
 
 
 def brick(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     color1: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     color2: nt.SocketOrVal[pt.Color] = (0.2, 0.2, 0.2, 1),
     mortar: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
@@ -101,7 +101,7 @@ def brick(
 
 
 def checker(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     color1: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     color2: nt.SocketOrVal[pt.Color] = (0.2, 0.2, 0.2, 1),
     scale: nt.SocketOrVal[float] = 5.0,
@@ -127,7 +127,7 @@ def checker(
 
 
 def environment(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["EQUIRECTANGULAR", "MIRROR_BALL"] = "EQUIRECTANGULAR",
@@ -153,7 +153,7 @@ def environment(
 
 
 def gradient(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     gradient_type: Literal[
         "LINEAR",
         "QUADRATIC",
@@ -185,7 +185,7 @@ def gradient(
 
 
 def ies(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     strength: nt.SocketOrVal[float] = 1.0,
     filepath: str = "",
     ies: Any = None,
@@ -208,7 +208,7 @@ def ies(
 
 
 def image(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     # None mirrors a bare ShaderNodeTexImage; attr not socket, strict-None doesnt apply
     image: pt.Image | None = None,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
@@ -243,7 +243,7 @@ def image(
 
 
 def magic(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     distortion: nt.SocketOrVal[float] = 1.0,
     turbulence_depth: int = 2,
@@ -318,9 +318,9 @@ def noise(
             raise ValueError(
                 "noise with noise_dimensions='1D' has no Vector input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("noise", logger=logger)
     else:
+        if vector is None:
+            raise_explicit_noise_vector_error("noise", logger=logger)
         inputs["Vector"] = vector
 
     if offset is not None:
@@ -352,7 +352,7 @@ def noise(
 
 
 def point_density(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     interpolation: Literal["Closest", "Linear", "Cubic"] = "Linear",
     object: Any = None,
     particle_color_source: Literal[
@@ -484,9 +484,9 @@ def voronoi(
             raise ValueError(
                 "voronoi with voronoi_dimensions='1D' has no Vector input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("voronoi", logger=logger)
     else:
+        if vector is None:
+            raise_explicit_noise_vector_error("voronoi", logger=logger)
         inputs["Vector"] = vector
 
     if exponent != 0.0:
@@ -547,9 +547,9 @@ def voronoi_distance(
                 "voronoi_distance with voronoi_dimensions='1D' has no Vector "
                 "input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
     else:
+        if vector is None:
+            raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
         inputs["Vector"] = vector
 
     if w is not None:
@@ -599,9 +599,9 @@ def voronoi_smooth_f1(
                 "voronoi_smooth_f1 with voronoi_dimensions='1D' has no Vector "
                 "input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
     else:
+        if vector is None:
+            raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
         inputs["Vector"] = vector
 
     if exponent != 0.0:
@@ -638,7 +638,7 @@ def voronoi_smooth_f1(
 
 
 def voronoi_n_spheres_distance(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     randomness: nt.SocketOrVal[float] = 1.0,
     normalize: bool = False,
@@ -646,14 +646,9 @@ def voronoi_n_spheres_distance(
     """Uses a TexVoronoi Shader Node with feature='N_SPHERE_RADIUS'."""
     if vector is None:
         raise_explicit_noise_vector_error("voronoi_spheres_distance", logger=logger)
-
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",
-        inputs={
-            "Vector": vector,
-            "Scale": scale,
-            "Randomness": randomness,
-        },
+        inputs={"Vector": vector, "Scale": scale, "Randomness": randomness},
         attrs={
             "feature": "N_SPHERE_RADIUS",
             "normalize": normalize,
@@ -662,7 +657,7 @@ def voronoi_n_spheres_distance(
 
 
 def wave(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     distortion: nt.SocketOrVal[float] = 0.0,
     detail: nt.SocketOrVal[float] = 2.0,

@@ -2144,7 +2144,7 @@ def instance_transform() -> nt.ProcNode:
 
 
 def instances_to_points(
-    position: nt.SocketOrVal[nt.pt.Vector],
+    position: nt.SocketOrVal[nt.pt.Vector] | None,
     instances: nt.ProcNode[nt.Instances] | None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.05,
@@ -2669,7 +2669,7 @@ def mesh_to_density_grid(
 
 def mesh_to_points(
     mesh: nt.ProcNode[pt.MeshObject] | None,
-    position: nt.SocketOrVal[nt.pt.Vector],
+    position: nt.SocketOrVal[nt.pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.05,
     mode: Literal["VERTICES", "EDGES", "FACES", "CORNERS"] = "VERTICES",
@@ -3464,7 +3464,7 @@ def sample_uv_surface(
 def scale_elements(
     geometry: nt.ProcNode[nt.Geometry] | None,
     scale: nt.SocketOrVal[float],
-    center: nt.SocketOrVal[nt.pt.Vector],
+    center: nt.SocketOrVal[nt.pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
     axis: nt.SocketOrVal[nt.pt.Vector] | None = None,
     domain: Literal["FACE", "EDGE"] = "FACE",

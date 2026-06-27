@@ -579,14 +579,10 @@ def parse_standard_node(
             if k in attrs and k not in func_sig.parameters.keys():
                 attrs.pop(k)
 
-    # we will assume the data_types in an input .blend can always be inferred.
-    #   it is the job of the .astype() insertion to preserve enough info for this
-    if "data_type" in attrs and node.bl_idname != "GeometryNodeInputNamedAttribute":
-        attrs.pop("data_type")
-
     # normalize the data_type spelling to the canonical NodeDataType
-    if "data_type" in attrs:
-        attrs["data_type"] = bpy_node_info.datatype_from_bpy_str(attrs["data_type"])
+    for dtype_attr in ("data_type", "input_type"):
+        if dtype_attr in attrs and isinstance(attrs[dtype_attr], str):
+            attrs[dtype_attr] = bpy_node_info.datatype_from_bpy_str(attrs[dtype_attr])
 
     inputs = _create_inputs(node_tree, node, memo, func_defaults=func_defaults)
     arg_names_map = func_spec["arg_names_map"]

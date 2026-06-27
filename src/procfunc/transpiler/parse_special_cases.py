@@ -51,25 +51,29 @@ def handle_specialcase_input_value(node: bpy.types.Node, cg_node: cg.Node) -> cg
     return cg_node
 
 
+_ANGLE_ABSENT = object()
+
+
 def handle_specialcase_vector_rotate(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    angle = cg_node.kwargs.pop("angle", None)
+    angle = cg_node.kwargs.pop("angle", _ANGLE_ABSENT)
+    axis_angle = 0.0 if angle is _ANGLE_ABSENT else angle
 
     match node.rotation_type:
         case "X_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.math.combine_xyz, args=(angle, 0, 0), kwargs={}
+                pf.nodes.math.combine_xyz, args=(axis_angle, 0, 0), kwargs={}
             )
         case "Y_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.math.combine_xyz, args=(0, angle, 0), kwargs={}
+                pf.nodes.math.combine_xyz, args=(0, axis_angle, 0), kwargs={}
             )
         case "Z_AXIS":
             cg_node.kwargs["rotation"] = cg.FunctionCallNode(
-                pf.nodes.math.combine_xyz, args=(0, 0, angle), kwargs={}
+                pf.nodes.math.combine_xyz, args=(0, 0, axis_angle), kwargs={}
             )
         case "AXIS_ANGLE":
-            # axis-angle has a dedicated Angle socket; restore the popped value
-            cg_node.kwargs["angle"] = angle
+            if angle is not _ANGLE_ABSENT:
+                cg_node.kwargs["angle"] = angle
         case "EULER_XYZ":
             pass  # Euler-vector rotation, no Angle socket
         case _:
