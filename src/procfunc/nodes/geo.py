@@ -491,22 +491,6 @@ def curve_endpoint_selection(
     )
 
 
-# def curve_handle_type_selection(
-#    handle_type: Literal["FREE", "AUTO", "VECTOR", "ALIGN"] = "AUTO",
-#    mode: Literal["LEFT", "RIGHT"] = "RIGHT",
-# ) -> t.ProcNode:
-#    """
-#    Uses a CurveHandleTypeSelection Geometry Node.
-#
-#    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/read/handle_type_selection.html
-#    """
-#    return t.ProcNode.from_nodetype(
-#        node_type="GeometryNodeCurveHandleTypeSelection",
-#        inputs={},
-#        attrs={"handle_type": handle_type, "mode": mode},
-#    )
-
-
 def curve_length(curve: nt.ProcNode[pt.CurveObject] | None) -> nt.ProcNode[float]:
     """
     Uses a CurveLength Geometry Node.
@@ -4463,32 +4447,6 @@ def vertex_of_corner(corner_index: nt.SocketOrVal[int] = 0) -> nt.ProcNode[int]:
 TViewer = TypeVar(
     "TViewer", nt.SocketOrVal[bool], nt.SocketOrVal[int], nt.SocketOrVal[float]
 )
-
-
-# def viewer(
-#     geometry: t.ProcNode[t.Geometry],
-#     value: TViewer = 0,
-#     domain: TDomain = "AUTO",
-#     data_type: NodeDataType | RuntimeResolveDataType | None = None,
-# ) -> t.ProcNode:
-#     """
-#     Uses a Viewer Geometry Node.
-#
-#     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
-#     """
-#     if data_type is None:
-#         data_type = RuntimeResolveDataType(
-#             [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-#             ["Value"],
-#         )
-#     return t.ProcNode.from_nodetype(
-#         node_type="GeometryNodeViewer",
-#         inputs={"Geometry": geometry, "Value": value},
-#         attrs={
-#             "domain": domain,
-#             "data_type": data_type,
-#         },
-#     )
 
 
 class ViewportTransformResult(NamedTuple):

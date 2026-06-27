@@ -31,12 +31,7 @@ def rgb_color(
 ) -> t.Color:
     if rgb is None and (r is None or g is None or b is None):
         raise ValueError("provide rgb=... or all of r/g/b")
-    color = t.Color()
-    if rgb is not None:
-        color.r, color.g, color.b = rgb
-    else:
-        color.r, color.g, color.b = r, g, b
-    return color
+    return t.Color(rgb if rgb is not None else (r, g, b))
 
 
 def _srgb_to_linearrgb(c):
@@ -48,14 +43,12 @@ def _srgb_to_linearrgb(c):
         return ((c + 0.055) / 1.055) ** 2.4
 
 
-def _hex_to_rgb(h: int, alpha: float = 1):
+def _hex_to_rgb(h: int):
     r = (h & 0xFF0000) >> 16
     g = (h & 0x00FF00) >> 8
     b = h & 0x0000FF
     return tuple([_srgb_to_linearrgb(c / 0xFF) for c in (r, g, b)])
 
 
-def hex_color(h: int, alpha: float = 1):
-    c = t.Color()
-    c.r, c.g, c.b = _hex_to_rgb(h, alpha)
-    return c
+def hex_color(h: int) -> t.Color:
+    return t.Color(_hex_to_rgb(h))

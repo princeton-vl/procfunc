@@ -27,6 +27,9 @@ TNoiseDimensions = Literal["1D", "2D", "3D", "4D"]
 TDistanceMetric = Literal["EUCLIDEAN", "MANHATTAN", "CHEBYCHEV", "MINKOWSKI"]
 TTextureInterpolationType = Literal["Linear", "Closest", "Cubic", "Smart"]  # TODO
 
+_NOISE_OFFSET_TYPES = {"RIDGED_MULTIFRACTAL", "HYBRID_MULTIFRACTAL", "HETERO_TERRAIN"}
+_NOISE_GAIN_TYPES = {"RIDGED_MULTIFRACTAL", "HYBRID_MULTIFRACTAL"}
+
 
 class TextureResult(NamedTuple):
     fac: nt.ProcNode[float]
@@ -271,8 +274,8 @@ def noise(
     detail: nt.SocketOrVal[float] = 2.0,
     roughness: nt.SocketOrVal[float] = 0.5,
     lacunarity: nt.SocketOrVal[float] = 2.0,
-    offset: nt.SocketOrVal[float] = 0.0,
-    gain: nt.SocketOrVal[float] = 1.0,
+    offset: float | None = None,
+    gain: float | None = None,
     distortion: nt.SocketOrVal[float] = 0.0,
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
@@ -320,10 +323,17 @@ def noise(
     else:
         inputs["Vector"] = vector
 
-    _extra_args_modes = ["RIDGED_MULTIFRACTAL", "HYBRID_MULTIFRACTAL"]  # noqa: F841
-    if offset != 0.0:
+    if offset is not None:
+        if noise_type not in _NOISE_OFFSET_TYPES:
+            raise ValueError(
+                f"offset is only valid for noise_type in {sorted(_NOISE_OFFSET_TYPES)}, got {noise_type!r}"
+            )
         inputs["Offset"] = offset
-    if gain != 1.0:
+    if gain is not None:
+        if noise_type not in _NOISE_GAIN_TYPES:
+            raise ValueError(
+                f"gain is only valid for noise_type in {sorted(_NOISE_GAIN_TYPES)}, got {noise_type!r}"
+            )
         inputs["Gain"] = gain
 
     res = nt.ProcNode.from_nodetype(
