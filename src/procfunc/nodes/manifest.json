@@ -17,7 +17,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -40,7 +39,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -62,7 +60,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -84,7 +81,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -106,7 +102,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -128,7 +123,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -150,7 +144,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -169,7 +162,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -188,7 +180,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -207,7 +198,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -226,7 +216,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -248,7 +237,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -270,7 +258,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -292,7 +279,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -314,7 +300,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -333,7 +318,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -356,7 +340,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -379,7 +362,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -402,7 +384,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -421,7 +402,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -440,7 +420,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -459,7 +438,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -478,7 +456,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -497,7 +474,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -519,7 +495,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -541,7 +516,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -564,7 +538,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -586,7 +559,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -608,7 +580,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -627,7 +598,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -646,7 +616,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -665,7 +634,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -684,7 +652,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -703,7 +670,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -722,7 +688,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -744,7 +709,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -763,7 +727,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -782,7 +745,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -801,7 +763,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -820,7 +781,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -839,7 +799,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -860,7 +819,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -882,7 +840,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -903,7 +860,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -924,7 +880,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -945,7 +900,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -966,7 +920,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -987,7 +940,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1008,7 +960,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1030,7 +981,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1052,7 +1002,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1073,7 +1022,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1094,7 +1042,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1114,7 +1061,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1132,7 +1078,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1150,7 +1095,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1172,7 +1116,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1193,7 +1136,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1211,7 +1153,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1229,7 +1170,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1250,7 +1190,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1268,7 +1207,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1286,7 +1224,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1307,7 +1244,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1328,7 +1264,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1346,7 +1281,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1364,7 +1298,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1382,7 +1315,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1399,7 +1331,6 @@
     ],
     "data_types": null,
     "is_contextual": "TRUE",
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1416,7 +1347,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1435,7 +1365,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1454,7 +1383,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1470,9 +1398,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "ShaderNodeMapRange",
@@ -1492,7 +1418,6 @@
       "vector"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1509,7 +1434,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1525,7 +1449,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1540,7 +1463,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1555,7 +1477,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1575,7 +1496,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1594,7 +1514,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1615,7 +1534,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1630,7 +1548,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1645,7 +1562,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1924,7 +1840,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -1944,7 +1859,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false
   },
   {
@@ -1963,7 +1877,6 @@
       "vector"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false
   },
   {
@@ -1983,7 +1896,6 @@
       "Vector"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": "mixes float/color/vec"
   },
@@ -2001,7 +1913,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2019,7 +1930,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2037,7 +1947,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2055,7 +1964,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2073,7 +1981,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2088,7 +1995,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2103,7 +2009,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2118,7 +2023,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2133,7 +2037,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2148,7 +2051,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2163,7 +2065,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2178,7 +2079,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2195,7 +2095,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2212,7 +2111,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2227,7 +2125,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2245,7 +2142,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2296,7 +2192,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2311,7 +2206,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": true,
     "notes": null
   },
@@ -2326,7 +2220,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2397,7 +2290,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2412,7 +2304,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2427,7 +2318,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2445,7 +2335,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2463,7 +2352,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": null,
     "is_unittest_specialcase": null,
     "notes": null
   },
@@ -2481,7 +2369,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": null,
     "is_unittest_specialcase": null,
     "notes": null
   },
@@ -2499,7 +2386,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": null,
     "is_unittest_specialcase": null,
     "notes": null
   },
@@ -2517,7 +2403,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": null,
     "is_unittest_specialcase": null,
     "notes": null
   },
@@ -2574,7 +2459,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2589,7 +2473,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2604,7 +2487,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2621,9 +2503,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "GeometryNodeSeparateGeometry",
@@ -2636,7 +2516,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2651,7 +2530,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2667,7 +2545,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2684,9 +2561,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "GeometryNodeRotateInstances",
@@ -2699,7 +2574,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2714,7 +2588,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2729,7 +2602,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2744,7 +2616,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2798,7 +2669,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2813,7 +2683,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2828,7 +2697,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2845,7 +2713,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": "TODO redundant with input_color?"
   },
@@ -2860,7 +2727,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2881,7 +2747,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2902,7 +2767,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2917,7 +2781,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2937,7 +2800,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2956,7 +2818,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2975,7 +2836,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -2990,7 +2850,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3005,7 +2864,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3024,7 +2882,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3039,7 +2896,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3054,7 +2910,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3070,7 +2925,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3089,7 +2943,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3106,7 +2959,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3123,7 +2975,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3138,7 +2989,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3153,7 +3003,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3172,7 +3021,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3187,7 +3035,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3202,7 +3049,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3221,7 +3067,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3245,7 +3090,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3269,7 +3113,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3284,7 +3127,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3299,7 +3141,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3314,7 +3155,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3330,7 +3170,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3345,7 +3184,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3360,7 +3198,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3375,7 +3212,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3392,7 +3228,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3409,7 +3244,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3426,7 +3260,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3441,7 +3274,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3456,7 +3288,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3475,7 +3306,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3492,7 +3322,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3509,7 +3338,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3524,7 +3352,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3539,7 +3366,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3554,7 +3380,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3569,7 +3394,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3586,7 +3410,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3601,7 +3424,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3616,7 +3438,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3631,7 +3452,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3646,9 +3466,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
-    "is_unittest_specialcase": true,
-    "notes": "RESTRICTED - use displacement output instead"
+    "is_unittest_specialcase": true
   },
   {
     "bpy_name": "FunctionNodeFloatToInt",
@@ -3661,7 +3479,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3676,7 +3493,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3691,7 +3507,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3706,7 +3521,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3721,9 +3535,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
-    "is_unittest_specialcase": false,
-    "notes": "RESTRICTED - use displacement output instead"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "ShaderNodeVolumePrincipled",
@@ -3736,7 +3548,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3756,7 +3567,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3779,7 +3589,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3802,7 +3611,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3817,7 +3625,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3837,7 +3644,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3856,7 +3662,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3871,7 +3676,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3886,7 +3690,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
     "is_unittest_specialcase": true,
     "notes": "incorporated into output typing"
   },
@@ -3902,7 +3705,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3920,7 +3722,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3935,7 +3736,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3950,7 +3750,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3965,7 +3764,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3980,7 +3778,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -3995,7 +3792,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4011,7 +3807,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4026,7 +3821,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4041,7 +3835,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": true,
     "notes": null
   },
@@ -4056,7 +3849,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4071,7 +3863,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4090,7 +3881,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4105,7 +3895,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4120,7 +3909,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4135,7 +3923,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4150,7 +3937,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4165,7 +3951,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4180,7 +3965,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4195,7 +3979,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4210,7 +3993,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
     "is_unittest_specialcase": true,
     "notes": "incorporated into output typing"
   },
@@ -4225,7 +4007,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4240,7 +4021,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4255,7 +4035,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4270,7 +4049,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4285,7 +4063,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4300,7 +4077,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4315,7 +4091,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4330,7 +4105,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4345,7 +4119,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4360,7 +4133,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4379,7 +4151,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4394,7 +4165,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4412,7 +4182,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4427,7 +4196,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": "compositor node has an extra premultiply attr so we will keep it separately"
   },
@@ -4446,7 +4214,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4468,7 +4235,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4490,7 +4256,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4512,7 +4277,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4534,7 +4298,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4549,7 +4312,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4564,7 +4326,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4583,7 +4344,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4602,7 +4362,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4619,9 +4378,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "GeometryNodeFieldAtIndex",
@@ -4638,7 +4395,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4653,7 +4409,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4668,7 +4423,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4683,7 +4437,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4698,7 +4451,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4713,7 +4465,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4728,7 +4479,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4743,7 +4493,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4758,7 +4507,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4773,7 +4521,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4788,7 +4535,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4804,7 +4550,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4819,7 +4564,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4834,7 +4578,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4853,7 +4596,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4877,7 +4619,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4901,7 +4642,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4925,7 +4665,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4949,7 +4688,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4969,7 +4707,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -4984,7 +4721,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5000,7 +4736,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5015,7 +4750,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5033,7 +4767,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5048,7 +4781,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5063,7 +4795,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5078,7 +4809,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5093,7 +4823,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5108,7 +4837,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5123,7 +4851,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5138,7 +4865,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5153,7 +4879,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5168,7 +4893,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5183,7 +4907,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5198,7 +4921,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5213,7 +4935,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5233,7 +4954,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5253,7 +4973,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5273,7 +4992,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5293,7 +5011,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5308,7 +5025,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5323,7 +5039,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5338,7 +5053,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5353,7 +5067,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5368,7 +5081,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5383,7 +5095,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5398,7 +5109,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5413,7 +5123,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5428,7 +5137,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5443,7 +5151,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5461,7 +5168,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5476,7 +5182,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5491,7 +5196,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5506,7 +5210,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5521,7 +5224,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5536,7 +5238,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5551,7 +5252,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5566,7 +5266,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5581,7 +5280,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5596,7 +5294,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5611,7 +5308,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5628,7 +5324,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5643,7 +5338,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5658,7 +5352,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5673,7 +5366,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5688,7 +5380,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5703,7 +5394,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5718,7 +5408,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5733,7 +5422,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5748,7 +5436,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5763,7 +5450,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5780,7 +5466,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5795,7 +5480,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5810,7 +5494,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5825,7 +5508,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5840,7 +5522,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5855,7 +5536,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5870,7 +5550,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5885,7 +5564,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5900,7 +5578,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5915,7 +5592,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5930,7 +5606,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5945,7 +5620,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5960,7 +5634,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5975,7 +5648,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -5990,7 +5662,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6005,7 +5676,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6020,7 +5690,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6035,7 +5704,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6058,7 +5726,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6081,7 +5748,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6104,7 +5770,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6127,7 +5792,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6142,7 +5806,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6160,7 +5823,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6175,7 +5837,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6190,7 +5851,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6205,7 +5865,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6220,7 +5879,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6235,7 +5893,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6252,7 +5909,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6267,7 +5923,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6282,7 +5937,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6297,7 +5951,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6312,7 +5965,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6330,7 +5982,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6345,7 +5996,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6365,7 +6015,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6380,7 +6029,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6398,7 +6046,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6413,7 +6060,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6428,7 +6074,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6443,7 +6088,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6458,7 +6102,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6473,9 +6116,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "FunctionNodeInputSpecialCharacters",
@@ -6488,7 +6129,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6505,9 +6145,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "FunctionNodeInvertMatrix",
@@ -6520,7 +6158,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6535,7 +6172,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6553,7 +6189,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6568,7 +6203,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6583,7 +6217,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6598,7 +6231,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6613,7 +6245,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6628,7 +6259,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6643,7 +6273,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6658,7 +6287,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6673,7 +6301,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6688,7 +6315,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6703,7 +6329,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6719,7 +6344,6 @@
     ],
     "data_types": null,
     "is_contextual": "1",
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6734,7 +6358,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6749,7 +6372,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6764,7 +6386,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6779,7 +6400,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6794,7 +6414,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6809,7 +6428,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6827,7 +6445,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6842,7 +6459,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6857,7 +6473,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6872,7 +6487,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6889,7 +6503,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6906,7 +6519,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6921,7 +6533,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6938,7 +6549,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6955,7 +6565,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6972,7 +6581,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -6989,7 +6597,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7006,7 +6613,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7021,7 +6627,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7036,7 +6641,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7051,7 +6655,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7066,7 +6669,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7081,7 +6683,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7096,7 +6697,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7111,7 +6711,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7126,7 +6725,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7141,7 +6739,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7156,7 +6753,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7171,7 +6767,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7186,7 +6781,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7201,7 +6795,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7216,7 +6809,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7231,7 +6823,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7256,7 +6847,6 @@
       "vector"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7271,7 +6861,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7286,7 +6875,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7301,7 +6889,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7316,7 +6903,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7331,9 +6917,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "GeometryNodeInputInstanceRotation",
@@ -7346,7 +6930,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7361,7 +6944,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7376,9 +6958,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "GeometryNodeInputMeshEdgeNeighbors",
@@ -7391,7 +6971,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7406,7 +6985,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7421,7 +6999,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7436,7 +7013,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7451,7 +7027,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7466,9 +7041,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "GeometryNodeInputSceneTime",
@@ -7481,9 +7054,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
-    "is_unittest_specialcase": false,
-    "notes": "should use nodegroup input"
+    "is_unittest_specialcase": false
   },
   {
     "bpy_name": "GeometryNodeInputShadeSmooth",
@@ -7496,7 +7067,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7511,7 +7081,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7526,7 +7095,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7541,7 +7109,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7556,7 +7123,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7571,7 +7137,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7586,7 +7151,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7601,7 +7165,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7616,7 +7179,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7631,7 +7193,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7646,7 +7207,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7661,7 +7221,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7676,7 +7235,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7691,7 +7249,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7706,7 +7263,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7721,7 +7277,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7736,7 +7291,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7751,7 +7305,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7766,7 +7319,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7781,7 +7333,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7796,7 +7347,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7811,7 +7361,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7826,7 +7375,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7841,7 +7389,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7861,7 +7408,6 @@
       "Vector"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7881,7 +7427,6 @@
       "Vector"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7900,7 +7445,6 @@
       "float"
     ],
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7918,7 +7462,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7933,7 +7476,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7948,7 +7490,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7963,7 +7504,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7978,7 +7518,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -7993,7 +7532,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8010,7 +7548,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8027,7 +7564,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8042,7 +7578,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8057,7 +7592,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8072,7 +7606,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8087,7 +7620,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8104,7 +7636,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8119,7 +7650,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8134,7 +7664,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8149,7 +7678,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8164,7 +7692,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8179,7 +7706,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8194,7 +7720,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8209,7 +7734,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8224,7 +7748,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8239,7 +7762,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8254,7 +7776,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8269,7 +7790,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8284,7 +7804,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8299,7 +7818,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8317,7 +7835,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8332,7 +7849,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8347,7 +7863,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8362,7 +7877,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8377,7 +7891,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8392,7 +7905,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8407,7 +7919,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8422,7 +7933,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8437,7 +7947,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8452,7 +7961,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8467,7 +7975,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": "TODO incorporate automatically via contextualnode?"
   },
@@ -8482,7 +7989,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8497,7 +8003,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8512,7 +8017,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8527,7 +8031,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8542,9 +8045,7 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
-    "is_unittest_specialcase": true,
-    "notes": "RESTRICTED - use displacement output instead"
+    "is_unittest_specialcase": true
   },
   {
     "bpy_name": "ShaderNodeParticleInfo",
@@ -8557,7 +8058,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8572,7 +8072,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8587,7 +8086,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8602,7 +8100,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8617,7 +8114,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8632,7 +8128,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8647,7 +8142,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8662,7 +8156,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8677,7 +8170,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8692,7 +8184,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8707,7 +8198,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8722,7 +8212,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8737,7 +8226,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8752,7 +8240,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8767,7 +8254,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8782,7 +8268,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8797,7 +8282,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8812,7 +8296,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
     "is_unittest_specialcase": true,
     "notes": "incorporated into output typing"
   },
@@ -8827,7 +8310,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": true,
     "is_unittest_specialcase": true,
     "notes": "incorporated into output typing"
   },
@@ -8847,7 +8329,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8868,7 +8349,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8888,7 +8368,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8908,7 +8387,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8928,7 +8406,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8948,7 +8425,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8968,7 +8444,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -8985,7 +8460,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9002,7 +8476,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9019,7 +8492,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9036,7 +8508,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9056,7 +8527,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9076,7 +8546,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9096,7 +8565,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9116,7 +8584,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9133,7 +8600,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9154,7 +8620,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9175,7 +8640,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9196,7 +8660,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9213,7 +8676,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9230,7 +8692,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9247,7 +8708,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9264,7 +8724,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9281,7 +8740,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9301,7 +8759,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9321,7 +8778,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9342,7 +8798,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9362,7 +8817,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9382,7 +8836,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9399,7 +8852,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9416,7 +8868,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9433,7 +8884,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9450,7 +8900,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9467,7 +8916,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9484,7 +8932,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9504,7 +8951,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9521,7 +8967,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9538,7 +8983,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9555,7 +8999,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9572,7 +9015,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9589,7 +9031,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9604,7 +9045,6 @@
     ],
     "data_types": null,
     "is_contextual": "TRUE",
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9623,7 +9063,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9645,7 +9084,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9667,7 +9105,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9684,7 +9121,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9706,7 +9142,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9728,7 +9163,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9747,7 +9181,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9769,7 +9202,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9791,7 +9223,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9808,7 +9239,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9830,7 +9260,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9852,7 +9281,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9872,7 +9300,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9893,7 +9320,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9913,7 +9339,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9933,7 +9358,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9953,7 +9377,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9973,7 +9396,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -9993,7 +9415,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10010,7 +9431,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10027,7 +9447,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10044,7 +9463,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10061,7 +9479,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10081,7 +9498,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10101,7 +9517,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10121,7 +9536,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10141,7 +9555,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10158,7 +9571,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10179,7 +9591,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10200,7 +9611,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10221,7 +9631,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10238,7 +9647,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10255,7 +9663,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10272,7 +9679,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10289,7 +9695,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10306,7 +9711,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10326,7 +9730,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10346,7 +9749,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10367,7 +9769,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10387,7 +9788,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10407,7 +9807,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10424,7 +9823,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10441,7 +9839,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10458,7 +9855,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10475,7 +9871,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10492,7 +9887,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10509,7 +9903,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10529,7 +9922,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10546,7 +9938,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10563,7 +9954,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10580,7 +9970,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10597,7 +9986,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10614,7 +10002,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   },
@@ -10633,7 +10020,6 @@
     ],
     "data_types": null,
     "is_contextual": null,
-    "is_infinigen_restricted": false,
     "is_unittest_specialcase": false,
     "notes": null
   }

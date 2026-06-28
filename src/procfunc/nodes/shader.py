@@ -1,13 +1,8 @@
 import logging
 from typing import Any, Literal, NamedTuple
 
-import procfunc as pf
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.util.bindings_util import (
-    raise_error_or_warn,
-    raise_shader_normal_error,
-)
 
 TBlendType = Literal[
     "MIX",
@@ -77,7 +72,6 @@ def ambient_occlusion(
     """
     inputs = {"Color": color, "Distance": distance}
     if normal is not None:
-        raise_shader_normal_error("ambient_occlusion", logger=logger)
         inputs["Normal"] = normal
 
     res = nt.ProcNode.from_nodetype(
@@ -152,7 +146,6 @@ def bevel(
     """
     inputs = {"Radius": radius}
     if normal is not None:
-        raise_shader_normal_error("bevel", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -192,7 +185,6 @@ def anisotropic_bsdf(
         "Tangent": tangent,
     }
     if normal is not None:
-        raise_shader_normal_error("anisotropic_bsdf", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -218,7 +210,6 @@ def diffuse_bsdf(
 
     inputs = {"Color": color, "Roughness": roughness}
     if normal is not None:
-        raise_shader_normal_error("diffuse_bsdf", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -246,7 +237,6 @@ def glass_bsdf(
 
     inputs = {"Color": color, "Roughness": roughness, "IOR": ior}
     if normal is not None:
-        raise_shader_normal_error("glass_bsdf", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -364,9 +354,6 @@ def principled_bsdf(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/principled.html
     """
 
-    if normal is not None or coat_normal is not None:
-        raise_shader_normal_error("principled_bsdf", logger=logger)
-
     inputs = {
         "Base Color": base_color,
         "Metallic": metallic,
@@ -449,7 +436,6 @@ def refraction_bsdf(
 
     inputs = {"Color": color, "Roughness": roughness, "IOR": ior}
     if normal is not None:
-        raise_shader_normal_error("refraction_bsdf", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -476,7 +462,6 @@ def sheen_bsdf(
 
     inputs = {"Color": color, "Roughness": roughness}
     if normal is not None:
-        raise_shader_normal_error("sheen_bsdf", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -504,7 +489,6 @@ def toon_bsdf(
 
     inputs = {"Color": color, "Size": size, "Smooth": smooth}
     if normal is not None:
-        raise_shader_normal_error("toon_bsdf", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -529,7 +513,6 @@ def translucent_bsdf(
 
     inputs = {"Color": color}
     if normal is not None:
-        raise_shader_normal_error("translucent_bsdf", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -566,13 +549,6 @@ def bump(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/bump.html
     """
-
-    msg = (
-        "Using the Bump shader node! We recommend using the shader's Displacement output instead"
-        ", as it has more capabilities e.g. mesh-based displacement "
-        "To suppress this warning, set pf.context.globals.warn_mode_avoid_normal_bump = 'ignore'"
-    )
-    raise_error_or_warn(msg, pf.context.globals.warn_mode_avoid_normal_bump, logger)
 
     inputs = {"Strength": strength, "Distance": distance, "Height": height}
     if normal is not None:
@@ -699,7 +675,6 @@ def fresnel(
     """
     inputs = {"IOR": ior}
     if normal is not None:
-        raise_shader_normal_error("fresnel", logger=logger)
         inputs["Normal"] = normal
 
     return nt.ProcNode.from_nodetype(
@@ -781,9 +756,6 @@ def layer_weight(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/input/layer_weight.html
     """
-    if normal != (0.0, 0.0, 0.0):
-        raise_shader_normal_error("layer_weight", logger=logger)
-
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeLayerWeight",
         inputs={"Blend": blend, "Normal": normal},
@@ -947,8 +919,6 @@ def normal_map(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/normal_map.html
     """
-    raise_shader_normal_error("normal_map", logger=logger)
-
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeNormalMap",
         inputs={"Strength": strength, "Color": color},
@@ -1000,8 +970,6 @@ def output_aov(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/output/aov.html
     """
 
-    raise_io_error("output_aov", logger=logger)
-
     return t.ProcNode.from_nodetype(
         node_type="ShaderNodeOutputAOV",
         inputs={"Color": color, "Value": value},
@@ -1018,8 +986,6 @@ def output_light(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/output/light.html
     """
-
-    raise_io_error("output_light", logger=logger)
 
     return t.ProcNode.from_nodetype(
         node_type="ShaderNodeOutputLight",
@@ -1042,8 +1008,6 @@ def output_line_style(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/output/aov.html
     """
-
-    raise_io_error("output_line_style", logger=logger)
 
     return t.ProcNode.from_nodetype(
         node_type="ShaderNodeOutputLineStyle",
@@ -1248,9 +1212,6 @@ def subsurface_scattering(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/volume_scatter.html
     """
-
-    if normal != (0.0, 0.0, 0.0):
-        raise_shader_normal_error("subsurface_scattering", logger=logger)
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeSubsurfaceScattering",

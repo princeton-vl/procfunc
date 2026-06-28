@@ -4,7 +4,7 @@ from typing import Generic, Literal, NamedTuple, TypeVar
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.util.bindings_util import RuntimeResolveDataType, raise_io_error
+from procfunc.nodes.util.bindings_util import RuntimeResolveDataType
 from procfunc.nodes.util.bpy_node_info import NodeDataType
 from procfunc.util import pytree
 
@@ -1620,8 +1620,6 @@ def input_active_camera() -> nt.ProcNode[pt.Object]:
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/scene/active_camera.html
     """
-    raise_io_error("input_active_camera", logger=logger)
-
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeInputActiveCamera",
         inputs={},
@@ -1696,7 +1694,6 @@ def input_image(image: pt.Image | None = None) -> nt.ProcNode[pt.Image]:
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/image.html
     """
 
-    raise_io_error("input_image", logger=logger)
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeInputImage",
         inputs={},
@@ -1749,8 +1746,6 @@ def input_material(material: pt.Material | None = None) -> nt.ProcNode[pt.Materi
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/material.html
     """
-    raise_io_error("input_material", logger=logger)
-
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeInputMaterial",
         inputs={},

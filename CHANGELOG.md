@@ -1,3 +1,29 @@
+# 0.34.0
+
+Interface changes:
+
+- removed the material strict-mode checks for normal/bump inputs, implicit texture vectors, and IO nodes, along with their `ProcfuncContext` fields (`warn_mode_avoid_normal_bump`, `warn_mode_avoid_implicit_vector`, `warn_mode_avoid_io_nodes`) and env vars (`PROCFUNC_WARN_MODE_AVOID_NORMAL_BUMP`, `PROCFUNC_WARN_MODE_AVOID_IMPLICIT_VECTOR`, `PROCFUNC_WARN_MODE_AVOID_IO_NODES`); these checks now live downstream in infinigen. `warn_mode_empty_geonodes` is unchanged. Passing `vector=None` to a texture node still falls back to blender's implicit coordinates, and normal/bump/IO inputs are still wired when provided.
+- dropped the now-unused `is_infinigen_restricted` field and restriction-only `notes` from the node manifest
+- `texture.noise` `offset` / `gain` now default to `None` and raise for noise types that don't support them (were `0.0` / `1.0` and applied unconditionally)
+- `color.hex_color` dropped its unused `alpha` parameter
+- removed `transform_nodetree` from `procfunc.compute_graph.__all__` (was exported but unimplemented)
+- `math.vector_dot_product` / `math.vector_distance` are now annotated `ProcNode[float]` (were `ProcNode[Vector]`)
+
+Fixed crashes:
+
+- transpiled code that passes `None` to disconnect a geometry/shader socket no longer crashes the strict-`None` executor; one central predicate accepts `None` for any socket carrying no explicit value — multi-inputs, datablock pointers (Object/Collection/Material/Image), and hide-value implicit fields (Selection/Vector/Center/Position) — replacing the per-binding omit-on-`None` workarounds
+- transpiling a Separate XYZ with a disconnected Vector emitted a `pf.nodes.func.constant` NameError; now emits `pf.nodes.math.constant`
+- transpiling `vector_rotate` with a dropped default-valued Angle socket no longer re-injects `angle=None`
+
+Fixed wrong results:
+
+- transpiler preserves `data_type` / `input_type` when no type-determining input is wired (was dropped unconditionally, breaking re-execution of `random_value` / `switch` / `sample_curve_length` / `blur_attribute`)
+
+Other:
+
+- removed dead commented-out `curve_handle_type_selection` / `viewer` bindings in `geo.py`
+- corrected the `control.choice` docstring parameter names
+
 # 0.33.0
 
 Interface changes:
