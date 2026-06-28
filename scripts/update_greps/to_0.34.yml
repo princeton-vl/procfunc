@@ -1,0 +1,94 @@
+# procfunc 0.33 -> 0.34 codemods. Derived from CHANGELOG.md (# 0.34.0).
+# Apply locate:  ast-grep scan -r scripts/update_greps/to_0.34.yml <path>
+# Apply fixes:   ast-grep scan -r scripts/update_greps/to_0.34.yml -U <path>   (then `ruff format`)
+# (on macOS `sg` is the setgroup binary -- use `ast-grep`.)
+#
+# 0.34 moved the material strict-mode checks OUT of procfunc into infinigen. Behavior is unchanged:
+# normal/bump/IO inputs are still wired when provided, and vector=None still falls back to blender's
+# implicit coords -- so NO node rewrite is REQUIRED. The one auto-fix is dropping the removed
+# hex_color alpha arg. Everything else is LOCATE-ONLY (no fix:): delete the removed strict-mode
+# context fields / env vars, review noise offset/gain, and (optional cleanup) drop zero-normals.
+# See README.md.
+
+# --- AUTO-FIX ---
+# color.hex_color dropped its unused `alpha` parameter; drop the kwarg (ruff format cleans the comma).
+id: hex_color-drop-alpha
+language: python
+rule:
+  pattern:
+    context: 'f(alpha=$V)'
+    selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: 'hex_color$' }
+fix: ''
+---
+# --- LOCATE-ONLY (no fix:) ---
+# Removed ProcfuncContext strict-mode fields; delete references. (warn_mode_empty_geonodes is KEPT.)
+id: locate-warn-mode-fields
+language: python
+rule:
+  any:
+    - pattern: warn_mode_avoid_normal_bump
+    - pattern: warn_mode_avoid_implicit_vector
+    - pattern: warn_mode_avoid_io_nodes
+---
+# Removed strict-mode env vars; delete references (PROCFUNC_WARN_MODE_AVOID_{NORMAL_BUMP,IMPLICIT_VECTOR,IO_NODES}).
+id: locate-warn-mode-env-vars
+language: python
+rule:
+  kind: string
+  regex: 'PROCFUNC_WARN_MODE_AVOID_'
+---
+# texture.noise offset/gain now default None and RAISE for noise types that don't support them
+# (were 0.0/1.0 applied unconditionally). Review any noise() call passing offset=/gain=.
+id: locate-noise-offset-gain
+language: python
+rule:
+  any:
+    - pattern:
+        context: 'f(offset=$V)'
+        selector: keyword_argument
+    - pattern:
+        context: 'f(gain=$V)'
+        selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: 'texture\.noise$' }
+---
+# transform_nodetree removed from procfunc.compute_graph.__all__ (was exported but unimplemented).
+id: locate-transform_nodetree
+language: python
+rule:
+  pattern: transform_nodetree
+---
+# OPTIONAL cleanup (NOT required -- the strict check just moved downstream; normal=(0,0,0) still
+# works): degenerate zero-normal arg on a diffuse/anisotropic BSDF can be removed by hand.
+id: locate-zero-normal-bsdf
+language: python
+rule:
+  any:
+    - pattern:
+        context: 'f(normal=(0.0, 0.0, 0.0))'
+        selector: keyword_argument
+    - pattern:
+        context: 'f(normal=(0, 0, 0))'
+        selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: 'diffuse_bsdf$|anisotropic_bsdf$' }
+---
+# principled_bsdf normal/coat_normal/tangent now default None; review only calls that pass one
+# explicitly (a passed value is still wired -- this just flags sites relying on the old (0,0,0) wire).
+id: locate-principled-bsdf-normal
+language: python
+rule:
+  pattern: pf.nodes.shader.principled_bsdf($$$A)
+  has:
+    field: arguments
+    has:
+      kind: keyword_argument
+      has: { field: name, regex: '^(normal|coat_normal|tangent)$' }

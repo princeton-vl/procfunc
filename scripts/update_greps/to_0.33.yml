@@ -1,0 +1,20 @@
+# procfunc 0.32 -> 0.33 codemods. Apply:  ast-grep scan -r scripts/update_greps/to_0.33.yml -U <path>
+# (on macOS `sg` is the setgroup binary -- use `ast-grep`). Then run `ruff format`. Auto: add
+# required vector= to texture nodes (pass None to keep blender's implicit coords). LOCATE-ONLY (by
+# hand, see README): principled_bsdf normal default change, internal import moves, OperatorType.AND/OR
+# removal. Note: voronoi_n_spheres_distance and white_noise are deliberately NOT matched (their
+# vector is required-with-value or optional, respectively).
+
+id: texture-add-vector
+language: python
+rule:
+  pattern: pf.nodes.texture.$FN($$$ARGS)
+  not:
+    has:
+      field: arguments
+      has:
+        kind: keyword_argument
+        has: { field: name, regex: '^vector$' }
+constraints:
+  FN: { regex: '^(noise|voronoi|voronoi_distance|voronoi_smooth_f1)$' }
+fix: pf.nodes.texture.$FN(vector=None, $$$ARGS)

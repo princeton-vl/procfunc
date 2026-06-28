@@ -1,0 +1,48 @@
+# procfunc 0.31 -> 0.32 codemods. Apply:  ast-grep scan -r scripts/update_greps/to_0.32.yml -U <path>
+# (on macOS `sg` is the setgroup binary -- use `ast-grep`). Then run `ruff format`. Auto: add
+# now-required leading kwargs (mix_rgb factor, hue_saturation fac) and drop compositor.value/rgb.
+# The mesh_boolean locate-only rule (no fix:) flags op-keyed splits + multi-output NamedTuple
+# unpacking (consume `.mesh` / `.intersecting_edges`) to hand-edit. See README.md.
+
+id: mixrgb-add-factor
+language: python
+rule:
+  pattern: pf.nodes.color.mix_rgb($$$ARGS)
+  not:
+    has:
+      field: arguments
+      has:
+        kind: keyword_argument
+        has: { field: name, regex: '^factor$' }
+fix: pf.nodes.color.mix_rgb(factor=0.5, $$$ARGS)
+---
+id: huesat-add-fac
+language: python
+rule:
+  pattern: pf.nodes.color.hue_saturation($$$ARGS)
+  not:
+    has:
+      field: arguments
+      has:
+        kind: keyword_argument
+        has: { field: name, regex: '^fac$' }
+fix: pf.nodes.color.hue_saturation(fac=1.0, $$$ARGS)
+---
+id: compositor-value-to-math-constant
+language: python
+rule:
+  pattern: pf.nodes.compositor.value
+fix: pf.nodes.math.constant
+---
+id: compositor-rgb-to-math-constant
+language: python
+rule:
+  pattern: pf.nodes.compositor.rgb
+fix: pf.nodes.math.constant
+---
+# LOCATE-ONLY (no fix:): mesh_boolean split per operation (difference/union/intersect) AND now
+# returns a NamedTuple -- consume `.mesh` (or `.intersecting_edges`) at the call's use site.
+id: locate-mesh_boolean-multioutput
+language: python
+rule:
+  pattern: pf.nodes.geo.mesh_boolean($$$A)
