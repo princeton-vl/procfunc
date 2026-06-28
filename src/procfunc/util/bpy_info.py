@@ -1,5 +1,4 @@
 import logging
-import uuid
 from enum import Enum
 from typing import Any
 
@@ -133,17 +132,16 @@ NOCOLLIDE_PREFIX_LEN = BPY_NAME_CAP - 1 - NOCOLLIDE_HEX_LEN
 def bpy_nocollide_data_name(
     x: Any,
     bpy_data: bpy.types.bpy_prop_collection,
-    retries: int = 4,
 ) -> str:
     base = x if isinstance(x, str) else getattr(x, "name", None)
-    prefix = base[:NOCOLLIDE_PREFIX_LEN] if base else ""
+    prefix = (base[:NOCOLLIDE_PREFIX_LEN] if base else "") or "data"
 
-    for _ in range(retries):
-        hexpart = uuid.uuid4().hex[:NOCOLLIDE_HEX_LEN]
-        name = f"{prefix}_{hexpart}" if prefix else hexpart
-        if name not in bpy_data:
-            return name
+    if prefix not in bpy_data:
+        return prefix
 
-    raise RuntimeError(
-        f"Could not find a unique name for {x} in {bpy_data} after {retries=}"
-    )
+    # Deterministic suffix probe (uuid4 was not reproducible); `name in bpy_data` is an
+    # O(1) name lookup, and a fresh suffix is almost always free on the first try.
+    i = 1
+    while f"{prefix}_{i}" in bpy_data:
+        i += 1
+    return f"{prefix}_{i}"
