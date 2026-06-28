@@ -27,7 +27,9 @@ dev = [
     "pytest",
     "pytest-xdist",
     "ruff>=0.15,<0.16",
-    "ty"
+    "ty",
+    "imageio",
+    "matplotlib",
 ]
 docs = [
     "sphinx",

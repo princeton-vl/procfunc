@@ -1,0 +1,39 @@
+name: Integration Test
+
+# Transpile round-trip + per-example render pixel-diff against reference data
+# staged on the self-hosted runner. Internal repo only. All logic lives in
+# tests/integration_test/run.sh (runnable locally). Triggers mirror
+# infinigen_internal's integration_render.yml.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - develop
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  integration-test:
+    if: github.repository == 'princeton-vl/procfunc_internal' && github.event.pull_request.draft == false
+    # Self-hosted GPU runner (renders bench_data). pick_free_gpu.py then picks a
+    # free device on the box. Mirrors infinigen_internal's [self-hosted, renderbot].
+    runs-on: [self-hosted, gpu]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v8.2.0
+        with:
+          python-version: "3.11"
+      - run: uv sync --extra dev
+
+      - name: Run integration test
+        env:
+          TASKS: ${{ vars.INTEGRATION_TASKS }}
+        run: |
+          bash tests/integration_test/run.sh \
+            "${{ vars.INTEGRATION_DATA }}" \
+            "$RUNNER_TEMP/integration_out"
