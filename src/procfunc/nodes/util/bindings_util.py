@@ -3,9 +3,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Self
 
-import procfunc as pf
 from procfunc.nodes.util.bpy_node_info import NodeDataType, NodeGroupType
-from procfunc.util.log import raise_error_or_warn
 
 logger = logging.getLogger(__name__)
 
@@ -392,36 +390,3 @@ def resolve_contextual_node(
         raise ValueError(f"No contextual node found for {node} in {group}")
 
     return item
-
-
-def raise_shader_normal_error(node_func_name: str, logger: logging.Logger):
-    """Helper to handle normal socket usage in shaders based on context setting."""
-
-    message = (
-        f"Using 'normal' input in {node_func_name} is not recommended. "
-        f"Use displacement instead. To suppress this message, set "
-        f"pf.context.globals.warn_mode_avoid_normal_bump = 'ignore'"
-    )
-
-    raise_error_or_warn(message, pf.context.globals.warn_mode_avoid_normal_bump, logger)
-
-
-def raise_explicit_noise_vector_error(node_func_name: str, logger: logging.Logger):
-    """Helper to handle missing vector input in noise functions based on context setting."""
-    message = (
-        f"The 'vector' input is required for {node_func_name}. "
-        f"procfunc requires an explicit vector input - node will not default to using texture coordinate or world coordinate like blender. "
-        f"To suppress this message, set pf.context.globals.warn_mode_avoid_implicit_vector = 'ignore'"
-    )
-    raise_error_or_warn(
-        message, pf.context.globals.warn_mode_avoid_implicit_vector, logger
-    )
-
-
-def raise_io_error(node_func_name: str, logger: logging.Logger):
-    """Helper to handle IO nodes based on context setting."""
-    message = (
-        f"IO nodes are not allowed in nodegroups but we found {node_func_name} in the nodegroup. Use the nodegroup interface instead. "
-        "To suppress this message, set pf.context.globals.warn_mode_avoid_io_nodes = 'ignore'"
-    )
-    raise_error_or_warn(message, pf.context.globals.warn_mode_avoid_io_nodes, logger)

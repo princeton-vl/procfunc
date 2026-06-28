@@ -11,7 +11,6 @@ from typing import Any, Literal, NamedTuple
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.util.bindings_util import raise_explicit_noise_vector_error
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +25,9 @@ TNoiseType = Literal[
 TNoiseDimensions = Literal["1D", "2D", "3D", "4D"]
 TDistanceMetric = Literal["EUCLIDEAN", "MANHATTAN", "CHEBYCHEV", "MINKOWSKI"]
 TTextureInterpolationType = Literal["Linear", "Closest", "Cubic", "Smart"]  # TODO
+
+_NOISE_OFFSET_TYPES = {"RIDGED_MULTIFRACTAL", "HYBRID_MULTIFRACTAL", "HETERO_TERRAIN"}
+_NOISE_GAIN_TYPES = {"RIDGED_MULTIFRACTAL", "HYBRID_MULTIFRACTAL"}
 
 
 class TextureResult(NamedTuple):
@@ -46,7 +48,7 @@ class PointDensityResult(NamedTuple):
 
 
 def brick(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     color1: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     color2: nt.SocketOrVal[pt.Color] = (0.2, 0.2, 0.2, 1),
     mortar: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
@@ -68,22 +70,22 @@ def brick(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/brick.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("brick", logger=logger)
+    inputs = {
+        "Color1": color1,
+        "Color2": color2,
+        "Mortar": mortar,
+        "Scale": scale,
+        "Mortar Size": mortar_size,
+        "Mortar Smooth": mortar_smooth,
+        "Bias": bias,
+        "Brick Width": brick_width,
+        "Row Height": row_height,
+    }
+    if vector is not None:
+        inputs["Vector"] = vector
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexBrick",
-        inputs={
-            "Vector": vector,
-            "Color1": color1,
-            "Color2": color2,
-            "Mortar": mortar,
-            "Scale": scale,
-            "Mortar Size": mortar_size,
-            "Mortar Smooth": mortar_smooth,
-            "Bias": bias,
-            "Brick Width": brick_width,
-            "Row Height": row_height,
-        },
+        inputs=inputs,
         attrs={
             "offset": offset,
             "offset_frequency": offset_frequency,
@@ -98,7 +100,7 @@ def brick(
 
 
 def checker(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     color1: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     color2: nt.SocketOrVal[pt.Color] = (0.2, 0.2, 0.2, 1),
     scale: nt.SocketOrVal[float] = 5.0,
@@ -110,11 +112,12 @@ def checker(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/checker.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("checker", logger=logger)
+    inputs = {"Color1": color1, "Color2": color2, "Scale": scale}
+    if vector is not None:
+        inputs["Vector"] = vector
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexChecker",
-        inputs={"Vector": vector, "Color1": color1, "Color2": color2, "Scale": scale},
+        inputs=inputs,
         attrs={},
     )
     return TextureResult(
@@ -124,7 +127,7 @@ def checker(
 
 
 def environment(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["EQUIRECTANGULAR", "MIRROR_BALL"] = "EQUIRECTANGULAR",
@@ -136,11 +139,12 @@ def environment(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/environment.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("environment", logger=logger)
+    inputs = {}
+    if vector is not None:
+        inputs["Vector"] = vector
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexEnvironment",
-        inputs={"Vector": vector},
+        inputs=inputs,
         attrs={
             "image": image,
             "interpolation": interpolation,
@@ -150,7 +154,7 @@ def environment(
 
 
 def gradient(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     gradient_type: Literal[
         "LINEAR",
         "QUADRATIC",
@@ -168,11 +172,12 @@ def gradient(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/gradient.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("gradient", logger=logger)
+    inputs = {}
+    if vector is not None:
+        inputs["Vector"] = vector
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexGradient",
-        inputs={"Vector": vector},
+        inputs=inputs,
         attrs={"gradient_type": gradient_type},
     )
     return TextureResult(
@@ -182,7 +187,7 @@ def gradient(
 
 
 def ies(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     strength: nt.SocketOrVal[float] = 1.0,
     filepath: str = "",
     ies: Any = None,
@@ -195,17 +200,18 @@ def ies(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/ies.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("ies", logger=logger)
+    inputs = {"Strength": strength}
+    if vector is not None:
+        inputs["Vector"] = vector
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexIES",
-        inputs={"Vector": vector, "Strength": strength},
+        inputs=inputs,
         attrs={"filepath": filepath, "ies": ies, "mode": mode},
     )
 
 
 def image(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     # None mirrors a bare ShaderNodeTexImage; attr not socket, strict-None doesnt apply
     image: pt.Image | None = None,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
@@ -220,11 +226,12 @@ def image(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/image.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("image", logger=logger)
+    inputs = {}
+    if vector is not None:
+        inputs["Vector"] = vector
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexImage",
-        inputs={"Vector": vector},
+        inputs=inputs,
         attrs={
             "extension": extension,
             "image": image,
@@ -240,7 +247,7 @@ def image(
 
 
 def magic(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     distortion: nt.SocketOrVal[float] = 1.0,
     turbulence_depth: int = 2,
@@ -252,11 +259,12 @@ def magic(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/magic.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("magic", logger=logger)
+    inputs = {"Scale": scale, "Distortion": distortion}
+    if vector is not None:
+        inputs["Vector"] = vector
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexMagic",
-        inputs={"Vector": vector, "Scale": scale, "Distortion": distortion},
+        inputs=inputs,
         attrs={"turbulence_depth": turbulence_depth},
     )
     return TextureResult(
@@ -271,8 +279,8 @@ def noise(
     detail: nt.SocketOrVal[float] = 2.0,
     roughness: nt.SocketOrVal[float] = 0.5,
     lacunarity: nt.SocketOrVal[float] = 2.0,
-    offset: nt.SocketOrVal[float] = 0.0,
-    gain: nt.SocketOrVal[float] = 1.0,
+    offset: float | None = None,
+    gain: float | None = None,
     distortion: nt.SocketOrVal[float] = 0.0,
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
@@ -290,8 +298,7 @@ def noise(
      - w: Only supported for 1D and 4D noise dimensions
      - vector: The coordinate to evaluate the noise at. Not available in 1D
        mode (pass vector=None and use w instead). Passing None explicitly
-       falls back to blender's implicit coordinates, gated by
-       pf.context.globals.warn_mode_avoid_implicit_vector.
+       falls back to blender's implicit coordinates.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/noise.html
     """
@@ -307,23 +314,26 @@ def noise(
     if w is not None:
         assert noise_dimensions in ["4D", "1D"]
         inputs["W"] = w
-    elif noise_dimensions == "1D":
-        raise_explicit_noise_vector_error("noise", logger=logger)
 
     if noise_dimensions == "1D":
         if vector is not None:
             raise ValueError(
                 "noise with noise_dimensions='1D' has no Vector input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("noise", logger=logger)
-    else:
+    elif vector is not None:
         inputs["Vector"] = vector
 
-    _extra_args_modes = ["RIDGED_MULTIFRACTAL", "HYBRID_MULTIFRACTAL"]  # noqa: F841
-    if offset != 0.0:
+    if offset is not None:
+        if noise_type not in _NOISE_OFFSET_TYPES:
+            raise ValueError(
+                f"offset is only valid for noise_type in {sorted(_NOISE_OFFSET_TYPES)}, got {noise_type!r}"
+            )
         inputs["Offset"] = offset
-    if gain != 1.0:
+    if gain is not None:
+        if noise_type not in _NOISE_GAIN_TYPES:
+            raise ValueError(
+                f"gain is only valid for noise_type in {sorted(_NOISE_GAIN_TYPES)}, got {noise_type!r}"
+            )
         inputs["Gain"] = gain
 
     res = nt.ProcNode.from_nodetype(
@@ -342,7 +352,7 @@ def noise(
 
 
 def point_density(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     interpolation: Literal["Closest", "Linear", "Cubic"] = "Linear",
     object: Any = None,
     particle_color_source: Literal[
@@ -367,11 +377,12 @@ def point_density(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/point_density.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("point_density", logger=logger)
+    inputs = {}
+    if vector is not None:
+        inputs["Vector"] = vector
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexPointDensity",
-        inputs={"Vector": vector},
+        inputs=inputs,
         attrs={
             "interpolation": interpolation,
             "object": object,
@@ -454,8 +465,7 @@ def voronoi(
         exponent: Only supported for Minkowski distance.
         vector: The coordinate to evaluate at. Not available in 1D mode (pass
             vector=None and use w instead). Passing None explicitly falls back
-            to blender's implicit coordinates, gated by
-            pf.context.globals.warn_mode_avoid_implicit_vector.
+            to blender's implicit coordinates.
         w: Only supported for 1D and 4D dimensions.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/voronoi.html
@@ -474,9 +484,7 @@ def voronoi(
             raise ValueError(
                 "voronoi with voronoi_dimensions='1D' has no Vector input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("voronoi", logger=logger)
-    else:
+    elif vector is not None:
         inputs["Vector"] = vector
 
     if exponent != 0.0:
@@ -487,8 +495,6 @@ def voronoi(
     if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
         inputs["W"] = w
-    elif voronoi_dimensions == "1D":
-        raise_explicit_noise_vector_error("voronoi", logger=logger)
 
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",
@@ -537,16 +543,12 @@ def voronoi_distance(
                 "voronoi_distance with voronoi_dimensions='1D' has no Vector "
                 "input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
-    else:
+    elif vector is not None:
         inputs["Vector"] = vector
 
     if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
         inputs["W"] = w
-    elif voronoi_dimensions == "1D":
-        raise_explicit_noise_vector_error("voronoi_distance", logger=logger)
 
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",
@@ -589,9 +591,7 @@ def voronoi_smooth_f1(
                 "voronoi_smooth_f1 with voronoi_dimensions='1D' has no Vector "
                 "input; use w instead"
             )
-    elif vector is None:
-        raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
-    else:
+    elif vector is not None:
         inputs["Vector"] = vector
 
     if exponent != 0.0:
@@ -603,8 +603,6 @@ def voronoi_smooth_f1(
     if w is not None:
         assert voronoi_dimensions in ["4D", "1D"]
         inputs["W"] = w
-    elif voronoi_dimensions == "1D":
-        raise_explicit_noise_vector_error("voronoi_smooth_f1", logger=logger)
 
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",
@@ -628,22 +626,18 @@ def voronoi_smooth_f1(
 
 
 def voronoi_n_spheres_distance(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     randomness: nt.SocketOrVal[float] = 1.0,
     normalize: bool = False,
 ) -> nt.ProcNode[float]:
     """Uses a TexVoronoi Shader Node with feature='N_SPHERE_RADIUS'."""
-    if vector is None:
-        raise_explicit_noise_vector_error("voronoi_spheres_distance", logger=logger)
-
+    inputs = {"Scale": scale, "Randomness": randomness}
+    if vector is not None:
+        inputs["Vector"] = vector
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexVoronoi",
-        inputs={
-            "Vector": vector,
-            "Scale": scale,
-            "Randomness": randomness,
-        },
+        inputs=inputs,
         attrs={
             "feature": "N_SPHERE_RADIUS",
             "normalize": normalize,
@@ -652,7 +646,7 @@ def voronoi_n_spheres_distance(
 
 
 def wave(
-    vector: nt.SocketOrVal[pt.Vector],
+    vector: nt.SocketOrVal[pt.Vector] | None,
     scale: nt.SocketOrVal[float] = 5.0,
     distortion: nt.SocketOrVal[float] = 0.0,
     detail: nt.SocketOrVal[float] = 2.0,
@@ -672,19 +666,19 @@ def wave(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/wave.html
     """
-    if vector is None:
-        raise_explicit_noise_vector_error("wave", logger=logger)
+    inputs = {
+        "Scale": scale,
+        "Distortion": distortion,
+        "Detail": detail,
+        "Detail Scale": detail_scale,
+        "Detail Roughness": detail_roughness,
+        "Phase Offset": phase_offset,
+    }
+    if vector is not None:
+        inputs["Vector"] = vector
     res = nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexWave",
-        inputs={
-            "Vector": vector,
-            "Scale": scale,
-            "Distortion": distortion,
-            "Detail": detail,
-            "Detail Scale": detail_scale,
-            "Detail Roughness": detail_roughness,
-            "Phase Offset": phase_offset,
-        },
+        inputs=inputs,
         attrs={
             "bands_direction": bands_direction,
             "rings_direction": rings_direction,
@@ -712,8 +706,6 @@ def white_noise(
 
     if noise_dimensions in ["1D", "4D"] and w is None:
         raise ValueError(f"w is required for {noise_dimensions} white noise")
-    if noise_dimensions in ["2D", "3D", "4D"] and vector is None:
-        raise_explicit_noise_vector_error("white_noise", logger=logger)
     if noise_dimensions in ["2D", "3D"] and w is not None:
         raise ValueError("w is not supported for 2D or 3D white noise")
 

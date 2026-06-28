@@ -6,7 +6,6 @@ from procfunc.nodes import types as nt
 from procfunc.nodes.util.bindings_util import (
     ContextualNode,
     RuntimeResolveDataType,
-    raise_io_error,
 )
 from procfunc.nodes.util.bpy_node_info import NodeDataType
 
@@ -466,8 +465,6 @@ def input_bool(boolean: bool = False) -> t.ProcNode[bool]:
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/boolean.html
     """
 
-    raise_io_error("input_bool", logger=logger)
-
     return t.ProcNode.from_nodetype(
         node_type="FunctionNodeInputBool",
         inputs={},
@@ -481,8 +478,6 @@ def input_color(value: tuple = (0.5, 0.5, 0.5, 1.0)) -> t.ProcNode[pt.Color]:
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/color.html
     """
-
-    raise_io_error("input_color", logger=logger)
 
     return t.ProcNode.from_nodetype(
         node_type="FunctionNodeInputColor",
@@ -498,8 +493,6 @@ def input_int(integer: int = 0) -> t.ProcNode[int]:
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/integer.html
     """
 
-    raise_io_error("input_int", logger=logger)
-
     return t.ProcNode.from_nodetype(
         node_type="FunctionNodeInputInt",
         inputs={},
@@ -513,8 +506,6 @@ def input_rotation(rotation_euler: tuple = (0.0, 0.0, 0.0)) -> t.ProcNode[pt.Vec
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/rotation.html
     """
-
-    raise_io_error("input_rotation", logger=logger)
 
     return t.ProcNode.from_nodetype(
         node_type="FunctionNodeInputRotation",
@@ -536,8 +527,6 @@ def input_special_characters() -> InputSpecialCharactersResult:
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/text/special_characters.html
     """
 
-    raise_io_error("input_special_characters", logger=logger)
-
     node = nt.ProcNode.from_nodetype(
         node_type="FunctionNodeInputSpecialCharacters",
         inputs={},
@@ -555,8 +544,6 @@ def input_string(string: str = "") -> nt.ProcNode[str]:
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/string.html
     """
 
-    raise_io_error("input_string", logger=logger)
-
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeInputString",
         inputs={},
@@ -570,8 +557,6 @@ def input_vector(vector: tuple = (0.0, 0.0, 0.0)) -> nt.ProcNode[pt.Vector]:
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/vector.html
     """
-
-    raise_io_error("input_vector", logger=logger)
 
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeInputVector",

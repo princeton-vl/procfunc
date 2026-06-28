@@ -1,3 +1,35 @@
+# 0.34.0
+
+Interface changes:
+
+- removed the material strict-mode checks for normal/bump inputs, implicit texture vectors, and IO nodes, along with their `ProcfuncContext` fields (`warn_mode_avoid_normal_bump`, `warn_mode_avoid_implicit_vector`, `warn_mode_avoid_io_nodes`) and env vars (`PROCFUNC_WARN_MODE_AVOID_NORMAL_BUMP`, `PROCFUNC_WARN_MODE_AVOID_IMPLICIT_VECTOR`, `PROCFUNC_WARN_MODE_AVOID_IO_NODES`)
+- dropped the now-unused `is_infinigen_restricted` field and restriction-only `notes` from the node manifest
+- `texture.noise` `offset` / `gain` now default to `None` and raise for noise types that don't support them (were `0.0` / `1.0` and applied unconditionally)
+- `color.hex_color` dropped its unused `alpha` parameter
+- removed `transform_nodetree` from `procfunc.compute_graph.__all__` (was exported but unimplemented)
+- `math.vector_dot_product` / `math.vector_distance` are now annotated `ProcNode[float]` (were `ProcNode[Vector]`)
+- texture nodes (`brick`, `checker`, `environment`, `gradient`, `ies`, `image`, `magic`, `point_density`, `wave`, …) now accept `vector=None` for blender's implicit coordinates (was required)
+- `geo.mesh_to_points` `position` and `geo.scale_elements` `center` now default to `None`; `geo.instances_to_points` `position` accepts `None`
+- `bpy_nocollide_data_name` now produces deterministic names (bare prefix, then an incrementing `_N` suffix on collision) instead of a random `uuid4` suffix; dropped its `retries` parameter
+
+Fixed crashes:
+
+- transpiled code that passes `None` to disconnect a geometry/shader socket no longer crashes the strict-`None` executor; one central predicate accepts `None` for any socket carrying no explicit value — multi-inputs, datablock pointers (Object/Collection/Material/Image), and hide-value implicit fields (Selection/Vector/Center/Position) — replacing the per-binding omit-on-`None` workarounds
+- transpiling a Separate XYZ with a disconnected Vector emitted a `pf.nodes.func.constant` NameError; now emits `pf.nodes.math.constant`
+- transpiling `vector_rotate` with a dropped default-valued Angle socket no longer re-injects `angle=None`
+- assigning an `INT` socket default during execution now coerces the value to `int` (was unhandled)
+
+Fixed wrong results:
+
+- transpiler preserves `data_type` / `input_type` when no type-determining input is wired (was dropped unconditionally, breaking re-execution of `random_value` / `switch` / `sample_curve_length` / `blur_attribute`)
+
+Other:
+
+- removed dead commented-out `curve_handle_type_selection` / `viewer` bindings in `geo.py`
+- corrected the `control.choice` docstring parameter names
+- added an integration test suite (transpile round-trip + render pixel-diff) and a warnings-as-errors Sphinx docs job
+- added ast-grep codemods (`scripts/update_greps/`) for migrating call sites across the 0.30 → 0.34 binding changes
+
 # 0.33.2
 
 Interface changes:

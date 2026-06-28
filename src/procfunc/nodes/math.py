@@ -436,7 +436,7 @@ def vector_faceforward(
 def vector_dot_product(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
-) -> nt.ProcNode[pt.Vector]:
+) -> nt.ProcNode[float]:
     """Uses a VectorMath Shader Node with operation='DOT_PRODUCT'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",
@@ -448,7 +448,7 @@ def vector_dot_product(
 def vector_distance(
     a: nt.SocketOrVal[pt.Vector],
     b: nt.SocketOrVal[pt.Vector],
-) -> nt.ProcNode[pt.Vector]:
+) -> nt.ProcNode[float]:
     """Uses a VectorMath Shader Node with operation='DISTANCE'."""
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeVectorMath",

@@ -66,7 +66,7 @@ def transpile_blendergym_task_blendfile(blend_path: Path, code_path: Path, task_
     )
 
     if task_type == "geometry":
-        cmd += ["--transforms", "extract_materials"]
+        cmd += ["--include_object_materials", "0"]
     else:
         cmd += ["--include_object_materials", "1"]
 

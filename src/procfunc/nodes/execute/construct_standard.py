@@ -320,26 +320,22 @@ def _construct_procnode_standard(
     for input_name, input_py in kwargs.items():
         input_result = input_results[input_name]
         if input_result is None:
-            # Strict-None policy: None means "leave disconnected" and is only
-            # allowed for sockets with no default_value attr at all (Geometry,
-            # Shader, Matrix, Virtual) - never rely on Blender's internal
-            # defaults, whose values may change across versions. A disabled or
-            # missing socket name is a binding bug and propagates as ValueError.
             to_socket = get_input_socket_to_connect_to(
                 bl_node_tree, bl_node, input_name, None
             )
-            # IMAGE default_value is a datablock pointer; None faithfully means "no image assigned"
             if (
                 to_socket.is_multi_input
                 or not hasattr(to_socket, "default_value")
-                or to_socket.type == "IMAGE"
+                or to_socket.hide_value
+                or to_socket.default_value is None
             ):
                 continue
             raise ValueError(
                 f"Node {bl_node.name!r} input {to_socket.name!r} (socket type "
                 f"{to_socket.type}) received None. Explicitly pass a value; None is "
-                f"only allowed for sockets with no default_value attribute "
-                f"(e.g. Geometry/Shader) or with a datablock pointer one (Image)."
+                f"only allowed for disconnected implicit-field sockets (hide_value), "
+                f"datablock pointers, or sockets with no default_value attribute "
+                f"(e.g. Geometry/Shader)."
             )
         to_socket = get_input_socket_to_connect_to(
             bl_node_tree, bl_node, input_name, input_result

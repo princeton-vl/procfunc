@@ -159,8 +159,7 @@ _PARAMS = list(_NODES.itertuples(index=False))
 _IDS = [f"{r.name}__{r.node_group_type}" for r in _PARAMS]
 
 
-@pytest.mark.parametrize("row", _PARAMS, ids=_IDS)
-def test_manifest_row_transpiles(row):
+def _check_manifest_row(row, *, connect_inputs: bool):
     group_type = row.node_group_type
     bl_idname = _resolve_bl_idname(row.bpy_name, group_type)
 
@@ -193,10 +192,11 @@ def test_manifest_row_transpiles(row):
             if chosen is not None:
                 node.data_type = chosen
 
-        for socket in node.inputs:
-            if not socket.enabled or not socket.name:
-                continue
-            _wire_socket(tree, input_node, socket, "INPUT")
+        if connect_inputs:
+            for socket in node.inputs:
+                if not socket.enabled or not socket.name:
+                    continue
+                _wire_socket(tree, input_node, socket, "INPUT")
 
         wireable = [s for s in node.outputs if s.enabled and s.name]
         wired_outputs = 0
@@ -239,3 +239,13 @@ def test_manifest_row_transpiles(row):
         # scene's tree); remove those constructed here to bound memory growth.
         for ng in set(bpy.data.node_groups) - groups_before:
             bpy.data.node_groups.remove(ng)
+
+
+@pytest.mark.parametrize("row", _PARAMS, ids=_IDS)
+def test_manifest_row_transpiles(row):
+    _check_manifest_row(row, connect_inputs=True)
+
+
+@pytest.mark.parametrize("row", _PARAMS, ids=_IDS)
+def test_manifest_row_transpiles_defaults(row):
+    _check_manifest_row(row, connect_inputs=False)

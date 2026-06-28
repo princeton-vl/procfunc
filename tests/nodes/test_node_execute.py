@@ -651,11 +651,43 @@ def test_true_for_boolean_selection_socket_ok():
 
 @pf.nodes.node_function
 def _none_selection(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
-    # Selection has a (hidden) boolean default_value, so None is rejected like
-    # any other value socket.
     return pf.nodes.geo.set_position(geo, selection=None, offset=(0, 0, 1))
 
 
-def test_none_for_boolean_selection_socket_raises():
-    with pytest.raises(ValueError, match="received None"):
-        _realize_geo(_none_selection)
+def test_none_for_boolean_selection_socket_omitted():
+    ng = _realize_geo(_none_selection)
+    node = next(n for n in ng.nodes if n.bl_idname == "GeometryNodeSetPosition")
+    assert not node.inputs["Selection"].is_linked
+
+
+@pf.nodes.node_function
+def _scale_elements_center_none(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    return pf.nodes.geo.scale_elements(geometry=geo, scale=2.0, center=None)
+
+
+def test_hide_value_center_none_omitted():
+    ng = _realize_geo(_scale_elements_center_none)
+    node = next(n for n in ng.nodes if n.bl_idname == "GeometryNodeScaleElements")
+    assert not node.inputs["Center"].is_linked
+
+
+@pf.nodes.node_function
+def _mesh_to_points_position_none(geo: pf.ProcNode[pf.MeshObject]) -> pf.ProcNode:
+    return pf.nodes.geo.mesh_to_points(mesh=geo, position=None)
+
+
+def test_hide_value_position_none_omitted():
+    ng = _realize_geo(_mesh_to_points_position_none)
+    node = next(n for n in ng.nodes if n.bl_idname == "GeometryNodeMeshToPoints")
+    assert not node.inputs["Position"].is_linked
+
+
+@pf.nodes.node_function
+def _checker_vector_none() -> pf.ProcNode:
+    return pf.nodes.texture.checker(vector=None).color
+
+
+def test_hide_value_texture_vector_none_omitted():
+    ng = _realize(_checker_vector_none, pf.nodes.NodeGroupType.SHADER)
+    node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeTexChecker")
+    assert not node.inputs["Vector"].is_linked

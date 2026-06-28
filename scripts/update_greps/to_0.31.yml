@@ -1,0 +1,279 @@
+# procfunc 0.30 -> 0.31 codemods. Apply:  ast-grep scan -r scripts/update_greps/to_0.31.yml -U <path>
+# (on macOS `sg` is the setgroup binary -- use `ast-grep`). Then run `ruff format`. Subtree moves,
+# a/b kwarg renames, and the codegen import move are auto. The locate-only rules at the bottom
+# (no fix:) flag context-dependent splits to hand-edit: fillet_curve, vector_math, combine_color,
+# distribute_points_on_faces. See README.md for those + newly-required primary inputs + removed
+# namespaces.
+
+id: func-combine_xyz-to-math
+language: python
+rule:
+  pattern: pf.nodes.func.combine_xyz
+fix: pf.nodes.math.combine_xyz
+---
+id: func-separate_xyz-to-math
+language: python
+rule:
+  pattern: pf.nodes.func.separate_xyz
+fix: pf.nodes.math.separate_xyz
+---
+id: func-constant-to-math
+language: python
+rule:
+  pattern: pf.nodes.func.constant
+fix: pf.nodes.math.constant
+---
+id: func-float_curve-to-math
+language: python
+rule:
+  pattern: pf.nodes.func.float_curve
+fix: pf.nodes.math.float_curve
+---
+id: func-map_range-to-math
+language: python
+rule:
+  pattern: pf.nodes.func.map_range
+fix: pf.nodes.math.map_range
+---
+id: func-mix-to-math
+language: python
+rule:
+  pattern: pf.nodes.func.mix
+fix: pf.nodes.math.mix
+---
+id: func-mix_rgb-to-color
+language: python
+rule:
+  pattern: pf.nodes.func.mix_rgb
+fix: pf.nodes.color.mix_rgb
+---
+id: func-rgb_curve-to-color
+language: python
+rule:
+  pattern: pf.nodes.func.rgb_curve
+fix: pf.nodes.color.rgb_curve
+---
+id: func-separate_color-to-color
+# separate_color was moved AND split into separate_rgb/_hsv/_hsl. RGB is the old default and the
+# safe auto-rewrite; if you used mode="HSV"/"HSL", change to separate_hsv/separate_hsl by hand.
+language: python
+rule:
+  pattern: pf.nodes.func.separate_color
+fix: pf.nodes.color.separate_rgb
+---
+id: shader-voronoi-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.voronoi
+fix: pf.nodes.texture.voronoi
+---
+id: shader-voronoi_distance-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.voronoi_distance
+fix: pf.nodes.texture.voronoi_distance
+---
+id: shader-voronoi_smooth_f1-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.voronoi_smooth_f1
+fix: pf.nodes.texture.voronoi_smooth_f1
+---
+id: shader-voronoi_n_spheres_distance-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.voronoi_n_spheres_distance
+fix: pf.nodes.texture.voronoi_n_spheres_distance
+---
+id: shader-checker-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.checker
+fix: pf.nodes.texture.checker
+---
+id: shader-gradient-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.gradient
+fix: pf.nodes.texture.gradient
+---
+id: shader-image-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.image
+fix: pf.nodes.texture.image
+---
+id: shader-noise-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.noise
+fix: pf.nodes.texture.noise
+---
+id: shader-sky-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.sky
+fix: pf.nodes.texture.sky
+---
+id: shader-white_noise-to-texture
+language: python
+rule:
+  pattern: pf.nodes.shader.white_noise
+fix: pf.nodes.texture.white_noise
+---
+id: shader-color_ramp-to-color
+language: python
+rule:
+  pattern: pf.nodes.shader.color_ramp
+fix: pf.nodes.color.color_ramp
+---
+id: shader-blackbody-to-color
+language: python
+rule:
+  pattern: pf.nodes.shader.blackbody
+fix: pf.nodes.color.blackbody
+---
+id: shader-bright_contrast-to-color
+language: python
+rule:
+  pattern: pf.nodes.shader.bright_contrast
+fix: pf.nodes.color.bright_contrast
+---
+id: shader-gamma-to-color
+language: python
+rule:
+  pattern: pf.nodes.shader.gamma
+fix: pf.nodes.color.gamma
+---
+id: shader-hue_saturation-to-color
+language: python
+rule:
+  pattern: pf.nodes.shader.hue_saturation
+fix: pf.nodes.color.hue_saturation
+---
+id: shader-rgb_to_bw-to-color
+language: python
+rule:
+  pattern: pf.nodes.shader.rgb_to_bw
+fix: pf.nodes.color.rgb_to_bw
+---
+id: shader-invert-to-color
+language: python
+rule:
+  pattern: pf.nodes.shader.invert
+fix: pf.nodes.color.invert
+---
+id: shader-value-to-math-constant
+language: python
+rule:
+  pattern: pf.nodes.shader.value
+fix: pf.nodes.math.constant
+---
+id: color-rgb-to-math-constant
+language: python
+rule:
+  pattern: pf.nodes.color.rgb
+fix: pf.nodes.math.constant
+---
+id: codegen-import-move
+language: python
+rule:
+  pattern: procfunc.transpiler.codegen
+fix: procfunc.codegen
+---
+id: codegen-from-import-move
+language: python
+rule:
+  pattern: from procfunc.transpiler import codegen
+fix: from procfunc import codegen
+---
+id: to_python-from-import-move
+language: python
+rule:
+  pattern: from procfunc.transpiler import to_python
+fix: from procfunc.codegen import to_python
+---
+id: boolean-mesh1-to-a
+language: python
+rule:
+  pattern:
+    context: 'f(mesh_1=$V)'
+    selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: 'mesh_boolean$|sdf_grid_boolean$' }
+fix: 'a=$V'
+---
+id: boolean-mesh2-to-b
+language: python
+rule:
+  pattern:
+    context: 'f(mesh_2=$V)'
+    selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: 'mesh_boolean$|sdf_grid_boolean$' }
+fix: 'b=$V'
+---
+id: compositor-image0-to-a
+language: python
+rule:
+  pattern:
+    context: 'f(image_0=$V)'
+    selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: 'mix_rgb$|alpha_over$|diff_matte$|split$' }
+fix: 'a=$V'
+---
+id: compositor-image1-to-b
+language: python
+rule:
+  pattern:
+    context: 'f(image_1=$V)'
+    selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: 'mix_rgb$|alpha_over$|diff_matte$|split$' }
+fix: 'b=$V'
+---
+id: math-value2-to-c
+language: python
+rule:
+  pattern:
+    context: 'f(value_2=$V)'
+    selector: keyword_argument
+  inside:
+    kind: call
+    stopBy: end
+    has: { field: function, regex: '_math$' }
+fix: 'c=$V'
+---
+# LOCATE-ONLY (no fix:) -- context-dependent splits/removals; hand-edit per README.
+# fillet_curve(mode=...) split into fillet_curve_poly / fillet_curve_bezier (drop the mode= line).
+id: locate-fillet_curve-split
+language: python
+rule:
+  pattern: pf.nodes.geo.fillet_curve($$$A)
+---
+# shader.vector_math split by operation -> math.vector_multiply / vector_multiply_add / ... .
+id: locate-vector_math-split
+language: python
+rule:
+  pattern: pf.nodes.shader.vector_math($$$A)
+---
+# compositor.combine_color removed -> color.combine_rgb (+ optional compositor.set_alpha).
+id: locate-compositor-combine_color
+language: python
+rule:
+  pattern: pf.nodes.compositor.combine_color($$$A)
+---
+# distribute_points_on_faces(mode=...) split -> ..._poisson (density= -> density_factor=, add distance_min=).
+id: locate-distribute_points_on_faces
+language: python
+rule:
+  pattern: pf.nodes.geo.distribute_points_on_faces($$$A)

@@ -127,12 +127,9 @@ def choice(
 ) -> T:
     """
     Args:
-        rng: random number generator
-        weights: list of weights for each option - will be normalized to sum to 1 as a probability distribution
-        options: list of callables to choose from
-        chosen: if not None, use this value instead of choosing randomly. Cannot be traced, but may appear in the output of the tracer.
+        choice_rng: random number generator
+        choice_options: list of (value, weight) tuples; weights are normalized to a probability distribution
         chosen_idx: if not None, use this index instead of choosing randomly. Cannot be traced, but may appear in the output of the tracer.
-        **child_kwargs: keyword arguments to pass to the chosen callable
 
     TODO: this function should really take args and kwargs as tuple & dict, not via expansion
     but this requires our Node to handle cases with pytrees as inputs. Currently it would fail to execute the children if they are hidden in a pytree

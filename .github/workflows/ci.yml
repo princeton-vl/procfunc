@@ -28,3 +28,13 @@ jobs:
       - run: uv sync --extra dev
       - name: Run tests
         run: uv run pytest
+
+  docs:
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.2.0
+        with:
+          python-version: "3.11"
+      - name: Build docs (warnings are errors)
+        run: uv run --extra docs sphinx-build -b html -W --keep-going docs docs/_build/html

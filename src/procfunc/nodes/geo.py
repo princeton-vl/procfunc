@@ -4,7 +4,7 @@ from typing import Generic, Literal, NamedTuple, TypeVar
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.util.bindings_util import RuntimeResolveDataType, raise_io_error
+from procfunc.nodes.util.bindings_util import RuntimeResolveDataType
 from procfunc.nodes.util.bpy_node_info import NodeDataType
 from procfunc.util import pytree
 
@@ -489,22 +489,6 @@ def curve_endpoint_selection(
         inputs={"Start Size": start_size, "End Size": end_size},
         attrs={},
     )
-
-
-# def curve_handle_type_selection(
-#    handle_type: Literal["FREE", "AUTO", "VECTOR", "ALIGN"] = "AUTO",
-#    mode: Literal["LEFT", "RIGHT"] = "RIGHT",
-# ) -> t.ProcNode:
-#    """
-#    Uses a CurveHandleTypeSelection Geometry Node.
-#
-#    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/read/handle_type_selection.html
-#    """
-#    return t.ProcNode.from_nodetype(
-#        node_type="GeometryNodeCurveHandleTypeSelection",
-#        inputs={},
-#        attrs={"handle_type": handle_type, "mode": mode},
-#    )
 
 
 def curve_length(curve: nt.ProcNode[pt.CurveObject] | None) -> nt.ProcNode[float]:
@@ -1636,8 +1620,6 @@ def input_active_camera() -> nt.ProcNode[pt.Object]:
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/scene/active_camera.html
     """
-    raise_io_error("input_active_camera", logger=logger)
-
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeInputActiveCamera",
         inputs={},
@@ -1712,7 +1694,6 @@ def input_image(image: pt.Image | None = None) -> nt.ProcNode[pt.Image]:
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/image.html
     """
 
-    raise_io_error("input_image", logger=logger)
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeInputImage",
         inputs={},
@@ -1765,8 +1746,6 @@ def input_material(material: pt.Material | None = None) -> nt.ProcNode[pt.Materi
 
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/input/constant/material.html
     """
-    raise_io_error("input_material", logger=logger)
-
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeInputMaterial",
         inputs={},
@@ -2160,7 +2139,7 @@ def instance_transform() -> nt.ProcNode:
 
 
 def instances_to_points(
-    position: nt.SocketOrVal[nt.pt.Vector],
+    position: nt.SocketOrVal[nt.pt.Vector] | None,
     instances: nt.ProcNode[nt.Instances] | None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.05,
@@ -2685,7 +2664,7 @@ def mesh_to_density_grid(
 
 def mesh_to_points(
     mesh: nt.ProcNode[pt.MeshObject] | None,
-    position: nt.SocketOrVal[nt.pt.Vector],
+    position: nt.SocketOrVal[nt.pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
     radius: nt.SocketOrVal[float] = 0.05,
     mode: Literal["VERTICES", "EDGES", "FACES", "CORNERS"] = "VERTICES",
@@ -3480,7 +3459,7 @@ def sample_uv_surface(
 def scale_elements(
     geometry: nt.ProcNode[nt.Geometry] | None,
     scale: nt.SocketOrVal[float],
-    center: nt.SocketOrVal[nt.pt.Vector],
+    center: nt.SocketOrVal[nt.pt.Vector] | None = None,
     selection: nt.SocketOrVal[bool] = True,
     axis: nt.SocketOrVal[nt.pt.Vector] | None = None,
     domain: Literal["FACE", "EDGE"] = "FACE",
@@ -4463,32 +4442,6 @@ def vertex_of_corner(corner_index: nt.SocketOrVal[int] = 0) -> nt.ProcNode[int]:
 TViewer = TypeVar(
     "TViewer", nt.SocketOrVal[bool], nt.SocketOrVal[int], nt.SocketOrVal[float]
 )
-
-
-# def viewer(
-#     geometry: t.ProcNode[t.Geometry],
-#     value: TViewer = 0,
-#     domain: TDomain = "AUTO",
-#     data_type: NodeDataType | RuntimeResolveDataType | None = None,
-# ) -> t.ProcNode:
-#     """
-#     Uses a Viewer Geometry Node.
-#
-#     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
-#     """
-#     if data_type is None:
-#         data_type = RuntimeResolveDataType(
-#             [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-#             ["Value"],
-#         )
-#     return t.ProcNode.from_nodetype(
-#         node_type="GeometryNodeViewer",
-#         inputs={"Geometry": geometry, "Value": value},
-#         attrs={
-#             "domain": domain,
-#             "data_type": data_type,
-#         },
-#     )
 
 
 class ViewportTransformResult(NamedTuple):

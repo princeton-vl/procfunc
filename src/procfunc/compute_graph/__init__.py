@@ -45,7 +45,6 @@ __all__ = [
     "LiteralConstant",
     "graph_nodes_equal",
     "transform_compute_graph",
-    "transform_nodetree",
     "traverse_breadth_first",
     "traverse_depth_first",
     "traverse_depth_first_node",
