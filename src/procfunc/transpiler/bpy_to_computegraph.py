@@ -1261,6 +1261,12 @@ def parse_material(
         if output_node.inputs[key].is_linked:
             res = parse_link(node_tree, output_node.inputs[key].links[0], memo)
             res.metadata["known_value_type"] = pf.ProcNode[expect_type]
+        elif key == "Displacement":
+            # An unconnected displacement is zero, not absent: downstream code
+            # composes it arithmetically (material.displacement + ...), so a
+            # (0,0,0) vector keeps that safe where None would crash.
+            res = cg.ConstantNode(value=(0.0, 0.0, 0.0))
+            res.metadata["known_value_type"] = pf.ProcNode[pf.Vector]
         else:
             res = cg.ConstantNode(value=None)
             res.metadata["known_value_type"] = Union[pf.ProcNode[expect_type], None]

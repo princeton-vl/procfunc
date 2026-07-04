@@ -8,7 +8,7 @@ from procfunc.codegen import to_python
 from procfunc.nodes.execute.construct_nodes import as_nodegroup
 from procfunc.nodes.util.bpy_node_info import NodeGroupType
 from procfunc.transpiler import parse_node_tree
-from procfunc.transpiler.bpy_to_computegraph import ParseMemo
+from procfunc.transpiler.bpy_to_computegraph import ParseMemo, parse_material
 
 
 def _shader_tree_with_hsv_ramp():
@@ -141,3 +141,17 @@ def test_transpile_dangling_reroute_resolves_to_default():
     src = to_python(graph, toplevel_as_maincall=False)
     assert "0.25" in src
     exec(compile(src, "<reroute>", "exec"), {})  # noqa: S102
+
+
+def test_transpile_material_unlinked_displacement_is_zero():
+    """An unconnected material Displacement output must transpile to a (0,0,0)
+    vector, not None: downstream code composes displacement arithmetically
+    (e.g. wear overlays doing material.displacement + ...), which crashes on None."""
+    mat = bpy.data.materials.new(f"mat_{uuid.uuid4().hex[:8]}")
+    mat.use_nodes = (
+        True  # default tree: Principled BSDF -> Surface, Displacement unlinked
+    )
+    graph = parse_material(mat, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    assert "displacement=None" not in src
+    assert "displacement=(0.0, 0.0, 0.0)" in src
