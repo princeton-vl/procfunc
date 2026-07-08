@@ -163,6 +163,36 @@ def _remove_banned_attrs(
             )
 
 
+def _returns_named_tuple(func: Any) -> bool:
+    try:
+        return_type = get_type_hints(func).get("return")
+    except Exception:
+        return False
+    if return_type is None:
+        return False
+    origin = get_origin(return_type) or return_type
+    return (
+        isinstance(origin, type)
+        and issubclass(origin, tuple)
+        and hasattr(origin, "_fields")
+    )
+
+
+def _produces_named_outputs(node: cg.Node, link: bpy.types.NodeLink) -> bool:
+    """Whether the parsed node yields multiple named outputs, so the downstream
+    link must select a specific one via getattr. A node's procfunc function may
+    return a namedtuple of all outputs (e.g. attribute_domain_size) even when
+    the source node's mode/component disables all but one output socket, so the
+    active-socket count alone underdetects this - prefer the function's return
+    type and fall back to the socket count when it is unknown."""
+    if isinstance(node, cg.FunctionCallNode):
+        return _returns_named_tuple(node.func)
+    if isinstance(node, cg.SubgraphCallNode):
+        out = node.subgraph.outputs.obj()
+        return isinstance(out, tuple) and hasattr(out, "_fields")
+    return len(get_active_sockets(link.from_node.outputs)) > 1
+
+
 def _parse_getattr(
     res: cg.Node,
     link: bpy.types.NodeLink,
@@ -232,9 +262,8 @@ def _create_link_impl_node(
         res = parse_node(node_tree, link.from_node, memo)
         assert res is not None, link
 
-        outsockets = get_active_sockets(link.from_node.outputs)
-        assert len(outsockets) > 0
-        if len(outsockets) > 1:
+        assert len(get_active_sockets(link.from_node.outputs)) > 0
+        if _produces_named_outputs(res, link):
             res = _parse_getattr(res, link)
             assert res is not None, link
 
@@ -912,8 +941,10 @@ def _placeholder_for_graph_input(
             varname=varname,
         ),
     )
-    if default_value is not None:
-        node.kwargs["default_value"] = default_value
+    # Record the default unconditionally, even when it is None: a socket with no
+    # synthesizable value (geometry/object/collection) should still become an
+    # optional param (= None), matching v1 where every input had a default.
+    node.kwargs["default_value"] = default_value
 
     return node
 

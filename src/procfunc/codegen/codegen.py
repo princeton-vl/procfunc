@@ -280,7 +280,7 @@ def _codegen_graph_inputs(
 ) -> list[str]:
     args = sorted(
         list(graph.inputs.values()),
-        key=lambda x: x.kwargs.get("default_value", None) is not None,
+        key=lambda x: "default_value" in x.kwargs,
     )
 
     func_name = func_name or graph.name
@@ -305,8 +305,8 @@ def _codegen_graph_inputs(
             else f"{name}"
         )
 
-        if (default := node.kwargs.get("default_value")) is not None:
-            line += f" = {repr_value(default)}"
+        if "default_value" in node.kwargs:
+            line += f" = {repr_value(node.kwargs['default_value'])}"
 
         args_lines.append(line + ",")
 

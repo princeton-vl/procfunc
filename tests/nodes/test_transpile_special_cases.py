@@ -1,4 +1,5 @@
 import ast
+import inspect
 import uuid
 
 import bpy
@@ -141,6 +142,64 @@ def test_transpile_dangling_reroute_resolves_to_default():
     src = to_python(graph, toplevel_as_maincall=False)
     assert "0.25" in src
     exec(compile(src, "<reroute>", "exec"), {})  # noqa: S102
+
+
+def test_transpile_multi_output_selects_named_socket():
+    """A node whose procfunc function returns a namedtuple of outputs (e.g.
+    attribute_domain_size) must select the wired output by name, even when the
+    source node's component/mode disables all but one output socket - so the
+    active-socket count is 1. Dropping the selection would emit
+    `attribute_domain_size.astype(...)` on the whole result instead of
+    `attribute_domain_size.point_count.astype(...)`."""
+    tree = bpy.data.node_groups.new(f"dsz_{uuid.uuid4().hex[:8]}", "GeometryNodeTree")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Value", in_out="OUTPUT", socket_type="NodeSocketFloat")
+
+    dsz = tree.nodes.new("GeometryNodeAttributeDomainSize")
+    dsz.component = "POINTCLOUD"  # gates every output socket off except Point Count
+    math = tree.nodes.new("ShaderNodeMath")
+    math.operation = "ADD"
+    point_count = next(s for s in dsz.outputs if s.name == "Point Count")
+    tree.links.new(point_count, math.inputs[0])
+    tree.links.new(math.outputs[0], out.inputs["Value"])
+
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    ast.parse(src)
+    assert "attribute_domain_size.point_count" in src
+    exec(compile(src, "<domain_size>", "exec"), {})  # noqa: S102
+
+
+def test_transpile_geometry_input_socket_defaults_to_none():
+    """An interface input socket with no synthesizable scalar default (geometry,
+    left unconnected in v1) must become an optional param (= None), not a
+    required one - else the transpiled function raises TypeError when called
+    without it."""
+    tree = bpy.data.node_groups.new(f"grp_{uuid.uuid4().hex[:8]}", "GeometryNodeTree")
+    inp = tree.nodes.new("NodeGroupInput")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Geo", in_out="INPUT", socket_type="NodeSocketGeometry")
+    tree.interface.new_socket(
+        "Strecher Instance", in_out="INPUT", socket_type="NodeSocketGeometry"
+    )
+    tree.interface.new_socket("Geo", in_out="OUTPUT", socket_type="NodeSocketGeometry")
+
+    # Wire only the first geometry input; leave Strecher Instance unconnected.
+    join = tree.nodes.new("GeometryNodeJoinGeometry")
+    tree.links.new(inp.outputs["Geo"], join.inputs[0])
+    tree.links.new(join.outputs[0], out.inputs["Geo"])
+
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    ast.parse(src)
+    assert "strecher_instance: pf.ProcNode = None" in src
+
+    ns: dict = {}
+    exec(compile(src, "<geo_default>", "exec"), ns)  # noqa: S102
+    fn = next(v for v in ns.values() if callable(v) and hasattr(v, "__wrapped__"))
+
+    params = inspect.signature(fn.__wrapped__).parameters
+    assert params["strecher_instance"].default is None
 
 
 def test_transpile_material_unlinked_displacement_is_zero():
