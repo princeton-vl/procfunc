@@ -205,16 +205,29 @@ def is_zero_displacement(value: Any) -> bool:
     Such a displacement has no effect, so the material build can leave the
     output socket disconnected and skip emitting the subgraph entirely.
     """
-    from procfunc import compute_graph as cg
-    from procfunc.nodes import types as nt
+    from procfunc import compute_graph as cg  # keep-local
+    from procfunc.nodes import math as node_math  # keep-local
+    from procfunc.nodes import types as nt  # keep-local
+    from procfunc.nodes.util.bindings_util import ContextualNode  # keep-local
 
     if isinstance(value, nt.ProcNode):
         value = value.item()
-    if not isinstance(value, cg.ConstantNode):
+    if isinstance(value, cg.ConstantNode):
+        value = value.value
+    elif isinstance(value, cg.FunctionCallNode) and value.func is node_math.constant:
+        value = value.args[0]
+    elif (
+        isinstance(value, cg.ProceduralNode)
+        and value.node_type == ContextualNode.VECTOR.value
+    ):
+        value = value.attrs.get("value")
+    else:
         return False
-    return isinstance(value.value, (mathutils.Vector, tuple, list)) and tuple(
-        value.value
-    ) == (0.0, 0.0, 0.0)
+    return isinstance(value, (mathutils.Vector, tuple, list)) and tuple(value) == (
+        0.0,
+        0.0,
+        0.0,
+    )
 
 
 @dataclass
@@ -226,7 +239,9 @@ class Material:
 
     def item(self) -> bpy.types.Material:
         if self._bpy_material is None:
-            from procfunc.nodes.execute.realize import build_bpy_material
+            from procfunc.nodes.execute.realize import (  # keep-local
+                build_bpy_material,
+            )
 
             self._bpy_material = build_bpy_material(
                 surface=self.surface,

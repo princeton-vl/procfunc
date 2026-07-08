@@ -5,6 +5,7 @@ import uuid
 import bpy
 
 import procfunc as pf
+from procfunc import types as pt
 from procfunc.codegen import to_python
 from procfunc.nodes.execute.construct_nodes import as_nodegroup
 from procfunc.nodes.util.bpy_node_info import NodeGroupType
@@ -202,15 +203,19 @@ def test_transpile_geometry_input_socket_defaults_to_none():
     assert params["strecher_instance"].default is None
 
 
-def test_transpile_material_unlinked_displacement_is_zero():
-    """An unconnected material Displacement output must transpile to a (0,0,0)
-    vector, not None: downstream code composes displacement arithmetically
-    (e.g. wear overlays doing material.displacement + ...), which crashes on None."""
+def test_transpile_material_unlinked_displacement_is_zero_procnode():
+    """Unconnected Displacement transpiles to a zero-vector ProcNode, not None
+    and not a raw tuple."""
     mat = bpy.data.materials.new(f"mat_{uuid.uuid4().hex[:8]}")
-    mat.use_nodes = (
-        True  # default tree: Principled BSDF -> Surface, Displacement unlinked
-    )
+    mat.use_nodes = True
     graph = parse_material(mat, ParseMemo())
     src = to_python(graph, toplevel_as_maincall=False)
     assert "displacement=None" not in src
-    assert "displacement=(0.0, 0.0, 0.0)" in src
+    assert "displacement=(0.0, 0.0, 0.0)" not in src
+    assert "pf.nodes.math.constant((0.0, 0.0, 0.0))" in src
+
+    mat2 = bpy.data.materials.new(f"mat_{uuid.uuid4().hex[:8]}")
+    mat2.use_nodes = True
+    assert pt.is_zero_displacement(
+        parse_material(mat2, ParseMemo()).outputs.obj().displacement
+    )
