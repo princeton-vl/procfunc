@@ -215,7 +215,8 @@ def transpile_targets(
     result_calls = []
     for result_graph in result_graphs:
         kwargs = {}
-        if result_graph.name.startswith("material_"):
+        input_names = {name for name, _ in result_graph.inputs.items()}
+        if "vector" in input_names:
             kwargs["vector"] = vec
 
         return_type = result_graph.metadata.get("known_value_type", None)
