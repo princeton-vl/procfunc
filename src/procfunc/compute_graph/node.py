@@ -1,6 +1,5 @@
 import inspect
 import logging
-from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 if TYPE_CHECKING:
@@ -9,6 +8,20 @@ if TYPE_CHECKING:
 from procfunc.util.pytree import PyTree
 
 logger = logging.getLogger(__name__)
+
+
+class FrozenDict(dict):
+    def _immutable(self, *_args, **_kwargs):
+        raise TypeError("FrozenDict is immutable")
+
+    __delitem__ = _immutable
+    __ior__ = _immutable
+    __setitem__ = _immutable
+    clear = _immutable
+    pop = _immutable
+    popitem = _immutable
+    setdefault = _immutable
+    update = _immutable
 
 
 class Node:
@@ -32,8 +45,8 @@ class Node:
         object.__setattr__(self, "args", tuple(self.args))
         for name in ("kwargs", "metadata", "attrs"):
             value = getattr(self, name, None)
-            if value is not None and not isinstance(value, MappingProxyType):
-                object.__setattr__(self, name, MappingProxyType(dict(value)))
+            if value is not None and not isinstance(value, FrozenDict):
+                object.__setattr__(self, name, FrozenDict(value))
         object.__setattr__(self, "_frozen", True)
 
     def _replace(self, **changes: Any) -> "Node":

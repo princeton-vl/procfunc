@@ -1,6 +1,5 @@
 import logging
 from dataclasses import dataclass
-from types import MappingProxyType
 from typing import Any, Callable, Generic, Iterator, TypeVar
 
 logger = logging.getLogger(__name__)
@@ -92,14 +91,6 @@ register_pytree_container(
     names_func=lambda x: list(x.keys()),
 )
 register_pytree_container(
-    MappingProxyType,
-    flatten_func=_dict_flatten,
-    unflatten_func=lambda objs, spec: MappingProxyType(
-        dict(zip(spec.aux, objs, strict=True))
-    ),
-    names_func=lambda x: list(x.keys()),
-)
-register_pytree_container(
     tuple,
     flatten_func=_tuple_flatten,
     unflatten_func=_tuple_unflatten,
@@ -125,6 +116,15 @@ def is_obj_namedtuple(obj: Any) -> bool:
 
 def flatten(obj: Any) -> tuple[list[Any], PyTreeDef]:
     registered_pytree_container = _registered_pytree_containers.get(type(obj))
+    if registered_pytree_container is None:
+        registered_pytree_container = next(
+            (
+                container
+                for container_type, container in _registered_pytree_containers.items()
+                if isinstance(obj, container_type)
+            ),
+            None,
+        )
 
     if registered_pytree_container is not None:
         flatten_func = registered_pytree_container.flatten_func
@@ -147,6 +147,15 @@ def flatten(obj: Any) -> tuple[list[Any], PyTreeDef]:
 
 def _get_container_funcs(container_type: type) -> RegisteredPyTreeContainer:
     rec = _registered_pytree_containers.get(container_type)
+    if rec is None:
+        rec = next(
+            (
+                funcs
+                for registered_type, funcs in _registered_pytree_containers.items()
+                if issubclass(container_type, registered_type)
+            ),
+            None,
+        )
     if is_type_namedtuple(container_type):
         return NAMEDTUPLE_CONTAINER
     elif rec is None:
