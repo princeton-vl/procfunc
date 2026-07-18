@@ -19,17 +19,23 @@ def map_subgraphs(
 ) -> Callable[[list[cg.ComputeGraph]], list[cg.ComputeGraph]]:
     @functools.wraps(func)
     def wrapper(graphs: list[cg.ComputeGraph]) -> list[cg.ComputeGraph]:
-        for g in graphs:
-            for node, g in cg.traverse_nested_graphs(g, yield_call_nodes=True):
-                if node is None:
+        def rewrite(graph: cg.ComputeGraph) -> cg.ComputeGraph:
+            replacements = {}
+            for node in cg.traverse_depth_first(graph):
+                if not isinstance(node, cg.SubgraphCallNode):
                     continue
-                assert isinstance(node, cg.SubgraphCallNode)
-                res = func(node, g)
+                res = func(node, node.subgraph)
                 if not isinstance(res, cg.ComputeGraph):
                     raise ValueError(
-                        f"Transform {func.__name__} produced {res=} for {g=}"
+                        f"Transform {func.__name__} produced {res=} for {graph=}"
                     )
-                node.subgraph = res
+                replacements[id(node)] = node._replace(subgraph=rewrite(res))
+            updated = cg.replace_in_graph(graph, replacements)
+            graph.inputs, graph.outputs = updated.inputs, updated.outputs
+            return graph
+
+        for graph in graphs:
+            rewrite(graph)
         return graphs
 
     return wrapper

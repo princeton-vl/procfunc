@@ -1,5 +1,6 @@
 import inspect
 import logging
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 if TYPE_CHECKING:
@@ -19,6 +20,30 @@ class Node:
         if metadata is None:
             metadata = {}
         self.metadata = metadata
+        if type(self) is Node:
+            self._freeze()
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if getattr(self, "_frozen", False):
+            raise AttributeError(f"{type(self).__name__} is immutable")
+        object.__setattr__(self, name, value)
+
+    def _freeze(self) -> None:
+        object.__setattr__(self, "args", tuple(self.args))
+        for name in ("kwargs", "metadata", "attrs"):
+            value = getattr(self, name, None)
+            if value is not None and not isinstance(value, MappingProxyType):
+                object.__setattr__(self, name, MappingProxyType(dict(value)))
+        object.__setattr__(self, "_frozen", True)
+
+    def _replace(self, **changes: Any) -> "Node":
+        replacement = object.__new__(type(self))
+        object.__setattr__(replacement, "__dict__", self.__dict__.copy())
+        object.__setattr__(replacement, "_frozen", False)
+        for name, value in changes.items():
+            object.__setattr__(replacement, name, value)
+        replacement._freeze()
+        return replacement
 
     def inputs_pytree(self) -> PyTree:
         return PyTree((self.args, self.kwargs))
@@ -34,6 +59,7 @@ class SubgraphCallNode(Node):
     ):
         super().__init__(args, kwargs, metadata)
         self.subgraph = subgraph
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.subgraph.name}, ...)"
@@ -49,6 +75,7 @@ class FunctionCallNode(Node):
     ):
         super().__init__(args=args, kwargs=kwargs, metadata=metadata)
         self.func = func
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.func.__name__}, ...)"
@@ -65,6 +92,7 @@ class MethodCallNode(Node):
     ):
         super().__init__(args=(callee, *args), kwargs=kwargs, metadata=metadata)
         self.method_name = method_name
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.method_name}, ...)"
@@ -77,6 +105,7 @@ class GetAttributeNode(Node):
         # store source as args since it is a Node and may need to be recursively constructed
         super().__init__(args=(source,), kwargs={}, metadata=metadata)
         self.attribute_name = attribute_name
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.attribute_name})"
@@ -100,6 +129,7 @@ class ProceduralNode(Node):
                     "(Node values are not allowed as attrs)"
                 )
         self.attrs = attrs
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.node_type}, ...)"
@@ -116,6 +146,7 @@ class MutatedArgumentNode(Node):
         super().__init__(
             args=(original_node, mutator_call_node), kwargs={}, metadata=metadata
         )
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}(...)"
@@ -125,6 +156,7 @@ class ConstantNode(Node):
     def __init__(self, value: Any, metadata: dict[str, Any] = None):
         super().__init__(args=(), kwargs={}, metadata=metadata)
         self.value = value
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.value})"
@@ -135,6 +167,7 @@ class InputPlaceholderNode(Node):
         super().__init__(args=(), kwargs={}, metadata=metadata)
         self.input_name = name
         self.default_value = default_value
+        self._freeze()
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.default_value})"

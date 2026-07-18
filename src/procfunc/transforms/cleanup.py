@@ -6,6 +6,7 @@ from procfunc import compute_graph as cg
 from procfunc import types as t
 from procfunc.nodes import types as nt
 from procfunc.nodes.shader import coord, geometry
+from procfunc.transforms.util import map_subgraphs
 from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
@@ -43,15 +44,10 @@ def eliminate_duplicate_subgraphs(
             else:
                 unique.append(subgraph)
 
-    # second pass: update ALL call nodes (in all nested subgraphs) that reference a replaced subgraph
-    for topgraph in graphs:
-        for subgraph in cg.traverse_nested_graphs(topgraph):
-            for node in cg.traverse_depth_first(subgraph):
-                if (
-                    isinstance(node, cg.SubgraphCallNode)
-                    and id(node.subgraph) in replacements
-                ):
-                    node.subgraph = replacements[id(node.subgraph)]
+    def replace_subgraphs(node: cg.Node, subgraph: cg.ComputeGraph) -> cg.ComputeGraph:
+        return replacements.get(id(subgraph), subgraph)
+
+    graphs = map_subgraphs(replace_subgraphs)(graphs)
 
     logger.debug(f"Eliminated duplicated subgraphs {[g.name for g in removed]}")
 
@@ -103,10 +99,16 @@ def fill_graph_defaults_with_call_node(
         )
         return graph
 
+    replacements = {}
     for name, inpnode in graph.inputs.items():
         fillval = call_node.kwargs.get(name, None)
         if fillval is not None and not isinstance(fillval, cg.Node):
-            inpnode.kwargs["default_value"] = fillval
+            replacements[id(inpnode)] = inpnode._replace(
+                kwargs={**inpnode.kwargs, "default_value": fillval}
+            )
+
+    updated = cg.replace_in_graph(graph, replacements)
+    graph.inputs, graph.outputs = updated.inputs, updated.outputs
 
     return graph
 
@@ -154,17 +156,8 @@ def replace_ids(
 
     assert isinstance(graph, cg.ComputeGraph)
 
-    for name, parent, child in cg.traverse_depth_first(
-        graph, yield_consts=True, yield_name=True, yield_parent=True
-    ):
-        if id(child) not in ids:
-            continue
-        if isinstance(name, int):
-            args = list(parent.args)
-            args[name] = val
-            parent.args = tuple(args)
-        else:
-            parent.kwargs[name] = val
+    updated = cg.replace_in_graph(graph, {node_id: val for node_id in ids})
+    graph.inputs, graph.outputs = updated.inputs, updated.outputs
 
     return graph
 

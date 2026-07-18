@@ -1,4 +1,3 @@
-import copy
 import logging
 from collections import defaultdict
 from typing import Any
@@ -153,10 +152,7 @@ def infer_hypercube_differing_node(
         for k in nodes[0].kwargs.keys()
     }
 
-    res = copy.copy(nodes[0])
-    res.args = tuple(args)
-    res.kwargs = kwargs
-    res.metadata = copy.copy(nodes[0].metadata)
+    res = nodes[0]._replace(args=tuple(args), kwargs=kwargs)
     memo[id(nodes[0])] = res
 
     return res

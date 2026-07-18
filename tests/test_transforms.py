@@ -107,7 +107,8 @@ def test_eliminate_duplicate_subgraphs():
         metadata={},
     )
     tr.eliminate_duplicate_subgraphs([top])
-    assert call_a.subgraph is call_b.subgraph
+    calls = top.outputs.dict()
+    assert calls["a"].subgraph is calls["b"].subgraph
 
 
 def test_eliminate_duplicate_result_types():
@@ -125,7 +126,7 @@ def test_fill_graph_defaults_with_call_node():
     )
     call = cg.SubgraphCallNode(subgraph=graph, args=(), kwargs={"x": 2.0})
     tr.fill_graph_defaults_with_call_node(call, graph)
-    assert inp.kwargs["default_value"] == 2.0
+    assert graph.inputs.dict()["x"].kwargs["default_value"] == 2.0
 
 
 def test_replace_ids():
@@ -138,7 +139,7 @@ def test_replace_ids():
         metadata={},
     )
     tr.replace_ids(graph, {id(const)}, 5.0)
-    assert parent.kwargs["a"] == 5.0
+    assert graph.outputs.dict()["result"].kwargs["a"] == 5.0
 
 
 def test_colors_to_hsv_definition():

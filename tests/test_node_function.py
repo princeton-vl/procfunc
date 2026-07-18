@@ -1,6 +1,7 @@
 import pytest
 
 import procfunc as pf
+from procfunc import compute_graph as cg
 from procfunc.nodes import types as nt
 
 
@@ -26,3 +27,17 @@ def test_procnode_annotation_accepted():
 
     graph = pf.nodes.function_to_compute_graph(ok)
     assert "x" in graph.inputs.obj()
+
+def test_nodes_are_deeply_immutable_and_replaceable():
+    node = cg.ProceduralNode("ShaderNodeValue", {"data_type": "FLOAT"}, {"Value": 1.0})
+
+    with pytest.raises(AttributeError):
+        node.args = ()
+    with pytest.raises(TypeError):
+        node.kwargs["Value"] = 2.0
+    with pytest.raises(TypeError):
+        node.attrs["data_type"] = "INT"
+
+    replacement = node._replace(kwargs={"Value": 2.0})
+    assert replacement.kwargs["Value"] == 2.0
+    assert node.kwargs["Value"] == 1.0

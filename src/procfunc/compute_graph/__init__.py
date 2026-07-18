@@ -18,6 +18,7 @@ from .proxy import AttributeProxy, Proxy
 from .util import (
     LiteralConstant,
     graph_nodes_equal,
+    replace_in_graph,
     transform_compute_graph,
     transform_nodetree,
     traverse_breadth_first,
@@ -44,6 +45,7 @@ __all__ = [
     "Proxy",
     "LiteralConstant",
     "graph_nodes_equal",
+    "replace_in_graph",
     "transform_compute_graph",
     "traverse_breadth_first",
     "traverse_depth_first",

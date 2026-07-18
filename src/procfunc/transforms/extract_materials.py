@@ -62,7 +62,7 @@ def _plumb_material_to_callers(
             if not parent_graph.metadata.get("is_node_function", False):
                 if input_name not in call_node.kwargs:
                     item_node = cg.MethodCallNode(mat_call, "item", args=(), kwargs={})
-                    call_node.kwargs[input_name] = item_node
+                    _replace_call_kwargs(parent_graph, call_node, input_name, item_node)
                 continue
 
             parent_inp = added_inputs.get(id(parent_graph))
@@ -71,7 +71,7 @@ def _plumb_material_to_callers(
                 added_inputs[id(parent_graph)] = parent_inp
 
             if input_name not in call_node.kwargs:
-                call_node.kwargs[input_name] = parent_inp
+                _replace_call_kwargs(parent_graph, call_node, input_name, parent_inp)
 
             if id(parent_graph) not in visited:
                 visited.add(id(parent_graph))
@@ -83,20 +83,26 @@ def _replace_node_in_graph(
     old_node: cg.Node,
     new_node: cg.Node,
 ) -> None:
-    for node in cg.traverse_depth_first(graph):
-        new_args = tuple(new_node if arg is old_node else arg for arg in node.args)
-        if new_args != node.args:
-            node.args = new_args
+    updated = cg.replace_in_graph(graph, {id(old_node): new_node})
+    graph.inputs, graph.outputs = updated.inputs, updated.outputs
 
-        for key, val in list(node.kwargs.items()):
-            if val is old_node:
-                node.kwargs[key] = new_node
+
+def _replace_call_kwargs(
+    graph: cg.ComputeGraph,
+    call_node: cg.SubgraphCallNode,
+    input_name: str,
+    value: cg.Node,
+) -> None:
+    replacement = call_node._replace(
+        kwargs={**call_node.kwargs, input_name: value}
+    )
+    updated = cg.replace_in_graph(graph, {id(call_node): replacement})
+    graph.inputs, graph.outputs = updated.inputs, updated.outputs
 
 
 def extract_materials_from_graph(
     top_graph: cg.ComputeGraph,
 ) -> dict[str, cg.SubgraphCallNode]:
-    parent_map = _build_parent_map(top_graph)
     extracted_materials = {}
 
     for graph in cg.traverse_nested_graphs(top_graph):
@@ -116,6 +122,7 @@ def extract_materials_from_graph(
             inp = _add_input(graph, input_name)
             _replace_node_in_graph(graph, mat_call, inp)
 
+            parent_map = _build_parent_map(top_graph)
             _plumb_material_to_callers(graph, mat_call, input_name, parent_map)
 
             extracted_materials[input_name] = mat_call

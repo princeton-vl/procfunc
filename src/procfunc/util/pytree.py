@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any, Callable, Generic, Iterator, TypeVar
 
 logger = logging.getLogger(__name__)
@@ -88,6 +89,14 @@ register_pytree_container(
     dict,
     flatten_func=_dict_flatten,
     unflatten_func=_dict_unflatten,
+    names_func=lambda x: list(x.keys()),
+)
+register_pytree_container(
+    MappingProxyType,
+    flatten_func=_dict_flatten,
+    unflatten_func=lambda objs, spec: MappingProxyType(
+        dict(zip(spec.aux, objs, strict=True))
+    ),
     names_func=lambda x: list(x.keys()),
 )
 register_pytree_container(

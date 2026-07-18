@@ -617,11 +617,12 @@ def parse_standard_node(
         kwargs=placeholder_attrs,
     )
 
-    cg_node_orig = cg_node
     if handler := SPECIAL_CASE_NODES.get(node.bl_idname):
         cg_node = handler(node, cg_node)
 
-    _remove_banned_attrs(cg_node.kwargs, attr_defaults)
+    kwargs = dict(cg_node.kwargs)
+    _remove_banned_attrs(kwargs, attr_defaults)
+    cg_node = cg_node._replace(kwargs=kwargs)
 
     signature = inspect.signature(func)
 
@@ -631,7 +632,7 @@ def parse_standard_node(
     )
 
     # Only check for missing parameters if the function doesn't accept **kwargs
-    excess_kwargs = set(cg_node_orig.kwargs.keys()) - set(signature.parameters.keys())
+    excess_kwargs = set(cg_node.kwargs.keys()) - set(signature.parameters.keys())
     if not has_var_keyword and excess_kwargs:
         node_mode = getattr(node, "mode", None)
         node_operation = getattr(node, "operation", None)
@@ -714,7 +715,12 @@ def parse_node(
         res = parse_standard_node(node_tree, node, memo)
 
     if node.label != "":
-        res.metadata["varname"] = identifiers.bpy_name_to_pythonid(node.label)
+        res = res._replace(
+            metadata={
+                **res.metadata,
+                "varname": identifiers.bpy_name_to_pythonid(node.label),
+            }
+        )
 
     memo.nodes[memo_key] = res
     return res
@@ -913,7 +919,7 @@ def _placeholder_for_graph_input(
         ),
     )
     if default_value is not None:
-        node.kwargs["default_value"] = default_value
+        node = node._replace(kwargs={"default_value": default_value})
 
     return node
 
@@ -1035,9 +1041,11 @@ def parse_node_tree(
                 logger.debug(
                     f"Setting known_value_type={vt} for {proc_node=} for {output_result_socket=}"
                 )
-            proc_node.metadata["known_value_type"] = vt
+            proc_node = proc_node._replace(
+                metadata={**proc_node.metadata, "known_value_type": vt}
+            )
         if isinstance(proc_node, cg.InputPlaceholderNode):
-            proc_node.default_value = None
+            proc_node = proc_node._replace(default_value=None)
         outputs[output_name] = proc_node
 
     if len(outputs) == 0:
@@ -1260,10 +1268,16 @@ def parse_material(
         expect_type = pf.Vector if key == "Displacement" else pf.Shader
         if output_node.inputs[key].is_linked:
             res = parse_link(node_tree, output_node.inputs[key].links[0], memo)
-            res.metadata["known_value_type"] = pf.ProcNode[expect_type]
+            res = res._replace(
+                metadata={**res.metadata, "known_value_type": pf.ProcNode[expect_type]}
+            )
         else:
-            res = cg.ConstantNode(value=None)
-            res.metadata["known_value_type"] = Union[pf.ProcNode[expect_type], None]
+            res = cg.ConstantNode(
+                value=None,
+                metadata={
+                    "known_value_type": Union[pf.ProcNode[expect_type], None]
+                },
+            )
         outputs_dict[key.lower()] = res
 
     func_name = identifiers.bpy_name_to_pythonid(mat.name)

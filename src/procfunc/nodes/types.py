@@ -1,4 +1,3 @@
-import copy
 import inspect
 import logging
 from pathlib import Path
@@ -67,11 +66,9 @@ class ProcNode(Generic[T]):
         node: cg.Node,
         known_value_type: type | None = None,
     ):
-        self._node = node
-
+        metadata = dict(node.metadata)
         if known_value_type is not None:
-            logger.debug(f"{self} using provided known_value_type={known_value_type}")
-            self._node.metadata["known_value_type"] = known_value_type
+            metadata["known_value_type"] = known_value_type
 
         if _has_unpreprocessed_inputs(node):
             raise ValueError(
@@ -79,15 +76,20 @@ class ProcNode(Generic[T]):
                 f"these should have been unwrapped to cg.Node {node.args} {node.kwargs}"
             )
 
-        self._node.metadata["definition"] = _node_definition_metadata()
+        metadata["definition"] = _node_definition_metadata()
+        self._node = node._replace(metadata=metadata)
+        self._frozen = True
+        if known_value_type is not None:
+            logger.debug(f"{self} using provided known_value_type={known_value_type}")
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if getattr(self, "_frozen", False):
+            raise AttributeError("ProcNode is immutable")
+        object.__setattr__(self, name, value)
 
     def astype(self, dtype: type) -> "ProcNode":
-        node = copy.copy(self._node)
-        node.metadata = copy.copy(self._node.metadata)
-        node.metadata["known_value_type"] = dtype
-
         logger.debug(f"{self}.astype() using provided known_value_type={dtype}")
-        return ProcNode(node)
+        return ProcNode(self._node, known_value_type=dtype)
 
     def __repr__(self):
         # NOTE: dont change this to be anything verbose, it may slow down system
@@ -113,10 +115,7 @@ class ProcNode(Generic[T]):
                 f"Attrs {attrs} contains ProcNode, which is not allowed. Must specify a constant."
             )
 
-        node = cg.ProceduralNode(node_type=node_type, attrs=attrs, kwargs=inputs)
-        node.metadata["definition"] = _node_definition_metadata()
-
-        return cls(node=node)
+        return cls(cg.ProceduralNode(node_type=node_type, attrs=attrs, kwargs=inputs))
 
     def item(self) -> cg.Node:
         return object.__getattribute__(self, "_node")

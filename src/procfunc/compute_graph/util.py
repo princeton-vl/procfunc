@@ -1,4 +1,3 @@
-import copy
 import logging
 from collections import defaultdict, deque
 from typing import Any, Callable, Generator, Literal, TypeVar
@@ -299,6 +298,49 @@ def graph_nodes_equal(graph1: ComputeGraph, graph2: ComputeGraph) -> bool:
     return all(_nodes_equal(node1, node2, memo) for node1, node2 in zip(nodes1, nodes2))
 
 
+def replace_in_graph(
+    compute_graph: ComputeGraph,
+    replacements: dict[int, Any],
+    graph_name: str | None = None,
+) -> ComputeGraph:
+    """Replace nodes and their reachable parents without mutating the source graph."""
+
+    memo: dict[int, Any] = {}
+
+    def replace_value(value: Any) -> Any:
+        if not isinstance(value, Node):
+            return value
+        if id(value) in memo:
+            return memo[id(value)]
+
+        replacement = replacements.get(id(value))
+        if replacement is not None:
+            memo[id(value)] = replacement
+            return replacement
+
+        args_tree = pytree.PyTree(value.args)
+        kwargs_tree = pytree.PyTree(value.kwargs)
+        args = args_tree.map(replace_value).obj()
+        kwargs = kwargs_tree.map(replace_value).obj()
+        args_changed = any(
+            new is not old for old, new in zip(args_tree.values(), args_tree.map(replace_value).values())
+        )
+        kwargs_changed = any(
+            new is not old
+            for old, new in zip(kwargs_tree.values(), kwargs_tree.map(replace_value).values())
+        )
+        node = value._replace(args=args, kwargs=kwargs) if args_changed or kwargs_changed else value
+        memo[id(value)] = node
+        return node
+
+    return ComputeGraph(
+        inputs=compute_graph.inputs.map(replace_value),
+        outputs=compute_graph.outputs.map(replace_value),
+        name=graph_name or compute_graph.name,
+        metadata=compute_graph.metadata.copy(),
+    )
+
+
 def transform_nodetree(
     root: Node,
     transform_fn: Callable[[Node], Any],
@@ -307,28 +349,6 @@ def transform_nodetree(
     raise NotImplementedError(
         "transform_nodetree is not yet implemented, use transform_compute_graph"
     )
-
-    new_root = transform_fn(root)
-
-    for parent, parent_key, node in traverse_breadth_first(root, parent_child=True):
-        if parent is None:
-            continue
-        elif parent is root:
-            parent = new_root
-
-        new_node = transform_fn(node)
-        if new_node is None:
-            raise ValueError(
-                f"Transform function {transform_fn.__name__} returned None for node {node.name}"
-            )
-        if isinstance(parent_key, int):
-            args_list = list(parent.args)
-            args_list[parent_key] = new_node
-            parent.args = tuple(args_list)
-        else:
-            parent.kwargs[parent_key] = new_node
-
-    return new_root
 
 
 def transform_compute_graph(
@@ -342,10 +362,10 @@ def transform_compute_graph(
         return id_map[id(value)] if isinstance(value, Node) else value
 
     for node in traverse_depth_first(compute_graph, order="postorder"):
-        new_node = copy.copy(node)
-        new_node.args = pytree.PyTree(node.args).map(lookup).obj()
-        new_node.kwargs = pytree.PyTree(node.kwargs).map(lookup).obj()
-        new_node.metadata = copy.copy(node.metadata)
+        new_node = node._replace(
+            args=pytree.PyTree(node.args).map(lookup).obj(),
+            kwargs=pytree.PyTree(node.kwargs).map(lookup).obj(),
+        )
 
         res = transform_fn(new_node)
         if res is None:
@@ -355,7 +375,7 @@ def transform_compute_graph(
     new_outputs = compute_graph.outputs.map(lambda v: id_map.get(id(v), v))
     new_inputs = compute_graph.inputs.map(lambda v: id_map.get(id(v), v))
 
-    new_metadata = copy.copy(compute_graph.metadata)
+    new_metadata = compute_graph.metadata.copy()
     op = (transform_compute_graph, {"transform_fn": transform_fn, "id_map": id_map})
     new_metadata["operations"] = new_metadata.get("operations", []) + [op]
 
