@@ -66,9 +66,10 @@ class ProcNode(Generic[T]):
         node: cg.Node,
         known_value_type: type | None = None,
     ):
-        metadata = dict(node.metadata)
         if known_value_type is not None:
-            metadata["known_value_type"] = known_value_type
+            node = node._replace(
+                metadata={**node.metadata, "known_value_type": known_value_type}
+            )
 
         if _has_unpreprocessed_inputs(node):
             raise ValueError(
@@ -76,8 +77,7 @@ class ProcNode(Generic[T]):
                 f"these should have been unwrapped to cg.Node {node.args} {node.kwargs}"
             )
 
-        metadata["definition"] = _node_definition_metadata()
-        self._node = node._replace(metadata=metadata)
+        self._node = node
         self._frozen = True
         if known_value_type is not None:
             logger.debug(f"{self} using provided known_value_type={known_value_type}")
@@ -115,13 +115,24 @@ class ProcNode(Generic[T]):
                 f"Attrs {attrs} contains ProcNode, which is not allowed. Must specify a constant."
             )
 
-        return cls(cg.ProceduralNode(node_type=node_type, attrs=attrs, kwargs=inputs))
+        return cls(
+            cg.ProceduralNode(
+                node_type=node_type,
+                attrs=attrs,
+                kwargs=inputs,
+                metadata={"definition": _node_definition_metadata()},
+            )
+        )
 
     def item(self) -> cg.Node:
         return object.__getattribute__(self, "_node")
 
     def _output_socket(self, name: str) -> "ProcNode":
-        node = cg.GetAttributeNode(source=self.item(), attribute_name=name)
+        node = cg.GetAttributeNode(
+            source=self.item(),
+            attribute_name=name,
+            metadata={"definition": _node_definition_metadata()},
+        )
         return ProcNode(node)
 
     def _procnode_operator(
@@ -142,7 +153,7 @@ class ProcNode(Generic[T]):
             func=OPERATORS_TO_FUNCTIONS[op],
             args=args,
             kwargs={},
-            metadata=None,
+            metadata={"definition": _node_definition_metadata()},
         )
         return ProcNode(node)
 
