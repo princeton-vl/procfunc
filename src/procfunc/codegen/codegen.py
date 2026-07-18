@@ -1,3 +1,4 @@
+import ast
 import dataclasses
 import enum
 import inspect
@@ -23,6 +24,30 @@ from procfunc.util import pytree
 logger = logging.getLogger(__name__)
 
 INDENT = "    "
+
+# UnaryOp included since ** binds tighter than unary minus: -2.0 ** x == -(2.0 ** x)
+_PAREN_SENSITIVE_NODES = (ast.BinOp, ast.UnaryOp, ast.Compare, ast.BoolOp, ast.IfExp)
+
+
+def _has_enclosing_parens(expr: str) -> bool:
+    if not (expr.startswith("(") and expr.endswith(")")):
+        return False
+    depth = 0
+    for i, char in enumerate(expr):
+        depth += (char == "(") - (char == ")")
+        if depth == 0:
+            return i == len(expr) - 1
+    return False
+
+
+def _needs_parens(expr: str) -> bool:
+    if _has_enclosing_parens(expr):
+        return False
+    try:
+        parsed = ast.parse(expr, mode="eval")
+    except SyntaxError:
+        return " " in expr
+    return isinstance(parsed.body, _PAREN_SENSITIVE_NODES)
 
 
 def indent_lines(lines: list[str], indent: str = INDENT) -> list[str]:
@@ -52,7 +77,7 @@ def _repr_inp(
         expr = expr[0]
     assert isinstance(expr, str)
 
-    if " " in expr and extra_parens and expr[0] != "(" and expr[-1] != ")":
+    if extra_parens and _needs_parens(expr):
         return f"({expr})"
     else:
         return expr
@@ -146,7 +171,8 @@ def _repr_function_call(
             if not isinstance(target, cg.Node):
                 raise ValueError(f"Method call {node=} has non-node target {target=}")
             func = None
-            func_str = f"{_repr_inp(target, scope_expressions)}.{method_name}"
+            target_expr = _repr_inp(target, scope_expressions, extra_parens=True)
+            func_str = f"{target_expr}.{method_name}"
         case cg.SubgraphCallNode(subgraph=subgraph):
             func = None
             func_str = scope_expressions.get(id(subgraph))
@@ -244,7 +270,7 @@ def _codegen_for_node(
             else:
                 return _repr_function_call(node, scope_expressions)
         case cg.MethodCallNode() if node.method_name == "__getitem__":
-            callee_expr = _repr_inp(node.args[0], scope_expressions)
+            callee_expr = _repr_inp(node.args[0], scope_expressions, extra_parens=True)
             idx_expr = _repr_inp(node.args[1], scope_expressions)
             return [f"{callee_expr}[{idx_expr}]"]
         case cg.MethodCallNode():

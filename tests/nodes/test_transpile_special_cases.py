@@ -11,6 +11,7 @@ from procfunc.nodes.execute.construct_nodes import as_nodegroup
 from procfunc.nodes.util.bpy_node_info import NodeGroupType
 from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import ParseMemo, parse_material
+from procfunc.transpiler.main import transpile_targets
 
 
 def _shader_tree_with_hsv_ramp():
@@ -219,3 +220,24 @@ def test_transpile_material_unlinked_displacement_is_zero_procnode():
     assert pt.is_zero_displacement(
         parse_material(mat2, ParseMemo()).outputs.obj().displacement
     )
+
+
+def test_transpile_modulo_emits_named_call_not_percent():
+    """Blender MODULO is truncated (fmod); Python % is floored. The transpiler
+    must keep the named call so constant-folded negative operands don't flip sign."""
+
+    tree = bpy.data.node_groups.new(f"mod_{uuid.uuid4().hex[:8]}", "GeometryNodeTree")
+    inp = tree.nodes.new("NodeGroupInput")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("A", in_out="INPUT", socket_type="NodeSocketFloat")
+    tree.interface.new_socket("Value", in_out="OUTPUT", socket_type="NodeSocketFloat")
+
+    mod = tree.nodes.new("ShaderNodeMath")
+    mod.operation = "MODULO"
+    mod.inputs[1].default_value = 3.0
+    tree.links.new(inp.outputs["A"], mod.inputs[0])
+    tree.links.new(mod.outputs[0], out.inputs["Value"])
+
+    src = transpile_targets([tree], transforms=[])
+    assert "math.modulo(" in src
+    assert " % " not in src

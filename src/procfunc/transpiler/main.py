@@ -239,6 +239,9 @@ def transpile_targets(
 
     func_resolution, import_lines = default_func_resolution_map(graph)
     for oprow in NODE_OPERATOR_TABLE:
+        # Python % is floored but Blender MODULO is truncated - keep the named call
+        if oprow.operator_type == cg.OperatorType.MOD:
+            continue
         func_resolution[oprow.pf_func] = oprow.operator_type
 
     python = to_python(

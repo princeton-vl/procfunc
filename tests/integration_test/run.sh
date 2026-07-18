@@ -46,7 +46,7 @@ echo "=== Regenerate bench_data from base (execute + transpile + render) ==="
 for tt in material geometry; do
   uv run python scripts/generate_benchdata_procfunc.py \
     "$DATA/bench_data" "$OUT/bench_data_pf" \
-    --task_type "$tt" --overwrite --num_workers 4 \
+    --task_type "$tt" --overwrite --num_workers 2 \
     --blender_bgym_path "$DATA/bl36env/blender_3_6.sh" \
     "${TASKARG[@]}"
 done

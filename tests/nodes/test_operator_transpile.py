@@ -25,12 +25,11 @@ from procfunc.transpiler.main import transpile_targets
 # submodule; reach the module (and its graph-builder helper) via importlib.
 _node_function_mod = importlib.import_module("procfunc.nodes.util.node_function")
 
-# NOOP rows (separate_xyz) have no infix symbol to assert on; RGBA rows lower
-# to Mix nodes and transpile as mix_rgb calls (see module docstring).
+# NOOP rows have no infix; RGBA lowers to mix_rgb; MOD stays named (fmod vs floored %)
 _ROWS = [
     r
     for r in NODE_OPERATOR_TABLE
-    if r.operator_type is not OperatorType.NOOP
+    if r.operator_type not in (OperatorType.NOOP, OperatorType.MOD)
     and r.value_type is not NodeDataType.RGBA
 ]
 _IDS = [r.pf_func.__name__ for r in _ROWS]
@@ -104,6 +103,28 @@ def test_color_operator_transpiles_to_mix_call():
 
     assert "mix_rgb(" in src, src
     assert " + " not in src, src
+
+
+@pytest.mark.parametrize(
+    "row",
+    [r for r in NODE_OPERATOR_TABLE if r.operator_type is OperatorType.MOD],
+    ids=lambda r: r.pf_func.__name__,
+)
+def test_modulo_operator_transpiles_to_named_call(row):
+    a, b = _operands_for(row)
+
+    def fn():
+        return row.pf_func(a, b)
+
+    graph = _node_function_mod._execute_procnode_func_to_computegraph(fn)
+    nodegroup = as_nodegroup(graph, NodeGroupType.GEOMETRY)
+    try:
+        src = transpile_targets([nodegroup], transforms=[], add_version_comment=False)
+    finally:
+        bpy.data.node_groups.remove(nodegroup)
+
+    assert f"{row.pf_func.__name__}(" in src, src
+    assert " % " not in src, src
 
 
 def test_nondefault_epsilon_declines_operator():
