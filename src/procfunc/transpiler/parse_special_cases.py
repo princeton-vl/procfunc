@@ -40,17 +40,25 @@ def handle_specialcase_color_ramp(node: bpy.types.Node, cg_node: cg.Node) -> cg.
 
 
 def handle_specialcase_value(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
-    return cg_node._replace(kwargs={
-        **cg_node.kwargs, "value": normalize_default_value(
-        node.outputs[0].default_value, node.outputs[0].type
-    )})
+    return cg_node._replace(
+        kwargs={
+            **cg_node.kwargs,
+            "value": normalize_default_value(
+                node.outputs[0].default_value, node.outputs[0].type
+            ),
+        }
+    )
 
 
 def handle_specialcase_input_value(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
     attr_name = bpy_node_info.CONSTANT_NODES[node.bl_idname]
-    return cg_node._replace(kwargs={"value": normalize_default_value(
-        getattr(node, attr_name), node.outputs[0].type
-    )})
+    return cg_node._replace(
+        kwargs={
+            "value": normalize_default_value(
+                getattr(node, attr_name), node.outputs[0].type
+            )
+        }
+    )
 
 
 _ANGLE_ABSENT = object()

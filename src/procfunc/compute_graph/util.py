@@ -323,13 +323,22 @@ def replace_in_graph(
         args = args_tree.map(replace_value).obj()
         kwargs = kwargs_tree.map(replace_value).obj()
         args_changed = any(
-            new is not old for old, new in zip(args_tree.values(), args_tree.map(replace_value).values())
+            new is not old
+            for old, new in zip(
+                args_tree.values(), args_tree.map(replace_value).values()
+            )
         )
         kwargs_changed = any(
             new is not old
-            for old, new in zip(kwargs_tree.values(), kwargs_tree.map(replace_value).values())
+            for old, new in zip(
+                kwargs_tree.values(), kwargs_tree.map(replace_value).values()
+            )
         )
-        node = value._replace(args=args, kwargs=kwargs) if args_changed or kwargs_changed else value
+        node = (
+            value._replace(args=args, kwargs=kwargs)
+            if args_changed or kwargs_changed
+            else value
+        )
         memo[id(value)] = node
         return node
 

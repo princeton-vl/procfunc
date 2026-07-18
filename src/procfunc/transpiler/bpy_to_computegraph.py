@@ -1274,9 +1274,7 @@ def parse_material(
         else:
             res = cg.ConstantNode(
                 value=None,
-                metadata={
-                    "known_value_type": Union[pf.ProcNode[expect_type], None]
-                },
+                metadata={"known_value_type": Union[pf.ProcNode[expect_type], None]},
             )
         outputs_dict[key.lower()] = res
 

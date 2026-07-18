@@ -28,6 +28,7 @@ def test_procnode_annotation_accepted():
     graph = pf.nodes.function_to_compute_graph(ok)
     assert "x" in graph.inputs.obj()
 
+
 def test_nodes_are_deeply_immutable_and_replaceable():
     node = cg.ProceduralNode("ShaderNodeValue", {"data_type": "FLOAT"}, {"Value": 1.0})
 

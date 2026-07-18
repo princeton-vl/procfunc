@@ -93,9 +93,7 @@ def _replace_call_kwargs(
     input_name: str,
     value: cg.Node,
 ) -> None:
-    replacement = call_node._replace(
-        kwargs={**call_node.kwargs, input_name: value}
-    )
+    replacement = call_node._replace(kwargs={**call_node.kwargs, input_name: value})
     updated = cg.replace_in_graph(graph, {id(call_node): replacement})
     graph.inputs, graph.outputs = updated.inputs, updated.outputs
 
