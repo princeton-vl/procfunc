@@ -1,3 +1,9 @@
+# Unreleased
+
+Interface changes:
+
+- material construction builds the shader graph directly into the material's node tree, dropping the redundant top-level wrapper node group (nested node groups are unaffected)
+
 # 0.34.0
 
 Interface changes:

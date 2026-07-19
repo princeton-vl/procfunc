@@ -5,13 +5,13 @@ import bpy
 from procfunc import compute_graph as cg
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.util.bpy_node_info import NodeGroupType, SocketType
+from procfunc.nodes.util.bpy_node_info import SocketType
 from procfunc.ops._util import modify
 from procfunc.ops.primitives.mesh import mesh_single_vertex
-from procfunc.util import pytree
 from procfunc.util.bpy_info import bpy_nocollide_data_name
 
-from .construct_nodes import as_nodegroup, instantiate_nodegroup
+from . import construct_standard
+from .construct_nodes import construct_procnode_to_bpy, instantiate_nodegroup
 
 logger = logging.getLogger(__name__)
 
@@ -81,11 +81,38 @@ def nodegroup_to_output(
     return output_node
 
 
+def construct_outputs_to_output_node(
+    node_tree: bpy.types.NodeTree,
+    outputs: dict[str, cg.Node],
+    output_node_type: str,
+) -> bpy.types.Node:
+    output_node = node_tree.nodes.new(output_node_type)
+    cache = {}
+    for key, node in outputs.items():
+        res = construct_procnode_to_bpy(node, node_tree, cache)
+        if isinstance(res, bpy.types.Node):
+            res = construct_standard._get_primary_output_socket(node, res)
+        construct_standard.connect_single_input(
+            node_tree, output_node.inputs[key.capitalize()], res
+        )
+    return output_node
+
+
 def build_bpy_material(
     surface: nt.ProcNode[nt.Shader] | None = None,
     displacement: nt.ProcNode[pt.Vector] | None = None,
     volume: nt.ProcNode[nt.Shader] | None = None,
 ) -> bpy.types.Material:
+    for key, val in {
+        "surface": surface,
+        "displacement": displacement,
+        "volume": volume,
+    }.items():
+        if val is not None and not isinstance(val, (nt.ProcNode, cg.Node)):
+            raise TypeError(
+                f"Material {key} must be a ProcNode or None, got {type(val)}: {val!r}"
+            )
+
     # optimization: a constant zero displacement has no effect, so drop it and
     # leave the output socket disconnected rather than emitting a dead subgraph
     if displacement is not None and pt.is_zero_displacement(displacement):
@@ -107,15 +134,7 @@ def build_bpy_material(
     mnt = material.node_tree
     mnt.nodes.clear()
 
-    outputs = pytree.PyTree(outputs)
-    graph = cg.ComputeGraph(
-        inputs=pytree.PyTree({}),
-        outputs=outputs,
-        name="to_material",
-        metadata={},
-    )
-    body = as_nodegroup(graph, NodeGroupType.SHADER)
-    nodegroup_to_output(mnt, body, "ShaderNodeOutputMaterial", list(outputs.names()))
+    construct_outputs_to_output_node(mnt, outputs, "ShaderNodeOutputMaterial")
 
     return material
 
