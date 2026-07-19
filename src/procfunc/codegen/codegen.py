@@ -6,7 +6,7 @@ import itertools
 import logging
 from collections import OrderedDict, defaultdict
 from pathlib import Path
-from typing import Any, Callable, Generator
+from typing import Any, Callable, Generator, get_type_hints
 
 import numpy as np
 
@@ -341,18 +341,31 @@ def _codegen_graph_inputs(
     return [f"def {func_name}("] + indent_lines(args_lines) + [end_statement]
 
 
+def _namedtuple_field_type(node, annotation) -> str:
+    vt = node.metadata.get("known_value_type", None)
+    if vt is None:
+        vt = annotation
+    if vt is None:
+        return "Any"
+    try:
+        return repr_type(vt)
+    except Exception:
+        return "Any"
+
+
 def _codegen_namedtuple_def(outputs: pytree.PyTree):
     tupletype = outputs.toplevel_type()
+    try:
+        annotations = get_type_hints(tupletype)
+    except Exception:
+        annotations = getattr(tupletype, "__annotations__", {})
 
     type_lines = []
     for name, node in outputs.items():
         if node is None:
             continue
-        vt = node.metadata.get("known_value_type", None)
-        if vt is None:
-            type_lines.append(f"{name}: Any")
-        else:
-            type_lines.append(f"{name}: {repr_type(vt)}")
+        field_type = _namedtuple_field_type(node, annotations.get(name))
+        type_lines.append(f"{name}: {field_type}")
 
     return [f"class {tupletype.__name__}(NamedTuple):"] + indent_lines(type_lines)
 
@@ -866,7 +879,7 @@ def to_python(
     add_line_comments: bool = False,
 ) -> str:
     code_lines = []
-    code_lines.append("from typing import NamedTuple, Annotated")
+    code_lines.append("from typing import Any, NamedTuple, Annotated")
     code_lines.append("import numpy as np")
     code_lines.append("import bpy")
     # code_lines.append("import logging; logging.basicConfig(level=logging.DEBUG)")

@@ -2,6 +2,7 @@ import dataclasses
 import enum
 import logging
 import math
+import types
 from pathlib import Path
 from typing import Any, Union, get_args, get_origin
 
@@ -20,11 +21,21 @@ def repr_type(x: Any) -> str:
     if isinstance(x, str):
         return x
 
-    if x.__name__ == "NoneType":
-        return "None"
-
     origin = get_origin(x)
     args = get_args(x)
+
+    if origin is Union or origin is types.UnionType:
+        first_args = get_args(args[0])
+        if (
+            get_origin(args[0]) is nt.ProcNode
+            and first_args
+            and first_args[0] is args[1]
+        ):
+            return f"t.SocketOrVal[{repr_type(first_args[0])}]"
+        return " | ".join([repr_type(a) for a in args])
+
+    if x.__name__ == "NoneType":
+        return "None"
 
     if x.__name__ == "ProcNode":
         if len(args) == 1:
@@ -41,16 +52,6 @@ def repr_type(x: Any) -> str:
 
     if x.__module__ == "builtins":
         return x.__name__
-
-    origin = get_origin(x)
-    args = get_args(x)
-
-    if origin is Union:
-        args_0 = get_args(args[0])
-        if get_origin(args[0]) is nt.ProcNode and args_0[0] is args[1]:
-            return f"t.SocketOrVal[{repr_type(args_0[0])}]"
-        else:
-            return " | ".join([repr_type(a) for a in args])
 
     if getattr(x, "__module__", None) == "procfunc.nodes.types":
         return f"t.{x.__name__}"
@@ -70,12 +71,12 @@ def repr_value(value: Any) -> str:
         value = value.__wrapped__
 
     if isinstance(value, cg.Proxy):
-        logger.warning(
+        raise ValueError(
             f"Proxy object {value} should never appear as a raw value in codegen - "
             f"its underlying node {value.node} was not resolved to a variable"
         )
     if isinstance(value, nt.ProcNode):
-        logger.warning(
+        raise ValueError(
             f"Procnode object {value} should never be treated as a raw value in codegen"
         )
 
