@@ -202,6 +202,22 @@ def _repr_function_call(
         return [f"{func_str}({', '.join(arg_reprs)})"]
 
 
+# ==/!= only match Blender Compare for exact dtypes; float/vector stay epsilon-tolerant.
+_EPSILON_EQUALITY_TEMPLATES = frozenset(
+    OPERATOR_TEMPLATES[op] for op in (OperatorType.EQUAL, OperatorType.NOT_EQUAL)
+)
+
+
+def _is_exact_compare_operand(value: Any) -> bool:
+    if isinstance(value, (cg.Node, cg.Proxy)):
+        return False
+    if isinstance(value, str):
+        return True
+    if isinstance(value, bool):
+        return True
+    return isinstance(value, int) and not isinstance(value, float)
+
+
 def _operator_call_operands(
     node: cg.FunctionCallNode,
     template: str,
@@ -222,13 +238,21 @@ def _operator_call_operands(
     if any(name not in bound.arguments for name in operand_names):
         return None
 
+    operands = [bound.arguments[name] for name in operand_names]
+
+    # a default epsilon stays tolerant unlike exact ==/!=, so require exact operands
+    if template in _EPSILON_EQUALITY_TEMPLATES and not all(
+        _is_exact_compare_operand(v) for v in operands
+    ):
+        return None
+
     for name, value in bound.arguments.items():
         if name in operand_names:
             continue
         if not _kwarg_matches_default(sig, name, value):
             return None
 
-    return [bound.arguments[name] for name in operand_names]
+    return operands
 
 
 def _repr_operator_call(
