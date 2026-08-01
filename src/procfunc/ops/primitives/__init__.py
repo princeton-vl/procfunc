@@ -20,6 +20,7 @@ from .mesh import (
     mesh_cone,
     mesh_cube,
     mesh_cylinder,
+    mesh_from_numpy,
     mesh_grid,
     mesh_icosphere,
     mesh_line,
