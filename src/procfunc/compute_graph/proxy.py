@@ -15,6 +15,10 @@ class Proxy(Generic[T]):
 
     node: Node
 
+    # Tell numpy to defer (ndarray + Proxy -> Proxy.__radd__) instead of probing the
+    # Proxy as an array, which would fabricate a bogus __array_struct__ via __getattr__.
+    __array_ufunc__ = None
+
     def __repr__(self):
         return f"Proxy({self.node!r})"
 

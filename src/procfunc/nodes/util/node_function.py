@@ -144,6 +144,12 @@ def _subgraph_call_procnode(func: Callable, subgraph: cg.ComputeGraph, *args, **
 def node_function(func: Callable):
     @functools.wraps(func)
     def node_function_wrapper(*args, **kwargs):
+        active = pf.context.globals.current_trace_level
+        if active is not None and active >= TraceLevel.NODEGROUPS.value:
+            from procfunc.tracer.trace import capture_as_function_call
+
+            return capture_as_function_call(node_function_wrapper, args, kwargs)
+
         subgraph = _execute_procnode_func_to_computegraph(func)
         subgraph.metadata["operations"] = [
             (node_function, {"func": func}),

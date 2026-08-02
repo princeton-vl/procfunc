@@ -67,7 +67,7 @@ def to_environment(
     return pt.World(world)
 
 
-@tracer_primitive
+@tracer_primitive(mutates=["light"])
 def to_light(
     light: pt.LightObject,
     surface: nt.ProcNode[nt.Shader],

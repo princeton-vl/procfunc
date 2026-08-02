@@ -20,10 +20,10 @@ def test_to_material_basic():
     assert material.item().use_nodes is True
     assert material.item().name in bpy.data.materials
 
-    # Verify node tree structure
     nodes = material.item().node_tree.nodes
     assert "Material Output" in nodes
-    assert any("Group" in node.name for node in nodes)
+    assert any(node.bl_idname == "ShaderNodeBsdfPrincipled" for node in nodes)
+    assert not any(node.bl_idname == "ShaderNodeGroup" for node in nodes)
 
 
 def test_to_material_with_texture():
@@ -116,6 +116,24 @@ def test_material_with_displacement():
     material = pf.Material(surface=bsdf, displacement=displacement)
 
     assert material.item().use_nodes is True
+
+
+def test_material_constant_zero_displacement_dropped():
+    bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.2, 0.2, 1.0))
+    zero = pf.nodes.math.constant((0.0, 0.0, 0.0))
+    material = pf.Material(surface=bsdf, displacement=zero, volume=None)
+
+    tree = material.item().node_tree
+    out = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+    assert out.inputs["Surface"].is_linked
+    assert not out.inputs["Displacement"].is_linked
+
+
+def test_material_rejects_raw_constant_outputs():
+    bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.2, 0.2, 1.0))
+    material = pf.Material(surface=bsdf, displacement=(0.0, 0.0, 0.0), volume=None)
+    with pytest.raises(TypeError, match="displacement"):
+        material.item()
 
 
 def test_material_with_volume():
@@ -299,11 +317,9 @@ def test_mix_shader_inputs_required():
     added = pf.nodes.shader.add_shader(a=None, b=mixed)
     material = pf.Material(surface=added)
 
-    group = next(
-        n for n in material.item().node_tree.nodes if n.type == "GROUP"
-    ).node_tree
-    mix = next(n for n in group.nodes if n.bl_idname == "ShaderNodeMixShader")
-    add = next(n for n in group.nodes if n.bl_idname == "ShaderNodeAddShader")
+    nodes = material.item().node_tree.nodes
+    mix = next(n for n in nodes if n.bl_idname == "ShaderNodeMixShader")
+    add = next(n for n in nodes if n.bl_idname == "ShaderNodeAddShader")
     assert not mix.inputs[1].is_linked and mix.inputs[2].is_linked
     assert not add.inputs[0].is_linked and add.inputs[1].is_linked
 

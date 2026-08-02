@@ -1,5 +1,8 @@
 import importlib
 import inspect
+import os
+import re
+import sys
 from pathlib import Path
 
 from docutils import nodes as _docnodes
@@ -7,6 +10,7 @@ from sphinx import addnodes as _addnodes
 from sphinx.util.nodes import make_refnode as _make_refnode
 
 import procfunc
+from procfunc.transpiler.main import TRANSPILE_TRANSFORM_REFS
 
 project = "procfunc"
 author = "Princeton Vision & Learning Lab"
@@ -158,8 +162,6 @@ _PACKAGE_TEMPLATE = """\
 
 def _emit_cli_page(out_dir: Path) -> None:
     """Write a dedicated ``cli.rst`` page rendering each CLI script with sphinx-argparse."""
-    from procfunc.transpiler.main import TRANSPILE_TRANSFORM_REFS
-
     blocks = [CLI_PAGE_TITLE, "=" * len(CLI_PAGE_TITLE), ""]
     for script, parser_module, parser_func in CLI_SCRIPTS:
         blocks.append(f"``{script}``")
@@ -313,9 +315,6 @@ def _generate(app, config):  # noqa: ARG001
 def _clean_exit(app, exception):
     # bpy segfaults on interpreter teardown (see commit 10c0540); exit cleanly
     # once the build has successfully produced its output.
-    import os
-    import sys
-
     sys.stdout.flush()
     sys.stderr.flush()
     os._exit(0 if exception is None else 1)
@@ -467,6 +466,28 @@ def _append_dunder_summary(app, what, name, obj, options, lines):  # noqa: ARG00
     lines.append("")
 
 
+_FIELD_ALIAS_RE = re.compile(r"^Alias for field number \d+$")
+
+
+def _strip_namedtuple_boilerplate(app, what, name, obj, options, lines):  # noqa: ARG001
+    """Drop the auto-generated docstrings ``NamedTuple`` synthesises.
+
+    Field descriptors get ``Alias for field number N`` and the class itself
+    gets a ``Name(field, ...)`` signature line — both pure noise beside the
+    field name and type annotation autodoc already renders.
+    """
+    if what == "attribute" and lines and _FIELD_ALIAS_RE.match(lines[0]):
+        lines.clear()
+        return
+    if what == "class" and inspect.isclass(obj) and issubclass(obj, tuple):
+        fields = getattr(obj, "_fields", None)
+        if fields is None:
+            return
+        signature = f"{obj.__name__}({', '.join(fields)})"
+        if lines and lines[0] == signature:
+            lines.clear()
+
+
 def _move_dunder_summaries(app, doctree, docname):  # noqa: ARG001
     for para in list(doctree.findall(_docnodes.paragraph)):
         if not para.astext().startswith("Supported special methods:"):
@@ -482,6 +503,7 @@ def setup(app):
     app.connect("config-inited", _generate)
     app.connect("missing-reference", _resolve_external_xref)
     app.connect("autodoc-skip-member", _skip_private)
+    app.connect("autodoc-process-docstring", _strip_namedtuple_boilerplate)
     app.connect("autodoc-process-docstring", _append_dunder_summary)
     app.connect("doctree-resolved", _move_dunder_summaries)
     app.connect("build-finished", _clean_exit)

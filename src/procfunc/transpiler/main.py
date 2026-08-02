@@ -215,7 +215,8 @@ def transpile_targets(
     result_calls = []
     for result_graph in result_graphs:
         kwargs = {}
-        if result_graph.name.startswith("material_"):
+        input_names = {name for name, _ in result_graph.inputs.items()}
+        if "vector" in input_names:
             kwargs["vector"] = vec
 
         return_type = result_graph.metadata.get("known_value_type", None)
@@ -238,6 +239,9 @@ def transpile_targets(
 
     func_resolution, import_lines = default_func_resolution_map(graph)
     for oprow in NODE_OPERATOR_TABLE:
+        # Python % is floored but Blender MODULO is truncated - keep the named call
+        if oprow.operator_type == cg.OperatorType.MOD:
+            continue
         func_resolution[oprow.pf_func] = oprow.operator_type
 
     python = to_python(

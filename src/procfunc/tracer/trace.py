@@ -139,6 +139,22 @@ def _map_args(
     return res
 
 
+def capture_as_function_call(func: Callable, args: tuple, kwargs: dict) -> cg.Proxy:
+    """Record a call as a single FunctionCallNode leaf without executing func's body.
+
+    The Proxy's attribute/item access becomes graph getattrs, so multi-output results
+    (e.g. a NamedTuple) work through it. Codegen re-emits this as an imported call.
+    """
+
+    def _unwrap(v):
+        return v.node if isinstance(v, cg.Proxy) else v
+
+    node_args = tuple(pytree.PyTree(a).map(_unwrap).obj() for a in args)
+    node_kwargs = {k: pytree.PyTree(v).map(_unwrap).obj() for k, v in kwargs.items()}
+    node = cg.FunctionCallNode(func=func, args=node_args, kwargs=node_kwargs)
+    return cg.Proxy(node)
+
+
 def trace(
     func: Callable,
     trace_level: TraceLevel = TraceLevel.GENERATORS,

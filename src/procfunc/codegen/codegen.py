@@ -1,3 +1,4 @@
+import ast
 import dataclasses
 import enum
 import inspect
@@ -5,7 +6,7 @@ import itertools
 import logging
 from collections import OrderedDict, defaultdict
 from pathlib import Path
-from typing import Any, Callable, Generator
+from typing import Any, Callable, Generator, get_type_hints
 
 import numpy as np
 
@@ -23,6 +24,30 @@ from procfunc.util import pytree
 logger = logging.getLogger(__name__)
 
 INDENT = "    "
+
+# UnaryOp included since ** binds tighter than unary minus: -2.0 ** x == -(2.0 ** x)
+_PAREN_SENSITIVE_NODES = (ast.BinOp, ast.UnaryOp, ast.Compare, ast.BoolOp, ast.IfExp)
+
+
+def _has_enclosing_parens(expr: str) -> bool:
+    if not (expr.startswith("(") and expr.endswith(")")):
+        return False
+    depth = 0
+    for i, char in enumerate(expr):
+        depth += (char == "(") - (char == ")")
+        if depth == 0:
+            return i == len(expr) - 1
+    return False
+
+
+def _needs_parens(expr: str) -> bool:
+    if _has_enclosing_parens(expr):
+        return False
+    try:
+        parsed = ast.parse(expr, mode="eval")
+    except SyntaxError:
+        return " " in expr
+    return isinstance(parsed.body, _PAREN_SENSITIVE_NODES)
 
 
 def indent_lines(lines: list[str], indent: str = INDENT) -> list[str]:
@@ -52,7 +77,7 @@ def _repr_inp(
         expr = expr[0]
     assert isinstance(expr, str)
 
-    if " " in expr and extra_parens and expr[0] != "(" and expr[-1] != ")":
+    if extra_parens and _needs_parens(expr):
         return f"({expr})"
     else:
         return expr
@@ -146,7 +171,8 @@ def _repr_function_call(
             if not isinstance(target, cg.Node):
                 raise ValueError(f"Method call {node=} has non-node target {target=}")
             func = None
-            func_str = f"{_repr_inp(target, scope_expressions)}.{method_name}"
+            target_expr = _repr_inp(target, scope_expressions, extra_parens=True)
+            func_str = f"{target_expr}.{method_name}"
         case cg.SubgraphCallNode(subgraph=subgraph):
             func = None
             func_str = scope_expressions.get(id(subgraph))
@@ -176,6 +202,22 @@ def _repr_function_call(
         return [f"{func_str}({', '.join(arg_reprs)})"]
 
 
+# ==/!= only match Blender Compare for exact dtypes; float/vector stay epsilon-tolerant.
+_EPSILON_EQUALITY_TEMPLATES = frozenset(
+    OPERATOR_TEMPLATES[op] for op in (OperatorType.EQUAL, OperatorType.NOT_EQUAL)
+)
+
+
+def _is_exact_compare_operand(value: Any) -> bool:
+    if isinstance(value, (cg.Node, cg.Proxy)):
+        return False
+    if isinstance(value, str):
+        return True
+    if isinstance(value, bool):
+        return True
+    return isinstance(value, int) and not isinstance(value, float)
+
+
 def _operator_call_operands(
     node: cg.FunctionCallNode,
     template: str,
@@ -196,13 +238,21 @@ def _operator_call_operands(
     if any(name not in bound.arguments for name in operand_names):
         return None
 
+    operands = [bound.arguments[name] for name in operand_names]
+
+    # a default epsilon stays tolerant unlike exact ==/!=, so require exact operands
+    if template in _EPSILON_EQUALITY_TEMPLATES and not all(
+        _is_exact_compare_operand(v) for v in operands
+    ):
+        return None
+
     for name, value in bound.arguments.items():
         if name in operand_names:
             continue
         if not _kwarg_matches_default(sig, name, value):
             return None
 
-    return [bound.arguments[name] for name in operand_names]
+    return operands
 
 
 def _repr_operator_call(
@@ -244,7 +294,7 @@ def _codegen_for_node(
             else:
                 return _repr_function_call(node, scope_expressions)
         case cg.MethodCallNode() if node.method_name == "__getitem__":
-            callee_expr = _repr_inp(node.args[0], scope_expressions)
+            callee_expr = _repr_inp(node.args[0], scope_expressions, extra_parens=True)
             idx_expr = _repr_inp(node.args[1], scope_expressions)
             return [f"{callee_expr}[{idx_expr}]"]
         case cg.MethodCallNode():
@@ -280,7 +330,7 @@ def _codegen_graph_inputs(
 ) -> list[str]:
     args = sorted(
         list(graph.inputs.values()),
-        key=lambda x: x.kwargs.get("default_value", None) is not None,
+        key=lambda x: "default_value" in x.kwargs,
     )
 
     func_name = func_name or graph.name
@@ -305,8 +355,8 @@ def _codegen_graph_inputs(
             else f"{name}"
         )
 
-        if (default := node.kwargs.get("default_value")) is not None:
-            line += f" = {repr_value(default)}"
+        if "default_value" in node.kwargs:
+            line += f" = {repr_value(node.kwargs['default_value'])}"
 
         args_lines.append(line + ",")
 
@@ -315,18 +365,31 @@ def _codegen_graph_inputs(
     return [f"def {func_name}("] + indent_lines(args_lines) + [end_statement]
 
 
+def _namedtuple_field_type(node, annotation) -> str:
+    vt = node.metadata.get("known_value_type", None)
+    if vt is None:
+        vt = annotation
+    if vt is None:
+        return "Any"
+    try:
+        return repr_type(vt)
+    except Exception:
+        return "Any"
+
+
 def _codegen_namedtuple_def(outputs: pytree.PyTree):
     tupletype = outputs.toplevel_type()
+    try:
+        annotations = get_type_hints(tupletype)
+    except Exception:
+        annotations = getattr(tupletype, "__annotations__", {})
 
     type_lines = []
     for name, node in outputs.items():
         if node is None:
             continue
-        vt = node.metadata.get("known_value_type", None)
-        if vt is None:
-            type_lines.append(f"{name}: Any")
-        else:
-            type_lines.append(f"{name}: {repr_type(vt)}")
+        field_type = _namedtuple_field_type(node, annotations.get(name))
+        type_lines.append(f"{name}: {field_type}")
 
     return [f"class {tupletype.__name__}(NamedTuple):"] + indent_lines(type_lines)
 
@@ -840,7 +903,7 @@ def to_python(
     add_line_comments: bool = False,
 ) -> str:
     code_lines = []
-    code_lines.append("from typing import NamedTuple, Annotated")
+    code_lines.append("from typing import Any, NamedTuple, Annotated")
     code_lines.append("import numpy as np")
     code_lines.append("import bpy")
     # code_lines.append("import logging; logging.basicConfig(level=logging.DEBUG)")

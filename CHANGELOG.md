@@ -1,3 +1,36 @@
+# 0.35.0
+
+Interface changes:
+
+- material construction builds the shader graph directly into the material's node tree, dropping the redundant top-level wrapper node group (nested node groups are unaffected)
+- `@node_function` calls are captured as a single leaf call when tracing at `NODEGROUPS` or coarser — including the default `GENERATORS` level — instead of being inlined into the traced graph
+
+Fixed crashes:
+
+- transpiling a material whose Displacement output is unconnected emits a zero vector instead of `None`, so downstream arithmetic on `material.displacement` no longer crashes
+- the transpiler decides whether to inject a `vector` argument from the graph's actual inputs (was: any graph whose name starts with `material_`, which passed `vector=` to materials that have no such input)
+- `ndarray` arithmetic against a `Proxy` defers to the `Proxy` operator instead of probing it as an array, which fabricated a bogus `__array_struct__` through `__getattr__`
+
+Fixed wrong results:
+
+- codegen parenthesizes folded operator expressions by parsing them, so subscripts, method-call targets, comparisons and unary/power expressions are grouped correctly (was a whitespace heuristic)
+- epsilon-tolerant equality transpiles to a named `func.equal` / `func.not_equal` call unless every operand is an exact dtype, rather than folding to Python `==` / `!=`, whose exact semantics differ from Blender's Compare node
+- every rng-consuming distribution in `random.py` is a tracer primitive, so tracing at `GENERATORS` bakes it to a constant instead of emitting a live call against an unseeded generator
+- `MOD` transpiles to a named `math.modulo` call rather than Python `%`, whose floored semantics differ from Blender's truncated MODULO
+- the transpiler emits an output getattr whenever the bound function returns a `NamedTuple`, even when the source node leaves only one output socket active (the socket count alone underdetected this)
+- generated function signatures keep an input socket default of `None` (was dropped, changing the emitted argument order and defaults)
+- `to_light` declares that it mutates its `light` argument, so its shader assignment survives trace codegen
+- `is_zero_displacement` recognizes zero displacement written as a `math.constant` call or a contextual vector node, not just a bare constant, so the drop-dead-displacement optimization applies to transpiled materials
+- generated `NamedTuple` field types fall back to the tuple's own annotations before `Any`
+
+Errors instead of silent misbehavior:
+
+- `build_bpy_material` raises `TypeError` when `surface` / `displacement` / `volume` is neither a `ProcNode` nor `None`
+
+Other:
+
+- generated docs strip the boilerplate docstrings Python synthesizes for `NamedTuple` members
+
 # 0.34.0
 
 Interface changes:

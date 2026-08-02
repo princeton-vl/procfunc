@@ -25,15 +25,31 @@ from procfunc.transpiler.main import transpile_targets
 # submodule; reach the module (and its graph-builder helper) via importlib.
 _node_function_mod = importlib.import_module("procfunc.nodes.util.node_function")
 
-# NOOP rows (separate_xyz) have no infix symbol to assert on; RGBA rows lower
-# to Mix nodes and transpile as mix_rgb calls (see module docstring).
+# Compare ==/!= is epsilon-tolerant except for int/string, which stay exact ==.
+_EXACT_EQUALITY_TYPES = (NodeDataType.INT, NodeDataType.STRING)
+
+
+def _is_epsilon_equality(row):
+    return (
+        row.operator_type in (OperatorType.EQUAL, OperatorType.NOT_EQUAL)
+        and row.value_type not in _EXACT_EQUALITY_TYPES
+    )
+
+
+# NOOP has no infix; RGBA lowers to mix_rgb; MOD stays named (fmod vs floored %); epsilon ==/!= stays named
 _ROWS = [
     r
     for r in NODE_OPERATOR_TABLE
-    if r.operator_type is not OperatorType.NOOP
+    if r.operator_type not in (OperatorType.NOOP, OperatorType.MOD)
     and r.value_type is not NodeDataType.RGBA
+    and not _is_epsilon_equality(r)
 ]
-_IDS = [r.pf_func.__name__ for r in _ROWS]
+_IDS = [f"{r.pf_func.__name__}_{r.value_type.name}" for r in _ROWS]
+
+_EPSILON_EQ_ROWS = [r for r in NODE_OPERATOR_TABLE if _is_epsilon_equality(r)]
+_EPSILON_EQ_IDS = [
+    f"{r.pf_func.__name__}_{r.value_type.name}" for r in _EPSILON_EQ_ROWS
+]
 
 # one representative pair per dtype, plus a single value used when a row's
 # operand_types calls for two *different* dtypes (e.g. vector * scalar).
@@ -104,6 +120,48 @@ def test_color_operator_transpiles_to_mix_call():
 
     assert "mix_rgb(" in src, src
     assert " + " not in src, src
+
+
+@pytest.mark.parametrize(
+    "row",
+    [r for r in NODE_OPERATOR_TABLE if r.operator_type is OperatorType.MOD],
+    ids=lambda r: r.pf_func.__name__,
+)
+def test_modulo_operator_transpiles_to_named_call(row):
+    a, b = _operands_for(row)
+
+    def fn():
+        return row.pf_func(a, b)
+
+    graph = _node_function_mod._execute_procnode_func_to_computegraph(fn)
+    nodegroup = as_nodegroup(graph, NodeGroupType.GEOMETRY)
+    try:
+        src = transpile_targets([nodegroup], transforms=[], add_version_comment=False)
+    finally:
+        bpy.data.node_groups.remove(nodegroup)
+
+    assert f"{row.pf_func.__name__}(" in src, src
+    assert " % " not in src, src
+
+
+@pytest.mark.parametrize("row", _EPSILON_EQ_ROWS, ids=_EPSILON_EQ_IDS)
+def test_epsilon_equality_transpiles_to_named_call(row):
+    # float ==/!= is epsilon-tolerant, so it must stay a named call, not exact ==.
+    a, b = _operands_for(row)
+
+    def fn():
+        return row.pf_func(a, b)
+
+    graph = _node_function_mod._execute_procnode_func_to_computegraph(fn)
+    nodegroup = as_nodegroup(graph, NodeGroupType.GEOMETRY)
+    try:
+        src = transpile_targets([nodegroup], transforms=[], add_version_comment=False)
+    finally:
+        bpy.data.node_groups.remove(nodegroup)
+
+    assert f"pf.nodes.func.{row.pf_func.__name__}(" in src, src
+    infix = OPERATOR_TEMPLATES[row.operator_type].format(a, b)
+    assert infix not in src, f"expected named call, not infix {infix!r}:\n{src}"
 
 
 def test_nondefault_epsilon_declines_operator():
