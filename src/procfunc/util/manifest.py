@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 import pandas as pd
+from pandas.api.types import is_string_dtype
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,7 @@ def filter_manifest(
             patterns = [patterns]
 
         before_count = len(manifest)
-        if manifest[column].dtype == "object":
+        if is_string_dtype(manifest[column].dtype):
             mask = pd.Series([False] * len(manifest), index=manifest.index)
             for pattern in patterns:
                 if isinstance(pattern, str):

@@ -405,15 +405,19 @@ docs = [
     { name = "sphinx-argparse" },
     { name = "sphinx-rtd-theme" },
 ]
+test = [
+    { name = "pytest" },
+]
 
 [package.metadata]
 requires-dist = [
     { name = "bpy", specifier = "==4.2.0" },
     { name = "imageio", marker = "extra == 'dev'" },
     { name = "matplotlib", marker = "extra == 'dev'" },
-    { name = "numpy", specifier = "<2" },
-    { name = "pandas" },
-    { name = "pytest", marker = "extra == 'dev'" },
+    { name = "numpy", specifier = ">=1.23.5,<2" },
+    { name = "pandas", specifier = ">=1.5" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.2,<10" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=7.2,<10" },
     { name = "pytest-xdist", marker = "extra == 'dev'" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.15,<0.16" },
     { name = "sphinx", marker = "extra == 'docs'" },
@@ -421,7 +425,7 @@ requires-dist = [
     { name = "sphinx-rtd-theme", marker = "extra == 'docs'" },
     { name = "ty", marker = "extra == 'dev'" },
 ]
-provides-extras = ["dev", "docs"]
+provides-extras = ["test", "dev", "docs"]
 
 [[package]]
 name = "pygments"

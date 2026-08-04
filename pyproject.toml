@@ -11,8 +11,8 @@ license = "BSD-3-Clause"
 requires-python = ">=3.11,<3.12"
 dependencies = [
     "bpy==4.2.0",
-    "numpy<2",
-    "pandas",
+    "numpy>=1.23.5,<2",
+    "pandas>=1.5",
 ]
 
 [project.urls]
@@ -23,8 +23,11 @@ Repository = "https://github.com/princeton-vl/procfunc"
 procfunc = "procfunc.cli:cli"
 
 [project.optional-dependencies]
+test = [
+    "pytest>=7.2,<10",
+]
 dev = [
-    "pytest",
+    "pytest>=7.2,<10",
     "pytest-xdist",
     "ruff>=0.15,<0.16",
     "ty",
