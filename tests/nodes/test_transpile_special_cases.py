@@ -10,7 +10,11 @@ from procfunc.codegen import to_python
 from procfunc.nodes.execute.construct_nodes import as_nodegroup
 from procfunc.nodes.util.bpy_node_info import NodeGroupType
 from procfunc.transpiler import parse_node_tree
-from procfunc.transpiler.bpy_to_computegraph import ParseMemo, parse_material
+from procfunc.transpiler.bpy_to_computegraph import (
+    ParseMemo,
+    parse_material,
+    parse_object,
+)
 from procfunc.transpiler.main import transpile_targets
 
 
@@ -241,3 +245,46 @@ def test_transpile_modulo_emits_named_call_not_percent():
     src = transpile_targets([tree], transforms=[])
     assert "math.modulo(" in src
     assert " % " not in src
+
+
+def _obj_with_geo_attr_modifier():
+    """Object carrying a geo-nodes modifier whose group emits one Geometry
+    output plus one non-geometry (attribute) output."""
+    tree = bpy.data.node_groups.new(
+        f"geoattr_{uuid.uuid4().hex[:8]}", "GeometryNodeTree"
+    )
+    inp = tree.nodes.new("NodeGroupInput")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket(
+        "Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+    )
+    tree.interface.new_socket(
+        "Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+    )
+    tree.interface.new_socket("Height", in_out="OUTPUT", socket_type="NodeSocketFloat")
+
+    pos = tree.nodes.new("GeometryNodeInputPosition")
+    sep = tree.nodes.new("ShaderNodeSeparateXYZ")
+    tree.links.new(pos.outputs["Position"], sep.inputs[0])
+    tree.links.new(inp.outputs["Geometry"], out.inputs["Geometry"])
+    tree.links.new(sep.outputs["Z"], out.inputs["Height"])
+
+    mesh = bpy.data.meshes.new(f"m_{uuid.uuid4().hex[:8]}")
+    obj = bpy.data.objects.new(f"o_{uuid.uuid4().hex[:8]}", mesh)
+    mod = obj.modifiers.new("GeoNodes", "NODES")
+    mod.node_group = tree
+    return obj
+
+
+def test_transpile_geomod_one_geometry_plus_attributes():
+    """A geo-nodes modifier with one Geometry output and extra attribute
+    outputs must transpile to to_mesh_object_with_attributes(geometry,
+    attributes={...}) - passing geometry positionally and collecting the
+    remaining getattrs into a single attributes dict."""
+    obj = _obj_with_geo_attr_modifier()
+    graph = parse_object(obj, ParseMemo(), include_set_material=False)
+    src = to_python(graph, toplevel_as_maincall=False)
+    ast.parse(src)
+    assert "to_mesh_object_with_attributes" in src
+    assert "attributes=" in src
+    exec(compile(src, "<geomod_attr>", "exec"), {})  # noqa: S102
