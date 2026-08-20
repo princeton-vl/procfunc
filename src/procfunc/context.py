@@ -19,6 +19,13 @@ class ProcfuncContext:
     'ignore' silently returns an empty mesh, 'warn' logs a warning, 'throw' raises an error.
     """
 
+    record_node_definitions: bool = False
+    """
+    Record the user-space file/line/function that constructed each ProcNode, used only to
+    enrich node-instantiation error messages. Walks the stack once per node, which can
+    dominate build time in node-heavy callers, so off by default.
+    """
+
     def __post_init__(self):
         """Initialize computed fields after dataclass creation."""
         if self.num_cpu_cores <= 0:
@@ -44,6 +51,8 @@ globals = ProcfuncContext(
     num_cpu_cores=int(os.environ.get("PROCFUNC_NUM_CPU_CORES", 0)),
     warn_mode_empty_geonodes=_warn_mode_empty_geonodes,  # type: ignore[invalid-assignment]
     current_trace_level=None,
+    record_node_definitions=os.environ.get("PROCFUNC_RECORD_NODE_DEFINITIONS", "0")
+    == "1",
 )
 
 
