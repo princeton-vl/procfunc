@@ -33,6 +33,7 @@ dev = [
     "ty",
     "imageio",
     "matplotlib",
+    "coverage",
 ]
 docs = [
     "sphinx",
