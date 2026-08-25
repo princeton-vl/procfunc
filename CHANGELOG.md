@@ -1,3 +1,18 @@
+# 0.35.1
+
+Interface changes:
+
+- per-node definition metadata is recorded only when the context's `record_node_definitions` is set (or `PROCFUNC_RECORD_NODE_DEFINITIONS=1`), so node-instantiation errors carry file/line context only when it is enabled (was always, and the stack walk dominated build time in node-heavy callers)
+
+Fixed crashes:
+
+- transpiling a geometry-nodes modifier with one geometry output plus extra attribute outputs calls `to_mesh_object_with_attributes` with the geometry positional and the attributes under `attributes=` (was flat kwargs, which did not match the signature)
+
+Other:
+
+- entrypoints exiting through `skip_teardown_on_exit` save coverage data before `os._exit`, so running one under `coverage` records the executed lines instead of discarding them
+- CI runs for every pull request, quarantines fresh dependency releases in the compatibility job, and gained lowest-supported-version unit tests
+
 # 0.35.0
 
 Interface changes:

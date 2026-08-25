@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Any, Generic, TypeVar, Union
 
 from procfunc import compute_graph as cg
+from procfunc import context
 from procfunc import types as pt
 from procfunc.compute_graph.operators_info import (
     OPERATORS_TO_FUNCTIONS,
@@ -79,7 +80,8 @@ class ProcNode(Generic[T]):
                 f"these should have been unwrapped to cg.Node {node.args} {node.kwargs}"
             )
 
-        self._node.metadata["definition"] = _node_definition_metadata()
+        if context.globals.record_node_definitions:
+            self._node.metadata["definition"] = _node_definition_metadata()
 
     def astype(self, dtype: type) -> "ProcNode":
         node = copy.copy(self._node)
@@ -114,7 +116,8 @@ class ProcNode(Generic[T]):
             )
 
         node = cg.ProceduralNode(node_type=node_type, attrs=attrs, kwargs=inputs)
-        node.metadata["definition"] = _node_definition_metadata()
+        if context.globals.record_node_definitions:
+            node.metadata["definition"] = _node_definition_metadata()
 
         return cls(node=node)
 
@@ -262,7 +265,11 @@ def node_definition_context_message(node: cg.Node):
     metadata = object.__getattribute__(node, "metadata")
     lineno_metadata = metadata.get("definition", None)
     if lineno_metadata is None:
-        return ""
+        return (
+            " (set PROCFUNC_RECORD_NODE_DEFINITIONS=1 or "
+            "override_globals(record_node_definitions=True) to see the "
+            "file/line that defined this node) "
+        )
     file, lineno, procfunc_name = lineno_metadata
     return f" {procfunc_name}() call on {file}:{lineno} "
 

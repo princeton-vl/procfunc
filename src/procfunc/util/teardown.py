@@ -2,7 +2,8 @@
 
 bpy's cleanup segfaults (SIGSEGV / exit code 139) during normal Python
 shutdown. ``os._exit`` skips Python teardown and atexit handlers, avoiding
-the crash while preserving the real exit code.
+the crash while preserving the real exit code. Anything the process would
+otherwise have written on its way out is flushed here first.
 """
 
 import os
@@ -11,7 +12,20 @@ import traceback
 from contextlib import contextmanager
 
 
+def _save_coverage() -> None:
+    # coverage.py saves once the traced process returns, which os._exit never does
+    try:
+        import coverage
+
+        cov = coverage.Coverage.current()
+        if cov is not None:
+            cov.save()
+    except Exception:
+        traceback.print_exc()
+
+
 def exit_skipping_teardown(code: int = 0):
+    _save_coverage()
     sys.stdout.flush()
     sys.stderr.flush()
     os._exit(code)
