@@ -8,7 +8,7 @@
 
 This repository contains only the Primitives API, Transpiler and Tracer from our research paper.
 
-The pre-made procedural generators are coming soon as part of [infinigen](https://github.com/princeton-vl/infinigen).
+Please see the infinigen2 [documentation](https://infinigen.cs.princeton.edu/docs/latest/) and [sourcecode](https://github.com/princeton-vl/infinigen/tree/3f58bb886bb1bda681d41240344fe3126ac0e9bd/src/infinigen2) to access the paper's library of new procedural generators
 
 ### Installation
 
