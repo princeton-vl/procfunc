@@ -947,10 +947,9 @@ def mapping(
     location: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
-    vector_type: Literal["POINT", "TEXTURE", "VECTOR", "NORMAL"] = "POINT",
 ) -> nt.ProcNode[pt.Vector]:
     """
-    Uses a Mapping Shader Node.
+    Uses a Mapping Shader Node with vector_type='POINT'.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
     """
@@ -962,7 +961,64 @@ def mapping(
             "Rotation": rotation,
             "Scale": scale,
         },
-        attrs={"vector_type": vector_type},
+        attrs={"vector_type": "POINT"},
+    )
+
+
+def mapping_texture(
+    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    location: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+) -> nt.ProcNode[pt.Vector]:
+    """
+    Uses a Mapping Shader Node with vector_type='TEXTURE'.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeMapping",
+        inputs={
+            "Vector": vector,
+            "Location": location,
+            "Rotation": rotation,
+            "Scale": scale,
+        },
+        attrs={"vector_type": "TEXTURE"},
+    )
+
+
+def mapping_vector(
+    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+) -> nt.ProcNode[pt.Vector]:
+    """
+    Uses a Mapping Shader Node with vector_type='VECTOR'.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeMapping",
+        inputs={"Vector": vector, "Rotation": rotation, "Scale": scale},
+        attrs={"vector_type": "VECTOR"},
+    )
+
+
+def mapping_normal(
+    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+) -> nt.ProcNode[pt.Vector]:
+    """
+    Uses a Mapping Shader Node with vector_type='NORMAL'.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeMapping",
+        inputs={"Vector": vector, "Rotation": rotation, "Scale": scale},
+        attrs={"vector_type": "NORMAL"},
     )
 
 

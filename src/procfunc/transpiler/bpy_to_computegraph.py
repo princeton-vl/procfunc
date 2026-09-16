@@ -43,6 +43,7 @@ MODE_ATTRS = [
     "data_type",
     "operation",
     "rotation_type",
+    "vector_type",
     "feature",
     "distribute_method",
     "glare_type",

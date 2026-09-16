@@ -1986,9 +1986,59 @@
   },
   {
     "bpy_name": "ShaderNodeMapping",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "vector_type": "POINT"
+    },
     "infinigen_v1_name": "Nodes.Mapping",
     "name": "pf.nodes.shader.mapping",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeMapping",
+    "bpy_mode_args": {
+      "vector_type": "TEXTURE"
+    },
+    "infinigen_v1_name": "Nodes.Mapping",
+    "name": "pf.nodes.shader.mapping_texture",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeMapping",
+    "bpy_mode_args": {
+      "vector_type": "VECTOR"
+    },
+    "infinigen_v1_name": "Nodes.Mapping",
+    "name": "pf.nodes.shader.mapping_vector",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeMapping",
+    "bpy_mode_args": {
+      "vector_type": "NORMAL"
+    },
+    "infinigen_v1_name": "Nodes.Mapping",
+    "name": "pf.nodes.shader.mapping_normal",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
