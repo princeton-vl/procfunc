@@ -6,6 +6,7 @@ import bpy
 import numpy as np
 
 from procfunc import compute_graph as cg
+from procfunc import types as pt
 from procfunc.nodes import func as pf_func
 from procfunc.nodes import types as nt
 from procfunc.nodes.util import bpy_node_info as bni
@@ -153,13 +154,13 @@ def special_case_hue_correct(
 
 
 IMAGE_USER_ATTRS = (
-    "frame_current",
     "frame_duration",
     "frame_offset",
     "frame_start",
     "tile",
     "use_auto_refresh",
     "use_cyclic",
+    "frame_current",
 )
 
 
@@ -170,6 +171,10 @@ def special_case_image_user(
 ):
     """ShaderNodeTexImage and ShaderNodeTexEnvironment keep their sequence and UDIM
     settings on an ImageUser sub-struct rather than on the node itself."""
+
+    image = attrs.pop("image", None)
+    if image is not None:
+        bl_node.image = image.item() if isinstance(image, pt.BlenderAsset) else image
 
     for name in IMAGE_USER_ATTRS:
         value = attrs.pop(name, None)

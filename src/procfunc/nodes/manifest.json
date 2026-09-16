@@ -4131,7 +4131,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Composite",
     "name": "pf.nodes.compositor.composite",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "alpha": null
+    },
     "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"

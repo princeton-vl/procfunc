@@ -117,10 +117,7 @@ def render_scene(scene: bpy.types.Scene, size: tuple = (8, 8)) -> np.ndarray:
 
 
 def composite_render(color, size: tuple = (8, 8), alpha=None) -> np.ndarray:
-    if alpha is None:
-        node = pf.nodes.compositor.composite(image=color, use_alpha=False)
-    else:
-        node = pf.nodes.compositor.composite(image=color, alpha=alpha)
+    node = pf.nodes.compositor.composite(image=color, alpha=alpha)
     return render_scene(build_compositor(node), size)
 
 
@@ -136,7 +133,7 @@ def realized_node(value: typing.Any, bl_idname: str) -> bpy.types.Node:
 def composite_source(value: typing.Any) -> tuple[str, str]:
     """Where the composite input comes from, for the outputs that render as
     zero until a movie clip or texture datablock supplies them."""
-    result = pf.nodes.compositor.composite(image=value, use_alpha=False)
+    result = pf.nodes.compositor.composite(image=value)
     node = realized_node(result, "CompositorNodeComposite")
     link = node.inputs["Image"].links[0]
     return link.from_node.bl_idname, link.from_socket.name

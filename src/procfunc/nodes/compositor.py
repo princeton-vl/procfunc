@@ -562,20 +562,23 @@ def combine_yuv(
 
 def composite(
     image: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
-    alpha: nt.SocketOrVal[float] = 1.0,
+    alpha: nt.SocketOrVal[float] | None = None,
     use_alpha: bool = True,
 ) -> nt.ProcNode:
     """
     Uses a Composite Compositor Node.
 
+    Omit alpha to preserve the image alpha, or pass it to replace the alpha.
+    Setting use_alpha=False makes the output opaque.
+
     See: https://docs.blender.org/manual/en/4.2/compositing/types/output/composite.html
     """
-    if use_alpha:
+    if use_alpha and alpha is not None:
         image = set_alpha(image, alpha, mode="REPLACE_ALPHA")
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeComposite",
         inputs={"Image": image},
-        attrs={"use_alpha": True},
+        attrs={"use_alpha": use_alpha},
     )
 
 

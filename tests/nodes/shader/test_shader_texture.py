@@ -212,7 +212,7 @@ def test_sky_texture_modes_round_trip(sky_type: str, sun_disc: bool) -> None:
         expected_parameters.remove("vector")
         expected_parameters.remove("sun_disc")
     if sky_type == "NISHITA" and not sun_disc:
-        expected_parameters.difference_update(_NISHITA_SUN_PARAMETERS)
+        expected_parameters.difference_update(("sun_intensity", "sun_size"))
     assert {keyword.arg for keyword in call.keywords} == expected_parameters
 
     rebuilt = _rebuild_sky(source)
@@ -232,7 +232,7 @@ def test_sky_texture_modes_round_trip(sky_type: str, sun_disc: bool) -> None:
             "sun_size": 0.02,
         }
         if not sun_disc:
-            expected_sun = _NISHITA_SUN_DEFAULTS
+            expected_sun.update(sun_intensity=1.0, sun_size=0.009512)
         for name, value in expected_sun.items():
             assert getattr(rebuilt, name) == pytest.approx(value)
         return
@@ -265,12 +265,22 @@ def test_sky_texture_nishita_fills_sun_defaults(sun_disc: bool) -> None:
     assert actual == _NISHITA_SUN_DEFAULTS
 
 
-@pytest.mark.parametrize("parameter", _NISHITA_SUN_PARAMETERS)
+@pytest.mark.parametrize("parameter", ["sun_intensity", "sun_size"])
 def test_sky_texture_nishita_rejects_sun_parameters_without_disc(
     parameter: str,
 ) -> None:
     with pytest.raises(ValueError, match=parameter):
         texture.sky_texture_nishita(sun_disc=False, **{parameter: 1.0})
+
+
+def test_sky_texture_nishita_preserves_sun_position_without_disc() -> None:
+    sky = texture.sky_texture_nishita(
+        sun_disc=False, sun_elevation=0.4, sun_rotation=0.3
+    )
+    attrs = sky.item().attrs
+    assert attrs["sun_disc"] is False
+    assert attrs["sun_elevation"] == pytest.approx(0.4)
+    assert attrs["sun_rotation"] == pytest.approx(0.3)
 
 
 def test_sky_texture_replaces_combined_sky_function() -> None:

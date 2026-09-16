@@ -588,6 +588,39 @@ def test_image_texture_unwraps_image_wrapper():
     assert obj.item().type == "MESH"
 
 
+@pytest.mark.parametrize("kind", ["image", "environment"])
+@pytest.mark.parametrize("with_datablock", [False, True])
+def test_image_user_settings_survive_datablock_assignment(
+    kind: str, with_datablock: bool
+) -> None:
+    raw = bpy.data.images.new("test_image_user", 2, 2)
+    image = pf.Image(raw) if with_datablock else None
+    value = getattr(pf.nodes.texture, kind)(
+        vector=None,
+        image=image,
+        frame_current=4,
+        frame_duration=42,
+        frame_offset=7,
+        frame_start=2,
+        tile=3,
+        use_auto_refresh=True,
+        use_cyclic=True,
+    )
+    if kind == "image":
+        value = value.color
+    ng = _realize(lambda: value, pf.nodes.NodeGroupType.SHADER)
+    tex = next(n for n in ng.nodes if n.bl_idname == f"ShaderNodeTex{kind.title()}")
+
+    assert tex.image == (raw if with_datablock else None)
+    assert tex.image_user.frame_current == 4
+    assert tex.image_user.frame_duration == 42
+    assert tex.image_user.frame_offset == 7
+    assert tex.image_user.frame_start == 2
+    assert tex.image_user.tile == 3
+    assert tex.image_user.use_auto_refresh
+    assert tex.image_user.use_cyclic
+
+
 def test_to_object_basic():
     cube = pf.nodes.geo.mesh_cube(size=(2, 2, 2))
     obj = pf.nodes.to_mesh_object(geometry=cube.mesh)

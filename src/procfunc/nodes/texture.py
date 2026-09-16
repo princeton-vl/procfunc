@@ -506,9 +506,7 @@ def sky_texture_nishita(
     if sun_disc and vector is not None:
         raise ValueError("Nishita Vector is only available with sun_disc=False")
     sun_parameters = {
-        "sun_elevation": sun_elevation,
         "sun_intensity": sun_intensity,
-        "sun_rotation": sun_rotation,
         "sun_size": sun_size,
     }
     specified_sun_parameters = [

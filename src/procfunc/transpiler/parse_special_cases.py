@@ -353,7 +353,7 @@ def handle_specialcase_sky(
     attrs = {k: v for k, v in attrs.items() if k not in TEXTURE_MAPPING_ATTRS}
     kwargs = {**generic_attrs(node_tree, node, attrs, func, func_spec), **inputs}
     if node.sky_type == "NISHITA" and not node.sun_disc:
-        for name in ("sun_elevation", "sun_intensity", "sun_rotation", "sun_size"):
+        for name in ("sun_intensity", "sun_size"):
             kwargs.pop(name, None)
     return build_call(node, func, kwargs)
 

@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 from compositor_eval import (
     assert_uniform,
+    build_compositor,
     composite_render,
     composite_source,
     halves,
@@ -13,10 +14,12 @@ from compositor_eval import (
     movie_clip_datablock,
     ramp,
     realized_node,
+    render_scene,
     solid,
 )
 
 import procfunc as pf
+from procfunc.transpiler import bpy_to_computegraph
 
 comp = pf.nodes.compositor
 
@@ -66,6 +69,42 @@ def test_composite_linked_alpha_input_replaces_the_alpha_channel():
     src = image_node("src", SEMI)
     out = composite_render(src.image, alpha=src.alpha)
     assert_uniform(out, (0.25, 0.5, 0.75, 0.5))
+
+
+@pytest.mark.parametrize(
+    "use_alpha,alpha,expected_alpha",
+    [(True, None, 0.5), (False, None, 1.0), (False, 0.25, 1.0), (True, 0.0, 0.0)],
+)
+def test_composite_preserves_or_discards_image_alpha(
+    use_alpha: bool, alpha: float | None, expected_alpha: float
+) -> None:
+    src = image_node("src", SEMI)
+    result = comp.composite(image=src.image, alpha=alpha, use_alpha=use_alpha)
+
+    out = render_scene(build_compositor(result))
+
+    assert_uniform(out, (0.25, 0.5, 0.75, expected_alpha))
+
+
+@pytest.mark.parametrize("use_alpha", [True, False])
+def test_composite_transpile_preserves_native_alpha(use_alpha: bool) -> None:
+    scene = bpy.data.scenes.new("native_composite_alpha")
+    scene.use_nodes = True
+    tree = scene.node_tree
+    tree.nodes.clear()
+    node = tree.nodes.new("CompositorNodeComposite")
+    node.use_alpha = use_alpha
+    node.inputs["Image"].default_value = (0.25, 0.5, 0.75, 0.5)
+    node.inputs["Alpha"].default_value = 0.25
+    expected = render_scene(scene)
+
+    parsed = bpy_to_computegraph.parse_standard_node(
+        tree, node, bpy_to_computegraph.ParseMemo()
+    )
+    rebuilt = parsed.func(**parsed.kwargs)
+    actual = render_scene(build_compositor(rebuilt))
+
+    np.testing.assert_allclose(actual, expected, atol=1e-4)
 
 
 def test_image_node_preserves_row_order_top_down():
