@@ -5093,11 +5093,72 @@
   },
   {
     "bpy_name": "ShaderNodeTexSky",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "sky_type": "NISHITA"
+    },
     "infinigen_v1_name": "Nodes.SkyTexture",
-    "name": "pf.nodes.texture.sky",
+    "name": "pf.nodes.texture.sky_texture_nishita",
     "arg_names_map": null,
-    "attr_names_map": null,
+    "attr_names_map": {
+      "ground_albedo": null,
+      "sun_direction": null,
+      "turbidity": null
+    },
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeTexSky",
+    "bpy_mode_args": {
+      "sky_type": "PREETHAM"
+    },
+    "infinigen_v1_name": "Nodes.SkyTexture",
+    "name": "pf.nodes.texture.sky_texture_preetham",
+    "arg_names_map": null,
+    "attr_names_map": {
+      "air_density": null,
+      "altitude": null,
+      "dust_density": null,
+      "ground_albedo": null,
+      "ozone_density": null,
+      "sun_disc": null,
+      "sun_elevation": null,
+      "sun_intensity": null,
+      "sun_rotation": null,
+      "sun_size": null
+    },
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeTexSky",
+    "bpy_mode_args": {
+      "sky_type": "HOSEK_WILKIE"
+    },
+    "infinigen_v1_name": "Nodes.SkyTexture",
+    "name": "pf.nodes.texture.sky_texture_hosek_wilkie",
+    "arg_names_map": null,
+    "attr_names_map": {
+      "air_density": null,
+      "altitude": null,
+      "dust_density": null,
+      "ozone_density": null,
+      "sun_disc": null,
+      "sun_elevation": null,
+      "sun_intensity": null,
+      "sun_rotation": null,
+      "sun_size": null
+    },
     "node_group_type": [
       "ShaderNodeTree"
     ],

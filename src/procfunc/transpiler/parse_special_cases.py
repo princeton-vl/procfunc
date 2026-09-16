@@ -91,6 +91,14 @@ def handle_specialcase_1d_texture(node: bpy.types.Node, cg_node: cg.Node) -> cg.
     return cg_node
 
 
+def handle_specialcase_sky(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
+    if node.sky_type != "NISHITA" or node.sun_disc:
+        return cg_node
+    for name in ("sun_elevation", "sun_intensity", "sun_rotation", "sun_size"):
+        cg_node.kwargs.pop(name, None)
+    return cg_node
+
+
 SINGLE_CURVE_NODES = {"ShaderNodeFloatCurve"}
 
 
@@ -126,7 +134,7 @@ def handle_specialcase_curve(node: bpy.types.Node, cg_node: cg.Node) -> cg.Node:
     return cg_node
 
 
-SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
+SPECIAL_CASE_NODES: dict[str, Callable[[bpy.types.Node, cg.Node], cg.Node]] = {
     "ShaderNodeMath": handle_specialcase_math,
     "CompositorNodeMath": handle_specialcase_math,
     "TextureNodeMath": handle_specialcase_math,
@@ -137,6 +145,7 @@ SPECIAL_CASE_NODES: Callable[[bpy.types.Node, cg.Node], cg.Node] = {
     "ShaderNodeTexNoise": handle_specialcase_1d_texture,
     "ShaderNodeTexVoronoi": handle_specialcase_1d_texture,
     "ShaderNodeTexWhiteNoise": handle_specialcase_1d_texture,
+    "ShaderNodeTexSky": handle_specialcase_sky,
     # curves share handler
     "ShaderNodeFloatCurve": handle_specialcase_curve,
     "ShaderNodeRGBCurve": handle_specialcase_curve,

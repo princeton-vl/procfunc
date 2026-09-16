@@ -66,7 +66,7 @@ def test_to_environment_basic():
 def test_to_environment_with_sky():
     """Test to_environment with sky texture."""
     # Create sky-based environment
-    sky = pf.nodes.texture.sky(sky_type="NISHITA", sun_elevation=0.5, sun_rotation=0.0)
+    sky = pf.nodes.texture.sky_texture_nishita(sun_elevation=0.5, sun_rotation=0.0)
 
     background = pf.nodes.shader.background(color=sky, strength=1.0)
 

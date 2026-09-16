@@ -2974,20 +2974,30 @@ def point_density(
     ] = "VERTEX_COLOR",
 ) -> PointDensityResult:
     pass
-def sky(
+def sky_texture_preetham(
+    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    sun_direction: tuple = (0.0, 0.0, 1.0),
+    turbidity: float = 2.2,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def sky_texture_hosek_wilkie(
+    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    ground_albedo: float = 0.3,
+    sun_direction: tuple = (0.0, 0.0, 1.0),
+    turbidity: float = 2.2,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def sky_texture_nishita(
+    vector: pf.SocketOrVal[pf.Vector] | None = None,
     air_density: float = 1.0,
     altitude: float = 0.0,
     dust_density: float = 1.0,
-    ground_albedo: float = 0.3,
     ozone_density: float = 1.0,
-    sky_type: Literal["NISHITA", "HOSEK_WILKIE", "PREETHAM"] = "NISHITA",
-    sun_direction: tuple = (0.0, 0.0, 1.0),
     sun_disc: bool = True,
-    sun_elevation: float = 0.261799,
-    sun_intensity: float = 1.0,
-    sun_rotation: float = 0.0,
-    sun_size: float = 0.009512,
-    turbidity: float = 2.2,
+    sun_elevation: float | None = None,
+    sun_intensity: float | None = None,
+    sun_rotation: float | None = None,
+    sun_size: float | None = None,
 ) -> pf.ProcNode[pf.Color]:
     pass
 def voronoi(
