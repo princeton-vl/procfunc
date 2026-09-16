@@ -1592,7 +1592,21 @@
     "node_group_type": [
       "GeometryNodeTree"
     ],
-    "data_types": null,
+    "data_types": [
+      "bool",
+      "int",
+      "float",
+      "vector",
+      "rotation",
+      "matrix",
+      "string",
+      "rgba",
+      "object",
+      "image",
+      "geometry",
+      "collection",
+      "material"
+    ],
     "is_contextual": null,
     "is_unittest_specialcase": false,
     "notes": null

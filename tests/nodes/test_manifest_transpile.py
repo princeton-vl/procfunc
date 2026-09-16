@@ -18,6 +18,7 @@ import pytest
 
 import procfunc as pf
 from procfunc.codegen import to_python
+from procfunc.nodes.execute import infer_runtime_data_type
 from procfunc.nodes.execute.construct_nodes import as_nodegroup
 from procfunc.nodes.execute.construct_standard import set_node_attribute
 from procfunc.nodes.util.bindings_util import (
@@ -80,8 +81,8 @@ def _manifest_canonical_to_ndt(canonical: str) -> NodeDataType | None:
     return matches[0] if len(matches) == 1 else None
 
 
-def _resolve_data_type(node, canonical: str) -> str | None:
-    prop = node.bl_rna.properties.get("data_type")
+def _resolve_data_type(node, attr: str, canonical: str) -> str | None:
+    prop = node.bl_rna.properties.get(attr)
     if prop is None or prop.type != "ENUM":
         return None
     valid = {item.identifier for item in prop.enum_items}
@@ -200,17 +201,17 @@ def _literal_params(func) -> list[tuple[str, list[str]]]:
     return result
 
 
-def _reverse_arg_names(row) -> dict[str, str]:
-    if not isinstance(row.arg_names_map, dict):
+def _reverse_attr_names(row) -> dict[str, str]:
+    if not isinstance(row.attr_names_map, dict):
         return {}
-    return {v: k for k, v in row.arg_names_map.items() if isinstance(v, str)}
+    return {v: k for k, v in row.attr_names_map.items() if isinstance(v, str)}
 
 
 def _mode_path(row, param: str) -> tuple[str, ...]:
     nested = _NESTED_MODE_PATHS.get(row.name, {}).get(param)
     if nested is not None:
         return nested
-    attr = _reverse_arg_names(row).get(param, param)
+    attr = _reverse_attr_names(row).get(param, param)
     return (attr,)
 
 
@@ -271,14 +272,16 @@ def _apply_mode_args(node, row) -> list[tuple[str, ...]]:
 def _apply_default_data_type(node, row) -> list[tuple[str, ...]]:
     if not (isinstance(row.data_types, list) and row.data_types):
         return []
-    # a bpy_mode_args data_type selects the row's pf function; never override it
-    if isinstance(row.bpy_mode_args, dict) and "data_type" in row.bpy_mode_args:
+    path = _mode_path(row, "data_type")
+    assert len(path) == 1
+    # a bpy_mode_args selector chooses the row's pf function; never override it
+    if isinstance(row.bpy_mode_args, dict) and path[0] in row.bpy_mode_args:
         return []
-    chosen = _resolve_data_type(node, row.data_types[0])
+    chosen = _resolve_data_type(node, path[0], row.data_types[0])
     if chosen is None:
         return []
-    set_node_attribute(node, "data_type", chosen)
-    return [("data_type",)]
+    _set_path(node, path, chosen)
+    return [path]
 
 
 def _apply_mode(node, row, bl_idname: str, mode) -> list[tuple[str, ...]]:
@@ -288,10 +291,12 @@ def _apply_mode(node, row, bl_idname: str, mode) -> list[tuple[str, ...]]:
         return attrs + _apply_default_data_type(node, row)
     param, value = mode
     if param == "data_type":
-        chosen = _resolve_data_type(node, value)
-        assert chosen is not None, f"{bl_idname} does not expose data_type {value!r}"
-        set_node_attribute(node, "data_type", chosen)
-        return [*attrs, ("data_type",)]
+        path = _mode_path(row, param)
+        assert len(path) == 1
+        chosen = _resolve_data_type(node, path[0], value)
+        assert chosen is not None, f"{bl_idname} does not expose {path[0]} {value!r}"
+        _set_path(node, path, chosen)
+        return [*attrs, path]
     attrs += _apply_default_data_type(node, row)
     if row.name == "pf.nodes.color.color_ramp" and param == "hue_interpolation":
         color_mode = _mode_path(row, "mode")
@@ -429,6 +434,31 @@ def test_manifest_row_does_not_claim_false_data_types(name):
     rows = [row for row in _NODES.itertuples(index=False) if row.name == name]
     assert rows
     assert all(not isinstance(row.data_types, list) for row in rows)
+
+
+def test_switch_sweep_covers_binding_data_types():
+    row = next(
+        row
+        for row in _NODES.itertuples(index=False)
+        if row.name == "pf.nodes.func.switch"
+    )
+    modes = [mode for current_row, mode in _PARAMS if current_row.name == row.name]
+    values = [mode[1] for mode in modes if mode is not None and mode[0] == "data_type"]
+    tree, cleanup = _make_test_tree(row.node_group_type)
+    try:
+        node = tree.nodes.new(row.bpy_name)
+        observed = [_resolve_data_type(node, "input_type", value) for value in values]
+        expected = [
+            infer_runtime_data_type.map_data_type_for_differing_node_interface(
+                data_type, node, "input_type"
+            )
+            for data_type in pf.nodes.func._SWITCH_DATA_TYPES
+        ]
+
+        assert observed == expected
+        assert _mode_path(row, "data_type") == ("input_type",)
+    finally:
+        cleanup()
 
 
 def test_color_ramp_hue_uses_nested_mode_paths():
