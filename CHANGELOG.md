@@ -2,6 +2,7 @@
 
 Interface changes:
 
+- importing ProcFunc disables Blender's global undo; `procfunc.ops` disables it again before every operator call in case loading factory settings restores it
 - `texture.image` and `texture.environment` gain the seven ImageUser arguments listed below; all default to Blender's own values, so existing calls are unaffected
 - `pf.nodes.func.rotate_euler` no longer takes `rotation_type`; the AXIS_ANGLE form is the new `rotate_euler_axis_angle(rotation, axis, angle, space)`, with `rotation_type` pinned via the manifest (was one function whose AXIS_ANGLE mode was unusable — it had no axis/angle kwargs and fed the Rotate By default into a socket that mode disables)
 - `shader.subsurface_scattering` split into `subsurface_scattering_burley` / `subsurface_scattering_random_walk` / `subsurface_scattering_random_walk_skin`, each exposing only the sockets its falloff supports (the combined binding fed defaults into disabled sockets)
@@ -29,6 +30,9 @@ Interface changes:
 
 Fixed behavior:
 
+- `control.choice` resolves the selected branch below `RANDOM_CONTROL` and retains its RNG while tracing callable alternatives, so generated code preserves the requested random-control granularity
+- `@node_function` calls expand into their underlying primitives at `PRIMITIVES` without constructing `ProcNode` values inside the trace graph
+- primitive code generation emits integer addition and subtraction, floor division, unary operators, native equality, and `ProcNode` / union type values correctly
 - curve nodes remove points beyond the ones given rather than leaving the node's remaining defaults in place
 - `func.axes_to_rotation` retains its public X/Y defaults while the transpiler emits Blender's native Z/X defaults explicitly, so native nodes rebuild with the same axes
 - `geo.string_to_curves` exposes the `remainder` string output for TRUNCATE overflow and returns `None` for modes where Blender has no such socket
