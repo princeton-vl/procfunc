@@ -851,7 +851,7 @@ def separate_xyz(vector: nt.SocketOrVal[pt.Vector]) -> SeparateXyzResult:
 # ---- MapRange --------------------------------------------------------------
 
 
-TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
+TInterpolationType = Literal["LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"]
 
 
 def map_range(
@@ -872,7 +872,10 @@ def map_range(
 
     if data_type is None:
         data_type = RuntimeResolveDataType(
-            [NodeDataType.FLOAT, NodeDataType.FLOAT_VECTOR],
+            [
+                NodeDataType.FLOAT,
+                # NodeDataType.FLOAT_VECTOR,  # bpy 4.5+; keep the bpy 4.2 surface.
+            ],
             ["From Max", "From Min", "To Max", "To Min", "Value"],
         )
 

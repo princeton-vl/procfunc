@@ -10,7 +10,15 @@ from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
 
-TDomain = Literal["POINT", "EDGE", "FACE", "CORNER", "CURVE", "INSTANCE", "LAYER"]
+TDomain = Literal[
+    "POINT",
+    "EDGE",
+    "FACE",
+    "CORNER",
+    "CURVE",
+    "INSTANCE",
+    # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+]
 
 TAttribute = TypeVar("TAttribute", int, float, bool)
 
@@ -993,7 +1001,14 @@ TDeleteGeometry = TypeVar(
 def delete_geometry(
     geometry: nt.ProcNode[TDeleteGeometry] | None,
     selection: nt.SocketOrVal[bool] = True,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
     mode: Literal["ALL", "EDGE_FACE", "ONLY_FACE"] = "ALL",
 ) -> nt.ProcNode[TDeleteGeometry]:
     """
@@ -3639,7 +3654,14 @@ class SeparateGeometryResult(NamedTuple, Generic[TMeshOrCurve]):
 def separate_geometry(
     geometry: nt.ProcNode[TMeshOrCurve],
     selection: nt.SocketOrVal[bool] = True,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
 ) -> SeparateGeometryResult[TMeshOrCurve]:
     """
     Uses a SeparateGeometry Geometry Node.
@@ -4009,7 +4031,14 @@ def split_to_instances(
     geometry: nt.ProcNode[pt.MeshObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     group_id: nt.SocketOrVal[int] = 0,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
 ) -> SplitToInstancesResult:
     """
     Uses a SplitToInstances Geometry Node.
