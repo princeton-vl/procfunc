@@ -862,6 +862,7 @@ def map_range(
     to_min: nt.SocketOrVal[float] = 0.0,
     clamp: bool = True,
     interpolation_type: TInterpolationType = "LINEAR",
+    steps: nt.SocketOrVal[float] | None = None,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode:
     """
@@ -869,6 +870,9 @@ def map_range(
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/map_range.html
     """
+
+    if steps is not None and interpolation_type != "STEPPED":
+        raise ValueError(f"map_range got {steps=} with {interpolation_type=}")
 
     if data_type is None:
         data_type = RuntimeResolveDataType(
@@ -889,14 +893,20 @@ def map_range(
     if interpolation_type != "LINEAR":
         attrs["interpolation_type"] = interpolation_type
 
+    # Blender enables the Steps socket only for STEPPED; it is not even
+    # reachable by name in the other interpolation modes.
+    inputs: dict[str, object] = {
+        "From Max": from_max,
+        "From Min": from_min,
+        "To Max": to_max,
+        "To Min": to_min,
+        "Value": value,
+    }
+    if interpolation_type == "STEPPED":
+        inputs["Steps"] = 4.0 if steps is None else steps
+
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.MAP_RANGE.value,
-        inputs={
-            "From Max": from_max,
-            "From Min": from_min,
-            "To Max": to_max,
-            "To Min": to_min,
-            "Value": value,
-        },
+        inputs=inputs,
         attrs=attrs,
     )

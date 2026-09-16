@@ -18,6 +18,7 @@ Interface changes:
 - `geo.volume_to_mesh` takes `voxel_amount` or `voxel_size` and derives `resolution_mode` from whichever is given; passing neither keeps the GRID default
 - `geo.string_to_curves` takes `text_box_height` for SCALE_TO_FIT and TRUNCATE overflow and rejects it for OVERFLOW, where Blender disables that socket
 - `math.map_range` spells its stepped interpolation `STEPPED` instead of `STEPPED_LINEAR`, which Blender rejects
+- `math.map_range` takes `steps` for STEPPED interpolation and rejects it in the other modes, where Blender disables that socket (the argument was missing entirely, so no STEPPED node could transpile)
 - `texture.voronoi` and `texture.voronoi_smooth_f1` return `position=None` in 1D, which has no Position socket, and expose `w` in 1D as well as 4D (its 1D W output was unreachable)
 
 Fixed behavior:

@@ -209,6 +209,11 @@ def test_map_range_stepped() -> None:
     shader_eval.assert_value(value, 0.25)
 
 
+def test_map_range_stepped_steps() -> None:
+    node = node_math.map_range(0.3, interpolation_type="STEPPED", steps=1.0)
+    shader_eval.assert_value(shader_eval.render(node), 0.0)
+
+
 def test_vector_add() -> None:
     node = node_math.vector_add((0.1, 0.2, 0.3), (0.2, 0.3, 0.4))
     shader_eval.assert_value(shader_eval.render(node), (0.3, 0.5, 0.7))

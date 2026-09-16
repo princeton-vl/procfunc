@@ -62,3 +62,18 @@ def test_map_range_advertises_and_constructs_bpy42_modes() -> None:
         "runtime_data_types": [pf.nodes.NodeDataType.FLOAT],
         "native_state": ("FLOAT", "STEPPED"),
     }
+
+
+@pf.nodes.node_function
+def _stepped_map_range_steps() -> pf.ProcNode[float]:
+    return math.map_range(0.25, interpolation_type="STEPPED", steps=7.0)
+
+
+def test_map_range_steps_is_wired_only_for_stepped() -> None:
+    graph = pf.nodes.function_to_compute_graph(_stepped_map_range_steps)
+    group = pf.nodes.as_nodegroup(graph, pf.nodes.NodeGroupType.SHADER)
+    native = next(n for n in group.nodes if n.bl_idname == "ShaderNodeMapRange")
+    assert native.inputs["Steps"].default_value == pytest.approx(7.0)
+
+    with pytest.raises(ValueError):
+        math.map_range(0.25, steps=7.0)
