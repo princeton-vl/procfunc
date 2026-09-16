@@ -697,7 +697,9 @@ def test_dilate_erode_negative_distance_shrinks_the_bright_region():
 
 
 def test_glare_fully_mixed_to_the_original_is_a_passthrough():
-    out = composite_render(comp.glare(image=image_node("src", COLOR).image, mix=-1.0))
+    out = composite_render(
+        comp.glare_streaks(image=image_node("src", COLOR).image, mix=-1.0)
+    )
     assert_uniform(out, (0.25, 0.5, 0.75, 1.0))
 
 
@@ -856,16 +858,14 @@ def test_flip_xy_mirrors_both_axes():
 
 def test_scale_identity_leaves_a_step_edge_in_place():
     out = composite_render(
-        comp.scale(image=image_node("src", STEP_X).image, x=1.0, y=1.0)
+        comp.scale_relative(image=image_node("src", STEP_X).image, x=1.0, y=1.0)
     )
     assert out[0, :, 0] == pytest.approx(STEP_X[0, :, 0])
 
 
 def test_scale_relative_double_widens_the_dark_half_past_the_frame():
     out = composite_render(
-        comp.scale(
-            image=image_node("src", STEP_X).image, x=2.0, y=2.0, space="RELATIVE"
-        )
+        comp.scale_relative(image=image_node("src", STEP_X).image, x=2.0, y=2.0)
     )
     assert out[0, 0, 0] == pytest.approx(0.0)
     assert out[0, -1, 0] == pytest.approx(1.0)
@@ -1112,8 +1112,20 @@ def test_rotate_defaults_build_and_render():
     assert_uniform(composite_render(comp.rotate()), (1.0, 1.0, 1.0, 1.0))
 
 
-def test_scale_defaults_build_and_render():
-    assert_uniform(composite_render(comp.scale()), (1.0, 1.0, 1.0, 1.0))
+def test_scale_relative_defaults_build_and_render():
+    assert_uniform(composite_render(comp.scale_relative()), (1.0, 1.0, 1.0, 1.0))
+
+
+def test_scale_absolute_defaults_build_and_render():
+    assert_uniform(composite_render(comp.scale_absolute()), (1.0, 1.0, 1.0, 1.0))
+
+
+def test_scale_render_defaults_build_and_render():
+    assert_uniform(composite_render(comp.scale_render()), (1.0, 1.0, 1.0, 1.0))
+
+
+def test_scale_scene_defaults_build_and_render():
+    assert_uniform(composite_render(comp.scale_scene()), (1.0, 1.0, 1.0, 1.0))
 
 
 def test_filter_defaults_build_and_render():
@@ -1186,8 +1198,24 @@ def test_track_pos_defaults_build_and_render():
     assert_uniform(composite_render(comp.track_pos().x), (0.0, 0.0, 0.0, 1.0))
 
 
-def test_glare_defaults_build_and_render():
-    assert_uniform(composite_render(comp.glare()), (1.0, 1.0, 1.0, 1.0))
+def test_glare_bloom_defaults_build_and_render():
+    assert_uniform(composite_render(comp.glare_bloom()), (1.0, 1.0, 1.0, 1.0))
+
+
+def test_glare_fog_glow_defaults_build_and_render():
+    assert_uniform(composite_render(comp.glare_fog_glow()), (1.0, 1.0, 1.0, 1.0))
+
+
+def test_glare_ghosts_defaults_build_and_render():
+    assert_uniform(composite_render(comp.glare_ghosts()), (1.0, 1.0, 1.0, 1.0))
+
+
+def test_glare_simple_star_defaults_build_and_render():
+    assert_uniform(composite_render(comp.glare_simple_star()), (1.0, 1.0, 1.0, 1.0))
+
+
+def test_glare_streaks_defaults_build_and_render():
+    assert_uniform(composite_render(comp.glare_streaks()), (1.0, 1.0, 1.0, 1.0))
 
 
 def test_lens_distortion_defaults_build_and_render():
