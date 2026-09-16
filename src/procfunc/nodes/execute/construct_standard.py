@@ -143,7 +143,7 @@ def _get_primary_output_socket(
     )
 
 
-def _set_node_attribute(bl_node: bpy.types.Node, k: str, v: Any):
+def set_node_attribute(bl_node: bpy.types.Node, k: str, v: Any):
     if isinstance(v, pt.BlenderAsset):
         v = v.item()
     if not hasattr(bl_node, k):
@@ -315,7 +315,7 @@ def _construct_procnode_standard(
     # data_type / input_type gate which enum values other attrs accept, so set
     # those selectors first
     for k in sorted(attrs, key=lambda k: k not in ("data_type", "input_type")):
-        _set_node_attribute(bl_node, k, attrs[k])
+        set_node_attribute(bl_node, k, attrs[k])
 
     for input_name, input_py in kwargs.items():
         input_result = input_results[input_name]

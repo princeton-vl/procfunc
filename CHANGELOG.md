@@ -48,6 +48,7 @@ Fixed crashes:
 Interface changes:
 
 - per-node definition metadata is recorded only when the context's `record_node_definitions` is set (or `PROCFUNC_RECORD_NODE_DEFINITIONS=1`), so node-instantiation errors carry file/line context only when it is enabled (was always, and the stack walk dominated build time in node-heavy callers)
+- `texture.sky` accepts an optional `vector` input for PREETHAM and HOSEK_WILKIE skies; omitting it preserves Blender's implicit direction
 
 Fixed crashes:
 

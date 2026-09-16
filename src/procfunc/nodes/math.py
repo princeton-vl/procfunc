@@ -898,7 +898,7 @@ def map_range(
 
     # interpolation_type / data_type only exist on ShaderNodeMapRange. The
     # wrapper omits interpolation_type at default so a compositor call with
-    # all defaults doesn't trip _set_node_attribute. RuntimeResolveDataType
+    # all defaults doesn't trip set_node_attribute. RuntimeResolveDataType
     # is dropped at construct time when the target lacks the attr; an
     # explicit NodeDataType in compositor context will reach setattr and
     # raise naturally.

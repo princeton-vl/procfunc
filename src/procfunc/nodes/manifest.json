@@ -1996,8 +1996,7 @@
       "GeometryNodeTree"
     ],
     "data_types": [
-      "float",
-      "Vector"
+      "rgba"
     ],
     "is_contextual": null,
     "is_unittest_specialcase": false,
@@ -3952,11 +3951,7 @@
     "node_group_type": [
       "GeometryNodeTree"
     ],
-    "data_types": [
-      "bool",
-      "int",
-      "float"
-    ],
+    "data_types": null,
     "is_contextual": null,
     "is_unittest_specialcase": false,
     "notes": null
@@ -4769,11 +4764,7 @@
     "node_group_type": [
       "CompositorNodeTree"
     ],
-    "data_types": [
-      "bool",
-      "int",
-      "float"
-    ],
+    "data_types": null,
     "is_contextual": null,
     "is_unittest_specialcase": false,
     "notes": null
