@@ -265,6 +265,26 @@ def test_vector_curve_nondefault_fac_raises_in_compositor():
         _realize(fn, pf.nodes.NodeGroupType.COMPOSITOR)
 
 
+def test_float_curve_vector_handles_and_unclipped_realize():
+    curve = np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])
+
+    def fn():
+        return pf.nodes.math.float_curve(
+            factor=1.0,
+            value=0.5,
+            curve=curve,
+            handle_type="VECTOR",
+            use_clip=False,
+        )
+
+    ng = _realize(fn, pf.nodes.NodeGroupType.SHADER)
+    node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeFloatCurve")
+    assert node.mapping.use_clip is False
+    assert [point.handle_type for point in node.mapping.curves[0].points] == [
+        "VECTOR"
+    ] * 3
+
+
 def test_multiple_outputs_compositor():
     """Test compositor with multiple output nodes."""
     render_layers = pf.nodes.compositor.render_layers()

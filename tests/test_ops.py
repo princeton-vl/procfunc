@@ -5,6 +5,7 @@ import numpy as np
 import pytest
 
 import procfunc as pf
+from procfunc.codegen import codegen
 from procfunc.util.manifest import import_item_iterative
 
 _PRIMITIVE_FUNCS = pf.util.manifest.filter_manifest(
@@ -68,6 +69,8 @@ def test_ops_modifier(func_name: str, arguments: str):
     if "target" in arguments:
         inputs["target"] = pf.ops.primitives.mesh_icosphere()
         target_before = inputs["target"].clone()
+    if "object_offset" in arguments:
+        inputs["object_offset"] = pf.ops.primitives.empty()
 
     obj = func(**inputs)
 
@@ -77,6 +80,117 @@ def test_ops_modifier(func_name: str, arguments: str):
 
     if "target" in arguments_list:
         assert _mesh_equal(target_before, inputs["target"])
+
+
+def test_modifier_bevel_percentage_width() -> None:
+    obj = pf.ops.primitives.mesh_cube(size=2.0)
+
+    pf.ops.modifier.bevel_pct(
+        obj,
+        width_pct=10.0,
+        segments=1,
+    )
+
+    coordinates = np.abs(pf.ops.attr.vertex_positions(obj))
+    assert len(coordinates) == 24
+    np.testing.assert_allclose(np.unique(coordinates), [0.8, 1.0])
+
+
+def test_modifier_array_object_offset() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[1.0, 0.0, 0.0]]),
+    )
+    offset = pf.ops.primitives.empty()
+    pf.ops.object.set_transform(offset, scale=(0.5, 0.5, 0.5))
+
+    pf.ops.modifier.array_object_offset(obj, offset, count=3)
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates[:, 0], [1.0, 0.5, 0.25])
+    np.testing.assert_allclose(coordinates[:, 1:], 0.0)
+
+
+def test_modifier_array_constant_offset() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[0.0, 0.0, 0.0]]),
+    )
+
+    pf.ops.modifier.array(
+        obj,
+        count=3,
+        constant_offset_displace=(0.0, 0.0, 2.0),
+    )
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates[:, :2], 0.0)
+    np.testing.assert_allclose(coordinates[:, 2], [0.0, 2.0, 4.0])
+
+
+def test_modifier_array_relative_offset() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[0.0, 0.0, 0.0], [2.0, 0.0, 0.0]]),
+        edges=np.array([[0, 1]]),
+    )
+
+    pf.ops.modifier.array_relative_offset(
+        obj,
+        count=2,
+        relative_offset_displace=(1.0, 0.0, 0.0),
+    )
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates[:, 0], [0.0, 2.0, 2.0, 4.0])
+    np.testing.assert_allclose(coordinates[:, 1:], 0.0)
+
+
+def _split_modifier_ops() -> pf.MeshObject:
+    obj = pf.ops.primitives.mesh_cube()
+    offset = pf.ops.primitives.empty()
+    pf.ops.modifier.bevel_pct(obj, width_pct=10.0)
+    pf.ops.modifier.array(obj, constant_offset_displace=(2.0, 0.0, 0.0))
+    pf.ops.modifier.array_relative_offset(obj)
+    pf.ops.modifier.array_object_offset(obj, offset)
+    return obj
+
+
+def test_split_modifier_ops_codegen() -> None:
+    graph = pf.trace(_split_modifier_ops)
+    source = codegen.to_python(graph, toplevel_as_maincall=False)
+
+    expected_calls = (
+        "pf.ops.modifier.bevel_pct(",
+        "pf.ops.modifier.array(",
+        "pf.ops.modifier.array_relative_offset(",
+        "pf.ops.modifier.array_object_offset(",
+    )
+    for call in expected_calls:
+        assert call in source
+
+
+def test_modifier_shrinkwrap_project_negative() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[0.0, 0.0, 1.0], [2.0, 0.0, 1.0]]),
+    )
+    target = pf.ops.primitives.mesh_plane(size=2.0)
+
+    pf.ops.modifier.shrinkwrap(
+        obj,
+        target,
+        wrap_method="PROJECT",
+        use_negative_direction=True,
+    )
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates, 0.0)
+
+
+def test_mesh_fill_grid_infers_span() -> None:
+    obj = pf.ops.primitives.mesh_circle(vertices=512)
+
+    pf.ops.mesh.fill_grid(obj)
+
+    assert len(obj.item().data.vertices) == 16641
+    assert len(obj.item().data.polygons) == 16384
 
 
 _MESH_FUNCS_MASKARGS = pf.util.manifest.filter_manifest(

@@ -49,9 +49,9 @@ def special_case_float_curve(
     points = attrs.pop("mapping", None)
 
     handle_type = attrs.pop("handle_type", "AUTO")
-    if handle_type != "AUTO":
+    if handle_type not in {"AUTO", "VECTOR"}:
         raise NotImplementedError(
-            f"handle_type={handle_type!r} is not yet supported, only 'AUTO' is implemented"
+            f"handle_type={handle_type!r} is not yet supported, expected 'AUTO' or 'VECTOR'"
         )
     use_clip = attrs.pop("use_clip", True)
     bl_node.mapping.use_clip = use_clip
@@ -70,6 +70,7 @@ def special_case_float_curve(
     for i, (x, y) in enumerate(points):
         if i < len(curve.points):
             curve.points[i].location = (x, y)
+            curve.points[i].handle_type = handle_type
 
     # Without update(), Blender keeps the default identity LUT and ignores
     # the points we just assigned during geo/shader node evaluation.

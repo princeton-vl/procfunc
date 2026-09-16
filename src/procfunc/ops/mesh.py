@@ -353,8 +353,8 @@ def separate_loose(
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def fill_grid(
     mutates_obj: t.MeshObject,
-    edge_mask: np.ndarray,
-    span: int = 1,
+    edge_mask: np.ndarray | None = None,
+    span: int | None = None,
     offset: int = 0,
     use_interp_simple: bool = False,
 ) -> None:
@@ -366,13 +366,14 @@ def fill_grid(
     Args:
         edge_mask: Boolean array selecting edge loops to fill between.
     """
+    kwargs = {"offset": offset, "use_interp_simple": use_interp_simple}
+    if span is not None:
+        kwargs["span"] = span
     execute_mesh_op(
         bpy.ops.mesh.fill_grid,
         mutates_obj,
         edge_mask=edge_mask,
-        span=span,
-        offset=offset,
-        use_interp_simple=use_interp_simple,
+        **kwargs,
     )
 
 
