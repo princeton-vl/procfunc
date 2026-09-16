@@ -82,7 +82,7 @@ def test_separate_hsl_returns_hue_saturation_lightness() -> None:
 
 
 def test_blackbody_has_warm_daylight_channels() -> None:
-    value = shader_eval.render(color.blackbody(6500.0))
+    value = shader_eval.probe(shader_eval.render(color.blackbody(6500.0)))
     assert 0.95 <= value[0] <= 1.05
     assert 0.9 <= value[1] <= 1.0
     assert 0.9 <= value[2] <= 1.05

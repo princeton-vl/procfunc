@@ -16,13 +16,13 @@ texture = pf.nodes.texture
 
 
 def test_checker_fac() -> None:
-    vector = pf.nodes.math.combine_xyz(0.1, 0.1, 0.1)
+    vector = shader_eval.constant_vector(0.1, 0.1, 0.1)
     value = shader_eval.render(texture.checker(vector, scale=1.0).fac)
     shader_eval.assert_value(value, 0.0)
 
 
 def test_checker_color() -> None:
-    vector = pf.nodes.math.combine_xyz(0.1, 0.1, 0.1)
+    vector = shader_eval.constant_vector(0.1, 0.1, 0.1)
     node = texture.checker(
         vector, color1=pf.Color((1, 0, 0)), color2=pf.Color((0, 1, 0)), scale=1.0
     )
@@ -30,19 +30,19 @@ def test_checker_color() -> None:
 
 
 def test_gradient_fac() -> None:
-    vector = pf.nodes.math.combine_xyz(0.25, 0.5, 0.75)
+    vector = shader_eval.constant_vector(0.25, 0.5, 0.75)
     value = shader_eval.render(texture.gradient(vector).fac)
     shader_eval.assert_value(value, 0.25)
 
 
 def test_gradient_color() -> None:
-    vector = pf.nodes.math.combine_xyz(0.25, 0.5, 0.75)
+    vector = shader_eval.constant_vector(0.25, 0.5, 0.75)
     value = shader_eval.render(texture.gradient(vector).color)
     shader_eval.assert_value(value, 0.25)
 
 
 def test_noise_3d_origin() -> None:
-    vector = pf.nodes.math.combine_xyz(0, 0, 0)
+    vector = shader_eval.constant_vector(0, 0, 0)
     value = shader_eval.render(texture.noise(vector, scale=1.0, detail=0.0).fac)
     shader_eval.assert_value(value, 0.5)
 
@@ -53,7 +53,7 @@ def test_noise_1d_origin() -> None:
 
 
 def test_wave_origin() -> None:
-    vector = pf.nodes.math.combine_xyz(0, 0, 0)
+    vector = shader_eval.constant_vector(0, 0, 0)
     value = shader_eval.render(texture.wave(vector, scale=1.0, detail=0.0).fac)
     shader_eval.assert_value(value, 0.0)
 

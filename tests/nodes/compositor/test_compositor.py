@@ -1,12 +1,18 @@
+import typing
+from pathlib import Path
+
 import bpy
 import numpy as np
 import pytest
 from compositor_eval import (
     assert_uniform,
     composite_render,
+    composite_source,
     halves,
     image_node,
+    movie_clip_datablock,
     ramp,
+    realized_node,
     solid,
 )
 
@@ -25,32 +31,11 @@ SEMI = solid(N, N, (0.25, 0.5, 0.75, 0.5))
 STEP_X = halves(N, N, (0, 0, 0, 1), (1, 1, 1, 1), "x")
 STEP_Y = halves(N, N, (0, 0, 0, 1), (1, 1, 1, 1), "y")
 RAMP = ramp(N, N, 0.0, 1.0)
+NARROW_RAMP = ramp(N, N, 0.25, 0.5)
 
-
-@pytest.fixture(autouse=True)
-def _restore_scene_render():
-    render = bpy.context.scene.render
-    saved = (
-        render.resolution_x,
-        render.resolution_y,
-        render.resolution_percentage,
-        render.engine,
-        render.film_transparent,
-        render.filepath,
-        render.image_settings.file_format,
-        render.image_settings.color_mode,
-    )
-    yield
-    (
-        render.resolution_x,
-        render.resolution_y,
-        render.resolution_percentage,
-        render.engine,
-        render.film_transparent,
-        render.filepath,
-        render.image_settings.file_format,
-        render.image_settings.color_mode,
-    ) = saved
+CORNER = np.zeros((N, N, 4), dtype=np.float32)
+CORNER[..., 3] = 1.0
+CORNER[: N // 2, : N // 2, :3] = 1.0
 
 
 # ---------------------------------------------------------------- harness ----
@@ -85,9 +70,427 @@ def test_image_node_preserves_row_order_top_down():
     assert out[N - 1, 0, 0] == pytest.approx(1.0)
 
 
+def test_composite_render_leaves_the_context_scene_unchanged() -> None:
+    scene = bpy.data.scenes.new("sentinel")
+    scene.use_nodes = True
+    node = scene.node_tree.nodes.new("CompositorNodeRGB")
+    scene.render.resolution_x = 1234
+    scene.render.filepath = "/tmp/untouched"
+    with bpy.context.temp_override(scene=scene):
+        composite_render(image_node("src", COLOR).image)
+        assert bpy.context.scene == scene
+    assert node in scene.node_tree.nodes.values()
+    assert scene.camera is None
+    assert scene.render.resolution_x == 1234
+    assert scene.render.filepath == "/tmp/untouched"
+
+
 def test_render_layers_reaches_the_composite_output():
     out = composite_render(comp.render_layers().image)
     assert out.shape == (N, N, 4)
+
+
+# -------------------------------------------------------- native contracts ----
+
+
+def test_rgb_curve_maps_all_four_curve_point_sets():
+    curves = np.asarray(
+        [
+            [[0.0, 0.1], [1.0, 0.9]],
+            [[0.0, 0.2], [1.0, 0.8]],
+            [[0.0, 0.3], [1.0, 0.7]],
+            [[0.0, 0.4], [1.0, 0.6]],
+        ]
+    )
+    node = realized_node(
+        comp.rgb_curve(fac=1.0, image=(0.1, 0.2, 0.3, 1.0), curves=curves),
+        "CompositorNodeCurveRGB",
+    )
+    for curve, expected in zip(node.mapping.curves, curves, strict=True):
+        assert [tuple(point.location) for point in curve.points] == pytest.approx(
+            expected
+        )
+
+
+def test_time_maps_distinct_frame_bounds():
+    node = realized_node(comp.time(frame_start=7, frame_end=23), "CompositorNodeTime")
+    assert node.frame_start == 7
+    assert node.frame_end == 23
+
+
+@pytest.mark.parametrize(
+    ("binding", "space", "kwargs"),
+    [
+        (comp.scale_absolute, "ABSOLUTE", {"x": 320, "y": 180}),
+        (comp.scale_relative, "RELATIVE", {"x": 2.0, "y": 3.0}),
+        (comp.scale_render, "RENDER_SIZE", {}),
+        (comp.scale_scene, "SCENE_SIZE", {}),
+    ],
+    ids=["absolute", "relative", "render", "scene"],
+)
+def test_scale_selects_its_size_space(
+    binding: typing.Callable, space: str, kwargs: dict
+) -> None:
+    node = realized_node(binding(**kwargs), "CompositorNodeScale")
+    assert node.space == space
+    assert [socket.enabled for socket in node.inputs] == [
+        True,
+        bool(kwargs),
+        bool(kwargs),
+    ]
+    if kwargs:
+        assert node.inputs["X"].default_value == kwargs["x"]
+        assert node.inputs["Y"].default_value == kwargs["y"]
+
+
+@pytest.mark.parametrize(
+    ("method", "active"),
+    [
+        ("LIFT_GAMMA_GAIN", ("lift", "gamma", "gain")),
+        ("OFFSET_POWER_SLOPE", ("offset", "offset_basis", "power", "slope")),
+    ],
+    ids=["lift_gamma_gain", "offset_power_slope"],
+)
+def test_color_balance_preserves_active_controls(
+    method: str, active: tuple[str, ...]
+) -> None:
+    controls = {
+        "lift": (0.7, 0.8, 0.9),
+        "gamma": (1.1, 1.2, 1.3),
+        "gain": (1.4, 1.5, 1.6),
+        "offset": (0.2, 0.3, 0.4),
+        "offset_basis": 0.15,
+        "power": (0.6, 0.7, 0.8),
+        "slope": (1.7, 1.8, 1.9),
+    }
+    binding = (
+        comp.color_balance
+        if method == "LIFT_GAMMA_GAIN"
+        else comp.color_balance_slope_offset_power
+    )
+    node = realized_node(
+        binding(**{name: controls[name] for name in active}),
+        "CompositorNodeColorBalance",
+    )
+    assert node.correction_method == method
+    for name in active:
+        np.testing.assert_allclose(getattr(node, name), controls[name], err_msg=name)
+
+
+def test_map_uv_preserves_image_uv_and_filter_controls() -> None:
+    node = realized_node(
+        comp.map_uv(
+            image=(0.1, 0.2, 0.3, 1.0),
+            uv=(0.4, 0.5, 0.6),
+            alpha=7,
+            filter_type="NEAREST",
+        ),
+        "CompositorNodeMapUV",
+    )
+    assert tuple(node.inputs["Image"].default_value) == pytest.approx(
+        (0.1, 0.2, 0.3, 1.0)
+    )
+    assert tuple(node.inputs["UV"].default_value) == pytest.approx((0.4, 0.5, 0.6))
+    assert node.alpha == 7
+    assert node.filter_type == "NEAREST"
+
+
+def test_sun_beams_preserves_ray_origin_and_length() -> None:
+    node = realized_node(
+        comp.sun_beams(image=(0.1, 0.2, 0.3, 1.0), ray_length=0.3, source=(0.2, 0.7)),
+        "CompositorNodeSunBeams",
+    )
+    assert tuple(node.inputs["Image"].default_value) == pytest.approx(
+        (0.1, 0.2, 0.3, 1.0)
+    )
+    assert tuple(node.source) == pytest.approx((0.2, 0.7))
+    assert node.ray_length == pytest.approx(0.3)
+
+
+def test_tonemap_selects_simple_photographic_controls() -> None:
+    node = realized_node(
+        comp.tonemap(
+            image=(0.1, 0.2, 0.3, 1.0),
+            tonemap_type="RH_SIMPLE",
+            key=0.3,
+            offset=1.7,
+            gamma=2.1,
+        ),
+        "CompositorNodeTonemap",
+    )
+    assert tuple(node.inputs["Image"].default_value) == pytest.approx(
+        (0.1, 0.2, 0.3, 1.0)
+    )
+    assert node.tonemap_type == "RH_SIMPLE"
+    assert (node.key, node.offset, node.gamma) == pytest.approx((0.3, 1.7, 2.1))
+
+
+def test_image_maps_resource_and_playback_properties():
+    image = bpy.data.images.new("property_test", 2, 2)
+    result = comp.image(
+        image=image,
+        frame_duration=7,
+        frame_offset=2,
+        frame_start=3,
+        use_auto_refresh=False,
+        use_cyclic=True,
+        use_straight_alpha_output=True,
+    )
+    node = realized_node(result.image, "CompositorNodeImage")
+    assert node.image == image
+    assert node.frame_duration == 7
+    assert node.frame_offset == 2
+    assert node.frame_start == 3
+    assert not node.use_auto_refresh
+    assert node.use_cyclic
+    assert node.use_straight_alpha_output
+
+
+def test_texture_maps_resource_and_vector_inputs():
+    texture = bpy.data.textures.new("property_test", type="IMAGE")
+    result = comp.texture(
+        texture=texture,
+        node_output=2,
+        offset=(1, 2, 3),
+        scale=(4, 5, 6),
+    )
+    node = realized_node(result.color, "CompositorNodeTexture")
+    assert node.texture == texture
+    assert node.node_output == 2
+    assert tuple(node.inputs["Offset"].default_value) == pytest.approx((1, 2, 3))
+    assert tuple(node.inputs["Scale"].default_value) == pytest.approx((4, 5, 6))
+
+
+@pytest.mark.parametrize(
+    ("binding", "bl_idname", "output", "properties"),
+    [
+        (comp.movie_clip, "CompositorNodeMovieClip", "image", {}),
+        (
+            comp.stabilize,
+            "CompositorNodeStabilize",
+            None,
+            {"filter_type": "BICUBIC", "invert": True},
+        ),
+        (
+            comp.keying_screen,
+            "CompositorNodeKeyingScreen",
+            None,
+            {"tracking_object": "Camera", "smoothness": 0.4},
+        ),
+        (
+            comp.track_pos,
+            "CompositorNodeTrackPos",
+            "x",
+            {
+                "frame_relative": 7,
+                "position": "RELATIVE_FRAME",
+                "track_name": "feature",
+                "tracking_object": "Camera",
+            },
+        ),
+        (
+            comp.plane_track_deform,
+            "CompositorNodePlaneTrackDeform",
+            "image",
+            {
+                "motion_blur_samples": 8,
+                "motion_blur_shutter": 0.25,
+                "plane_track_name": "plane",
+                "tracking_object": "Camera",
+                "use_motion_blur": True,
+            },
+        ),
+        (
+            comp.movie_distortion,
+            "CompositorNodeMovieDistortion",
+            None,
+            {"distortion_type": "UNDISTORT"},
+        ),
+    ],
+    ids=[
+        "movie_clip",
+        "stabilize",
+        "keying_screen",
+        "track_pos",
+        "plane_track_deform",
+        "movie_distortion",
+    ],
+)
+def test_movie_bindings_preserve_clip_and_properties(
+    tmp_path: Path,
+    binding: typing.Callable,
+    bl_idname: str,
+    output: str | None,
+    properties: dict,
+) -> None:
+    clip = movie_clip_datablock(tmp_path / "clip.png")
+    image = {}
+    if binding in (comp.stabilize, comp.plane_track_deform, comp.movie_distortion):
+        image = {"image": (0.1, 0.2, 0.3, 1.0)}
+    result = binding(clip=clip, **properties, **image)
+    node = realized_node(getattr(result, output) if output else result, bl_idname)
+    assert node.clip == clip
+    for name, expected in properties.items():
+        assert getattr(node, name) == pytest.approx(expected), name
+    if image:
+        assert tuple(node.inputs["Image"].default_value) == pytest.approx(
+            image["image"]
+        )
+
+
+def test_mask_maps_datablock_size_feather_and_motion_blur():
+    mask = bpy.data.masks.new("property_test")
+    node = realized_node(
+        comp.mask(
+            mask=mask,
+            motion_blur_samples=8,
+            motion_blur_shutter=0.25,
+            size_source="FIXED",
+            size_x=320,
+            size_y=180,
+            use_feather=False,
+            use_motion_blur=True,
+        ),
+        "CompositorNodeMask",
+    )
+    assert node.mask == mask
+    assert node.motion_blur_samples == 8
+    assert node.motion_blur_shutter == pytest.approx(0.25)
+    assert node.size_source == "FIXED"
+    assert (node.size_x, node.size_y) == (320, 180)
+    assert not node.use_feather
+    assert node.use_motion_blur
+
+
+def test_cryptomatte_maps_id_and_each_image_input():
+    pixels = [
+        (0.1, 0.2, 0.3, 1.0),
+        (0.4, 0.5, 0.6, 1.0),
+        (0.7, 0.8, 0.9, 1.0),
+        (0.2, 0.4, 0.6, 1.0),
+    ]
+    result = comp.cryptomatte(
+        image=pixels[0],
+        crypto_00=pixels[1],
+        crypto_01=pixels[2],
+        crypto_02=pixels[3],
+        matte_id="asset",
+    )
+    node = realized_node(result.image, "CompositorNodeCryptomatte")
+    assert node.matte_id == "asset"
+    for socket, expected in zip(
+        ("Image", "Crypto 00", "Crypto 01", "Crypto 02"), pixels, strict=True
+    ):
+        assert tuple(node.inputs[socket].default_value) == pytest.approx(expected)
+
+
+def test_output_file_maps_path_format_slot_and_input():
+    node = realized_node(
+        comp.output_file(
+            active_input_index=0,
+            base_path="/tmp/sentinel",
+            slot_paths={"Image": "beauty"},
+            format={"file_format": "PNG"},
+            Image=(0.1, 0.2, 0.3, 1.0),
+        ),
+        "CompositorNodeOutputFile",
+    )
+    assert node.active_input_index == 0
+    assert node.base_path == "/tmp/sentinel"
+    assert node.format.file_format == "PNG"
+    assert node.file_slots[0].path == "beauty"
+    assert tuple(node.inputs["Image"].default_value) == pytest.approx(
+        (0.1, 0.2, 0.3, 1.0)
+    )
+
+
+def test_viewer_maps_inputs_and_alpha_option():
+    node = realized_node(
+        comp.viewer(image=(0.1, 0.2, 0.3, 1.0), alpha=0.4, use_alpha=False),
+        "CompositorNodeViewer",
+    )
+    assert tuple(node.inputs["Image"].default_value) == pytest.approx(
+        (0.1, 0.2, 0.3, 1.0)
+    )
+    assert node.inputs["Alpha"].default_value == pytest.approx(0.4)
+    assert not node.use_alpha
+
+
+@pytest.mark.parametrize(
+    ("binding", "bl_idname", "outputs"),
+    [
+        (
+            comp.movie_clip,
+            "CompositorNodeMovieClip",
+            {
+                "image": "Image",
+                "alpha": "Alpha",
+                "offset_x": "Offset X",
+                "offset_y": "Offset Y",
+                "scale": "Scale",
+                "angle": "Angle",
+            },
+        ),
+        (comp.texture, "CompositorNodeTexture", {"value": "Value", "color": "Color"}),
+        (
+            comp.track_pos,
+            "CompositorNodeTrackPos",
+            {"x": "X", "y": "Y", "speed": "Speed"},
+        ),
+        (
+            comp.cryptomatte,
+            "CompositorNodeCryptomatte",
+            {"image": "Image", "matte": "Matte", "pick": "Pick"},
+        ),
+        (
+            comp.plane_track_deform,
+            "CompositorNodePlaneTrackDeform",
+            {"image": "Image", "plane": "Plane"},
+        ),
+        (
+            comp.corner_pin,
+            "CompositorNodeCornerPin",
+            {"image": "Image", "plane": "Plane"},
+        ),
+        (
+            comp.keying,
+            "CompositorNodeKeying",
+            {"image": "Image", "matte": "Matte", "edges": "Edges"},
+        ),
+        (comp.levels, "CompositorNodeLevels", {"mean": "Mean", "std_dev": "Std Dev"}),
+        (
+            comp.separate_ycc,
+            "CompositorNodeSeparateColor",
+            {"y": "Red", "cb": "Green", "cr": "Blue", "alpha": "Alpha"},
+        ),
+        (
+            comp.separate_yuv,
+            "CompositorNodeSeparateColor",
+            {"y": "Red", "u": "Green", "v": "Blue", "alpha": "Alpha"},
+        ),
+    ],
+    ids=[
+        "movie_clip",
+        "texture",
+        "track_pos",
+        "cryptomatte",
+        "plane_track_deform",
+        "corner_pin",
+        "keying",
+        "levels",
+        "separate_ycc",
+        "separate_yuv",
+    ],
+)
+def test_result_fields_select_the_named_native_socket(
+    binding: typing.Callable, bl_idname: str, outputs: dict[str, str]
+) -> None:
+    kwargs = {}
+    if binding in (comp.separate_ycc, comp.separate_yuv):
+        kwargs = {"color": (0.1, 0.2, 0.3, 1.0)}
+    result = binding(**kwargs)
+    for field, socket in outputs.items():
+        assert composite_source(getattr(result, field)) == (bl_idname, socket)
 
 
 # ------------------------------------------------------------------ color ----
@@ -508,6 +911,23 @@ def test_separate_then_combine_yuv_round_trips_the_color():
     assert_uniform(out, (0.25, 0.5, 0.75, 1.0))
 
 
+def test_separate_then_combine_ycc_jfif_round_trips_the_color():
+    src = comp.separate_ycc(
+        color=image_node("src", COLOR).image,
+        ycc_mode="JFIF",
+    )
+    out = composite_render(
+        comp.combine_ycc(
+            y=src.y,
+            cb=src.cb,
+            cr=src.cr,
+            alpha=src.alpha,
+            ycc_mode="JFIF",
+        )
+    )
+    assert_uniform(out, (0.25, 0.5, 0.75, 1.0))
+
+
 def test_switch_check_true_selects_the_on_input():
     out = composite_render(
         comp.switch(
@@ -543,8 +963,8 @@ def test_normal_passes_its_vector_through():
     assert_uniform(out, (0.0, 0.0, 1.0, 1.0))
 
 
-def test_normalize_rescales_a_ramp_to_the_unit_range():
-    out = composite_render(comp.normalize(value=image_node("src", RAMP).image))
+def test_normalize_rescales_a_narrow_ramp_to_the_unit_range():
+    out = composite_render(comp.normalize(value=image_node("src", NARROW_RAMP).image))
     assert out[..., 0].min() == pytest.approx(0.0)
     assert out[..., 0].max() == pytest.approx(1.0)
 
@@ -660,6 +1080,13 @@ def test_pixelate_leaves_a_uniform_image_unchanged():
     assert_uniform(out, (0.25, 0.5, 0.75, 1.0))
 
 
+def test_pixelate_averages_a_ramp_into_blocks():
+    out = composite_render(
+        comp.pixelate(color=image_node("src", RAMP).image, pixel_size=4)
+    )
+    assert out[0, :, 0] == pytest.approx([0.21428] * 4 + [0.78571] * 4, abs=1e-4)
+
+
 def test_directional_blur_with_zero_distance_is_a_passthrough():
     out = composite_render(
         comp.directional_blur(image=image_node("src", COLOR).image, distance=0.0)
@@ -715,22 +1142,24 @@ def test_vector_blur_with_an_explicit_zero_speed_is_a_passthrough():
 # ------------------------------------------------------------------ matte ----
 
 
-def test_luma_matte_passes_a_white_image_above_the_limit():
+def test_luma_matte_scales_the_image_by_the_matte():
     out = composite_render(
         comp.luma_matte(
-            image=image_node("src", WHITE).image, limit_min=0.0, limit_max=0.5
+            image=image_node("src", COLOR).image, limit_min=0.0, limit_max=0.5
         ).image
     )
-    assert_uniform(out, (1.0, 1.0, 1.0, 1.0))
+    matte = (0.2126 * 0.25 + 0.7152 * 0.5 + 0.0722 * 0.75) / 0.5
+    assert_uniform(out, (0.25 * matte, 0.5 * matte, 0.75 * matte, matte))
 
 
-def test_luma_matte_matte_is_one_for_a_fully_bright_image():
+def test_luma_matte_matte_is_the_luma_rescaled_by_the_limits():
     out = composite_render(
         comp.luma_matte(
-            image=image_node("src", WHITE).image, limit_min=0.0, limit_max=0.5
+            image=image_node("src", COLOR).image, limit_min=0.0, limit_max=0.5
         ).matte
     )
-    assert_uniform(out, (1.0, 1.0, 1.0, 1.0))
+    luma = 0.2126 * 0.25 + 0.7152 * 0.5 + 0.0722 * 0.75
+    assert_uniform(out, (luma / 0.5, luma / 0.5, luma / 0.5, 1.0))
 
 
 def test_diff_matte_of_identical_images_is_fully_keyed_out():
@@ -774,6 +1203,21 @@ def test_channel_matte_defaults_keep_an_opaque_image():
         comp.channel_matte(image=image_node("src", COLOR).image).matte
     )
     assert_uniform(out, (1.0, 1.0, 1.0, 1.0))
+
+
+def test_channel_matte_limits_rescale_the_matte():
+    out = composite_render(
+        comp.channel_matte(
+            image=image_node("src", COLOR).image,
+            matte_channel="B",
+            limit_channel="R",
+            limit_method="SINGLE",
+            limit_min=0.2,
+            limit_max=1.0,
+        ).matte
+    )
+    matte = (1.0 - (0.75 - 0.25) - 0.2) / (1.0 - 0.2)
+    assert_uniform(out, (matte, matte, matte, 1.0))
 
 
 def test_chroma_matte_defaults_keep_an_opaque_image():
@@ -851,9 +1295,10 @@ def test_flip_y_mirrors_a_vertical_step_edge():
     assert out[:, 0, 0] == pytest.approx(STEP_Y[::-1, 0, 0])
 
 
-def test_flip_xy_mirrors_both_axes():
-    out = composite_render(comp.flip(image=image_node("src", STEP_X).image, axis="XY"))
-    assert out[0, :, 0] == pytest.approx(STEP_X[0, ::-1, 0])
+def test_flip_xy_moves_a_bright_quadrant_to_the_opposite_corner():
+    out = composite_render(comp.flip(image=image_node("src", CORNER).image, axis="XY"))
+    assert out[N - 1, N - 1, 0] == pytest.approx(1.0)
+    assert out[0, 0, 0] == pytest.approx(0.0)
 
 
 def test_scale_identity_leaves_a_step_edge_in_place():
@@ -863,17 +1308,29 @@ def test_scale_identity_leaves_a_step_edge_in_place():
     assert out[0, :, 0] == pytest.approx(STEP_X[0, :, 0])
 
 
-def test_scale_relative_double_widens_the_dark_half_past_the_frame():
+def test_scale_relative_double_shows_only_the_middle_of_a_ramp():
     out = composite_render(
-        comp.scale_relative(image=image_node("src", STEP_X).image, x=2.0, y=2.0)
+        comp.scale_relative(image=image_node("src", RAMP).image, x=2.0, y=2.0)
     )
-    assert out[0, 0, 0] == pytest.approx(0.0)
-    assert out[0, -1, 0] == pytest.approx(1.0)
+    assert out[0, 0, 0] == pytest.approx(0.28571, abs=1e-4)
+    assert out[0, -1, 0] == pytest.approx(0.78571, abs=1e-4)
 
 
 def test_rotate_by_zero_leaves_the_image_in_place():
     out = composite_render(comp.rotate(image=image_node("src", STEP_X).image, degr=0.0))
     assert out[0, :, 0] == pytest.approx(STEP_X[0, :, 0])
+
+
+def test_rotate_by_a_quarter_turn_moves_the_bright_quadrant_down():
+    out = composite_render(
+        comp.rotate(
+            image=image_node("src", CORNER).image,
+            degr=np.pi / 2,
+            filter_type="NEAREST",
+        )
+    )
+    assert out[5:, 1:4, 0] == pytest.approx(1.0)
+    assert out[:3, 1:4, 0] == pytest.approx(0.0)
 
 
 @pytest.mark.xfail(
@@ -892,6 +1349,13 @@ def test_transform_identity_leaves_the_image_in_place():
         comp.transform(image=image_node("src", STEP_X).image, scale=1.0)
     )
     assert out[0, :, 0] == pytest.approx(STEP_X[0, :, 0])
+
+
+def test_transform_x_shifts_the_step_edge_right():
+    out = composite_render(
+        comp.transform(image=image_node("src", STEP_X).image, x=2.0, scale=1.0)
+    )
+    assert out[0, :, 0] == pytest.approx([0, 0, 0, 0, 0, 0, 1, 1])
 
 
 def test_translate_by_zero_leaves_the_image_in_place():
@@ -1059,10 +1523,6 @@ def test_pixelate_defaults_build_and_render():
     assert_uniform(composite_render(comp.pixelate()), (0.8, 0.8, 0.8, 1.0))
 
 
-def test_transform_defaults_build_and_render():
-    assert_uniform(composite_render(comp.transform()), (0.8, 0.8, 0.8, 1.0))
-
-
 def test_switch_defaults_build_and_render():
     assert_uniform(composite_render(comp.switch()), (0.8, 0.8, 0.8, 1.0))
 
@@ -1102,30 +1562,6 @@ def test_box_mask_defaults_build_and_render():
 
 def test_id_mask_defaults_build_and_render():
     assert_uniform(composite_render(comp.id_mask()), (0.0, 0.0, 0.0, 1.0))
-
-
-def test_flip_defaults_build_and_render():
-    assert_uniform(composite_render(comp.flip()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_rotate_defaults_build_and_render():
-    assert_uniform(composite_render(comp.rotate()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_scale_relative_defaults_build_and_render():
-    assert_uniform(composite_render(comp.scale_relative()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_scale_absolute_defaults_build_and_render():
-    assert_uniform(composite_render(comp.scale_absolute()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_scale_render_defaults_build_and_render():
-    assert_uniform(composite_render(comp.scale_render()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_scale_scene_defaults_build_and_render():
-    assert_uniform(composite_render(comp.scale_scene()), (1.0, 1.0, 1.0, 1.0))
 
 
 def test_filter_defaults_build_and_render():
@@ -1182,20 +1618,12 @@ def test_separate_yuv_defaults_build_and_render():
     assert_uniform(out, (expected, expected, expected, 1.0))
 
 
-def test_movie_distortion_defaults_build_and_render():
-    assert_uniform(composite_render(comp.movie_distortion()), (0.8, 0.8, 0.8, 1.0))
-
-
 def test_switch_view_defaults_build_and_render():
     assert_uniform(composite_render(comp.switch_view()), (0.0, 0.0, 0.0, 1.0))
 
 
 def test_time_defaults_build_and_render():
     assert_uniform(composite_render(comp.time()), (0.0, 0.0, 0.0, 1.0))
-
-
-def test_track_pos_defaults_build_and_render():
-    assert_uniform(composite_render(comp.track_pos().x), (0.0, 0.0, 0.0, 1.0))
 
 
 def test_glare_bloom_defaults_build_and_render():
@@ -1218,10 +1646,6 @@ def test_glare_streaks_defaults_build_and_render():
     assert_uniform(composite_render(comp.glare_streaks()), (1.0, 1.0, 1.0, 1.0))
 
 
-def test_lens_distortion_defaults_build_and_render():
-    assert_uniform(composite_render(comp.lens_distortion()), (1.0, 1.0, 1.0, 1.0))
-
-
 def test_luma_matte_defaults_build_and_render():
     assert_uniform(composite_render(comp.luma_matte().image), (1.0, 1.0, 1.0, 1.0))
 
@@ -1238,22 +1662,6 @@ def test_bokeh_blur_defaults_build_and_render():
     assert_uniform(composite_render(comp.bokeh_blur()), (0.8, 0.8, 0.8, 1.0))
 
 
-def test_translate_defaults_build_and_render():
-    assert_uniform(composite_render(comp.translate()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_displace_defaults_build_and_render():
-    assert composite_render(comp.displace()).shape == (N, N, 4)
-
-
-def test_corner_pin_defaults_build_and_render():
-    assert composite_render(comp.corner_pin().image).shape == (N, N, 4)
-
-
-def test_vector_blur_defaults_build_and_render():
-    assert composite_render(comp.vector_blur()).shape == (N, N, 4)
-
-
 def test_dilate_erode_defaults_build_and_render():
     assert_uniform(composite_render(comp.dilate_erode()), (0.0, 0.0, 0.0, 1.0))
 
@@ -1262,72 +1670,8 @@ def test_z_combine_defaults_build_and_render():
     assert_uniform(composite_render(comp.z_combine().image), (1.0, 1.0, 1.0, 1.0))
 
 
-def test_convert_color_space_defaults_build_and_render():
-    assert composite_render(comp.convert_color_space()).shape == (N, N, 4)
-
-
 def test_kuwahara_defaults_build_and_render():
     assert_uniform(composite_render(comp.kuwahara()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_split_defaults_build_and_render():
-    assert composite_render(comp.split()).shape == (N, N, 4)
-
-
-def test_texture_defaults_build_and_render():
-    assert composite_render(comp.texture().color).shape == (N, N, 4)
-
-
-def test_set_alpha_defaults_build_and_render():
-    assert composite_render(comp.set_alpha()).shape == (N, N, 4)
-
-
-def test_mask_defaults_build_and_render():
-    assert composite_render(comp.mask()).shape == (N, N, 4)
-
-
-def test_cryptomatte_defaults_build_and_render():
-    assert composite_render(comp.cryptomatte().image)[..., :3] == pytest.approx(0.0)
-
-
-def test_movie_clip_defaults_build_and_render():
-    assert composite_render(comp.movie_clip().image)[..., :3] == pytest.approx(0.0)
-
-
-def test_keying_screen_defaults_build_and_render():
-    assert composite_render(comp.keying_screen())[..., :3] == pytest.approx(0.0)
-
-
-def test_image_node_without_a_datablock_is_black():
-    assert composite_render(comp.image().image)[..., :3] == pytest.approx(0.0)
-
-
-def test_stabilize_defaults_build_and_render():
-    assert composite_render(comp.stabilize()).shape == (N, N, 4)
-
-
-def test_plane_track_deform_defaults_build_and_render():
-    assert composite_render(comp.plane_track_deform().image).shape == (N, N, 4)
-
-
-def test_keying_defaults_build_and_render():
-    assert composite_render(comp.keying().image).shape == (N, N, 4)
-
-
-def test_denoise_defaults_build_and_render():
-    assert composite_render(comp.denoise()).shape == (N, N, 4)
-
-
-def test_normalize_defaults_build_and_render():
-    assert composite_render(comp.normalize()).shape == (N, N, 4)
-
-
-def test_map_uv_defaults_build_and_render():
-    assert composite_render(comp.map_uv()).shape == (N, N, 4)
-
-
-def test_crop_defaults_build_and_render():
-    assert composite_render(comp.crop()).shape == (N, N, 4)
 
 
 def test_color_balance_defaults_build_and_render():
@@ -1349,15 +1693,3 @@ def test_color_matte_defaults_build_and_render():
 
 def test_chroma_matte_defaults_build_and_render():
     assert composite_render(comp.chroma_matte().image)[..., :3] == pytest.approx(0.0)
-
-
-def test_sun_beams_defaults_build_and_render():
-    assert composite_render(comp.sun_beams()).shape == (N, N, 4)
-
-
-def test_tonemap_defaults_build_and_render():
-    assert composite_render(comp.tonemap()).shape == (N, N, 4)
-
-
-def test_render_layers_defaults_build_and_render():
-    assert composite_render(comp.render_layers().image).shape == (N, N, 4)

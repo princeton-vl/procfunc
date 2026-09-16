@@ -13,6 +13,7 @@ axis-sensitive nodes such as ``flip`` and ``translate`` keep their meaning.
 """
 
 import tempfile
+import typing
 from pathlib import Path
 
 import bpy
@@ -67,28 +68,33 @@ def image_node(name: str, arr: np.ndarray):
     return pf.nodes.compositor.image(image=image_datablock(name, arr))
 
 
-def ensure_camera() -> None:
-    scene = bpy.context.scene
-    if scene.camera is not None:
-        return
+def movie_clip_datablock(path: Path) -> bpy.types.MovieClip:
+    frame = bpy.data.images.new(path.stem, 2, 2, alpha=True)
+    frame.filepath_raw = str(path)
+    frame.file_format = "PNG"
+    frame.save()
+    return bpy.data.movieclips.load(str(path))
+
+
+def ensure_camera(scene: bpy.types.Scene) -> None:
     data = bpy.data.cameras.new("compositor_eval")
     camera = bpy.data.objects.new("compositor_eval", data)
     scene.collection.objects.link(camera)
     scene.camera = camera
 
 
-def composite_render(color, size: tuple = (8, 8), alpha=None) -> np.ndarray:
-    """Render `color` through the scene compositor and return the resulting
+def build_compositor(value: typing.Any) -> bpy.types.Scene:
+    scene = bpy.data.scenes.new("compositor_eval")
+    with bpy.context.temp_override(scene=scene):
+        pf.nodes.to_compositor(results={"result": value})
+    return scene
+
+
+def render_scene(scene: bpy.types.Scene, size: tuple = (8, 8)) -> np.ndarray:
+    """Render `scene` through its compositor and return the resulting
     (height, width, 4) float array in top-down row order."""
     width, height = size
-    if alpha is None:
-        node = pf.nodes.compositor.composite(image=color, use_alpha=False)
-    else:
-        node = pf.nodes.compositor.composite(image=color, alpha=alpha)
-    pf.nodes.to_compositor(results={"composite": node})
-
-    ensure_camera()
-    scene = bpy.context.scene
+    ensure_camera(scene)
     scene.render.resolution_x = width
     scene.render.resolution_y = height
     scene.render.resolution_percentage = 100
@@ -101,13 +107,39 @@ def composite_render(color, size: tuple = (8, 8), alpha=None) -> np.ndarray:
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "composite.exr"
         scene.render.filepath = str(path.with_suffix(""))
-        bpy.ops.render.render(write_still=True)
+        bpy.ops.render.render(write_still=True, scene=scene.name)
         out = bpy.data.images.load(str(path), check_existing=False)
         buf = np.empty(out.size[0] * out.size[1] * out.channels, dtype=np.float32)
         out.pixels.foreach_get(buf)
         arr = buf.reshape(out.size[1], out.size[0], out.channels).copy()
         bpy.data.images.remove(out)
     return np.flipud(arr).copy()
+
+
+def composite_render(color, size: tuple = (8, 8), alpha=None) -> np.ndarray:
+    if alpha is None:
+        node = pf.nodes.compositor.composite(image=color, use_alpha=False)
+    else:
+        node = pf.nodes.compositor.composite(image=color, alpha=alpha)
+    return render_scene(build_compositor(node), size)
+
+
+def realized_node(value: typing.Any, bl_idname: str) -> bpy.types.Node:
+    """Realize a binding to inspect its Blender inputs and properties."""
+    scene = build_compositor(value)
+    assert scene.node_tree is not None
+    nodes = [node for node in scene.node_tree.nodes if node.bl_idname == bl_idname]
+    assert len(nodes) == 1
+    return nodes[0]
+
+
+def composite_source(value: typing.Any) -> tuple[str, str]:
+    """Where the composite input comes from, for the outputs that render as
+    zero until a movie clip or texture datablock supplies them."""
+    result = pf.nodes.compositor.composite(image=value, use_alpha=False)
+    node = realized_node(result, "CompositorNodeComposite")
+    link = node.inputs["Image"].links[0]
+    return link.from_node.bl_idname, link.from_socket.name
 
 
 def assert_uniform(arr: np.ndarray, rgba: tuple, tol: float = 1e-4) -> None:

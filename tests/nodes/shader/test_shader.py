@@ -1,3 +1,4 @@
+import pytest
 import shader_eval
 
 import procfunc as pf
@@ -15,8 +16,11 @@ def test_render_float_passthrough() -> None:
     shader_eval.assert_value(value, -0.5)
 
 
-def test_render_vector_passthrough() -> None:
-    value = shader_eval.render(pf.nodes.math.constant(pf.Vector((-1.25, 0.5, 2.5))))
+@pytest.mark.parametrize("engine", [shader_eval.CYCLES, shader_eval.EEVEE])
+def test_render_vector_passthrough(engine: str) -> None:
+    value = shader_eval.render(
+        pf.nodes.math.constant(pf.Vector((-1.25, 0.5, 2.5))), engine=engine
+    )
     shader_eval.assert_value(value, (-1.25, 0.5, 2.5))
 
 
@@ -69,7 +73,9 @@ def test_normal_map() -> None:
 
 
 def test_squeeze() -> None:
-    value = shader_eval.render(shader.squeeze(value=0.0, width=1.0, center=0.0))
+    value = shader_eval.render(
+        shader.squeeze(value=0.0, width=1.0, center=0.0), engine=shader_eval.EEVEE
+    )
     shader_eval.assert_value(value, 0.5)
 
 
@@ -123,7 +129,7 @@ def test_mapping_normal_renormalizes() -> None:
 
 
 def test_wavelength_500nm_is_green_cyan() -> None:
-    value = shader_eval.render(shader.wavelength(500.0))
+    value = shader_eval.probe(shader_eval.render(shader.wavelength(500.0)))
     assert value[1] > value[0]
     assert value[1] > value[2]
     assert value[1] > 0.2
