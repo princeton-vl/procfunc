@@ -13,6 +13,8 @@ Interface changes:
 - `geo.mesh_cone` and `geo.mesh_cylinder` default `fill_segments` to None and reject it when `fill_type='NONE'`, which has no fill segments to set (was fed into a disabled socket)
 - `geo.sample_curve` no longer takes `mode`; length-based sampling is the existing `geo.sample_curve_length` (was a mode argument that fed Factor into the socket LENGTH disables)
 - `geo.mesh_line` no longer takes `count_mode`, which its OFFSET mode ignores
+- `texture.wave` accepts `bands_direction` 'DIAGONAL' instead of 'SPHERICAL', which Blender only accepts on `rings_direction`
+- `compositor.image` types `layer` and `view` as `str`, since their valid values come from the assigned image datablock at runtime rather than a fixed set
 - `geo.volume_to_mesh` takes `voxel_amount` or `voxel_size` and derives `resolution_mode` from whichever is given; passing neither keeps the GRID default
 - `geo.string_to_curves` takes `text_box_height` for SCALE_TO_FIT and TRUNCATE overflow and rejects it for OVERFLOW, where Blender disables that socket
 

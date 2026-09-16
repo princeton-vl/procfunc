@@ -653,7 +653,7 @@ def wave(
     detail_scale: nt.SocketOrVal[float] = 1.0,
     detail_roughness: nt.SocketOrVal[float] = 0.5,
     phase_offset: nt.SocketOrVal[float] = 0.0,
-    bands_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
+    bands_direction: Literal["X", "Y", "Z", "DIAGONAL"] = "X",
     rings_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
     wave_profile: Literal["SIN", "SAW", "TRI"] = "SIN",
     wave_type: Literal["BANDS", "RINGS"] = "BANDS",
