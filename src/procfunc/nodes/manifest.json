@@ -5493,11 +5493,39 @@
   },
   {
     "bpy_name": "CompositorNodeColorBalance",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "correction_method": "LIFT_GAMMA_GAIN"
+    },
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.color_balance",
     "arg_names_map": null,
-    "attr_names_map": null,
+    "attr_names_map": {
+      "offset": null,
+      "offset_basis": null,
+      "power": null,
+      "slope": null
+    },
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeColorBalance",
+    "bpy_mode_args": {
+      "correction_method": "OFFSET_POWER_SLOPE"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.color_balance_slope_offset_power",
+    "arg_names_map": null,
+    "attr_names_map": {
+      "gain": null,
+      "gamma": null,
+      "lift": null
+    },
     "node_group_type": [
       "CompositorNodeTree"
     ],

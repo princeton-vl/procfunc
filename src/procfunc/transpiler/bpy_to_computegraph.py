@@ -42,6 +42,7 @@ _OPS_MANIFEST_INDEXED = OPS_MANIFEST.set_index("bpy_name")
 MODE_ATTRS = [
     "mode",
     "sky_type",
+    "correction_method",
     "data_type",
     "operation",
     "rotation_type",

@@ -351,19 +351,13 @@ def chroma_matte(
 def color_balance(
     fac: nt.SocketOrVal[float] = 1.0,
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    correction_method: Literal[
-        "LIFT_GAMMA_GAIN", "OFFSET_POWER_SLOPE"
-    ] = "LIFT_GAMMA_GAIN",
     gain: tuple = (1.0, 1.0, 1.0),
     gamma: tuple = (1.0, 1.0, 1.0),
     lift: tuple = (1.0, 1.0, 1.0),
-    offset: tuple = (0.0, 0.0, 0.0),
-    offset_basis: float = 0.0,
-    power: tuple = (1.0, 1.0, 1.0),
-    slope: tuple = (1.0, 1.0, 1.0),
 ) -> nt.ProcNode:
     """
-    Uses a ColorBalance Compositor Node.
+    Uses a ColorBalance Compositor Node with
+    correction_method='LIFT_GAMMA_GAIN'.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/color_balance.html
     """
@@ -371,10 +365,32 @@ def color_balance(
         node_type="CompositorNodeColorBalance",
         inputs={"Fac": fac, "Image": image},
         attrs={
-            "correction_method": correction_method,
+            "correction_method": "LIFT_GAMMA_GAIN",
             "gain": gain,
             "gamma": gamma,
             "lift": lift,
+        },
+    )
+
+
+def color_balance_slope_offset_power(
+    fac: nt.SocketOrVal[float] = 1.0,
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    offset: tuple = (0.0, 0.0, 0.0),
+    offset_basis: float = 0.0,
+    power: tuple = (1.0, 1.0, 1.0),
+    slope: tuple = (1.0, 1.0, 1.0),
+) -> nt.ProcNode:
+    """
+    Uses a slope/offset/power ColorBalance Compositor Node.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/color_balance.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeColorBalance",
+        inputs={"Fac": fac, "Image": image},
+        attrs={
+            "correction_method": "OFFSET_POWER_SLOPE",
             "offset": offset,
             "offset_basis": offset_basis,
             "power": power,
