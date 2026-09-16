@@ -31,7 +31,6 @@ def choice_idx(rng: np.random.Generator, weights: list[float]) -> int:
 
 
 def _peekthrough_execute_all_choices(
-    choice_rng: cg.Node,
     choice_options: list[tuple[Callable[..., T], float]],
     chosen_idx: int,
     choice_rng: cg.Node,
@@ -68,7 +67,6 @@ class ChoiceResultProxy(cg.Proxy):
             raise ValueError(f"Executed {self} while not in a tracing context?")
         if current_level >= TraceLevel.RANDOM_CONTROL:
             return _peekthrough_execute_all_choices(
-                self.node.kwargs["choice_rng"],
                 self.node.kwargs["choice_options"],
                 self.node.kwargs["chosen_idx"],
                 self.node.kwargs["choice_rng"],
