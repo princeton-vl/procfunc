@@ -1086,7 +1086,11 @@ def parse_modifier(
     if mod.type == "NODES":
         return parse_geo_modifier(obj, node_curr, mod, memo)
 
-    mode_vals = {"type": mod.type, "operation": getattr(mod, "operation", None)}
+    mode_vals = {
+        "type": mod.type,
+        "operation": getattr(mod, "operation", None),
+        "offset_type": getattr(mod, "offset_type", None),
+    }
     func_row = _find_manifest_func(
         "bpy.ops.object.modifier_add", mode_vals, _OPS_MANIFEST_INDEXED
     )

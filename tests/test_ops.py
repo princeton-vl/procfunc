@@ -6,6 +6,7 @@ import pytest
 
 import procfunc as pf
 from procfunc.codegen import codegen
+from procfunc.transpiler import bpy_to_computegraph as b2c
 from procfunc.util.manifest import import_item_iterative
 
 _PRIMITIVE_FUNCS = pf.util.manifest.filter_manifest(
@@ -94,6 +95,20 @@ def test_modifier_bevel_percentage_width() -> None:
     coordinates = np.abs(pf.ops.attr.vertex_positions(obj))
     assert len(coordinates) == 24
     np.testing.assert_allclose(np.unique(coordinates), [0.8, 1.0])
+
+
+def test_percentage_bevel_reverse_transpiles_to_percentage_binding() -> None:
+    obj = bpy.data.objects.new("percentage_bevel", bpy.data.meshes.new("source"))
+    bpy.context.scene.collection.objects.link(obj)
+    modifier = obj.modifiers.new("bevel", "BEVEL")
+    modifier.offset_type = "PERCENT"
+    modifier.width_pct = 37.0
+
+    graph = b2c.parse_object(obj, b2c.ParseMemo())
+    source = codegen.to_python(graph, toplevel_as_maincall=False)
+
+    assert "pf.ops.modifier.bevel_pct(" in source
+    assert "width_pct=37.0" in source
 
 
 def test_modifier_array_object_offset() -> None:

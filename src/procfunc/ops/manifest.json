@@ -17940,8 +17940,11 @@
     "bpy_doc": null
   },
   {
-    "bpy_name": null,
-    "bpy_mode_args": null,
+    "bpy_name": "bpy.ops.object.modifier_add",
+    "bpy_mode_args": {
+      "type": "BEVEL",
+      "offset_type": "PERCENT"
+    },
     "infinigen_v1_name": null,
     "infinigen_v1_count": null,
     "category": "modifier",
