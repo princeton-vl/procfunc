@@ -38,7 +38,7 @@ class TextureResult(NamedTuple):
 class VoronoiResult(NamedTuple):
     color: nt.ProcNode[pt.Color]
     distance: nt.ProcNode[float]
-    position: nt.ProcNode[pt.Vector]
+    position: nt.ProcNode[pt.Vector] | None
     w: nt.ProcNode[float] | None
 
 
@@ -507,12 +507,13 @@ def voronoi(
         },
     )
 
-    w = res._output_socket("w") if voronoi_dimensions == "4D" else None
+    position = res._output_socket("position") if voronoi_dimensions != "1D" else None
+    w = res._output_socket("w") if voronoi_dimensions in {"1D", "4D"} else None
 
     return VoronoiResult(
         distance=res._output_socket("distance"),
         color=res._output_socket("color"),
-        position=res._output_socket("position"),
+        position=position,
         w=w,
     )
 
@@ -615,12 +616,13 @@ def voronoi_smooth_f1(
         },
     )
 
-    w = res._output_socket("w") if voronoi_dimensions == "4D" else None
+    position = res._output_socket("position") if voronoi_dimensions != "1D" else None
+    w = res._output_socket("w") if voronoi_dimensions in {"1D", "4D"} else None
 
     return VoronoiResult(
         distance=res._output_socket("distance"),
         color=res._output_socket("color"),
-        position=res._output_socket("position"),
+        position=position,
         w=w,
     )
 

@@ -17,6 +17,8 @@ Interface changes:
 - `compositor.image` types `layer` and `view` as `str`, since their valid values come from the assigned image datablock at runtime rather than a fixed set
 - `geo.volume_to_mesh` takes `voxel_amount` or `voxel_size` and derives `resolution_mode` from whichever is given; passing neither keeps the GRID default
 - `geo.string_to_curves` takes `text_box_height` for SCALE_TO_FIT and TRUNCATE overflow and rejects it for OVERFLOW, where Blender disables that socket
+- `math.map_range` spells its stepped interpolation `STEPPED` instead of `STEPPED_LINEAR`, which Blender rejects
+- `texture.voronoi` and `texture.voronoi_smooth_f1` return `position=None` in 1D, which has no Position socket, and expose `w` in 1D as well as 4D (its 1D W output was unreachable)
 
 # 0.35.1
 
