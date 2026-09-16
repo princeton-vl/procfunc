@@ -85,6 +85,15 @@ def test_string_to_curves_accepts_text_box_height(overflow):
     assert node.inputs["Text Box Height"].default_value == pytest.approx(2.5)
 
 
+@pytest.mark.parametrize(
+    ("overflow", "has_remainder"),
+    [("OVERFLOW", False), ("SCALE_TO_FIT", False), ("TRUNCATE", True)],
+)
+def test_string_to_curves_remainder_matches_overflow(overflow, has_remainder):
+    result = pf.nodes.geo.string_to_curves("hello", overflow=overflow)
+    assert (result.remainder is not None) is has_remainder
+
+
 def test_string_to_curves_rejects_height_for_overflow():
     with pytest.raises(ValueError, match="text_box_height"):
         pf.nodes.geo.string_to_curves("hello", text_box_height=2.5)

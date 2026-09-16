@@ -23,6 +23,7 @@ Interface changes:
 Fixed behavior:
 
 - `func.axes_to_rotation` retains its public X/Y defaults while the transpiler emits Blender's native Z/X defaults explicitly, so native nodes rebuild with the same axes
+- `geo.string_to_curves` exposes the `remainder` string output for TRUNCATE overflow and returns `None` for modes where Blender has no such socket
 
 Fixed crashes:
 

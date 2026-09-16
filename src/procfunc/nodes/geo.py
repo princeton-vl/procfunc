@@ -4122,6 +4122,7 @@ def string_join(
 
 class StringToCurvesResult(NamedTuple):
     curve_instances: nt.ProcNode[nt.Instances]
+    remainder: nt.ProcNode[str] | None
     line: nt.ProcNode[pt.CurveObject]
     pivot_point: nt.ProcNode[nt.pt.Vector]
 
@@ -4183,6 +4184,7 @@ def string_to_curves(
 
     return StringToCurvesResult(
         curve_instances=res._output_socket("curve_instances"),
+        remainder=res._output_socket("remainder") if overflow == "TRUNCATE" else None,
         line=res._output_socket("line"),
         pivot_point=res._output_socket("pivot_point"),
     )
