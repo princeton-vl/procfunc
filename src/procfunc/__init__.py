@@ -54,6 +54,7 @@ from .nodes import ProcNode, Shader, NodeDataType
 from .tracer import trace, autowrap_module, add_search_scope
 from .util.manifest import module_path
 
+bpy.context.preferences.edit.use_global_undo = False
 autowrap_module(random)
 autowrap_module(color)
 add_search_scope(nodes)
