@@ -10,6 +10,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -32,6 +33,7 @@
       "value_1": "b",
       "value_2": "addend"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -53,6 +55,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -74,6 +77,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -95,6 +99,7 @@
       "value_0": "numerator",
       "value_1": "denominator"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -116,6 +121,7 @@
       "value_0": "base",
       "value_1": "exponent"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -137,6 +143,7 @@
       "value_0": "value",
       "value_1": "base"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -155,6 +162,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sqrt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -173,6 +181,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.inverse_sqrt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -191,6 +200,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.absolute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -209,6 +219,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.exponent",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -230,6 +241,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -251,6 +263,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -272,6 +285,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -293,6 +307,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -311,6 +326,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sign",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -333,6 +349,7 @@
       "value_1": "b",
       "value_2": "epsilon"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -355,6 +372,7 @@
       "value_1": "b",
       "value_2": "distance"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -377,6 +395,7 @@
       "value_1": "b",
       "value_2": "distance"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -395,6 +414,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.round",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -413,6 +433,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.floor",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -431,6 +452,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.ceil",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -449,6 +471,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.truncate",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -467,6 +490,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.fraction",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -488,6 +512,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -509,6 +534,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -531,6 +557,7 @@
       "value_1": "max_val",
       "value_2": "min_val"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -552,6 +579,7 @@
       "value_0": "value",
       "value_1": "increment"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -573,6 +601,7 @@
       "value_0": "value",
       "value_1": "scale"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -591,6 +620,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -609,6 +639,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.cos",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -627,6 +658,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.tan",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -645,6 +677,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.asin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -663,6 +696,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.acos",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -681,6 +715,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.atan",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -702,6 +737,7 @@
       "value_0": "y",
       "value_1": "x"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -720,6 +756,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sinh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -738,6 +775,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.cosh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -756,6 +794,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.tanh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -774,6 +813,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.deg_to_rad",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -792,6 +832,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.rad_to_deg",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -813,6 +854,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -834,6 +876,7 @@
       "vector_1": "b",
       "vector_2": "addend"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -854,6 +897,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -874,6 +918,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -894,6 +939,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -914,6 +960,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -934,6 +981,7 @@
       "vector_0": "vector",
       "vector_1": "onto"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -954,6 +1002,7 @@
       "vector_0": "a",
       "vector_1": "normal"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -975,6 +1024,7 @@
       "vector_1": "normal",
       "scale": "ior"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -996,6 +1046,7 @@
       "vector_1": "surface",
       "vector_2": "normal"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1016,6 +1067,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1036,6 +1088,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1055,6 +1108,7 @@
     "arg_names_map": {
       "vector_0": "vector"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1072,6 +1126,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_scale",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1089,6 +1144,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_normalize",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1110,6 +1166,7 @@
       "vector_1": "max_val",
       "vector_2": "min_val"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1130,6 +1187,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1147,6 +1205,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_floor",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1164,6 +1223,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_ceil",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1184,6 +1244,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1201,6 +1262,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_fraction",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1218,6 +1280,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_absolute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1238,6 +1301,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1258,6 +1322,7 @@
       "vector_0": "a",
       "vector_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1275,6 +1340,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_sine",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1292,6 +1358,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_cosine",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1309,6 +1376,7 @@
     "infinigen_v1_name": "Nodes.VectorMath",
     "name": "pf.nodes.math.vector_tangent",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1324,6 +1392,7 @@
     "infinigen_v1_name": "Nodes.CombineXYZ",
     "name": "pf.nodes.math.combine_xyz",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -1342,6 +1411,7 @@
     "infinigen_v1_name": "Nodes.Transform",
     "name": "pf.nodes.geo.transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1360,6 +1430,7 @@
     "arg_names_map": {
       "transform": "matrix"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1374,6 +1445,7 @@
     "infinigen_v1_name": "Nodes.StoreNamedAttribute",
     "name": "pf.nodes.geo.store_named_attribute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1392,6 +1464,7 @@
     "infinigen_v1_name": "Nodes.Value",
     "name": "pf.nodes.math.constant",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -1409,6 +1482,7 @@
       "vector": "value",
       "value": "value"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1428,6 +1502,7 @@
     "arg_names_map": {
       "geometry": "geometries"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1442,6 +1517,7 @@
     "infinigen_v1_name": "Nodes.NoiseTexture",
     "name": "pf.nodes.texture.noise",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -1457,6 +1533,7 @@
     "infinigen_v1_name": "Nodes.SetPosition",
     "name": "pf.nodes.geo.set_position",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1471,6 +1548,7 @@
     "infinigen_v1_name": "Nodes.InputPosition",
     "name": "pf.nodes.geo.input_position",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1485,6 +1563,7 @@
     "infinigen_v1_name": "Nodes.ColorRamp",
     "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Image": "color"
     },
@@ -1505,7 +1584,9 @@
     "name": "pf.nodes.func.switch",
     "arg_names_map": {
       "false": "a",
-      "true": "b",
+      "true": "b"
+    },
+    "attr_names_map": {
       "input_type": "data_type"
     },
     "node_group_type": [
@@ -1524,7 +1605,9 @@
     "arg_names_map": {
       "color1": "a",
       "color2": "b",
-      "fac": "factor",
+      "fac": "factor"
+    },
+    "attr_names_map": {
       "use_clamp": "clamp_result"
     },
     "node_group_type": [
@@ -1542,6 +1625,7 @@
     "infinigen_v1_name": "Nodes.PrincipledBSDF",
     "name": "pf.nodes.shader.principled_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -1556,6 +1640,7 @@
     "infinigen_v1_name": "Nodes.SetMaterial",
     "name": "pf.nodes.geo.set_material",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1572,6 +1657,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1589,6 +1675,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.not_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1606,6 +1693,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.less_than",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1622,6 +1710,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.less_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1638,6 +1727,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.greater_than",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1654,6 +1744,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.greater_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1672,6 +1763,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.vector_elementwise_less_than",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1689,6 +1781,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.vector_elementwise_less_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1706,6 +1799,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.vector_elementwise_greater_than",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1723,6 +1817,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.vector_elementwise_greater_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1740,6 +1835,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.vector_elementwise_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1757,6 +1853,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.vector_elementwise_not_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1773,6 +1870,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.color_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1789,6 +1887,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.color_not_equal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1805,6 +1904,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.color_brighter",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1821,6 +1921,7 @@
     "infinigen_v1_name": "Nodes.Compare",
     "name": "pf.nodes.func.color_darker",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1834,6 +1935,7 @@
     "infinigen_v1_name": "Nodes.CurveToMesh",
     "name": "pf.nodes.geo.curve_to_mesh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -1850,6 +1952,7 @@
     "infinigen_v1_name": "Nodes.Mix",
     "name": "pf.nodes.math.mix",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -1868,6 +1971,7 @@
     "infinigen_v1_name": "Nodes.Mix",
     "name": "pf.nodes.math.mix",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -1886,6 +1990,7 @@
     "infinigen_v1_name": "Nodes.Mix",
     "name": "pf.nodes.color.mix_rgb",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -1906,6 +2011,7 @@
     "infinigen_v1_name": "Nodes.VoronoiTexture",
     "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1923,6 +2029,7 @@
     "infinigen_v1_name": "Nodes.VoronoiTexture",
     "name": "pf.nodes.texture.voronoi",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1940,6 +2047,7 @@
     "infinigen_v1_name": "Nodes.VoronoiTexture",
     "name": "pf.nodes.texture.voronoi_distance",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1957,6 +2065,7 @@
     "infinigen_v1_name": "Nodes.VoronoiTexture",
     "name": "pf.nodes.texture.voronoi_smooth_f1",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1974,6 +2083,7 @@
     "infinigen_v1_name": "Nodes.VoronoiTexture",
     "name": "pf.nodes.texture.voronoi_n_spheres_distance",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -1991,6 +2101,7 @@
     "infinigen_v1_name": "Nodes.Mapping",
     "name": "pf.nodes.shader.mapping",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2007,6 +2118,7 @@
     "infinigen_v1_name": "Nodes.Mapping",
     "name": "pf.nodes.shader.mapping_texture",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2023,6 +2135,7 @@
     "infinigen_v1_name": "Nodes.Mapping",
     "name": "pf.nodes.shader.mapping_vector",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2039,6 +2152,7 @@
     "infinigen_v1_name": "Nodes.Mapping",
     "name": "pf.nodes.shader.mapping_normal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2053,6 +2167,7 @@
     "infinigen_v1_name": "Nodes.FloatCurve",
     "name": "pf.nodes.math.float_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2067,6 +2182,7 @@
     "infinigen_v1_name": "Nodes.NamedAttribute",
     "name": "pf.nodes.geo.input_named_attribute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2081,6 +2197,7 @@
     "infinigen_v1_name": "Nodes.TextureCoord",
     "name": "pf.nodes.shader.coord",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2095,6 +2212,7 @@
     "infinigen_v1_name": "Nodes.MeshCube",
     "name": "pf.nodes.geo.mesh_cube",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2109,6 +2227,7 @@
     "infinigen_v1_name": "Nodes.RealizeInstances",
     "name": "pf.nodes.geo.realize_instances",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2123,6 +2242,7 @@
     "infinigen_v1_name": "Nodes.AttributeStatistic",
     "name": "pf.nodes.geo.attribute_statistic",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2139,6 +2259,7 @@
     "infinigen_v1_name": "Nodes.CurveCircle",
     "name": "pf.nodes.geo.curve_circle",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2155,6 +2276,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_circle_from_points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2169,6 +2291,7 @@
     "infinigen_v1_name": "Nodes.Attribute",
     "name": "pf.nodes.shader.attribute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2183,6 +2306,7 @@
     "infinigen_v1_name": "Nodes.RandomValue",
     "name": "pf.nodes.func.random_value",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2202,6 +2326,7 @@
     "infinigen_v1_name": "Nodes.RandomValue",
     "name": "pf.nodes.func.random_boolean",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2214,6 +2339,7 @@
     "infinigen_v1_name": "Nodes.CurveLine",
     "name": "pf.nodes.geo.curve_line",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2226,6 +2352,7 @@
     "infinigen_v1_name": "Nodes.CurveLine",
     "name": "pf.nodes.geo.curve_line_from_direction",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2236,6 +2363,7 @@
     "infinigen_v1_name": "Nodes.SplineParameter",
     "name": "pf.nodes.geo.spline_parameter",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2250,6 +2378,7 @@
     "infinigen_v1_name": "Nodes.CaptureAttribute",
     "name": "pf.nodes.geo.capture_attribute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2264,6 +2393,7 @@
     "infinigen_v1_name": "Nodes.InputNormal",
     "name": "pf.nodes.geo.input_normal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2283,6 +2413,7 @@
       "boolean_0": "a",
       "boolean_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2298,6 +2429,7 @@
       "boolean_0": "a",
       "boolean_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2313,6 +2445,7 @@
       "boolean_0": "a",
       "boolean_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2326,7 +2459,8 @@
     "name": "pf.nodes.func.boolean_not",
     "arg_names_map": {
       "boolean": "a"
-    }
+    },
+    "attr_names_map": null
   },
   {
     "bpy_name": "GeometryNodeInputIndex",
@@ -2334,6 +2468,7 @@
     "infinigen_v1_name": "Nodes.Index",
     "name": "pf.nodes.geo.input_index",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2348,6 +2483,7 @@
     "infinigen_v1_name": "Nodes.InstanceOnPoints",
     "name": "pf.nodes.geo.instance_on_points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2362,6 +2498,7 @@
     "infinigen_v1_name": "Nodes.QuadraticBezier",
     "name": "pf.nodes.geo.curve_bezier",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2378,6 +2515,7 @@
     "infinigen_v1_name": "Nodes.VectorRotate",
     "name": "pf.nodes.math.vector_rotate_axis_angle",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -2395,6 +2533,7 @@
     "infinigen_v1_name": "Nodes.VectorRotate",
     "name": "pf.nodes.math.vector_rotate_euler",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -2412,6 +2551,7 @@
     "infinigen_v1_name": "Nodes.VectorRotate",
     "name": "pf.nodes.math.vector_rotate_euler",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -2429,6 +2569,7 @@
     "infinigen_v1_name": "Nodes.VectorRotate",
     "name": "pf.nodes.math.vector_rotate_euler",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -2446,6 +2587,7 @@
     "infinigen_v1_name": "Nodes.VectorRotate",
     "name": "pf.nodes.math.vector_rotate_euler",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -2465,6 +2607,7 @@
     "name": "pf.nodes.geo.resample_curve_count",
     "arguments": "curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2477,6 +2620,7 @@
     "infinigen_v1_name": "Nodes.ResampleCurve",
     "name": "pf.nodes.geo.resample_curve_length",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2489,6 +2633,7 @@
     "infinigen_v1_name": "Nodes.ResampleCurve",
     "name": "pf.nodes.geo.resample_curve_evaluated",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ]
@@ -2503,6 +2648,7 @@
       "shader_0": "a",
       "shader_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2517,6 +2663,7 @@
     "infinigen_v1_name": "Nodes.BoundingBox",
     "name": "pf.nodes.geo.bound_box",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2531,6 +2678,7 @@
     "infinigen_v1_name": "Nodes.SetCurveRadius",
     "name": "pf.nodes.geo.set_curve_radius",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2544,7 +2692,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Integer",
     "name": "pf.nodes.math.constant",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "integer": "value"
     },
     "node_group_type": [
@@ -2560,6 +2709,7 @@
     "infinigen_v1_name": "Nodes.SeparateGeometry",
     "name": "pf.nodes.geo.separate_geometry",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2574,6 +2724,7 @@
     "infinigen_v1_name": "Nodes.AlignEulerToVector",
     "name": "pf.nodes.func.align_euler_to_vector",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2588,6 +2739,7 @@
     "infinigen_v1_name": "Nodes.WaveTexture",
     "name": "pf.nodes.texture.wave",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -2602,7 +2754,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Vector",
     "name": "pf.nodes.math.constant",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "vector": "value"
     },
     "node_group_type": [
@@ -2618,6 +2771,7 @@
     "infinigen_v1_name": "Nodes.RotateInstances",
     "name": "pf.nodes.geo.rotate_instances",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2632,6 +2786,7 @@
     "infinigen_v1_name": "Nodes.SetShadeSmooth",
     "name": "pf.nodes.geo.set_shade_smooth",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2646,6 +2801,7 @@
     "infinigen_v1_name": "Nodes.ObjectInfo",
     "name": "pf.nodes.geo.object_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2660,6 +2816,7 @@
     "infinigen_v1_name": "Nodes.MeshUVSphere",
     "name": "pf.nodes.geo.mesh_uv_sphere",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2676,6 +2833,7 @@
     "infinigen_v1_name": "Nodes.ExtrudeMesh",
     "name": "pf.nodes.geo.extrude_mesh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2689,6 +2847,7 @@
     "infinigen_v1_name": "Nodes.ExtrudeMesh",
     "name": "pf.nodes.geo.extrude_mesh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2702,6 +2861,7 @@
     "infinigen_v1_name": "Nodes.ExtrudeMesh",
     "name": "pf.nodes.geo.extrude_mesh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2713,6 +2873,7 @@
     "infinigen_v1_name": "Nodes.MergeByDistance",
     "name": "pf.nodes.geo.merge_by_distance",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2727,6 +2888,7 @@
     "infinigen_v1_name": "Nodes.SubdivideMesh",
     "name": "pf.nodes.geo.subdivide_mesh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2741,6 +2903,7 @@
     "infinigen_v1_name": "Nodes.ScaleInstances",
     "name": "pf.nodes.geo.scale_instances",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2757,6 +2920,7 @@
     "arg_names_map": {
       "color": "value"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2771,6 +2935,7 @@
     "infinigen_v1_name": "Nodes.SubdivisionSurface",
     "name": "pf.nodes.geo.subdivision_surface",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2787,6 +2952,7 @@
     "infinigen_v1_name": "Nodes.SampleCurve",
     "name": "pf.nodes.geo.sample_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2807,6 +2973,7 @@
     "infinigen_v1_name": "Nodes.SampleCurve",
     "name": "pf.nodes.geo.sample_curve_length",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2825,6 +2992,7 @@
     "infinigen_v1_name": "Nodes.DuplicateElements",
     "name": "pf.nodes.geo.duplicate_elements",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2844,6 +3012,7 @@
       "mesh_1": "a",
       "mesh_2": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2862,6 +3031,7 @@
     "arg_names_map": {
       "mesh_2": "mesh"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2880,6 +3050,7 @@
     "arg_names_map": {
       "mesh_2": "mesh"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2894,6 +3065,7 @@
     "infinigen_v1_name": "Nodes.FlipFaces",
     "name": "pf.nodes.geo.flip_faces",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2908,6 +3080,7 @@
     "infinigen_v1_name": "Nodes.MeshToCurve",
     "name": "pf.nodes.geo.mesh_to_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2922,6 +3095,7 @@
     "infinigen_v1_name": "Nodes.SampleIndex",
     "name": "pf.nodes.geo.sample_index",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2940,6 +3114,7 @@
     "infinigen_v1_name": "Nodes.TranslucentBSDF",
     "name": "pf.nodes.shader.translucent_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -2954,6 +3129,7 @@
     "infinigen_v1_name": "Nodes.CurveTangent",
     "name": "pf.nodes.geo.input_tangent",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -2968,6 +3144,7 @@
     "infinigen_v1_name": "Nodes.Clamp",
     "name": "pf.nodes.math.clamp",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -2983,6 +3160,7 @@
     "infinigen_v1_name": "Nodes.WhiteNoiseTexture",
     "name": "pf.nodes.texture.white_noise",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Value": "fac"
     },
@@ -3003,6 +3181,7 @@
     "infinigen_v1_name": "Nodes.DistributePointsOnFaces",
     "name": "pf.nodes.geo.distribute_points_on_faces",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3019,6 +3198,7 @@
     "infinigen_v1_name": "Nodes.DistributePointsOnFaces",
     "name": "pf.nodes.geo.distribute_points_on_faces_poisson",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3033,6 +3213,7 @@
     "infinigen_v1_name": "Nodes.FillCurve",
     "name": "pf.nodes.geo.fill_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3046,7 +3227,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MeshLine",
     "name": "pf.nodes.geo.mesh_line",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "count_mode": null
     },
     "node_group_type": [
@@ -3065,7 +3247,9 @@
     "infinigen_v1_name": "Nodes.MeshLine",
     "name": "pf.nodes.geo.mesh_line_from_endpoints",
     "arg_names_map": {
-      "offset": "end_location",
+      "offset": "end_location"
+    },
+    "attr_names_map": {
       "count_mode": null
     },
     "node_group_type": [
@@ -3082,6 +3266,7 @@
     "infinigen_v1_name": "Nodes.TransparentBSDF",
     "name": "pf.nodes.shader.transparent_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3098,6 +3283,7 @@
     "infinigen_v1_name": "Nodes.RotateEuler",
     "name": "pf.nodes.func.rotate_euler",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3114,6 +3300,7 @@
     "infinigen_v1_name": "Nodes.RotateEuler",
     "name": "pf.nodes.func.rotate_euler_axis_angle",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3130,6 +3317,7 @@
     "infinigen_v1_name": "Nodes.SeparateColor",
     "name": "pf.nodes.color.separate_rgb",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree",
@@ -3148,6 +3336,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.separate_hsv",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -3171,6 +3360,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.separate_hsl",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -3192,6 +3382,7 @@
     "infinigen_v1_name": "Nodes.Proximity",
     "name": "pf.nodes.geo.proximity",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3206,6 +3397,7 @@
     "infinigen_v1_name": "Nodes.SetCurveTilt",
     "name": "pf.nodes.geo.set_curve_tilt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3220,6 +3412,7 @@
     "infinigen_v1_name": "Nodes.SubdivideCurve",
     "name": "pf.nodes.geo.subdivide_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3234,6 +3427,7 @@
     "infinigen_v1_name": "Nodes.BrickTexture",
     "name": "pf.nodes.texture.brick",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -3249,6 +3443,7 @@
     "infinigen_v1_name": "Nodes.EndpointSelection",
     "name": "pf.nodes.geo.curve_endpoint_selection",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3263,6 +3458,7 @@
     "infinigen_v1_name": "Nodes.CollectionInfo",
     "name": "pf.nodes.geo.collection_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3277,6 +3473,7 @@
     "infinigen_v1_name": "Nodes.CurveToPoints",
     "name": "pf.nodes.geo.curve_to_points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3293,6 +3490,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_to_points_evaluated",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3309,6 +3507,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_to_points_count",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3325,6 +3524,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_to_points_length",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3339,6 +3539,7 @@
     "infinigen_v1_name": "Nodes.MeshGrid",
     "name": "pf.nodes.geo.mesh_grid",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3353,6 +3554,7 @@
     "infinigen_v1_name": "Nodes.Displacement",
     "name": "pf.nodes.shader.displacement",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3367,6 +3569,7 @@
     "infinigen_v1_name": "Nodes.SampleNearestSurface",
     "name": "pf.nodes.geo.sample_nearest_surface",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3387,6 +3590,7 @@
     "infinigen_v1_name": "Nodes.FilletCurve",
     "name": "pf.nodes.geo.fillet_curve_bezier",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3403,6 +3607,7 @@
     "infinigen_v1_name": "Nodes.FilletCurve",
     "name": "pf.nodes.geo.fillet_curve_poly",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3417,6 +3622,7 @@
     "infinigen_v1_name": "Nodes.ScaleElements",
     "name": "pf.nodes.geo.scale_elements",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3431,6 +3637,7 @@
     "infinigen_v1_name": "Nodes.LightPath",
     "name": "pf.nodes.shader.light_path",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3445,6 +3652,7 @@
     "infinigen_v1_name": "Nodes.NewGeometry",
     "name": "pf.nodes.shader.geometry",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3459,6 +3667,7 @@
     "infinigen_v1_name": "Nodes.ObjectInfo_Shader",
     "name": "pf.nodes.shader.object_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3473,6 +3682,7 @@
     "infinigen_v1_name": "Nodes.VectorCurve",
     "name": "pf.nodes.math.vector_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree",
@@ -3489,6 +3699,7 @@
     "infinigen_v1_name": "Nodes.DomainSize",
     "name": "pf.nodes.geo.attribute_domain_size",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3503,6 +3714,7 @@
     "infinigen_v1_name": "Nodes.MeshCircle",
     "name": "pf.nodes.geo.mesh_circle",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3517,6 +3729,7 @@
     "infinigen_v1_name": "Nodes.DiffuseBSDF",
     "name": "pf.nodes.shader.diffuse_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3531,6 +3744,7 @@
     "infinigen_v1_name": "Nodes.ShaderNodeNormalMap",
     "name": "pf.nodes.shader.normal_map",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3544,6 +3758,7 @@
     "infinigen_v1_name": "Nodes.FloatToInt",
     "name": "pf.nodes.func.float_to_int",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3558,6 +3773,7 @@
     "infinigen_v1_name": "Nodes.InputColor",
     "name": "pf.nodes.math.constant",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3572,6 +3788,7 @@
     "infinigen_v1_name": "Nodes.InputEdgeVertices",
     "name": "pf.nodes.geo.input_mesh_edge_vertices",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3586,6 +3803,7 @@
     "infinigen_v1_name": "Nodes.TrimCurve",
     "name": "pf.nodes.geo.trim_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3600,6 +3818,7 @@
     "infinigen_v1_name": "Nodes.Bump",
     "name": "pf.nodes.shader.bump",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3613,6 +3832,7 @@
     "infinigen_v1_name": "Nodes.PrincipledVolume",
     "name": "pf.nodes.shader.volume_principled",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3631,6 +3851,7 @@
     "arg_names_map": {
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -3653,6 +3874,7 @@
       "blue": "value",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -3675,6 +3897,7 @@
       "blue": "lightness",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -3690,6 +3913,7 @@
     "infinigen_v1_name": "Nodes.CurveLength",
     "name": "pf.nodes.geo.curve_length",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3706,6 +3930,7 @@
     "arg_names_map": {
       "target_geometry": "geometry"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3723,6 +3948,7 @@
     "infinigen_v1_name": "Nodes.SampleNearest",
     "name": "pf.nodes.geo.sample_nearest",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3741,6 +3967,7 @@
     "infinigen_v1_name": "Nodes.TranslateInstances",
     "name": "pf.nodes.geo.translate_instances",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3755,6 +3982,7 @@
     "infinigen_v1_name": "Nodes.WorldOutput",
     "name": null,
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3769,6 +3997,7 @@
     "infinigen_v1_name": "Nodes.GradientTexture",
     "name": "pf.nodes.texture.gradient",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -3784,6 +4013,7 @@
     "infinigen_v1_name": "Nodes.AccumulateField",
     "name": "pf.nodes.geo.accumulate_field",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3801,6 +4031,7 @@
     "infinigen_v1_name": "Nodes.ConvexHull",
     "name": "pf.nodes.geo.convex_hull",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3815,6 +4046,7 @@
     "infinigen_v1_name": "Nodes.DeleteGeom",
     "name": "pf.nodes.geo.delete_geometry",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3829,6 +4061,7 @@
     "infinigen_v1_name": "Nodes.GlassBSDF",
     "name": "pf.nodes.shader.glass_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3843,6 +4076,7 @@
     "infinigen_v1_name": "Nodes.Emission",
     "name": "pf.nodes.shader.emission",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3857,6 +4091,7 @@
     "infinigen_v1_name": "Nodes.Invert",
     "name": "pf.nodes.shader.invert",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -3871,6 +4106,7 @@
     "infinigen_v1_name": "Nodes.CheckerTexture",
     "name": "pf.nodes.texture.checker",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree",
       "ShaderNodeTree"
@@ -3886,6 +4122,7 @@
     "infinigen_v1_name": "Nodes.Composite",
     "name": "pf.nodes.compositor.composite",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -3900,6 +4137,7 @@
     "infinigen_v1_name": "Nodes.RenderLayers",
     "name": "pf.nodes.compositor.render_layers",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -3914,6 +4152,7 @@
     "infinigen_v1_name": "Nodes.DualMesh",
     "name": "pf.nodes.geo.dual_mesh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3928,6 +4167,7 @@
     "infinigen_v1_name": "Nodes.EdgePathToCurve",
     "name": "pf.nodes.geo.edge_paths_to_curves",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3942,6 +4182,7 @@
     "infinigen_v1_name": "Nodes.EvaluateonDomain",
     "name": "pf.nodes.geo.field_on_domain",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3960,6 +4201,7 @@
     "infinigen_v1_name": "Nodes.ShortestEdgePath",
     "name": "pf.nodes.geo.input_shortest_edge_paths",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3974,6 +4216,7 @@
     "infinigen_v1_name": "Nodes.MeshToPoints",
     "name": "pf.nodes.geo.mesh_to_points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3988,6 +4231,7 @@
     "infinigen_v1_name": "Nodes.PointsToVertices",
     "name": "pf.nodes.geo.points_to_vertices",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4002,6 +4246,7 @@
     "infinigen_v1_name": "Nodes.SetMaterialIndex",
     "name": "pf.nodes.geo.set_material_index",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4016,6 +4261,7 @@
     "infinigen_v1_name": "Nodes.AmbientOcclusion",
     "name": "pf.nodes.shader.ambient_occlusion",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4030,6 +4276,7 @@
     "infinigen_v1_name": "Nodes.Background",
     "name": "pf.nodes.shader.background",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4044,6 +4291,7 @@
     "infinigen_v1_name": "Nodes.UVMap",
     "name": "pf.nodes.shader.uv_map",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4058,6 +4306,7 @@
     "infinigen_v1_name": "Nodes.LightOutput",
     "name": null,
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4072,6 +4321,7 @@
     "infinigen_v1_name": "Nodes.EnvironmentTexture",
     "name": "pf.nodes.texture.environment",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4086,6 +4336,7 @@
     "infinigen_v1_name": "Nodes.BezierSegment",
     "name": "pf.nodes.geo.curve_bezier_segment",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4100,6 +4351,7 @@
     "infinigen_v1_name": "Nodes.SetHandleType",
     "name": "pf.nodes.geo.curve_set_handles",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4114,6 +4366,7 @@
     "infinigen_v1_name": "Nodes.CurveSplineType",
     "name": "pf.nodes.geo.curve_spline_type",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4128,6 +4381,7 @@
     "infinigen_v1_name": "Nodes.ImageTexture",
     "name": "pf.nodes.geo.image_texture",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4142,6 +4396,7 @@
     "infinigen_v1_name": "Nodes.InputID",
     "name": "pf.nodes.geo.input_id",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4156,6 +4411,7 @@
     "infinigen_v1_name": "Nodes.SetHandlePositions",
     "name": "pf.nodes.geo.set_curve_handle_positions",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4170,6 +4426,7 @@
     "infinigen_v1_name": "Nodes.SplitEdges",
     "name": "pf.nodes.geo.split_edges",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4184,6 +4441,7 @@
     "infinigen_v1_name": "Nodes.Fresnel",
     "name": "pf.nodes.shader.fresnel",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4198,6 +4456,7 @@
     "infinigen_v1_name": "Nodes.RGBCurve",
     "name": "pf.nodes.color.rgb_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4216,6 +4475,7 @@
       "s": "saturation",
       "v": "value"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4230,6 +4490,7 @@
     "infinigen_v1_name": "Nodes.OutputFile",
     "name": null,
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4244,6 +4505,7 @@
     "infinigen_v1_name": "Nodes.ShaderImageTexture",
     "name": "pf.nodes.texture.image",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Alpha": "fac"
     },
@@ -4261,6 +4523,7 @@
     "infinigen_v1_name": "Nodes.BrightContrast",
     "name": "pf.nodes.compositor.bright_contrast",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4279,6 +4542,7 @@
     "arg_names_map": {
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4300,6 +4564,7 @@
       "blue": "value",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4321,6 +4586,7 @@
       "blue": "lightness",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4342,6 +4608,7 @@
       "blue": "cr",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4363,6 +4630,7 @@
       "blue": "v",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4379,6 +4647,7 @@
     "infinigen_v1_name": "Nodes.Glare",
     "name": "pf.nodes.compositor.glare_bloom",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4395,6 +4664,7 @@
     "infinigen_v1_name": "Nodes.Glare",
     "name": "pf.nodes.compositor.glare_fog_glow",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4411,6 +4681,7 @@
     "infinigen_v1_name": "Nodes.Glare",
     "name": "pf.nodes.compositor.glare_ghosts",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4427,6 +4698,7 @@
     "infinigen_v1_name": "Nodes.Glare",
     "name": "pf.nodes.compositor.glare_simple_star",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4443,6 +4715,7 @@
     "infinigen_v1_name": "Nodes.Glare",
     "name": "pf.nodes.compositor.glare_streaks",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4457,6 +4730,7 @@
     "infinigen_v1_name": "Nodes.LensDistortion",
     "name": "pf.nodes.compositor.lens_distortion",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4472,7 +4746,9 @@
     "name": "pf.nodes.compositor.mix_rgb",
     "arg_names_map": {
       "image_0": "a",
-      "image_1": "b",
+      "image_1": "b"
+    },
+    "attr_names_map": {
       "use_clamp": "clamp_result"
     },
     "node_group_type": [
@@ -4489,6 +4765,7 @@
     "infinigen_v1_name": "Nodes.Viewer",
     "name": "pf.nodes.compositor.viewer",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4506,7 +4783,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.Boolean",
     "name": "pf.nodes.math.constant",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "boolean": "value"
     },
     "node_group_type": [
@@ -4522,6 +4800,7 @@
     "infinigen_v1_name": "Nodes.FieldAtIndex",
     "name": "pf.nodes.geo.field_at_index",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4540,6 +4819,7 @@
     "infinigen_v1_name": "Nodes.MaterialIndex",
     "name": "pf.nodes.geo.input_material_index",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4554,6 +4834,7 @@
     "infinigen_v1_name": "Nodes.InputEdgeAngle",
     "name": "pf.nodes.geo.input_mesh_edge_angle",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4568,6 +4849,7 @@
     "infinigen_v1_name": "Nodes.InputMeshFaceArea",
     "name": "pf.nodes.geo.input_mesh_face_area",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4582,6 +4864,7 @@
     "infinigen_v1_name": "Nodes.FaceNeighbors",
     "name": "pf.nodes.geo.input_mesh_face_neighbors",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4595,7 +4878,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.PointsToVolume",
     "name": "pf.nodes.geo.points_to_volume",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "resolution_mode": null
     },
     "node_group_type": [
@@ -4612,6 +4896,7 @@
     "infinigen_v1_name": "Nodes.SetPointRadius",
     "name": "pf.nodes.geo.set_point_radius",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4626,6 +4911,7 @@
     "infinigen_v1_name": "Nodes.SplineLength",
     "name": "pf.nodes.geo.spline_length",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -4639,7 +4925,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.VolumeToMesh",
     "name": "pf.nodes.geo.volume_to_mesh",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "resolution_mode": null
     },
     "node_group_type": [
@@ -4656,6 +4943,7 @@
     "infinigen_v1_name": "Nodes.BlackBody",
     "name": "pf.nodes.color.blackbody",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4673,6 +4961,7 @@
     "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
     "name": "pf.nodes.shader.principled_hair_bsdf_chiang",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4690,6 +4979,7 @@
     "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
     "name": "pf.nodes.shader.principled_hair_bsdf_chiang",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4707,6 +4997,7 @@
     "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
     "name": "pf.nodes.shader.principled_hair_bsdf_chiang",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4724,6 +5015,7 @@
     "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
     "name": "pf.nodes.shader.principled_hair_bsdf_huang",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4741,6 +5033,7 @@
     "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
     "name": "pf.nodes.shader.principled_hair_bsdf_huang",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4758,6 +5051,7 @@
     "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
     "name": "pf.nodes.shader.principled_hair_bsdf_huang",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4772,6 +5066,7 @@
     "infinigen_v1_name": "Nodes.HueSaturationValue",
     "name": "pf.nodes.color.hue_saturation",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "CompositorNodeTree"
@@ -4787,6 +5082,7 @@
     "infinigen_v1_name": "Nodes.LayerWeight",
     "name": "pf.nodes.shader.layer_weight",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4801,6 +5097,7 @@
     "infinigen_v1_name": "Nodes.SkyTexture",
     "name": "pf.nodes.texture.sky",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4819,6 +5116,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -4837,6 +5135,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -4860,6 +5159,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -4883,6 +5183,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "y",
       "Green": "cb",
@@ -4906,6 +5207,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "y",
       "Green": "u",
@@ -4929,6 +5231,7 @@
       "g": "green",
       "b": "blue"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -4944,6 +5247,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.texture.ies",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4958,6 +5262,7 @@
     "infinigen_v1_name": "Nodes.MagicTexture",
     "name": "pf.nodes.texture.magic",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -4973,6 +5278,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.texture.point_density",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -4990,6 +5296,7 @@
       "image_0": "a",
       "image_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5004,6 +5311,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.anti_aliasing",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5018,6 +5326,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.bilateral_blur",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5032,6 +5341,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.blur",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5046,6 +5356,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.bokeh_blur",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5060,6 +5371,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.bokeh_image",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5074,6 +5386,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.box_mask",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5088,6 +5401,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.channel_matte",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5102,6 +5416,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.chroma_matte",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5116,6 +5431,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.color_balance",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5130,6 +5446,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.color_correction",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5144,6 +5461,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.color_matte",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5158,6 +5476,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.color_spill",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5177,6 +5496,7 @@
       "v": "value",
       "a": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5196,6 +5516,7 @@
       "b": "blue",
       "a": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5215,6 +5536,7 @@
       "cr": "cr",
       "a": "alpha"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5234,6 +5556,7 @@
       "v": "v",
       "a": "alpha"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5248,6 +5571,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.convert_color_space",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5262,6 +5586,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.corner_pin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5276,6 +5601,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.crop",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5290,6 +5616,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.cryptomatte",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5304,6 +5631,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.rgb_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5318,6 +5646,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.vector_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5332,6 +5661,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.directional_blur",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5346,6 +5676,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.defocus",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5360,6 +5691,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.denoise",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5374,6 +5706,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.despeckle",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5391,6 +5724,7 @@
       "image_1": "a",
       "image_2": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5405,6 +5739,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.dilate_erode",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5419,6 +5754,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.displace",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5433,6 +5769,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.distance_matte",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5447,6 +5784,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.double_edge_mask",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5461,6 +5799,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.ellipse_mask",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5475,6 +5814,7 @@
     "infinigen_v1_name": "Nodes.Exposure",
     "name": "pf.nodes.compositor.exposure",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5489,6 +5829,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.filter",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5503,6 +5844,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.flip",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5517,6 +5859,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.gamma",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5531,6 +5874,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.hue_correct",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5547,6 +5891,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5561,6 +5906,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.id_mask",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5575,6 +5921,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.image",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5589,6 +5936,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.inpaint",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5603,6 +5951,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.invert",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5617,6 +5966,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.keying",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5631,6 +5981,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.keying_screen",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5645,6 +5996,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.kuwahara",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5659,6 +6011,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.levels",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5673,6 +6026,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.luma_matte",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5686,7 +6040,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.map_range",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "use_clamp": "clamp"
     },
     "node_group_type": [
@@ -5703,6 +6058,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.map_uv",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5717,6 +6073,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.map_value",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5731,6 +6088,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.mask",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5745,6 +6103,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.movie_clip",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5759,6 +6118,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.movie_distortion",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5773,6 +6133,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.normal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5787,6 +6148,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.normalize",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5801,6 +6163,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.pixelate",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5815,6 +6178,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.plane_track_deform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5829,6 +6193,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.posterize",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5843,6 +6208,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.premultiply_key",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5857,6 +6223,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.constant",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5871,6 +6238,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.constant",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5885,6 +6253,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.rgb_to_bw",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5899,6 +6268,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.rotate",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5915,6 +6285,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.scale_absolute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5931,6 +6302,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.scale_relative",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5947,6 +6319,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.scale_render",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5963,6 +6336,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.scale_scene",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5977,6 +6351,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.scene_time",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -5993,6 +6368,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "H": "hue",
       "S": "saturation",
@@ -6015,6 +6391,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "R": "red",
       "G": "green",
@@ -6037,6 +6414,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "Y": "y",
       "Cb": "cb",
@@ -6059,6 +6437,7 @@
     "arg_names_map": {
       "image": "color"
     },
+    "attr_names_map": null,
     "output_names_map": {
       "Y": "y",
       "U": "u",
@@ -6079,6 +6458,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.set_alpha",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6096,6 +6476,7 @@
       "image_0": "a",
       "image_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6110,6 +6491,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.stabilize",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6124,6 +6506,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.sun_beams",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6138,6 +6521,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.switch",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6152,6 +6536,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.switch_view",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6166,6 +6551,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.texture",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6179,7 +6565,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.time",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "curve": null
     },
     "node_group_type": [
@@ -6196,6 +6583,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.tonemap",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6210,6 +6598,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.track_pos",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6224,6 +6613,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6238,6 +6628,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.translate",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6252,6 +6643,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.color_ramp",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Image": "color"
     },
@@ -6269,6 +6661,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.compositor.vector_blur",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6288,6 +6681,7 @@
       "image_1": "image_b",
       "z_1": "z_b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -6302,6 +6696,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.align_rotation_to_vector",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6319,6 +6714,7 @@
       "primary_axis": "primary_axis_vector",
       "secondary_axis": "secondary_axis_vector"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6333,6 +6729,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.axis_angle_to_rotation",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6347,6 +6744,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.combine_matrix",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6361,6 +6759,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.combine_transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6375,6 +6774,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.euler_to_rotation",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6389,6 +6789,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.constant",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6402,6 +6803,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.input_special_characters",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6415,7 +6817,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.constant",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "string": "value"
     },
     "node_group_type": [
@@ -6431,6 +6834,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.invert_matrix",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6445,6 +6849,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.invert_rotation",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6462,6 +6867,7 @@
       "matrix_0": "a",
       "matrix_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6476,6 +6882,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.project_point",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6490,6 +6897,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.quaternion_to_rotation",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6504,6 +6912,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.replace_string",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6518,6 +6927,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.rotate_rotation",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6532,6 +6942,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.rotate_vector",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6546,6 +6957,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.rotation_to_axis_angle",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6560,6 +6972,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.rotation_to_euler",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6574,6 +6987,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.rotation_to_quaternion",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6588,6 +7002,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.separate_matrix",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6602,6 +7017,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.separate_transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6616,6 +7032,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.separate_xyz",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree",
       "GeometryNodeTree"
@@ -6631,6 +7048,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.slice_string",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6645,6 +7063,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.string_length",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6659,6 +7078,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.transform_direction",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6673,6 +7093,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.transform_point",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6687,6 +7108,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.transpose_matrix",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6701,6 +7123,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.func.value_to_string",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6715,6 +7138,7 @@
     "infinigen_v1_name": "Nodes.BlurAttribute",
     "name": "pf.nodes.geo.blur_attribute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6732,6 +7156,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.corners_of_edge",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6746,6 +7171,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.corners_of_face",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6760,6 +7186,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.corners_of_vertex",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6776,6 +7203,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_arc",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6792,6 +7220,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_arc_from_points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6806,6 +7235,7 @@
     "infinigen_v1_name": "Nodes.CurveofPoint",
     "name": "pf.nodes.geo.curve_of_point",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6822,6 +7252,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_quadrilateral",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6838,6 +7269,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_quadrilateral_parallelogram",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6854,6 +7286,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_quadrilateral_trapezoid",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6870,6 +7303,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_quadrilateral_kite",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6886,6 +7320,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_quadrilateral_points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6900,6 +7335,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_spiral",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6914,6 +7350,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.curve_star",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6928,6 +7365,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.deform_curves_on_surface",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6941,7 +7379,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.distribute_points_in_grid",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "mode": null
     },
     "node_group_type": [
@@ -6957,7 +7396,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.distribute_points_in_volume",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "mode": null
     },
     "node_group_type": [
@@ -6974,6 +7414,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.edge_paths_to_selection",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6988,6 +7429,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.edges_of_corner",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7002,6 +7444,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.edges_of_vertex",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7016,6 +7459,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.edges_to_face_groups",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7030,6 +7474,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.face_of_corner",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7044,6 +7489,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.geometry_to_instance",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7058,6 +7504,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.get_named_grid",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7072,6 +7519,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.grid_to_mesh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7086,6 +7534,7 @@
     "infinigen_v1_name": "Nodes.ImageInfo",
     "name": "pf.nodes.geo.image_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7100,6 +7549,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.index_of_nearest",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7117,6 +7567,7 @@
       "0": "a",
       "1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7138,6 +7589,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_active_camera",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7152,6 +7604,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_curve_handle_positions",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7166,6 +7619,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_curve_tilt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7180,6 +7634,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_edge_smooth",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7194,6 +7649,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_image",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7207,6 +7663,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_instance_rotation",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7221,6 +7678,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_instance_scale",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7235,6 +7693,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_material",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7248,6 +7707,7 @@
     "infinigen_v1_name": "Nodes.EdgeNeighbors",
     "name": "pf.nodes.geo.input_mesh_edge_neighbors",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7262,6 +7722,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_mesh_face_is_planar",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7276,6 +7737,7 @@
     "infinigen_v1_name": "Nodes.MeshIsland",
     "name": "pf.nodes.geo.input_mesh_island",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7290,6 +7752,7 @@
     "infinigen_v1_name": "Nodes.VertexNeighbors",
     "name": "pf.nodes.geo.input_mesh_vertex_neighbors",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7304,6 +7767,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_named_layer_selection",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7318,6 +7782,7 @@
     "infinigen_v1_name": "Nodes.Radius",
     "name": "pf.nodes.geo.input_radius",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7331,6 +7796,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_scene_time",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7344,6 +7810,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_shade_smooth",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7358,6 +7825,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.input_spline_cyclic",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7372,6 +7840,7 @@
     "infinigen_v1_name": "Nodes.SplineResolution",
     "name": "pf.nodes.geo.input_spline_resolution",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7386,6 +7855,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.instance_transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7400,6 +7870,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.instances_to_points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7414,6 +7885,7 @@
     "infinigen_v1_name": "Nodes.InterpolateCurves",
     "name": "pf.nodes.geo.interpolate_curves",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7428,6 +7900,7 @@
     "infinigen_v1_name": "Nodes.IsViewport",
     "name": "pf.nodes.geo.is_viewport",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7442,6 +7915,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.material_selection",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7456,6 +7930,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.mesh_cone",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7470,6 +7945,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.mesh_cylinder",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7484,6 +7960,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.mesh_face_set_boundaries",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7498,6 +7975,7 @@
     "infinigen_v1_name": "Nodes.IcoSphere",
     "name": "pf.nodes.geo.mesh_icosphere",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7512,6 +7990,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.mesh_to_density_grid",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7526,6 +8005,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.mesh_to_sdf_grid",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7539,7 +8019,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.mesh_to_volume",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "resolution_mode": null
     },
     "node_group_type": [
@@ -7556,6 +8037,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.offset_corner_in_face",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7570,6 +8052,7 @@
     "infinigen_v1_name": "Nodes.OffsetPointinCurve",
     "name": "pf.nodes.geo.offset_point_in_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7584,6 +8067,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.points",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7598,6 +8082,7 @@
     "infinigen_v1_name": "Nodes.PointsofCurve",
     "name": "pf.nodes.geo.points_of_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7612,6 +8097,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.points_to_curves",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7626,6 +8112,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.points_to_sdf_grid",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7640,6 +8127,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.remove_attribute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7654,6 +8142,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.replace_material",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7668,6 +8157,7 @@
     "infinigen_v1_name": "Nodes.ReverseCurve",
     "name": "pf.nodes.geo.reverse_curve",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7682,6 +8172,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7701,6 +8192,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7720,6 +8212,7 @@
     "infinigen_v1_name": "Nodes.SampleUVSurface",
     "name": "pf.nodes.geo.sample_uv_surface",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7741,6 +8234,7 @@
       "grid_1": "a",
       "grid_2": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7755,6 +8249,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.self_object",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7769,6 +8264,7 @@
     "infinigen_v1_name": "Nodes.SeparateComponents",
     "name": "pf.nodes.geo.separate_components",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7783,6 +8279,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.set_curve_normal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7797,6 +8294,7 @@
     "infinigen_v1_name": "Nodes.SetID",
     "name": "pf.nodes.geo.set_id",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7811,6 +8309,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.set_instance_transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7827,6 +8326,7 @@
     "arg_names_map": {
       "geometry": "curve"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7843,6 +8343,7 @@
     "arg_names_map": {
       "geometry": "curve"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7857,6 +8358,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.sort_elements",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7871,6 +8373,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.split_to_instances",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7885,6 +8388,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.store_named_grid",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7899,6 +8403,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.string_join",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7912,7 +8417,8 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.string_to_curves",
-    "arg_names_map": {
+    "arg_names_map": null,
+    "attr_names_map": {
       "font": null
     },
     "node_group_type": [
@@ -7929,6 +8435,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7943,6 +8450,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7957,6 +8465,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7971,6 +8480,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7985,6 +8495,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7999,6 +8510,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8013,6 +8525,7 @@
     "infinigen_v1_name": null,
     "name": "TODO",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8027,6 +8540,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.triangulate",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8041,6 +8555,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.uv_pack_islands",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8055,6 +8570,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.uv_unwrap",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8069,6 +8585,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.vertex_of_corner",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8083,6 +8600,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.viewport_transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8097,6 +8615,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.volume_cube",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -8114,6 +8633,7 @@
       "shader_0": "a",
       "shader_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8128,6 +8648,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.bevel",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8142,6 +8663,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.bright_contrast",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8156,6 +8678,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.anisotropic_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8170,6 +8693,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.hair_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8184,6 +8708,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.ray_portal_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8198,6 +8723,7 @@
     "infinigen_v1_name": "Nodes.RefractionBSDF",
     "name": "pf.nodes.shader.refraction_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8212,6 +8738,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.sheen_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8226,6 +8753,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.toon_bsdf",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8240,6 +8768,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.camera_data",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8254,6 +8783,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.eevee_specular",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8268,6 +8798,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.gamma",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8282,6 +8813,7 @@
     "infinigen_v1_name": "Nodes.CurvesInfo",
     "name": "pf.nodes.shader.hair_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8296,6 +8828,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.holdout",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8310,6 +8843,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.light_falloff",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8324,6 +8858,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.normal",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8337,6 +8872,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.particle_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8351,6 +8887,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.point_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8365,6 +8902,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.rgb_to_bw",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8379,6 +8917,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.script",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8393,6 +8932,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.shader_to_rgb",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8407,6 +8947,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.squeeze",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8423,6 +8964,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.subsurface_scattering_burley",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8439,6 +8981,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.subsurface_scattering_random_walk",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8455,6 +8998,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.subsurface_scattering_random_walk_skin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8469,6 +9013,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.tangent",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8483,6 +9028,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.uv_along_stroke",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8497,6 +9043,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.vector_displacement",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8511,6 +9058,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.math.vector_transform",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8525,6 +9073,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.vertex_color",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8539,6 +9088,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.volume_absorption",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8553,6 +9103,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.volume_info",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8567,6 +9118,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.volume_scatter",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8581,6 +9133,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.wavelength",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8595,6 +9148,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.shader.wireframe",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8609,6 +9163,7 @@
     "infinigen_v1_name": null,
     "name": null,
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8623,6 +9178,7 @@
     "infinigen_v1_name": null,
     "name": null,
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
     ],
@@ -8642,6 +9198,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8662,6 +9219,7 @@
       "value_1": "b",
       "value_2": "addend"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8681,6 +9239,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8700,6 +9259,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8719,6 +9279,7 @@
       "value_0": "numerator",
       "value_1": "denominator"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8738,6 +9299,7 @@
       "value_0": "base",
       "value_1": "exponent"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8757,6 +9319,7 @@
       "value_0": "value",
       "value_1": "base"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8773,6 +9336,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sqrt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8789,6 +9353,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.inverse_sqrt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8805,6 +9370,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.absolute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8821,6 +9387,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.exponent",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8840,6 +9407,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8859,6 +9427,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8878,6 +9447,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8897,6 +9467,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8913,6 +9484,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sign",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8933,6 +9505,7 @@
       "value_1": "b",
       "value_2": "epsilon"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8953,6 +9526,7 @@
       "value_1": "b",
       "value_2": "distance"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8973,6 +9547,7 @@
       "value_1": "b",
       "value_2": "distance"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -8989,6 +9564,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.round",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9005,6 +9581,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.floor",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9021,6 +9598,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.ceil",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9037,6 +9615,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.truncate",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9053,6 +9632,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.fraction",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9072,6 +9652,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9091,6 +9672,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9111,6 +9693,7 @@
       "value_1": "max_val",
       "value_2": "min_val"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9130,6 +9713,7 @@
       "value_0": "value",
       "value_1": "increment"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9149,6 +9733,7 @@
       "value_0": "value",
       "value_1": "scale"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9165,6 +9750,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9181,6 +9767,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.cos",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9197,6 +9784,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.tan",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9213,6 +9801,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.asin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9229,6 +9818,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.acos",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9245,6 +9835,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.atan",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9264,6 +9855,7 @@
       "value_0": "y",
       "value_1": "x"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9280,6 +9872,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sinh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9296,6 +9889,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.cosh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9312,6 +9906,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.tanh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9328,6 +9923,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.deg_to_rad",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9344,6 +9940,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.rad_to_deg",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9358,6 +9955,7 @@
     "infinigen_v1_name": "Nodes.CombineXYZ",
     "name": "pf.nodes.math.combine_xyz",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
     ],
@@ -9376,6 +9974,7 @@
     "arg_names_map": {
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -9397,6 +9996,7 @@
       "blue": "value",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -9418,6 +10018,7 @@
       "blue": "lightness",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -9434,6 +10035,7 @@
     "infinigen_v1_name": "Nodes.SeparateColor",
     "name": "pf.nodes.color.separate_rgb",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -9450,6 +10052,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.separate_hsv",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -9471,6 +10074,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.separate_hsl",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -9494,6 +10098,7 @@
     "arg_names_map": {
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9515,6 +10120,7 @@
       "blue": "value",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9536,6 +10142,7 @@
       "blue": "lightness",
       "alpha": null
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9552,6 +10159,7 @@
     "infinigen_v1_name": "Nodes.SeparateColor",
     "name": "pf.nodes.color.separate_rgb",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9568,6 +10176,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.separate_hsv",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -9589,6 +10198,7 @@
     "infinigen_v1_name": null,
     "name": "pf.nodes.color.separate_hsl",
     "arg_names_map": null,
+    "attr_names_map": null,
     "output_names_map": {
       "Red": "hue",
       "Green": "saturation",
@@ -9613,6 +10223,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9633,6 +10244,7 @@
       "value_1": "b",
       "value_2": "addend"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9652,6 +10264,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9671,6 +10284,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9690,6 +10304,7 @@
       "value_0": "numerator",
       "value_1": "denominator"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9709,6 +10324,7 @@
       "value_0": "base",
       "value_1": "exponent"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9728,6 +10344,7 @@
       "value_0": "value",
       "value_1": "base"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9744,6 +10361,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sqrt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9760,6 +10378,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.inverse_sqrt",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9776,6 +10395,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.absolute",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9792,6 +10412,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.exponent",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9811,6 +10432,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9830,6 +10452,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9849,6 +10472,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9868,6 +10492,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9884,6 +10509,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sign",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9904,6 +10530,7 @@
       "value_1": "b",
       "value_2": "epsilon"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9924,6 +10551,7 @@
       "value_1": "b",
       "value_2": "distance"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9944,6 +10572,7 @@
       "value_1": "b",
       "value_2": "distance"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9960,6 +10589,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.round",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9976,6 +10606,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.floor",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -9992,6 +10623,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.ceil",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10008,6 +10640,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.truncate",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10024,6 +10657,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.fraction",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10043,6 +10677,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10062,6 +10697,7 @@
       "value_0": "a",
       "value_1": "b"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10082,6 +10718,7 @@
       "value_1": "max_val",
       "value_2": "min_val"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10101,6 +10738,7 @@
       "value_0": "value",
       "value_1": "increment"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10120,6 +10758,7 @@
       "value_0": "value",
       "value_1": "scale"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10136,6 +10775,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10152,6 +10792,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.cos",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10168,6 +10809,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.tan",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10184,6 +10826,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.asin",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10200,6 +10843,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.acos",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10216,6 +10860,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.atan",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10235,6 +10880,7 @@
       "value_0": "y",
       "value_1": "x"
     },
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10251,6 +10897,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.sinh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10267,6 +10914,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.cosh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10283,6 +10931,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.tanh",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10299,6 +10948,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.deg_to_rad",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10315,6 +10965,7 @@
     "infinigen_v1_name": "Nodes.Math",
     "name": "pf.nodes.math.rad_to_deg",
     "arg_names_map": null,
+    "attr_names_map": null,
     "node_group_type": [
       "TextureNodeTree"
     ],
@@ -10330,7 +10981,9 @@
     "name": "pf.nodes.color.mix_rgb",
     "arg_names_map": {
       "color1": "a",
-      "color2": "b",
+      "color2": "b"
+    },
+    "attr_names_map": {
       "use_clamp": "clamp_result"
     },
     "node_group_type": [

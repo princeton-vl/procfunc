@@ -20,6 +20,14 @@ Interface changes:
 - `math.map_range` spells its stepped interpolation `STEPPED` instead of `STEPPED_LINEAR`, which Blender rejects
 - `texture.voronoi` and `texture.voronoi_smooth_f1` return `position=None` in 1D, which has no Position socket, and expose `w` in 1D as well as 4D (its 1D W output was unreachable)
 
+Fixed behavior:
+
+- `func.axes_to_rotation` retains its public X/Y defaults while the transpiler emits Blender's native Z/X defaults explicitly, so native nodes rebuild with the same axes
+
+Fixed crashes:
+
+- the manifest splits attr renames into their own `attr_names_map` column, applied to bpy attrs only while `arg_names_map` applies to sockets only, so a node whose attr and socket share a name transpiles instead of crashing (`FunctionNodeAxesToRotation` raised `keys overlap` for every non-default primary/secondary axis)
+
 # 0.35.1
 
 Interface changes:

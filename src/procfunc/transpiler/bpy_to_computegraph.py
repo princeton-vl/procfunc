@@ -583,6 +583,7 @@ def parse_standard_node(
     func = manifest.import_item_iterative(func_spec["name"].replace("pf.", "procfunc."))
     func_sig = inspect.signature(func)
     arg_names_map = func_spec.get("arg_names_map")
+    attr_names_map = func_spec.get("attr_names_map") or {}
 
     func_defaults = {
         param.name: param.default
@@ -591,20 +592,14 @@ def parse_standard_node(
     }
 
     attr_defaults = _bpy_node_defaults(node_tree, node, list(attrs.keys()))
-    attrs = {
-        k: v
-        for k, v in attrs.items()
-        if _keep_attr(
-            node, k, v, (arg_names_map or {}).get(k, k), func_defaults, attr_defaults
-        )
-    }
-
-    if arg_names_map is not None:
-        attrs = {
-            arg_names_map.get(k, k): v
-            for k, v in attrs.items()
-            if arg_names_map.get(k, k) is not None
-        }
+    kept_attrs = {}
+    for k, v in attrs.items():
+        param = attr_names_map.get(k, k)
+        if not _keep_attr(node, k, v, param, func_defaults, attr_defaults):
+            continue
+        if param is not None:
+            kept_attrs[param] = v
+    attrs = kept_attrs
 
     # we only want to remove MODE_ATTRS which were actually used to resolve the function
     #   (since presumably the restriction implied by these is already enforced by the new function signature)
@@ -620,7 +615,6 @@ def parse_standard_node(
             attrs[dtype_attr] = bpy_node_info.datatype_from_bpy_str(attrs[dtype_attr])
 
     inputs = _create_inputs(node_tree, node, memo, func_defaults=func_defaults)
-    arg_names_map = func_spec["arg_names_map"]
     if arg_names_map is not None:
         inputs = _map_inputs_with_arg_map(inputs, arg_names_map)
 
