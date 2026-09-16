@@ -2,6 +2,7 @@ import inspect
 from collections.abc import Callable
 from typing import get_args
 
+import bpy
 import pytest
 
 import procfunc as pf
@@ -20,6 +21,14 @@ _DOMAIN_FUNCTIONS = [
     geo.split_to_instances,
     geo.store_named_attribute,
 ]
+
+
+def test_curve_handle_type_annotation_matches_bpy() -> None:
+    annotation = (
+        inspect.signature(math.float_curve).parameters["handle_type"].annotation
+    )
+    enum_items = bpy.types.CurveMapPoint.bl_rna.properties["handle_type"].enum_items
+    assert get_args(annotation) == tuple(item.identifier for item in enum_items)
 
 
 @pytest.mark.parametrize("fn", _DOMAIN_FUNCTIONS)

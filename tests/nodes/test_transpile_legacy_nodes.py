@@ -156,3 +156,70 @@ def test_compositor_curve_vec_round_trips_without_fac():
     rebuilt = _single_node(realized, "CompositorNodeCurveVec")
     rebuilt_x = [tuple(p.location) for p in rebuilt.mapping.curves[0].points]
     np.testing.assert_allclose(rebuilt_x, [(0.0, 0.25), (1.0, 0.75)], atol=1e-4)
+
+
+def test_float_curve_mixed_handles_round_trip():
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeFloatCurve")
+    node.mapping.curves[0].points[0].handle_type = "VECTOR"
+    node.mapping.curves[0].points[1].handle_type = "AUTO"
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketFloat")
+
+    src = _transpile(tree)
+    assert "handle_types=['VECTOR', 'AUTO']" in src
+
+    realized = _realize(src, NodeGroupType.SHADER)
+    rebuilt = _single_node(realized, "ShaderNodeFloatCurve")
+    assert [point.handle_type for point in rebuilt.mapping.curves[0].points] == [
+        "VECTOR",
+        "AUTO",
+    ]
+
+
+def test_vector_curve_mixed_handles_round_trip():
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeVectorCurve")
+    expected = []
+    for index, curve in enumerate(node.mapping.curves):
+        handles = ["VECTOR", "AUTO"] if index == 1 else ["AUTO", "AUTO"]
+        expected.append(handles)
+        for point, handle in zip(curve.points, handles, strict=True):
+            point.handle_type = handle
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketVector")
+
+    src = _transpile(tree)
+    assert "handle_types=" in src
+
+    realized = _realize(src, NodeGroupType.SHADER)
+    rebuilt = _single_node(realized, "ShaderNodeVectorCurve")
+    actual = [
+        [point.handle_type for point in curve.points]
+        for curve in rebuilt.mapping.curves
+    ]
+    assert actual == expected
+
+
+def test_rgb_curve_mixed_handles_round_trip():
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeRGBCurve")
+    expected = []
+    for index, curve in enumerate(node.mapping.curves):
+        handles = ["VECTOR", "AUTO"] if index == 3 else ["AUTO", "AUTO"]
+        expected.append(handles)
+        for point, handle in zip(curve.points, handles, strict=True):
+            point.handle_type = handle
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketColor")
+
+    src = _transpile(tree)
+    assert "handle_types=" in src
+
+    realized = _realize(src, NodeGroupType.SHADER)
+    rebuilt = _single_node(realized, "ShaderNodeRGBCurve")
+    actual = [
+        [point.handle_type for point in curve.points]
+        for curve in rebuilt.mapping.curves
+    ]
+    assert actual == expected

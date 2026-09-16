@@ -2,7 +2,7 @@ import copy
 import inspect
 import logging
 from pathlib import Path
-from typing import Any, Generic, TypeVar, Union
+from typing import Any, Generic, Literal, TypeAlias, TypeVar, Union
 
 from procfunc import compute_graph as cg
 from procfunc import context
@@ -276,6 +276,7 @@ def node_definition_context_message(node: cg.Node):
 
 TSocketVal = TypeVar("TSocketVal")
 SocketOrVal = Union[ProcNode[TSocketVal], TSocketVal]
+HandleType: TypeAlias = Literal["AUTO", "AUTO_CLAMPED", "VECTOR"]
 
 
 class Instances:
@@ -325,6 +326,7 @@ __all__ = [
     "ProcNode",
     "Shader",
     "SocketOrVal",
+    "HandleType",
     "AnyShaderDataVal",
     "AnyDataVal",
     "AnyAssetVal",

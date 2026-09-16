@@ -770,18 +770,27 @@ def float_curve(
     factor: nt.SocketOrVal[float],
     value: nt.SocketOrVal[float],
     curve: np.ndarray | None = None,
-    handle_type: str = "AUTO",
+    handle_type: nt.HandleType = "AUTO",
     use_clip: bool = True,
+    handle_types: list[nt.HandleType] | None = None,
 ) -> nt.ProcNode[float]:
     """
     Uses a FloatCurve Shader Node.
+
+    `handle_type` sets every point's interpolation handle. `handle_types` sets
+    them individually and cannot be combined with a non-default `handle_type`.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/float_curve.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeFloatCurve",
         inputs={"Factor": factor, "Value": value},
-        attrs={"mapping": curve, "handle_type": handle_type, "use_clip": use_clip},
+        attrs={
+            "mapping": curve,
+            "handle_type": handle_type,
+            "handle_types": handle_types,
+            "use_clip": use_clip,
+        },
     )
 
 
@@ -789,9 +798,13 @@ def vector_curve(
     vector: nt.SocketOrVal[pt.Vector],
     fac: nt.SocketOrVal[float] = 1.0,
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[nt.HandleType]] | None = None,
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a VectorCurve Shader Node.
+
+    `handle_types[i]` contains the handles for the i-th curve, and
+    `handle_types[i][j]` is the handle type for `curves[i][j]`.
 
     `fac` blends between the input and curve-mapped vector; the compositor
     variant (CompositorNodeCurveVec) has no Fac socket and always applies the
@@ -802,7 +815,7 @@ def vector_curve(
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.VECTOR_CURVE.value,
         inputs={"Fac": fac, "Vector": vector},
-        attrs={"curves": curves},
+        attrs={"curves": curves, "handle_types": handle_types},
     )
 
 

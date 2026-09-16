@@ -22,6 +22,7 @@ Interface changes:
 - `math.map_range` spells its stepped interpolation `STEPPED` instead of `STEPPED_LINEAR`, which Blender rejects
 - `math.map_range` takes `steps` for STEPPED interpolation and rejects it in the other modes, where Blender disables that socket (the argument was missing entirely, so no STEPPED node could transpile)
 - `texture.voronoi` and `texture.voronoi_smooth_f1` return `position=None` in 1D, which has no Position socket, and expose `w` in 1D as well as 4D (its 1D W output was unreachable)
+- `math.float_curve` gains a per-point `handle_types` list alongside its broadcast `handle_type`, and `math.vector_curve`, `color.rgb_curve`, and `compositor.rgb_curve` gain a per-curve `handle_types`
 
 Fixed behavior:
 
@@ -30,6 +31,7 @@ Fixed behavior:
 - transpiling a `ShaderNodeTex*` node in a shader tree whose `texture_mapping` is not the identity transform now rebuilds it as the Combine XYZ and Mapping nodes it is equivalent to, in front of the texture, instead of silently dropping it and changing how the graph renders
 - the `use_min`/`use_max` clamp, which EEVEE applies and Cycles ignores, and any `texture_mapping` on `ShaderNodeTexSky`, which has no Vector input to map, have no such equivalent and now raise; set `context.globals.warn_mode_transpile_dropped_attrs` (or `PROCFUNC_WARN_MODE_TRANSPILE_DROPPED_ATTRS`) to `warn` or `ignore` to transpile anyway
 - `color_mapping`, the legacy `mapping` projection of `texture_mapping`, and any `texture_mapping` in a geometry node tree are dropped silently, since nothing evaluates them
+- float, vector, and RGB curve nodes keep each point's handle type through transpile (non-AUTO handles were logged as a warning and dropped, so the rebuilt curve had a different shape)
 
 Fixed crashes:
 

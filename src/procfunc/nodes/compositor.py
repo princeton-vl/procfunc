@@ -1701,9 +1701,13 @@ def rgb_curve(
     black_level: nt.SocketOrVal[pt.Color] = (0, 0, 0, 1),
     white_level: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[nt.HandleType]] | None = None,
 ) -> nt.ProcNode:
     """
     Uses a CurveRGB Compositor Node.
+
+    `handle_types[i]` contains the handles for the i-th curve, and
+    `handle_types[i][j]` is the handle type for `curves[i][j]`.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/rgb_curves.html
     """
@@ -1715,7 +1719,7 @@ def rgb_curve(
             "Black Level": black_level,
             "White Level": white_level,
         },
-        attrs={"curves": curves},
+        attrs={"curves": curves, "handle_types": handle_types},
     )
 
 

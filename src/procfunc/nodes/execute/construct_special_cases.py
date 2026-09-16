@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 import bpy
+import numpy as np
 
 from procfunc import compute_graph as cg
 from procfunc.nodes import func as pf_func
@@ -47,37 +48,39 @@ def special_case_float_curve(
 ):
     """Handle float curve nodes with points attribute."""
     points = attrs.pop("mapping", None)
-
     handle_type = attrs.pop("handle_type", "AUTO")
-    if handle_type not in {"AUTO", "VECTOR"}:
-        raise NotImplementedError(
-            f"handle_type={handle_type!r} is not yet supported, expected 'AUTO' or 'VECTOR'"
-        )
+    handle_types = attrs.pop("handle_types", None)
     use_clip = attrs.pop("use_clip", True)
     bl_node.mapping.use_clip = use_clip
 
-    if points is None:
+    if handle_types is not None and handle_type != "AUTO":
+        raise ValueError(
+            "handle_types cannot be combined with a non-default handle_type"
+        )
+    if handle_types is None and handle_type != "AUTO":
+        point_count = (
+            len(points) if points is not None else len(bl_node.mapping.curves[0].points)
+        )
+        handle_types = [handle_type] * point_count
+
+    curves = None if points is None else [points]
+    nested_handles = None if handle_types is None else [handle_types]
+    _apply_curves(bl_node, curves, nested_handles)
+
+
+def _apply_curves(
+    bl_node: bpy.types.Node,
+    curves: list[np.ndarray] | np.ndarray | None,
+    handle_types: list[list[nt.HandleType]] | None = None,
+) -> None:
+    if curves is None and handle_types is None:
         return
+    if curves is None:
+        curves = [
+            np.array([tuple(point.location) for point in curve.points])
+            for curve in bl_node.mapping.curves
+        ]
 
-    curve = bl_node.mapping.curves[0]
-
-    # Add new points if needed (starts with 2 by default)
-    if len(points) > 2:
-        for _ in range(len(points) - 2):
-            curve.points.new(0, 0)
-
-    # Set positions for all points
-    for i, (x, y) in enumerate(points):
-        if i < len(curve.points):
-            curve.points[i].location = (x, y)
-            curve.points[i].handle_type = handle_type
-
-    # Without update(), Blender keeps the default identity LUT and ignores
-    # the points we just assigned during geo/shader node evaluation.
-    bl_node.mapping.update()
-
-
-def _apply_curves(bl_node: bpy.types.Node, curves):
     # Accept either list[np.ndarray] or a single stacked ndarray of shape
     # (n_curves, n_points, 2); both iterate per-curve on the outer dim.
     if len(curves) != len(bl_node.mapping.curves):
@@ -85,11 +88,30 @@ def _apply_curves(bl_node: bpy.types.Node, curves):
             f"{bl_node.bl_idname} expects {len(bl_node.mapping.curves)} curves, "
             f"got {len(curves)}"
         )
-    for bl_curve, curve_np in zip(bl_node.mapping.curves, curves, strict=True):
+    if handle_types is None:
+        handle_types = [["AUTO"] * len(curve_np) for curve_np in curves]
+    if len(handle_types) != len(curves):
+        raise ValueError(
+            f"{bl_node.bl_idname} expects handles for {len(curves)} curves, "
+            f"got {len(handle_types)}"
+        )
+    point_counts = [len(curve_np) for curve_np in curves]
+    handle_counts = [len(curve_handles) for curve_handles in handle_types]
+    if handle_counts != point_counts:
+        raise ValueError(
+            f"{bl_node.bl_idname} has {point_counts} points per curve "
+            f"but {handle_counts} handles per curve"
+        )
+    for bl_curve, curve_np, curve_handles in zip(
+        bl_node.mapping.curves, curves, handle_types, strict=True
+    ):
         while len(bl_curve.points) < len(curve_np):
             bl_curve.points.new(0, 0)
         for i, (x, y) in enumerate(curve_np):
             bl_curve.points[i].location = (x, y)
+            bl_curve.points[i].handle_type = curve_handles[i]
+    # Without update(), Blender keeps the default identity LUT and ignores
+    # the points we just assigned during geo/shader node evaluation.
     bl_node.mapping.update()
 
 
@@ -101,9 +123,8 @@ def special_case_rgb_curves(
     """Handle RGB curve nodes with points attribute."""
 
     curves = attrs.pop("curves", None)
-    if curves is None:
-        return
-    _apply_curves(bl_node, curves)
+    handle_types = attrs.pop("handle_types", None)
+    _apply_curves(bl_node, curves, handle_types)
 
 
 def special_case_vector_curves(
@@ -114,9 +135,8 @@ def special_case_vector_curves(
     """Handle vector curve nodes with points attribute."""
 
     curves = attrs.pop("curves", None)
-    if curves is None:
-        return
-    _apply_curves(bl_node, curves)
+    handle_types = attrs.pop("handle_types", None)
+    _apply_curves(bl_node, curves, handle_types)
 
 
 def special_case_compositor_vector_curves(

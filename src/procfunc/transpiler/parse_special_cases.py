@@ -351,18 +351,12 @@ def handle_specialcase_curve(
     else:
         kwargs["curves"] = curves
 
-    invalid_handle = next(
-        (
-            point.handle_type
-            for point in node.mapping.curves[0].points
-            if point.handle_type != "AUTO"
-        ),
-        None,
-    )
-    if invalid_handle:
-        logger.warning(
-            f"{node.name=} had curve handle {invalid_handle=}, currently only AUTO is supported. "
-            "Please use a different handle, or contact the developers to add support for it"
+    handle_types = [
+        [point.handle_type for point in curve.points] for curve in node.mapping.curves
+    ]
+    if any(handle != "AUTO" for curve in handle_types for handle in curve):
+        kwargs["handle_types"] = (
+            handle_types[0] if node.bl_idname in SINGLE_CURVE_NODES else handle_types
         )
 
     return build_call(node, func, kwargs)

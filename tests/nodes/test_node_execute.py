@@ -1,3 +1,5 @@
+import collections.abc
+
 import bpy
 import numpy as np
 import pytest
@@ -265,7 +267,10 @@ def test_vector_curve_nondefault_fac_raises_in_compositor():
         _realize(fn, pf.nodes.NodeGroupType.COMPOSITOR)
 
 
-def test_float_curve_vector_handles_and_unclipped_realize():
+@pytest.mark.parametrize("handle_type", ["AUTO_CLAMPED", "VECTOR"])
+def test_float_curve_handles_and_unclipped_realize(
+    handle_type: pf.nodes.HandleType,
+) -> None:
     curve = np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])
 
     def fn():
@@ -273,7 +278,7 @@ def test_float_curve_vector_handles_and_unclipped_realize():
             factor=1.0,
             value=0.5,
             curve=curve,
-            handle_type="VECTOR",
+            handle_type=handle_type,
             use_clip=False,
         )
 
@@ -281,8 +286,102 @@ def test_float_curve_vector_handles_and_unclipped_realize():
     node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeFloatCurve")
     assert node.mapping.use_clip is False
     assert [point.handle_type for point in node.mapping.curves[0].points] == [
-        "VECTOR"
+        handle_type
     ] * 3
+
+
+def test_float_curve_handle_types_apply_to_default_curve() -> None:
+    def fn() -> pf.ProcNode:
+        return pf.nodes.math.float_curve(
+            factor=1.0,
+            value=0.5,
+            handle_types=["VECTOR", "AUTO"],
+        )
+
+    ng = _realize(fn, pf.nodes.NodeGroupType.SHADER)
+    node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeFloatCurve")
+    actual = [point.handle_type for point in node.mapping.curves[0].points]
+    assert actual == ["VECTOR", "AUTO"]
+
+
+def test_float_curve_rejects_broadcast_and_per_point_handles() -> None:
+    def fn() -> pf.ProcNode:
+        return pf.nodes.math.float_curve(
+            factor=1.0,
+            value=0.5,
+            handle_type="VECTOR",
+            handle_types=["VECTOR", "AUTO"],
+        )
+
+    with pytest.raises(ValueError, match="handle_types.*handle_type"):
+        _realize(fn, pf.nodes.NodeGroupType.SHADER)
+
+
+def _vector_curve_with_handles(
+    handle_types: list[list[pf.nodes.HandleType]],
+) -> pf.ProcNode:
+    return pf.nodes.math.vector_curve(vector=(0.5, 0.5, 0.5), handle_types=handle_types)
+
+
+def _shader_rgb_curve_with_handles(
+    handle_types: list[list[pf.nodes.HandleType]],
+) -> pf.ProcNode:
+    return pf.nodes.color.rgb_curve(
+        fac=1.0, color=(0.5, 0.5, 0.5, 1.0), handle_types=handle_types
+    )
+
+
+def _compositor_rgb_curve_with_handles(
+    handle_types: list[list[pf.nodes.HandleType]],
+) -> pf.ProcNode:
+    return pf.nodes.compositor.rgb_curve(
+        fac=1.0, image=(0.5, 0.5, 0.5, 1.0), handle_types=handle_types
+    )
+
+
+@pytest.mark.parametrize(
+    ("make_curve", "group_type", "bl_idname", "curve_count"),
+    [
+        (
+            _vector_curve_with_handles,
+            pf.nodes.NodeGroupType.SHADER,
+            "ShaderNodeVectorCurve",
+            3,
+        ),
+        (
+            _shader_rgb_curve_with_handles,
+            pf.nodes.NodeGroupType.SHADER,
+            "ShaderNodeRGBCurve",
+            4,
+        ),
+        (
+            _compositor_rgb_curve_with_handles,
+            pf.nodes.NodeGroupType.COMPOSITOR,
+            "CompositorNodeCurveRGB",
+            4,
+        ),
+    ],
+)
+def test_curve_handle_types_apply_to_default_curves(
+    make_curve: collections.abc.Callable[
+        [list[list[pf.nodes.HandleType]]], pf.ProcNode
+    ],
+    group_type: pf.nodes.NodeGroupType,
+    bl_idname: str,
+    curve_count: int,
+) -> None:
+    expected = [["VECTOR", "AUTO"]]
+    expected += [["AUTO", "AUTO"] for _ in range(curve_count - 1)]
+
+    def fn() -> pf.ProcNode:
+        return make_curve(expected)
+
+    ng = _realize(fn, group_type)
+    node = next(n for n in ng.nodes if n.bl_idname == bl_idname)
+    actual = [
+        [point.handle_type for point in curve.points] for curve in node.mapping.curves
+    ]
+    assert actual == expected
 
 
 def test_multiple_outputs_compositor():
