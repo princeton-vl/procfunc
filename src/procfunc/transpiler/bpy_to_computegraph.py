@@ -1058,10 +1058,16 @@ def parse_geo_modifier(
             )
         case 1, _:
             (geometry_getattr,) = geo_output_getattrs.values()
-            return cg.FunctionCallNode(
+            mesh_with_attributes = cg.FunctionCallNode(
                 pf.nodes.to_mesh_object_with_attributes,
                 args=(geometry_getattr,),
                 kwargs={"attributes": attribute_output_getattrs},
+            )
+            return cg.MethodCallNode(
+                mesh_with_attributes,
+                "__getitem__",
+                args=(0,),
+                kwargs={},
             )
         case _, _:
             return cg.FunctionCallNode(

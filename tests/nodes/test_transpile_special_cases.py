@@ -248,7 +248,7 @@ def test_transpile_modulo_emits_named_call_not_percent():
     assert " % " not in src
 
 
-def _obj_with_geo_attr_modifier():
+def _obj_with_geo_attr_modifier() -> bpy.types.Object:
     """Object carrying a geo-nodes modifier whose group emits one Geometry
     output plus one non-geometry (attribute) output."""
     tree = bpy.data.node_groups.new(
@@ -271,13 +271,18 @@ def _obj_with_geo_attr_modifier():
     tree.links.new(sep.outputs["Z"], out.inputs["Height"])
 
     mesh = bpy.data.meshes.new(f"m_{uuid.uuid4().hex[:8]}")
+    mesh.from_pydata(
+        [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0)],
+        [],
+        [(0, 1, 2)],
+    )
     obj = bpy.data.objects.new(f"o_{uuid.uuid4().hex[:8]}", mesh)
     mod = obj.modifiers.new("GeoNodes", "NODES")
     mod.node_group = tree
     return obj
 
 
-def test_transpile_geomod_one_geometry_plus_attributes():
+def test_transpile_geomod_one_geometry_plus_attributes() -> None:
     """A geo-nodes modifier with one Geometry output and extra attribute
     outputs must transpile to to_mesh_object_with_attributes(geometry,
     attributes={...}) - passing geometry positionally and collecting the
@@ -288,7 +293,23 @@ def test_transpile_geomod_one_geometry_plus_attributes():
     ast.parse(src)
     assert "to_mesh_object_with_attributes" in src
     assert "attributes=" in src
-    exec(compile(src, "<geomod_attr>", "exec"), {})  # noqa: S102
+    namespace = {}
+    exec(compile(src, "<geomod_attr>", "exec"), namespace)  # noqa: S102
+    result = namespace[graph.name]()
+    assert isinstance(result, pf.MeshObject)
+    assert "height" in result.item().data.attributes
+
+
+def test_transpile_geomod_attributes_then_modifier() -> None:
+    obj = _obj_with_geo_attr_modifier()
+    obj.modifiers.new("Triangulate", "TRIANGULATE")
+    graph = parse_object(obj, ParseMemo(), include_set_material=False)
+    src = to_python(graph, toplevel_as_maincall=False)
+    namespace = {}
+    exec(compile(src, "<geomod_attr_chain>", "exec"), namespace)  # noqa: S102
+
+    result = namespace[graph.name]()
+    assert isinstance(result, pf.MeshObject)
 
 
 def _geo_tree_with_index_switch():

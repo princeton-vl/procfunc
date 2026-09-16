@@ -74,7 +74,15 @@ _LEGACY_REBUILD_BL_IDNAME = {"ShaderNodeMixRGB": "ShaderNodeMix"}
 def _manifest_canonical_to_ndt(canonical: str) -> NodeDataType | None:
     # manifest data_types are lowercase short forms; resolve to the matching
     # NodeDataType (e.g. "bool" -> BOOLEAN, "vector" -> FLOAT_VECTOR)
-    key = {"bool": "BOOLEAN", "str": "STRING"}.get(canonical.lower(), canonical.upper())
+    aliases = {
+        "bool": NodeDataType.BOOLEAN,
+        "str": NodeDataType.STRING,
+        "vector": NodeDataType.FLOAT_VECTOR,
+    }
+    alias = aliases.get(canonical.lower())
+    if alias is not None:
+        return alias
+    key = canonical.upper()
     matches = [m for m in NodeDataType if key in m.name.split("_")]
     exact = [m for m in matches if m.name == key]
     matches = exact or matches

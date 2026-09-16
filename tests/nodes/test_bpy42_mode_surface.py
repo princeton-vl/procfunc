@@ -42,6 +42,17 @@ def _scalar_stepped_map_range() -> pf.ProcNode[float]:
     return math.map_range(0.25, interpolation_type="STEPPED")
 
 
+@pf.nodes.node_function
+def _vector_map_range() -> pf.ProcNode:
+    return math.map_range(
+        (0.25, 0.5, 0.75),
+        from_max=(1.0, 1.0, 1.0),
+        from_min=(0.0, 0.0, 0.0),
+        to_max=(0.5, 0.6, 0.7),
+        to_min=(0.1, 0.2, 0.3),
+    )
+
+
 def test_map_range_advertises_and_constructs_bpy42_modes() -> None:
     graph = pf.nodes.function_to_compute_graph(_scalar_stepped_map_range)
     group = pf.nodes.as_nodegroup(graph, pf.nodes.NodeGroupType.SHADER)
@@ -67,10 +78,24 @@ def test_map_range_advertises_and_constructs_bpy42_modes() -> None:
         "native_state": (native.data_type, native.interpolation_type),
     } == {
         "literal_modes": ("LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"),
-        "manifest_data_types": ["float"],
-        "runtime_data_types": [pf.nodes.NodeDataType.FLOAT],
+        "manifest_data_types": ["float", "vector"],
+        "runtime_data_types": [
+            pf.nodes.NodeDataType.FLOAT,
+            pf.nodes.NodeDataType.FLOAT_VECTOR,
+        ],
         "native_state": ("FLOAT", "STEPPED"),
     }
+
+
+def test_map_range_constructs_bpy42_vector_mode() -> None:
+    graph = pf.nodes.function_to_compute_graph(_vector_map_range)
+    group = pf.nodes.as_nodegroup(graph, pf.nodes.NodeGroupType.SHADER)
+    native = next(n for n in group.nodes if n.bl_idname == "ShaderNodeMapRange")
+
+    assert native.data_type == "FLOAT_VECTOR"
+    assert tuple(native.inputs["Vector"].default_value) == pytest.approx(
+        (0.25, 0.5, 0.75)
+    )
 
 
 @pf.nodes.node_function

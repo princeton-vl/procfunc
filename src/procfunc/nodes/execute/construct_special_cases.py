@@ -1,4 +1,5 @@
 import logging
+from numbers import Real
 from typing import Any
 
 import bpy
@@ -287,6 +288,9 @@ def special_case_map_range(
         assert "Value" in inputs, inputs
         inputs["Vector"] = inputs.pop("Value")
         kwargs["Vector"] = kwargs.pop("Value")
+        for name, value in inputs.items():
+            if isinstance(value, Real):
+                inputs[name] = (value, value, value)
 
 
 def special_case_capture_attribute(

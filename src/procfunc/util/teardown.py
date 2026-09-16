@@ -16,7 +16,15 @@ def _save_coverage() -> None:
     # coverage.py saves once the traced process returns, which os._exit never does
     try:
         import coverage
+    except ModuleNotFoundError as exc:
+        if exc.name != "coverage":
+            traceback.print_exc()
+        return
+    except Exception:
+        traceback.print_exc()
+        return
 
+    try:
         cov = coverage.Coverage.current()
         if cov is not None:
             cov.save()

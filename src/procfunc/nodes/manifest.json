@@ -1488,7 +1488,8 @@
       "ShaderNodeTree"
     ],
     "data_types": [
-      "float"
+      "float",
+      "vector"
     ],
     "is_contextual": null,
     "is_unittest_specialcase": false,

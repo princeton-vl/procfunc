@@ -868,14 +868,14 @@ TInterpolationType = Literal["LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"]
 
 
 def map_range(
-    value: nt.SocketOrVal[float],
-    from_max: nt.SocketOrVal[float] = 1.0,
-    from_min: nt.SocketOrVal[float] = 0.0,
-    to_max: nt.SocketOrVal[float] = 1.0,
-    to_min: nt.SocketOrVal[float] = 0.0,
+    value: nt.SocketOrVal[float | pt.Vector],
+    from_max: nt.SocketOrVal[float | pt.Vector] = 1.0,
+    from_min: nt.SocketOrVal[float | pt.Vector] = 0.0,
+    to_max: nt.SocketOrVal[float | pt.Vector] = 1.0,
+    to_min: nt.SocketOrVal[float | pt.Vector] = 0.0,
     clamp: bool = True,
     interpolation_type: TInterpolationType = "LINEAR",
-    steps: nt.SocketOrVal[float] | None = None,
+    steps: nt.SocketOrVal[float | pt.Vector] | None = None,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode:
     """
@@ -891,9 +891,10 @@ def map_range(
         data_type = RuntimeResolveDataType(
             [
                 NodeDataType.FLOAT,
-                # NodeDataType.FLOAT_VECTOR,  # bpy 4.5+; keep the bpy 4.2 surface.
+                NodeDataType.FLOAT_VECTOR,
             ],
-            ["From Max", "From Min", "To Max", "To Min", "Value"],
+            ["From Max", "From Min", "To Max", "To Min", "Value", "Steps"],
+            broadcast_scalars=True,
         )
 
     # interpolation_type / data_type only exist on ShaderNodeMapRange. The

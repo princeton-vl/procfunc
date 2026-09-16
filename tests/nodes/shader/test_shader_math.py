@@ -1,5 +1,6 @@
 import math
 
+import pytest
 import shader_eval
 
 import procfunc as pf
@@ -212,6 +213,48 @@ def test_map_range_stepped() -> None:
 def test_map_range_stepped_steps() -> None:
     node = node_math.map_range(0.3, interpolation_type="STEPPED", steps=1.0)
     shader_eval.assert_value(shader_eval.render(node), 0.0)
+
+
+def test_map_range_vector() -> None:
+    node = node_math.map_range(
+        (0.25, 0.5, 0.75),
+        from_min=(0.0, 0.0, 0.0),
+        from_max=(1.0, 1.0, 1.0),
+        to_min=(0.1, 0.2, 0.3),
+        to_max=(0.5, 0.6, 0.7),
+    )
+    shader_eval.assert_value(shader_eval.render(node), (0.2, 0.4, 0.6))
+
+
+@pytest.mark.parametrize(
+    "kwargs, expected",
+    [
+        ({}, (0.2, 0.45, 0.7)),
+        ({"to_max": 0.5}, (0.1, 0.225, 0.35)),
+        ({"interpolation_type": "STEPPED"}, (0.25, 0.5, 0.75)),
+        ({"interpolation_type": "STEPPED", "steps": 2.0}, (0.0, 0.5, 1.0)),
+        ({"data_type": pf.nodes.NodeDataType.FLOAT_VECTOR}, (0.2, 0.45, 0.7)),
+    ],
+)
+def test_map_range_vector_scalar_defaults(kwargs: dict, expected: tuple) -> None:
+    node = node_math.map_range((0.2, 0.45, 0.7), **kwargs)
+    shader_eval.assert_value(shader_eval.render(node), expected)
+
+
+def test_map_range_scalar_value_vector_bound() -> None:
+    node = node_math.map_range(0.5, to_max=(0.4, 0.6, 0.8))
+    shader_eval.assert_value(shader_eval.render(node), (0.2, 0.3, 0.4))
+
+
+def test_map_range_vector_socket_scalar_bound() -> None:
+    vector = node_math.combine_xyz(0.2, 0.4, 0.6)
+    node = node_math.map_range(vector, to_max=node_math.add(0.25, 0.25))
+    shader_eval.assert_value(shader_eval.render(node), (0.1, 0.2, 0.3))
+
+
+def test_map_range_scalar_value_vector_steps() -> None:
+    node = node_math.map_range(0.3, interpolation_type="STEPPED", steps=(2.0, 4.0, 8.0))
+    shader_eval.assert_value(shader_eval.render(node), (0.0, 0.25, 0.25))
 
 
 def test_vector_add() -> None:
