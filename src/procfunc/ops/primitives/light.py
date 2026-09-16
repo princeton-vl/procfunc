@@ -4,6 +4,7 @@ import bpy
 import numpy as np
 
 from procfunc import types as t
+from procfunc.ops._util import execute_op
 from procfunc.tracer import primitive as tracer_primitive
 
 
@@ -17,7 +18,7 @@ def point_lamp(
     contact_shadow_bias: float = 0.03,
     contact_shadow_thickness: float = 0.2,
 ) -> t.LightObject:
-    bpy.ops.object.light_add(type="POINT")
+    execute_op(bpy.ops.object.light_add, type="POINT")
     lamp = bpy.context.object
 
     lamp.data.energy = energy
@@ -41,7 +42,7 @@ def sun_lamp(
     contact_shadow_bias: float = 0.03,
     contact_shadow_thickness: float = 0.2,
 ) -> t.LightObject:
-    bpy.ops.object.light_add(type="SUN")
+    execute_op(bpy.ops.object.light_add, type="SUN")
     lamp = bpy.context.object
 
     lamp.data.energy = intensity  # intentional - blender uses energy for this case
@@ -67,7 +68,7 @@ def spot_lamp(
     contact_shadow_bias: float = 0.03,
     contact_shadow_thickness: float = 0.2,
 ) -> t.LightObject:
-    bpy.ops.object.light_add(type="SPOT")
+    execute_op(bpy.ops.object.light_add, type="SPOT")
     lamp = bpy.context.object
 
     lamp.data.energy = energy
@@ -96,7 +97,7 @@ def area_lamp(
     contact_shadow_bias: float = 0.03,
     contact_shadow_thickness: float = 0.2,
 ) -> t.LightObject:
-    bpy.ops.object.light_add(type="AREA")
+    execute_op(bpy.ops.object.light_add, type="AREA")
     lamp = bpy.context.object
 
     lamp.data.energy = energy

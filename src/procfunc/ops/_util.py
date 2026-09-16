@@ -10,6 +10,11 @@ from procfunc.util.bpy_info import bpy_nocollide_data_name
 logger = logging.getLogger(__name__)
 
 
+def execute_op(operator: Callable, *args: Any, **kwargs: Any) -> Any:
+    bpy.context.preferences.edit.use_global_undo = False
+    return operator(*args, **kwargs)
+
+
 def _parse_objs(
     objs: t.Object | list[t.Object] | None, active: t.Object | None
 ) -> tuple[list[bpy.types.Object], bpy.types.Object]:
@@ -62,13 +67,13 @@ def execute_object_op(
     objs, active = _parse_objs(objs, active)
 
     # TODO: more efficient via temp_override?
-    bpy.ops.object.select_all(action="DESELECT")
+    execute_op(bpy.ops.object.select_all, action="DESELECT")
     bpy.context.view_layer.objects.active = active
-    bpy.ops.object.mode_set(mode="OBJECT")
+    execute_op(bpy.ops.object.mode_set, mode="OBJECT")
     for o in objs:
         o.select_set(True)
 
-    result = operator(**kwargs)
+    result = execute_op(operator, **kwargs)
     _assert_op_finished(result, description)
 
 
@@ -90,14 +95,14 @@ def _apply_selection_masks(
 
     if n_masks == 0:
         logger.debug(f"No edit-masks provided for {obj.name}, selecting all")
-        bpy.ops.mesh.select_all(action="SELECT")
+        execute_op(bpy.ops.mesh.select_all, action="SELECT")
         return
     if n_masks > 1:
         raise ValueError(
             "Only one of vertex_mask, edge_mask, or face_mask can be provided"
         )
 
-    bpy.ops.mesh.select_all(action="DESELECT")
+    execute_op(bpy.ops.mesh.select_all, action="DESELECT")
 
     # must select the type of mask we're applying, otherwise re-entering editmode will incorrectly
     # convert face/edge masks into vertex masks, which is lossy.
@@ -108,10 +113,10 @@ def _apply_selection_masks(
         if edge_mask is not None
         else "FACE"
     )
-    bpy.ops.mesh.select_mode(type=select_type)
+    execute_op(bpy.ops.mesh.select_mode, type=select_type)
 
     # foreach_set operations must run in object mode then switch back to edit mode to re-sync them
-    bpy.ops.object.mode_set(mode="OBJECT")
+    execute_op(bpy.ops.object.mode_set, mode="OBJECT")
 
     if vertex_mask is not None:
         assert vertex_mask.shape == (len(obj.data.vertices),)
@@ -128,7 +133,7 @@ def _apply_selection_masks(
         assert face_mask.dtype == bool
         obj.data.polygons.foreach_set("select", face_mask)
 
-    bpy.ops.object.mode_set(mode="EDIT")
+    execute_op(bpy.ops.object.mode_set, mode="EDIT")
 
 
 def extract_face_mask(
@@ -187,12 +192,12 @@ def execute_mesh_op(
 
     # TODO: would rather do this with context overrides,
     #   but it messes up the active_object for cases like ops.mesh.separate()
-    bpy.ops.object.select_all(action="DESELECT")
+    execute_op(bpy.ops.object.select_all, action="DESELECT")
     bpy.context.view_layer.objects.active = obj
-    bpy.ops.object.mode_set(mode="OBJECT")
+    execute_op(bpy.ops.object.mode_set, mode="OBJECT")
     obj.select_set(True)
 
-    bpy.ops.object.mode_set(mode="EDIT")
+    execute_op(bpy.ops.object.mode_set, mode="EDIT")
     _apply_selection_masks(obj, vertex_mask, edge_mask, face_mask)
 
     try:
@@ -208,9 +213,9 @@ def execute_mesh_op(
             else:
                 raise ValueError(f"Invalid empty_mask_mode: {empty_mask_mode}")
 
-        result = operator(**kwargs)
+        result = execute_op(operator, **kwargs)
     finally:
-        bpy.ops.object.mode_set(mode="OBJECT")
+        execute_op(bpy.ops.object.mode_set, mode="OBJECT")
 
     _assert_op_finished(result, description)
 

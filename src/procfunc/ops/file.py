@@ -7,6 +7,7 @@ import bpy
 import numpy as np
 
 from procfunc import types as t
+from procfunc.ops._util import execute_op
 from procfunc.util.log import Suppress
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ def load_blend(input_path: Path | str):
     if isinstance(input_path, Path):
         input_path = str(input_path)
 
-    bpy.ops.wm.open_mainfile(filepath=input_path)
+    execute_op(bpy.ops.wm.open_mainfile, filepath=input_path)
 
 
 def save_blend(
@@ -46,10 +47,10 @@ def save_blend(
 
     with Suppress():
         if autopack:
-            bpy.ops.file.autopack_toggle()
-        bpy.ops.wm.save_as_mainfile(filepath=output_path)
+            execute_op(bpy.ops.file.autopack_toggle)
+        execute_op(bpy.ops.wm.save_as_mainfile, filepath=output_path)
         if autopack:
-            bpy.ops.file.autopack_toggle()
+            execute_op(bpy.ops.file.autopack_toggle)
 
     return output_path
 
@@ -70,7 +71,7 @@ def import_mesh(path: Path, **kwargs):
             f"{import_mesh.__name__} does not yet support extension {ext}, please contact the developer"
         )
 
-    funcs[ext](filepath=str(path), **kwargs)
+    execute_op(funcs[ext], filepath=str(path), **kwargs)
 
     if len(bpy.context.selected_objects) > 1 if ext != "usdc" else 2:
         logger.warning(
@@ -113,28 +114,39 @@ def save_mesh(
 
     match output_path.suffix:
         case ".obj":
-            bpy.ops.wm.obj_export(
+            execute_op(
+                bpy.ops.wm.obj_export,
                 filepath=str(output_path),
                 export_selected_objects=use_selection,
                 **kwargs,
             )
         case ".fbx":
-            bpy.ops.export_scene.fbx(
-                filepath=str(output_path), use_selection=use_selection, **kwargs
+            execute_op(
+                bpy.ops.export_scene.fbx,
+                filepath=str(output_path),
+                use_selection=use_selection,
+                **kwargs,
             )
         case ".stl":
-            bpy.ops.export_mesh.stl(
-                filepath=str(output_path), use_selection=use_selection, **kwargs
+            execute_op(
+                bpy.ops.export_mesh.stl,
+                filepath=str(output_path),
+                use_selection=use_selection,
+                **kwargs,
             )
         case ".ply":
-            bpy.ops.wm.ply_export(
+            execute_op(
+                bpy.ops.wm.ply_export,
                 filepath=str(output_path),
                 export_selected_objects=use_selection,
                 **kwargs,
             )
         case ".usdc":
-            bpy.ops.wm.usd_export(
-                filepath=str(output_path), selected_objects_only=use_selection, **kwargs
+            execute_op(
+                bpy.ops.wm.usd_export,
+                filepath=str(output_path),
+                selected_objects_only=use_selection,
+                **kwargs,
             )
         case _:
             raise ValueError(f"Unknown extension {output_path.suffix}")
@@ -265,7 +277,7 @@ def render(
         tmp = None
 
     scene.render.filepath = str(out_path)
-    bpy.ops.render.render(write_still=True)
+    execute_op(bpy.ops.render.render, write_still=True)
 
     if return_array:
         try:

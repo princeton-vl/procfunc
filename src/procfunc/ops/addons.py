@@ -3,6 +3,8 @@ import logging
 import addon_utils
 import bpy
 
+from procfunc.ops._util import execute_op
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,15 +43,18 @@ def require_blender_addon(addon: str, fail: str = "fatal", allow_online=False):
             logger.info(
                 f"Addon {addon} already in blender local addons, attempt to enable it."
             )
-            bpy.ops.preferences.addon_enable(module=long)
+            execute_op(bpy.ops.preferences.addon_enable, module=long)
         else:
-            bpy.ops.extensions.userpref_allow_online()
+            execute_op(bpy.ops.extensions.userpref_allow_online)
             logger.info(f"Installing Add-on {addon}.")
-            bpy.ops.extensions.repo_sync(repo_index=0)
-            bpy.ops.extensions.package_install(
-                repo_index=0, pkg_id=addon, enable_on_install=True
+            execute_op(bpy.ops.extensions.repo_sync, repo_index=0)
+            execute_op(
+                bpy.ops.extensions.package_install,
+                repo_index=0,
+                pkg_id=addon,
+                enable_on_install=True,
             )
-            bpy.ops.preferences.addon_enable(module=long)
+            execute_op(bpy.ops.preferences.addon_enable, module=long)
     except Exception as e:
         report_fail(f"Failed to install {addon=} due to {e=}")
 
