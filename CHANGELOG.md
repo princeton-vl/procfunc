@@ -1,3 +1,9 @@
+# 0.36.0
+
+Interface changes:
+
+- `pf.nodes.func.rotate_euler` no longer takes `rotation_type`; the AXIS_ANGLE form is the new `rotate_euler_axis_angle(rotation, axis, angle, space)`, with `rotation_type` pinned via the manifest (was one function whose AXIS_ANGLE mode was unusable — it had no axis/angle kwargs and fed the Rotate By default into a socket that mode disables)
+
 # 0.35.1
 
 Interface changes:

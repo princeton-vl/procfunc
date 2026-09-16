@@ -3040,9 +3040,27 @@
   },
   {
     "bpy_name": "FunctionNodeRotateEuler",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "rotation_type": "EULER"
+    },
     "infinigen_v1_name": "Nodes.RotateEuler",
     "name": "pf.nodes.func.rotate_euler",
+    "arg_names_map": null,
+    "node_group_type": [
+      "GeometryNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "FunctionNodeRotateEuler",
+    "bpy_mode_args": {
+      "rotation_type": "AXIS_ANGLE"
+    },
+    "infinigen_v1_name": "Nodes.RotateEuler",
+    "name": "pf.nodes.func.rotate_euler_axis_angle",
     "arg_names_map": null,
     "node_group_type": [
       "GeometryNodeTree"
