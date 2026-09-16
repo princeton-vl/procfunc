@@ -131,11 +131,20 @@ def environment(
     image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["EQUIRECTANGULAR", "MIRROR_BALL"] = "EQUIRECTANGULAR",
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a TexEnvironment Shader Node.
 
     procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
+
+    Sequence and UDIM settings live on the node's ImageUser and are taken as plain arguments.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/environment.html
     """
@@ -149,6 +158,13 @@ def environment(
             "image": image,
             "interpolation": interpolation,
             "projection": projection,
+            "frame_current": frame_current,
+            "frame_duration": frame_duration,
+            "frame_offset": frame_offset,
+            "frame_start": frame_start,
+            "tile": tile,
+            "use_auto_refresh": use_auto_refresh,
+            "use_cyclic": use_cyclic,
         },
     )
 
@@ -218,11 +234,20 @@ def image(
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["FLAT", "BOX", "SPHERE", "TUBE"] = "FLAT",
     projection_blend: float = 0.0,
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> TextureResult:
     """
     Uses a TexImage Shader Node.
 
     procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
+
+    Sequence and UDIM settings live on the node's ImageUser and are taken as plain arguments.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/image.html
     """
@@ -238,6 +263,13 @@ def image(
             "interpolation": interpolation,
             "projection": projection,
             "projection_blend": projection_blend,
+            "frame_current": frame_current,
+            "frame_duration": frame_duration,
+            "frame_offset": frame_offset,
+            "frame_start": frame_start,
+            "tile": tile,
+            "use_auto_refresh": use_auto_refresh,
+            "use_cyclic": use_cyclic,
         },
     )
     return TextureResult(

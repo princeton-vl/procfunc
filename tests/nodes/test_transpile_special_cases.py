@@ -12,6 +12,7 @@ from procfunc.nodes.util.bpy_node_info import NodeGroupType
 from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import (
     ParseMemo,
+    _target_attrs,
     parse_material,
     parse_object,
 )
@@ -288,3 +289,145 @@ def test_transpile_geomod_one_geometry_plus_attributes():
     assert "to_mesh_object_with_attributes" in src
     assert "attributes=" in src
     exec(compile(src, "<geomod_attr>", "exec"), {})  # noqa: S102
+
+
+def _geo_tree_with_index_switch():
+    tree = bpy.data.node_groups.new(f"isw_{uuid.uuid4().hex[:8]}", "GeometryNodeTree")
+    inp = tree.nodes.new("NodeGroupInput")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Index", in_out="INPUT", socket_type="NodeSocketInt")
+    tree.interface.new_socket("Value", in_out="OUTPUT", socket_type="NodeSocketFloat")
+
+    switch = tree.nodes.new("GeometryNodeIndexSwitch")
+    switch.data_type = "FLOAT"
+    switch.inputs["0"].default_value = 3.0
+    switch.inputs["1"].default_value = 7.0
+    tree.links.new(inp.outputs["Index"], switch.inputs["Index"])
+    tree.links.new(switch.outputs[0], out.inputs["Value"])
+    return tree
+
+
+def test_transpile_index_switch_drops_item_collection():
+    """index_switch_items is an RNA collection restating what the '0'/'1' sockets
+    already say. Its handler must drop it, or codegen emits it as a kwarg the
+    binding has no parameter for."""
+    tree = _geo_tree_with_index_switch()
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    ast.parse(src)
+    assert "index_switch_items" not in src
+    assert "a=3.0" in src
+    assert "b=7.0" in src
+
+
+def test_index_switch_item_collection_reaches_the_handler():
+    """The handler owns the drop, so the collection must still arrive in attrs -
+    otherwise the drop is silently happening somewhere else and this handler is
+    dead code."""
+    tree = _geo_tree_with_index_switch()
+    switch = next(n for n in tree.nodes if n.bl_idname == "GeometryNodeIndexSwitch")
+    assert "index_switch_items" in _target_attrs(switch)
+
+
+def _geo_tree_with_raycast(mapping):
+    tree = bpy.data.node_groups.new(f"rc_{uuid.uuid4().hex[:8]}", "GeometryNodeTree")
+    inp = tree.nodes.new("NodeGroupInput")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket(
+        "Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+    )
+    tree.interface.new_socket("Hit", in_out="OUTPUT", socket_type="NodeSocketBool")
+
+    raycast = tree.nodes.new("GeometryNodeRaycast")
+    raycast.mapping = mapping
+    tree.links.new(inp.outputs["Geometry"], raycast.inputs["Target Geometry"])
+    tree.links.new(raycast.outputs["Is Hit"], out.inputs["Hit"])
+    return tree
+
+
+def test_transpile_raycast_preserves_nearest_mapping():
+    """Raycast.mapping is an ENUM that happened to share a name with the
+    CurveMapping struct. While that name was globally skipped, a NEAREST raycast
+    transpiled as INTERPOLATED - a silently different graph."""
+    tree = _geo_tree_with_raycast("NEAREST")
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    ast.parse(src)
+    assert "mapping='NEAREST'" in src
+
+
+def test_transpile_raycast_default_mapping_omitted():
+    tree = _geo_tree_with_raycast("INTERPOLATED")
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    assert "mapping=" not in src
+
+
+def test_transpile_premultiply_key_preserves_mapping():
+    """PremulKey.mapping is the node's entire function, and was pinned to its
+    default by the same global skip."""
+    tree = bpy.data.node_groups.new(f"pk_{uuid.uuid4().hex[:8]}", "CompositorNodeTree")
+    inp = tree.nodes.new("NodeGroupInput")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Image", in_out="INPUT", socket_type="NodeSocketColor")
+    tree.interface.new_socket("Out", in_out="OUTPUT", socket_type="NodeSocketColor")
+
+    premul = tree.nodes.new("CompositorNodePremulKey")
+    premul.mapping = "PREMUL_TO_STRAIGHT"
+    tree.links.new(inp.outputs["Image"], premul.inputs["Image"])
+    tree.links.new(premul.outputs[0], out.inputs["Out"])
+
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    ast.parse(src)
+    assert "mapping='PREMUL_TO_STRAIGHT'" in src
+
+
+def _shader_tree_with_image_user(**settings):
+    tree = bpy.data.node_groups.new(f"iu_{uuid.uuid4().hex[:8]}", "ShaderNodeTree")
+    out = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Color", in_out="OUTPUT", socket_type="NodeSocketColor")
+
+    tex = tree.nodes.new("ShaderNodeTexImage")
+    for name, value in settings.items():
+        setattr(tex.image_user, name, value)
+    tree.links.new(tex.outputs["Color"], out.inputs["Color"])
+    return tree
+
+
+def test_transpile_image_user_settings_become_kwargs():
+    """ImageUser is an embedded struct with no literal spelling, so the handler
+    flattens its fields into plain arguments rather than dropping them."""
+    tree = _shader_tree_with_image_user(
+        frame_duration=42, frame_offset=7, use_cyclic=True
+    )
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    ast.parse(src)
+    assert "frame_duration=42" in src
+    assert "frame_offset=7" in src
+    assert "use_cyclic=True" in src
+
+
+def test_transpile_image_user_defaults_omitted():
+    tree = _shader_tree_with_image_user()
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    src = to_python(graph, toplevel_as_maincall=False)
+    for name in ("frame_duration", "frame_offset", "frame_start", "tile", "use_cyclic"):
+        assert name not in src
+
+
+@pf.nodes.node_function
+def _image_with_sequence() -> pf.ProcNode[pt.Color]:
+    return pf.nodes.texture.image(
+        vector=None, frame_duration=42, frame_offset=7, use_cyclic=True
+    ).color
+
+
+def test_image_user_settings_round_trip():
+    graph = pf.nodes.function_to_compute_graph(_image_with_sequence)
+    ng = as_nodegroup(graph, NodeGroupType.SHADER)
+    tex = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeTexImage")
+    assert tex.image_user.frame_duration == 42
+    assert tex.image_user.frame_offset == 7
+    assert tex.image_user.use_cyclic

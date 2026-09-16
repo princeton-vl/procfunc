@@ -8,6 +8,7 @@ import numpy as np
 import procfunc as pf
 from procfunc import compute_graph as cg
 from procfunc import context
+from procfunc.nodes.execute.construct_special_cases import IMAGE_USER_ATTRS
 from procfunc.nodes.util import bpy_node_info
 from procfunc.transpiler.parse_attrs import generic_attrs
 from procfunc.transpiler.parse_default_values import normalize_default_value
@@ -277,6 +278,22 @@ def handle_specialcase_texture_mapping(
     return build_call(node, func, kwargs)
 
 
+def handle_specialcase_image_texture(
+    node_tree: bpy.types.NodeTree,
+    node: bpy.types.Node,
+    func: Callable,
+    func_spec: dict[str, Any],
+    inputs: dict[str, Any],
+    attrs: dict[str, Any],
+) -> cg.Node:
+    image_user = attrs.pop("image_user", None)
+    if image_user is not None:
+        attrs.update({k: getattr(image_user, k) for k in IMAGE_USER_ATTRS})
+    return handle_specialcase_texture_mapping(
+        node_tree, node, func, func_spec, inputs, attrs
+    )
+
+
 def handle_specialcase_1d_texture(
     node_tree: bpy.types.NodeTree,
     node: bpy.types.Node,
@@ -295,6 +312,21 @@ def handle_specialcase_1d_texture(
         kwargs["vector"] = None
     else:
         kwargs["vector"] = texture_mapping_vector(node_tree, node, kwargs.get("vector"))
+    return build_call(node, func, kwargs)
+
+
+def handle_specialcase_index_switch(
+    node_tree: bpy.types.NodeTree,
+    node: bpy.types.Node,
+    func: Callable,
+    func_spec: dict[str, Any],
+    inputs: dict[str, Any],
+    attrs: dict[str, Any],
+) -> cg.Node:
+    # the item list is fully implied by the '0'/'1' input sockets, and reading the
+    # collection off a temp default node would outlive that node
+    attrs.pop("index_switch_items", None)
+    kwargs = {**generic_attrs(node_tree, node, attrs, func, func_spec), **inputs}
     return build_call(node, func, kwargs)
 
 
@@ -390,11 +422,12 @@ SPECIAL_CASE_NODES: dict[str, SpecialCaseHandler] = {
     # every other ShaderNodeTex* carrying texture_mapping and color_mapping
     "ShaderNodeTexBrick": handle_specialcase_texture_mapping,
     "ShaderNodeTexChecker": handle_specialcase_texture_mapping,
-    "ShaderNodeTexEnvironment": handle_specialcase_texture_mapping,
+    "ShaderNodeTexEnvironment": handle_specialcase_image_texture,
     "ShaderNodeTexGradient": handle_specialcase_texture_mapping,
-    "ShaderNodeTexImage": handle_specialcase_texture_mapping,
+    "ShaderNodeTexImage": handle_specialcase_image_texture,
     "ShaderNodeTexMagic": handle_specialcase_texture_mapping,
     "ShaderNodeTexWave": handle_specialcase_texture_mapping,
+    "GeometryNodeIndexSwitch": handle_specialcase_index_switch,
     # curves share handler
     "ShaderNodeFloatCurve": handle_specialcase_curve,
     "ShaderNodeRGBCurve": handle_specialcase_curve,

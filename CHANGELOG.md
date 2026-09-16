@@ -2,6 +2,7 @@
 
 Interface changes:
 
+- `texture.image` and `texture.environment` gain the seven ImageUser arguments listed below; all default to Blender's own values, so existing calls are unaffected
 - `pf.nodes.func.rotate_euler` no longer takes `rotation_type`; the AXIS_ANGLE form is the new `rotate_euler_axis_angle(rotation, axis, angle, space)`, with `rotation_type` pinned via the manifest (was one function whose AXIS_ANGLE mode was unusable — it had no axis/angle kwargs and fed the Rotate By default into a socket that mode disables)
 - `shader.subsurface_scattering` split into `subsurface_scattering_burley` / `subsurface_scattering_random_walk` / `subsurface_scattering_random_walk_skin`, each exposing only the sockets its falloff supports (the combined binding fed defaults into disabled sockets)
 - `shader.principled_hair_bsdf` split by model into `principled_hair_bsdf_chiang` / `principled_hair_bsdf_huang`, adding the previously-missing melanin, absorption, and Huang-model sockets; each function derives COLOR / ABSORPTION / MELANIN parametrization from the provided color arguments and rejects mixed parametrizations
@@ -34,6 +35,9 @@ Fixed behavior:
 - the `use_min`/`use_max` clamp, which EEVEE applies and Cycles ignores, and any `texture_mapping` on `ShaderNodeTexSky`, which has no Vector input to map, have no such equivalent and now raise; set `context.globals.warn_mode_transpile_dropped_attrs` (or `PROCFUNC_WARN_MODE_TRANSPILE_DROPPED_ATTRS`) to `warn` or `ignore` to transpile anyway
 - `color_mapping`, the legacy `mapping` projection of `texture_mapping`, and any `texture_mapping` in a geometry node tree are dropped silently, since nothing evaluates them
 - float, vector, and RGB curve nodes keep each point's handle type through transpile (non-AUTO handles were logged as a warning and dropped, so the rebuilt curve had a different shape)
+- `GeometryNodeIndexSwitch` gets a transpiler handler that drops its `index_switch_items` collection, which restates the numbered input sockets
+- `GeometryNodeRaycast` and `CompositorNodePremulKey` transpile their `mapping` enum, which a global skip list had been pinning to `INTERPOLATED` and `STRAIGHT_TO_PREMUL` regardless of the source node
+- `texture.image` and `texture.environment` take the node's ImageUser settings as plain `frame_current` / `frame_duration` / `frame_offset` / `frame_start` / `tile` / `use_auto_refresh` / `use_cyclic` arguments, matching `compositor.image`, instead of dropping them on transpile
 
 Fixed crashes:
 

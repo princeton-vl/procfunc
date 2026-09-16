@@ -11,6 +11,7 @@ from procfunc.transpiler.parse_special_cases import (
     IMPLICIT_TEXTURE_COORDINATES,
     SPECIAL_CASE_NODES,
     handle_specialcase_1d_texture,
+    handle_specialcase_image_texture,
     handle_specialcase_texture_mapping,
 )
 
@@ -311,7 +312,11 @@ def test_every_mapped_node_knows_its_implicit_coordinate() -> None:
         bl_idname
         for bl_idname, handler in SPECIAL_CASE_NODES.items()
         if handler
-        in (handle_specialcase_texture_mapping, handle_specialcase_1d_texture)
+        in (
+            handle_specialcase_texture_mapping,
+            handle_specialcase_1d_texture,
+            handle_specialcase_image_texture,
+        )
     }
     assert mapped - {"ShaderNodeTexWhiteNoise"} == set(IMPLICIT_TEXTURE_COORDINATES)
 

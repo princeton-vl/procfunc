@@ -151,6 +151,31 @@ def special_case_hue_correct(
     _apply_curves(bl_node, curves, handle_types)
 
 
+IMAGE_USER_ATTRS = (
+    "frame_current",
+    "frame_duration",
+    "frame_offset",
+    "frame_start",
+    "tile",
+    "use_auto_refresh",
+    "use_cyclic",
+)
+
+
+def special_case_image_user(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    **_kwargs,
+):
+    """ShaderNodeTexImage and ShaderNodeTexEnvironment keep their sequence and UDIM
+    settings on an ImageUser sub-struct rather than on the node itself."""
+
+    for name in IMAGE_USER_ATTRS:
+        value = attrs.pop(name, None)
+        if value is not None:
+            setattr(bl_node.image_user, name, value)
+
+
 def special_case_compositor_vector_curves(
     bl_node: bpy.types.Node,
     attrs: dict[str, Any],
@@ -375,6 +400,8 @@ NODE_SPECIAL_CASES = {
     "ShaderNodeVectorCurve": special_case_vector_curves,
     "CompositorNodeCurveVec": special_case_compositor_vector_curves,
     "CompositorNodeHueCorrect": special_case_hue_correct,
+    "ShaderNodeTexImage": special_case_image_user,
+    "ShaderNodeTexEnvironment": special_case_image_user,
     "TextureNodeMixRGB": special_case_texture_mix_rgb,
     "CompositorNodeOutputFile": special_case_file_output,
     nt.INPUT_NODE_TYPE: special_case_input,

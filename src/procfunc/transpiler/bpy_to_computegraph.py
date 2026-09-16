@@ -104,8 +104,6 @@ def _target_attrs(node: bpy.types.Node) -> dict[str, Any]:
     for k in dir(node):
         if k.startswith("_"):
             continue
-        elif k in bpy_node_info.SPECIAL_CASE_ATTR_NAMES:
-            continue
         elif k not in bpy_node_info.UNIVERSAL_ATTR_NAMES:
             v = getattr(node, k)
             # Skip bound methods exposed alongside data properties
