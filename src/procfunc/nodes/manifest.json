@@ -2997,7 +2997,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.MeshLine",
     "name": "pf.nodes.geo.mesh_line",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "count_mode": null
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -3014,7 +3016,8 @@
     "infinigen_v1_name": "Nodes.MeshLine",
     "name": "pf.nodes.geo.mesh_line_from_endpoints",
     "arg_names_map": {
-      "offset": "end_location"
+      "offset": "end_location",
+      "count_mode": null
     },
     "node_group_type": [
       "GeometryNodeTree"
@@ -4543,7 +4546,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.PointsToVolume",
     "name": "pf.nodes.geo.points_to_volume",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "resolution_mode": null
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6885,7 +6890,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.distribute_points_in_grid",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "mode": null
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -6899,7 +6906,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.distribute_points_in_volume",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "mode": null
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
@@ -7479,7 +7488,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": null,
     "name": "pf.nodes.geo.mesh_to_volume",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "resolution_mode": null
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],

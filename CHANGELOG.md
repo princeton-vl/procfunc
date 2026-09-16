@@ -5,6 +5,13 @@ Interface changes:
 - `pf.nodes.func.rotate_euler` no longer takes `rotation_type`; the AXIS_ANGLE form is the new `rotate_euler_axis_angle(rotation, axis, angle, space)`, with `rotation_type` pinned via the manifest (was one function whose AXIS_ANGLE mode was unusable — it had no axis/angle kwargs and fed the Rotate By default into a socket that mode disables)
 - `shader.subsurface_scattering` split into `subsurface_scattering_burley` / `subsurface_scattering_random_walk` / `subsurface_scattering_random_walk_skin`, each exposing only the sockets its falloff supports (the combined binding fed defaults into disabled sockets)
 - `shader.principled_hair_bsdf` split by model into `principled_hair_bsdf_chiang` / `principled_hair_bsdf_huang`, adding the previously-missing melanin, absorption, and Huang-model sockets; each function derives COLOR / ABSORPTION / MELANIN parametrization from the provided color arguments and rejects mixed parametrizations
+- `geo.mesh_to_volume` and `geo.points_to_volume` take `voxel_amount` or `voxel_size` and derive `resolution_mode` from whichever is given (was a `resolution_mode` enum with no `voxel_size` argument at all, so VOXEL_SIZE fed the voxel amount into a socket that mode disables)
+- `geo.distribute_points_in_grid` and `geo.distribute_points_in_volume` take `density`/`seed` or `spacing`/`threshold` and derive `mode` from whichever group is given (was a `mode` enum with no `spacing`/`threshold` arguments, so DENSITY_GRID fed density and seed into disabled sockets)
+- `geo.mesh_line_from_endpoints` takes `count` or `resolution` and derives `count_mode` from whichever is given (was a `count_mode` enum with no `resolution` argument, so RESOLUTION fed the count into a disabled socket)
+- passing arguments from both modes to any of the above raises `ValueError`, and passing neither keeps the Blender default mode and its default values
+- `geo.mesh_cone` and `geo.mesh_cylinder` default `fill_segments` to None and reject it when `fill_type='NONE'`, which has no fill segments to set (was fed into a disabled socket)
+- `geo.sample_curve` no longer takes `mode`; length-based sampling is the existing `geo.sample_curve_length` (was a mode argument that fed Factor into the socket LENGTH disables)
+- `geo.mesh_line` no longer takes `count_mode`, which its OFFSET mode ignores
 
 # 0.35.1
 
