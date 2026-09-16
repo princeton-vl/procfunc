@@ -47,6 +47,9 @@ MODE_ATTRS = [
     "distribute_method",
     "glare_type",
     "space",
+    "falloff",
+    "model",
+    "parametrization",
 ]
 IGNORE_ATTRS = ["color_mapping", "texture_mapping", "active_item", "capture_items"]
 

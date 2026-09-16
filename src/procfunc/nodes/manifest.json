@@ -4610,9 +4610,97 @@
   },
   {
     "bpy_name": "ShaderNodeBsdfHairPrincipled",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "model": "CHIANG",
+      "parametrization": "ABSORPTION"
+    },
     "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
-    "name": "pf.nodes.shader.principled_hair_bsdf",
+    "name": "pf.nodes.shader.principled_hair_bsdf_chiang",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeBsdfHairPrincipled",
+    "bpy_mode_args": {
+      "model": "CHIANG",
+      "parametrization": "COLOR"
+    },
+    "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
+    "name": "pf.nodes.shader.principled_hair_bsdf_chiang",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeBsdfHairPrincipled",
+    "bpy_mode_args": {
+      "model": "CHIANG",
+      "parametrization": "MELANIN"
+    },
+    "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
+    "name": "pf.nodes.shader.principled_hair_bsdf_chiang",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeBsdfHairPrincipled",
+    "bpy_mode_args": {
+      "model": "HUANG",
+      "parametrization": "ABSORPTION"
+    },
+    "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
+    "name": "pf.nodes.shader.principled_hair_bsdf_huang",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeBsdfHairPrincipled",
+    "bpy_mode_args": {
+      "model": "HUANG",
+      "parametrization": "COLOR"
+    },
+    "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
+    "name": "pf.nodes.shader.principled_hair_bsdf_huang",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeBsdfHairPrincipled",
+    "bpy_mode_args": {
+      "model": "HUANG",
+      "parametrization": "MELANIN"
+    },
+    "infinigen_v1_name": "Nodes.PrincipledHairBSDF",
+    "name": "pf.nodes.shader.principled_hair_bsdf_huang",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"
@@ -8267,9 +8355,43 @@
   },
   {
     "bpy_name": "ShaderNodeSubsurfaceScattering",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "falloff": "BURLEY"
+    },
     "infinigen_v1_name": null,
-    "name": "pf.nodes.shader.subsurface_scattering",
+    "name": "pf.nodes.shader.subsurface_scattering_burley",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeSubsurfaceScattering",
+    "bpy_mode_args": {
+      "falloff": "RANDOM_WALK"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.shader.subsurface_scattering_random_walk",
+    "arg_names_map": null,
+    "node_group_type": [
+      "ShaderNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "ShaderNodeSubsurfaceScattering",
+    "bpy_mode_args": {
+      "falloff": "RANDOM_WALK_SKIN"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.shader.subsurface_scattering_random_walk_skin",
     "arg_names_map": null,
     "node_group_type": [
       "ShaderNodeTree"

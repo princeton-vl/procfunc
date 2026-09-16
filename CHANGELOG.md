@@ -3,6 +3,8 @@
 Interface changes:
 
 - `pf.nodes.func.rotate_euler` no longer takes `rotation_type`; the AXIS_ANGLE form is the new `rotate_euler_axis_angle(rotation, axis, angle, space)`, with `rotation_type` pinned via the manifest (was one function whose AXIS_ANGLE mode was unusable — it had no axis/angle kwargs and fed the Rotate By default into a socket that mode disables)
+- `shader.subsurface_scattering` split into `subsurface_scattering_burley` / `subsurface_scattering_random_walk` / `subsurface_scattering_random_walk_skin`, each exposing only the sockets its falloff supports (the combined binding fed defaults into disabled sockets)
+- `shader.principled_hair_bsdf` split by model into `principled_hair_bsdf_chiang` / `principled_hair_bsdf_huang`, adding the previously-missing melanin, absorption, and Huang-model sockets; each function derives COLOR / ABSORPTION / MELANIN parametrization from the provided color arguments and rejects mixed parametrizations
 
 # 0.35.1
 
