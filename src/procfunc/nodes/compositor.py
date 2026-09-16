@@ -990,24 +990,15 @@ def gamma(
     )
 
 
-def glare(
+def glare_bloom(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
-    angle_offset: float = 0.0,
-    color_modulation: float = 0.25,
-    fade: float = 0.9,
-    glare_type: Literal[
-        "BLOOM", "GHOSTS", "STREAKS", "FOG_GLOW", "SIMPLE_STAR"
-    ] = "STREAKS",
-    iterations: int = 3,
     mix: float = 0.0,
     quality: Literal["HIGH", "MEDIUM", "LOW"] = "MEDIUM",
     size: int = 8,
-    streaks: int = 4,
     threshold: float = 1.0,
-    use_rotate_45: bool = True,
 ) -> nt.ProcNode:
     """
-    Uses a Glare Compositor Node.
+    Uses a Glare Compositor Node with glare_type='BLOOM'.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/filter/glare.html
     """
@@ -1015,17 +1006,125 @@ def glare(
         node_type="CompositorNodeGlare",
         inputs={"Image": image},
         attrs={
-            "angle_offset": angle_offset,
-            "color_modulation": color_modulation,
-            "fade": fade,
-            "glare_type": glare_type,
-            "iterations": iterations,
+            "glare_type": "BLOOM",
             "mix": mix,
             "quality": quality,
             "size": size,
-            "streaks": streaks,
+            "threshold": threshold,
+        },
+    )
+
+
+def glare_fog_glow(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    mix: float = 0.0,
+    quality: Literal["HIGH", "MEDIUM", "LOW"] = "MEDIUM",
+    size: int = 8,
+    threshold: float = 1.0,
+) -> nt.ProcNode:
+    """
+    Uses a Glare Compositor Node with glare_type='FOG_GLOW'.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/filter/glare.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeGlare",
+        inputs={"Image": image},
+        attrs={
+            "glare_type": "FOG_GLOW",
+            "mix": mix,
+            "quality": quality,
+            "size": size,
+            "threshold": threshold,
+        },
+    )
+
+
+def glare_ghosts(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    color_modulation: float = 0.25,
+    iterations: int = 3,
+    mix: float = 0.0,
+    quality: Literal["HIGH", "MEDIUM", "LOW"] = "MEDIUM",
+    threshold: float = 1.0,
+) -> nt.ProcNode:
+    """
+    Uses a Glare Compositor Node with glare_type='GHOSTS'.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/filter/glare.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeGlare",
+        inputs={"Image": image},
+        attrs={
+            "glare_type": "GHOSTS",
+            "color_modulation": color_modulation,
+            "iterations": iterations,
+            "mix": mix,
+            "quality": quality,
+            "threshold": threshold,
+        },
+    )
+
+
+def glare_simple_star(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    fade: float = 0.9,
+    iterations: int = 3,
+    mix: float = 0.0,
+    quality: Literal["HIGH", "MEDIUM", "LOW"] = "MEDIUM",
+    threshold: float = 1.0,
+    use_rotate_45: bool = True,
+) -> nt.ProcNode:
+    """
+    Uses a Glare Compositor Node with glare_type='SIMPLE_STAR'.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/filter/glare.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeGlare",
+        inputs={"Image": image},
+        attrs={
+            "glare_type": "SIMPLE_STAR",
+            "fade": fade,
+            "iterations": iterations,
+            "mix": mix,
+            "quality": quality,
             "threshold": threshold,
             "use_rotate_45": use_rotate_45,
+        },
+    )
+
+
+def glare_streaks(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    angle_offset: float = 0.0,
+    color_modulation: float = 0.25,
+    fade: float = 0.9,
+    iterations: int = 3,
+    mix: float = 0.0,
+    quality: Literal["HIGH", "MEDIUM", "LOW"] = "MEDIUM",
+    streaks: int = 4,
+    threshold: float = 1.0,
+) -> nt.ProcNode:
+    """
+    Uses a Glare Compositor Node with glare_type='STREAKS'.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/filter/glare.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeGlare",
+        inputs={"Image": image},
+        attrs={
+            "glare_type": "STREAKS",
+            "angle_offset": angle_offset,
+            "color_modulation": color_modulation,
+            "fade": fade,
+            "iterations": iterations,
+            "mix": mix,
+            "quality": quality,
+            "streaks": streaks,
+            "threshold": threshold,
         },
     )
 
@@ -1648,29 +1747,84 @@ def rotate(
     )
 
 
-def scale(
+def scale_absolute(
     image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     x: nt.SocketOrVal[float] = 1.0,
     y: nt.SocketOrVal[float] = 1.0,
-    frame_method: Literal["STRETCH", "FIT", "CROP"] = "STRETCH",
-    offset_x: float = 0.0,
-    offset_y: float = 0.0,
-    space: Literal["RELATIVE", "ABSOLUTE", "SCENE_SIZE", "RENDER_SIZE"] = "RELATIVE",
 ) -> nt.ProcNode:
     """
-    Uses a Scale Compositor Node.
+    Uses a Scale Compositor Node with space='ABSOLUTE'.
+
+    x and y are the output size in pixels.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/transform/scale.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeScale",
         inputs={"Image": image, "X": x, "Y": y},
+        attrs={"space": "ABSOLUTE"},
+    )
+
+
+def scale_relative(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    x: nt.SocketOrVal[float] = 1.0,
+    y: nt.SocketOrVal[float] = 1.0,
+) -> nt.ProcNode:
+    """
+    Uses a Scale Compositor Node with space='RELATIVE'.
+
+    x and y are factors of the input size.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/transform/scale.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeScale",
+        inputs={"Image": image, "X": x, "Y": y},
+        attrs={"space": "RELATIVE"},
+    )
+
+
+def scale_render(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    frame_method: Literal["STRETCH", "FIT", "CROP"] = "STRETCH",
+    offset_x: float = 0.0,
+    offset_y: float = 0.0,
+) -> nt.ProcNode:
+    """
+    Uses a Scale Compositor Node with space='RENDER_SIZE'.
+
+    Scales to the render size, which is the only space that fits the result to
+    the frame and offsets it.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/transform/scale.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeScale",
+        inputs={"Image": image},
         attrs={
             "frame_method": frame_method,
             "offset_x": offset_x,
             "offset_y": offset_y,
-            "space": space,
+            "space": "RENDER_SIZE",
         },
+    )
+
+
+def scale_scene(
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+) -> nt.ProcNode:
+    """
+    Uses a Scale Compositor Node with space='SCENE_SIZE'.
+
+    Scales to the scene size, which takes no factors.
+
+    See: https://docs.blender.org/manual/en/4.2/compositing/types/transform/scale.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="CompositorNodeScale",
+        inputs={"Image": image},
+        attrs={"space": "SCENE_SIZE"},
     )
 
 

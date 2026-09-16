@@ -4321,9 +4321,75 @@
   },
   {
     "bpy_name": "CompositorNodeGlare",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "glare_type": "BLOOM"
+    },
     "infinigen_v1_name": "Nodes.Glare",
-    "name": "pf.nodes.compositor.glare",
+    "name": "pf.nodes.compositor.glare_bloom",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeGlare",
+    "bpy_mode_args": {
+      "glare_type": "FOG_GLOW"
+    },
+    "infinigen_v1_name": "Nodes.Glare",
+    "name": "pf.nodes.compositor.glare_fog_glow",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeGlare",
+    "bpy_mode_args": {
+      "glare_type": "GHOSTS"
+    },
+    "infinigen_v1_name": "Nodes.Glare",
+    "name": "pf.nodes.compositor.glare_ghosts",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeGlare",
+    "bpy_mode_args": {
+      "glare_type": "SIMPLE_STAR"
+    },
+    "infinigen_v1_name": "Nodes.Glare",
+    "name": "pf.nodes.compositor.glare_simple_star",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeGlare",
+    "bpy_mode_args": {
+      "glare_type": "STREAKS"
+    },
+    "infinigen_v1_name": "Nodes.Glare",
+    "name": "pf.nodes.compositor.glare_streaks",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"
@@ -5699,9 +5765,59 @@
   },
   {
     "bpy_name": "CompositorNodeScale",
-    "bpy_mode_args": null,
+    "bpy_mode_args": {
+      "space": "ABSOLUTE"
+    },
     "infinigen_v1_name": null,
-    "name": "pf.nodes.compositor.scale",
+    "name": "pf.nodes.compositor.scale_absolute",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeScale",
+    "bpy_mode_args": {
+      "space": "RELATIVE"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.scale_relative",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeScale",
+    "bpy_mode_args": {
+      "space": "RENDER_SIZE"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.scale_render",
+    "arg_names_map": null,
+    "node_group_type": [
+      "CompositorNodeTree"
+    ],
+    "data_types": null,
+    "is_contextual": null,
+    "is_unittest_specialcase": false,
+    "notes": null
+  },
+  {
+    "bpy_name": "CompositorNodeScale",
+    "bpy_mode_args": {
+      "space": "SCENE_SIZE"
+    },
+    "infinigen_v1_name": null,
+    "name": "pf.nodes.compositor.scale_scene",
     "arg_names_map": null,
     "node_group_type": [
       "CompositorNodeTree"

@@ -45,6 +45,8 @@ MODE_ATTRS = [
     "rotation_type",
     "feature",
     "distribute_method",
+    "glare_type",
+    "space",
 ]
 IGNORE_ATTRS = ["color_mapping", "texture_mapping", "active_item", "capture_items"]
 
