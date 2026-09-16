@@ -1726,6 +1726,11 @@ def rgb_curve(
     white_level: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
     curves: list[np.ndarray] | np.ndarray | None = None,
     handle_types: list[list[nt.HandleType]] | None = None,
+    use_clip: bool = True,
+    extend: Literal["HORIZONTAL", "EXTRAPOLATED"] = "EXTRAPOLATED",
+    clip_min: tuple[float, float] | None = None,
+    clip_max: tuple[float, float] | None = None,
+    tone: Literal["STANDARD", "FILMLIKE"] = "STANDARD",
 ) -> nt.ProcNode:
     """
     Uses a CurveRGB Compositor Node.
@@ -1743,7 +1748,15 @@ def rgb_curve(
             "Black Level": black_level,
             "White Level": white_level,
         },
-        attrs={"curves": curves, "handle_types": handle_types},
+        attrs={
+            "curves": curves,
+            "handle_types": handle_types,
+            "use_clip": use_clip,
+            "extend": extend,
+            "clip_min": clip_min,
+            "clip_max": clip_max,
+            "tone": tone,
+        },
     )
 
 

@@ -79,6 +79,26 @@ def test_transpile_color_ramp_default_mode_omitted():
     assert "mode=" not in src
 
 
+def test_float_curve_clipping_round_trips() -> None:
+    tree = bpy.data.node_groups.new(f"curve_{uuid.uuid4().hex[:8]}", "ShaderNodeTree")
+    output = tree.nodes.new("NodeGroupOutput")
+    tree.interface.new_socket("Value", in_out="OUTPUT", socket_type="NodeSocketFloat")
+    curve = tree.nodes.new("ShaderNodeFloatCurve")
+    curve.mapping.use_clip = False
+    tree.links.new(curve.outputs["Value"], output.inputs["Value"])
+
+    graph, _ = parse_node_tree(tree, ParseMemo())
+    namespace = {}
+    exec(to_python(graph, toplevel_as_maincall=False), namespace)  # noqa: S102
+    rebuilt_graph = pf.nodes.function_to_compute_graph(namespace[tree.name])
+    rebuilt = as_nodegroup(rebuilt_graph, NodeGroupType.SHADER)
+    rebuilt_curve = next(
+        node for node in rebuilt.nodes if node.bl_idname == "ShaderNodeFloatCurve"
+    )
+
+    assert rebuilt_curve.mapping.use_clip is False
+
+
 def test_transpile_keyword_socket_name_emits_valid_python():
     """A socket named after a python keyword must be renamed, not emitted as
     a SyntaxError like `def f(lambda: ...)`."""

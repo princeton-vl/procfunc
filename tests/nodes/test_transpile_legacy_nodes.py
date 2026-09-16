@@ -160,6 +160,89 @@ def test_compositor_curve_vec_round_trips_without_fac():
     np.testing.assert_allclose(rebuilt_x, [(0.0, 0.25), (1.0, 0.75)], atol=1e-4)
 
 
+@pytest.mark.parametrize(
+    ("tree_type", "group_type", "bl_idname", "socket_type"),
+    [
+        (
+            "ShaderNodeTree",
+            NodeGroupType.SHADER,
+            "ShaderNodeFloatCurve",
+            "NodeSocketFloat",
+        ),
+        (
+            "ShaderNodeTree",
+            NodeGroupType.SHADER,
+            "ShaderNodeRGBCurve",
+            "NodeSocketColor",
+        ),
+        (
+            "ShaderNodeTree",
+            NodeGroupType.SHADER,
+            "ShaderNodeVectorCurve",
+            "NodeSocketVector",
+        ),
+        (
+            "CompositorNodeTree",
+            NodeGroupType.COMPOSITOR,
+            "CompositorNodeCurveRGB",
+            "NodeSocketColor",
+        ),
+        (
+            "CompositorNodeTree",
+            NodeGroupType.COMPOSITOR,
+            "CompositorNodeCurveVec",
+            "NodeSocketVector",
+        ),
+    ],
+)
+def test_curve_mapping_settings_round_trip(
+    tree_type: str,
+    group_type: NodeGroupType,
+    bl_idname: str,
+    socket_type: str,
+) -> None:
+    tree = _make_tree(tree_type)
+    node = tree.nodes.new(bl_idname)
+    vector_curve = bl_idname in {"ShaderNodeVectorCurve", "CompositorNodeCurveVec"}
+    clip_min = (-0.75, -0.5) if vector_curve else (0.1, 0.2)
+    clip_max = (0.75, 0.5) if vector_curve else (0.8, 0.9)
+    node.mapping.use_clip = False
+    node.mapping.extend = "HORIZONTAL"
+    node.mapping.clip_min_x, node.mapping.clip_min_y = clip_min
+    node.mapping.clip_max_x, node.mapping.clip_max_y = clip_max
+    if bl_idname == "CompositorNodeCurveRGB":
+        node.mapping.tone = "FILMLIKE"
+    node.mapping.update()
+    _wire_output(tree, node, socket_type)
+
+    rebuilt = _single_node(_realize(_transpile(tree), group_type), bl_idname)
+
+    assert rebuilt.mapping.use_clip is False
+    assert rebuilt.mapping.extend == "HORIZONTAL"
+    np.testing.assert_allclose(
+        (rebuilt.mapping.clip_min_x, rebuilt.mapping.clip_min_y), clip_min
+    )
+    np.testing.assert_allclose(
+        (rebuilt.mapping.clip_max_x, rebuilt.mapping.clip_max_y), clip_max
+    )
+    if bl_idname == "CompositorNodeCurveRGB":
+        assert rebuilt.mapping.tone == "FILMLIKE"
+
+
+def test_curve_point_precision_round_trips() -> None:
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeFloatCurve")
+    node.mapping.curves[0].points[0].location = (0.123456, 0.234567)
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketFloat")
+
+    rebuilt = _single_node(
+        _realize(_transpile(tree), NodeGroupType.SHADER), "ShaderNodeFloatCurve"
+    )
+    actual = tuple(rebuilt.mapping.curves[0].points[0].location)
+    np.testing.assert_allclose(actual, (0.123456, 0.234567), atol=1e-6)
+
+
 def test_float_curve_mixed_handles_round_trip():
     tree = _make_tree("ShaderNodeTree")
     node = tree.nodes.new("ShaderNodeFloatCurve")

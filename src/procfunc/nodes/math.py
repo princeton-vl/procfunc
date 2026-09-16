@@ -773,6 +773,9 @@ def float_curve(
     handle_type: nt.HandleType = "AUTO",
     use_clip: bool = True,
     handle_types: list[nt.HandleType] | None = None,
+    extend: Literal["HORIZONTAL", "EXTRAPOLATED"] = "EXTRAPOLATED",
+    clip_min: tuple[float, float] | None = None,
+    clip_max: tuple[float, float] | None = None,
 ) -> nt.ProcNode[float]:
     """
     Uses a FloatCurve Shader Node.
@@ -790,6 +793,9 @@ def float_curve(
             "handle_type": handle_type,
             "handle_types": handle_types,
             "use_clip": use_clip,
+            "extend": extend,
+            "clip_min": clip_min,
+            "clip_max": clip_max,
         },
     )
 
@@ -799,6 +805,10 @@ def vector_curve(
     fac: nt.SocketOrVal[float] = 1.0,
     curves: list[np.ndarray] | np.ndarray | None = None,
     handle_types: list[list[nt.HandleType]] | None = None,
+    use_clip: bool = True,
+    extend: Literal["HORIZONTAL", "EXTRAPOLATED"] = "EXTRAPOLATED",
+    clip_min: tuple[float, float] | None = None,
+    clip_max: tuple[float, float] | None = None,
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a VectorCurve Shader Node.
@@ -815,7 +825,14 @@ def vector_curve(
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.VECTOR_CURVE.value,
         inputs={"Fac": fac, "Vector": vector},
-        attrs={"curves": curves, "handle_types": handle_types},
+        attrs={
+            "curves": curves,
+            "handle_types": handle_types,
+            "use_clip": use_clip,
+            "extend": extend,
+            "clip_min": clip_min,
+            "clip_max": clip_max,
+        },
     )
 
 

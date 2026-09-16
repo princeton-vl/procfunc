@@ -363,6 +363,7 @@ def handle_specialcase_sky(
 
 
 SINGLE_CURVE_NODES = {"ShaderNodeFloatCurve"}
+VECTOR_CURVE_NODES = {"ShaderNodeVectorCurve", "CompositorNodeCurveVec"}
 
 
 def handle_specialcase_curve(
@@ -375,13 +376,25 @@ def handle_specialcase_curve(
 ) -> cg.Node:
     kwargs = dict(inputs)
 
-    def _repr_point(point):
-        return tuple(round(p, 4) for p in point.location)
-
     curves = [
-        np.array([_repr_point(point) for point in curve.points])
+        np.array([tuple(point.location) for point in curve.points])
         for curve in node.mapping.curves
     ]
+    mapping = node.mapping
+    default_min = (-1.0, -1.0) if node.bl_idname in VECTOR_CURVE_NODES else (0.0, 0.0)
+    default_max = (1.0, 1.0)
+    clip_min = (mapping.clip_min_x, mapping.clip_min_y)
+    clip_max = (mapping.clip_max_x, mapping.clip_max_y)
+    if not mapping.use_clip:
+        kwargs["use_clip"] = False
+    if mapping.extend != "EXTRAPOLATED":
+        kwargs["extend"] = mapping.extend
+    if clip_min != default_min:
+        kwargs["clip_min"] = clip_min
+    if clip_max != default_max:
+        kwargs["clip_max"] = clip_max
+    if node.bl_idname == "CompositorNodeCurveRGB" and mapping.tone != "STANDARD":
+        kwargs["tone"] = mapping.tone
     if node.bl_idname in SINGLE_CURVE_NODES:
         kwargs["curve"] = curves[0]
     else:

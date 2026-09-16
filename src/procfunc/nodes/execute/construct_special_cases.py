@@ -52,8 +52,7 @@ def special_case_float_curve(
     points = attrs.pop("mapping", None)
     handle_type = attrs.pop("handle_type", "AUTO")
     handle_types = attrs.pop("handle_types", None)
-    use_clip = attrs.pop("use_clip", True)
-    bl_node.mapping.use_clip = use_clip
+    _apply_curve_mapping_settings(bl_node, attrs)
 
     if handle_types is not None and handle_type != "AUTO":
         raise ValueError(
@@ -119,6 +118,25 @@ def _apply_curves(
     bl_node.mapping.update()
 
 
+def _apply_curve_mapping_settings(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+) -> None:
+    mapping = bl_node.mapping
+    mapping.use_clip = attrs.pop("use_clip", True)
+    mapping.extend = attrs.pop("extend", "EXTRAPOLATED")
+    clip_min = attrs.pop("clip_min", None)
+    clip_max = attrs.pop("clip_max", None)
+    tone = attrs.pop("tone", None)
+    if clip_min is not None:
+        mapping.clip_min_x, mapping.clip_min_y = clip_min
+    if clip_max is not None:
+        mapping.clip_max_x, mapping.clip_max_y = clip_max
+    if tone is not None:
+        mapping.tone = tone
+    mapping.update()
+
+
 def special_case_rgb_curves(
     bl_node: bpy.types.Node,
     attrs: dict[str, Any],
@@ -126,6 +144,7 @@ def special_case_rgb_curves(
 ):
     """Handle RGB curve nodes with points attribute."""
 
+    _apply_curve_mapping_settings(bl_node, attrs)
     curves = attrs.pop("curves", None)
     handle_types = attrs.pop("handle_types", None)
     _apply_curves(bl_node, curves, handle_types)
@@ -138,6 +157,7 @@ def special_case_vector_curves(
 ):
     """Handle vector curve nodes with points attribute."""
 
+    _apply_curve_mapping_settings(bl_node, attrs)
     curves = attrs.pop("curves", None)
     handle_types = attrs.pop("handle_types", None)
     _apply_curves(bl_node, curves, handle_types)
