@@ -151,8 +151,8 @@ def blur(
     filter_type: Literal[
         "FLAT", "TENT", "QUAD", "CUBIC", "GAUSS", "FAST_GAUSS", "CATROM", "MITCH"
     ] = "GAUSS",
-    size_x: int = 0,
-    size_y: int = 0,
+    size_x: int = 1,
+    size_y: int = 1,
     use_bokeh: bool = False,
     use_extended_bounds: bool = False,
     use_gamma_correction: bool = False,
@@ -554,10 +554,12 @@ def composite(
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/output/composite.html
     """
+    if use_alpha:
+        image = set_alpha(image, alpha, mode="REPLACE_ALPHA")
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeComposite",
-        inputs={"Image": image, "Alpha": alpha},
-        attrs={"use_alpha": use_alpha},
+        inputs={"Image": image},
+        attrs={"use_alpha": True},
     )
 
 
