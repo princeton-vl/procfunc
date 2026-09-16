@@ -4118,22 +4118,32 @@ def string_to_curves(
         "BOTTOM_CENTER",
         "BOTTOM_RIGHT",
     ] = "BOTTOM_LEFT",
+    text_box_height: nt.SocketOrVal[float] | None = None,
 ) -> StringToCurvesResult:
     """
     Uses a StringToCurves Geometry Node.
 
+    Text box height is available only when overflow scales or truncates the text.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/text/string_to_curves.html
     """
+    inputs = {
+        "String": string,
+        "Size": size,
+        "Character Spacing": character_spacing,
+        "Word Spacing": word_spacing,
+        "Line Spacing": line_spacing,
+        "Text Box Width": text_box_width,
+    }
+    if overflow == "OVERFLOW" and text_box_height is not None:
+        raise ValueError(
+            "string_to_curves got text_box_height with overflow='OVERFLOW'"
+        )
+    elif overflow != "OVERFLOW":
+        inputs["Text Box Height"] = 0.0 if text_box_height is None else text_box_height
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeStringToCurves",
-        inputs={
-            "String": string,
-            "Size": size,
-            "Character Spacing": character_spacing,
-            "Word Spacing": word_spacing,
-            "Line Spacing": line_spacing,
-            "Text Box Width": text_box_width,
-        },
+        inputs=inputs,
         attrs={
             "align_x": align_x,
             "align_y": align_y,
@@ -4579,15 +4589,29 @@ def volume_to_mesh(
     volume: nt.ProcNode[pt.VolumeObject] | None,
     threshold: nt.SocketOrVal[float] = 0.1,
     adaptivity: nt.SocketOrVal[float] = 0.0,
-    resolution_mode: Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"] = "GRID",
+    voxel_amount: nt.SocketOrVal[float] | None = None,
+    voxel_size: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a VolumeToMesh Geometry Node.
 
+    Provide voxel_amount or voxel_size, not both; neither uses the grid default.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/volume/operations/volume_to_mesh.html
     """
+    inputs = {"Volume": volume, "Threshold": threshold, "Adaptivity": adaptivity}
+    if voxel_amount is not None and voxel_size is not None:
+        raise ValueError("volume_to_mesh got both voxel_amount and voxel_size")
+    elif voxel_amount is not None:
+        inputs["Voxel Amount"] = voxel_amount
+        resolution_mode = "VOXEL_AMOUNT"
+    elif voxel_size is not None:
+        inputs["Voxel Size"] = voxel_size
+        resolution_mode = "VOXEL_SIZE"
+    else:
+        resolution_mode = "GRID"
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeVolumeToMesh",
-        inputs={"Volume": volume, "Threshold": threshold, "Adaptivity": adaptivity},
+        inputs=inputs,
         attrs={"resolution_mode": resolution_mode},
     )

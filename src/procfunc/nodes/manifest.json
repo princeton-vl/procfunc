@@ -4590,7 +4590,9 @@
     "bpy_mode_args": null,
     "infinigen_v1_name": "Nodes.VolumeToMesh",
     "name": "pf.nodes.geo.volume_to_mesh",
-    "arg_names_map": null,
+    "arg_names_map": {
+      "resolution_mode": null
+    },
     "node_group_type": [
       "GeometryNodeTree"
     ],
