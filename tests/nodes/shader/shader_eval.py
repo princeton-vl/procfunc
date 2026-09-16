@@ -22,14 +22,14 @@ def _nodegroup(node: pf.ProcNode) -> bpy.types.NodeTree:
     return pf.nodes.as_nodegroup(graph, bpy_node_info.NodeGroupType.SHADER)
 
 
-def _material(node: pf.ProcNode) -> bpy.types.Material:
+def _material(tree: bpy.types.NodeTree) -> bpy.types.Material:
     material = bpy.data.materials.new("shader_eval")
     material.use_nodes = True
     nodes = material.node_tree.nodes
     nodes.clear()
 
     group = nodes.new("ShaderNodeGroup")
-    group.node_tree = _nodegroup(node)
+    group.node_tree = tree
     aov = nodes.new("ShaderNodeOutputAOV")
     aov.aov_name = AOV_NAME
     material.node_tree.links.new(group.outputs[0], aov.inputs["Color"])
@@ -97,8 +97,11 @@ def _scene(material: bpy.types.Material) -> bpy.types.Scene:
     return scene
 
 
-def render(node: pf.ProcNode) -> np.ndarray:
-    scene = _scene(_material(node))
+def render_nodegroup(tree: bpy.types.NodeTree) -> np.ndarray:
+    """Every pixel of the plane, as (height, width, rgb). Compare two node groups
+    with this rather than with render(), whose single sample is too weak to
+    notice most of the ways a texture coordinate can be wrong."""
+    scene = _scene(_material(tree))
     with tempfile.TemporaryDirectory() as tmp:
         path = Path(tmp) / "shader.exr"
         scene.render.filepath = str(path.with_suffix(""))
@@ -108,8 +111,12 @@ def render(node: pf.ProcNode) -> np.ndarray:
         image.pixels.foreach_get(buf)
         arr = buf.reshape(image.size[1], image.size[0], image.channels).copy()
         bpy.data.images.remove(image)
+    return arr[..., :3]
+
+
+def render(node: pf.ProcNode) -> np.ndarray:
     # (2, 1) sits off the plane's triangulation diagonal, which wireframe draws
-    return arr[2, 1, :3]
+    return render_nodegroup(_nodegroup(node))[2, 1]
 
 
 def assert_value(

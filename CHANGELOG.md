@@ -27,6 +27,9 @@ Fixed behavior:
 
 - `func.axes_to_rotation` retains its public X/Y defaults while the transpiler emits Blender's native Z/X defaults explicitly, so native nodes rebuild with the same axes
 - `geo.string_to_curves` exposes the `remainder` string output for TRUNCATE overflow and returns `None` for modes where Blender has no such socket
+- transpiling a `ShaderNodeTex*` node in a shader tree whose `texture_mapping` is not the identity transform now rebuilds it as the Combine XYZ and Mapping nodes it is equivalent to, in front of the texture, instead of silently dropping it and changing how the graph renders
+- the `use_min`/`use_max` clamp, which EEVEE applies and Cycles ignores, and any `texture_mapping` on `ShaderNodeTexSky`, which has no Vector input to map, have no such equivalent and now raise; set `context.globals.warn_mode_transpile_dropped_attrs` (or `PROCFUNC_WARN_MODE_TRANSPILE_DROPPED_ATTRS`) to `warn` or `ignore` to transpile anyway
+- `color_mapping`, the legacy `mapping` projection of `texture_mapping`, and any `texture_mapping` in a geometry node tree are dropped silently, since nothing evaluates them
 
 Fixed crashes:
 

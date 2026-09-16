@@ -15,7 +15,12 @@ def test_definition_metadata_off_by_default():
 
 
 def test_context_construction_defaults_definition_metadata_off():
-    new_context = pf.context.ProcfuncContext(1, None, "warn")
+    new_context = pf.context.ProcfuncContext(
+        num_cpu_cores=1,
+        current_trace_level=None,
+        warn_mode_empty_geonodes="warn",
+        warn_mode_transpile_dropped_attrs="warn",
+    )
     with pf.context.override_globals(new_context=new_context):
         assert not pf.context.globals.record_node_definitions
 

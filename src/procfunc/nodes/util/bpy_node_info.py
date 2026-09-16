@@ -343,8 +343,6 @@ SPECIAL_CASE_ATTR_NAMES = set(
     [
         "color_ramp",
         "mapping",
-        "texture_mapping",
-        "color_mapping",
         "image_user",
         "interface",
         "node_tree",
