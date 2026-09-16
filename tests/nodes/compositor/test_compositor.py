@@ -37,6 +37,10 @@ CORNER = np.zeros((N, N, 4), dtype=np.float32)
 CORNER[..., 3] = 1.0
 CORNER[: N // 2, : N // 2, :3] = 1.0
 
+ASYMMETRIC = np.empty((N, N, 4), dtype=np.float32)
+ASYMMETRIC[..., :3] = np.arange(N * N, dtype=np.float32).reshape(N, N, 1)
+ASYMMETRIC[..., 3] = 1.0
+
 
 # ---------------------------------------------------------------- harness ----
 
@@ -1295,10 +1299,11 @@ def test_flip_y_mirrors_a_vertical_step_edge():
     assert out[:, 0, 0] == pytest.approx(STEP_Y[::-1, 0, 0])
 
 
-def test_flip_xy_moves_a_bright_quadrant_to_the_opposite_corner():
-    out = composite_render(comp.flip(image=image_node("src", CORNER).image, axis="XY"))
-    assert out[N - 1, N - 1, 0] == pytest.approx(1.0)
-    assert out[0, 0, 0] == pytest.approx(0.0)
+def test_flip_xy_mirrors_both_axes():
+    out = composite_render(
+        comp.flip(image=image_node("src", ASYMMETRIC).image, axis="XY")
+    )
+    assert out == pytest.approx(ASYMMETRIC[::-1, ::-1])
 
 
 def test_scale_identity_leaves_a_step_edge_in_place():
@@ -1308,12 +1313,12 @@ def test_scale_identity_leaves_a_step_edge_in_place():
     assert out[0, :, 0] == pytest.approx(STEP_X[0, :, 0])
 
 
-def test_scale_relative_double_shows_only_the_middle_of_a_ramp():
+def test_scale_relative_double_enlarges_the_image_about_its_center():
     out = composite_render(
-        comp.scale_relative(image=image_node("src", RAMP).image, x=2.0, y=2.0)
+        comp.scale_relative(image=image_node("src", ASYMMETRIC).image, x=2.0, y=2.0)
     )
-    assert out[0, 0, 0] == pytest.approx(0.28571, abs=1e-4)
-    assert out[0, -1, 0] == pytest.approx(0.78571, abs=1e-4)
+    expected = 14 + 4 * np.arange(N)[:, None] + 0.5 * np.arange(N)[None, :]
+    assert out[..., 0] == pytest.approx(expected)
 
 
 def test_rotate_by_zero_leaves_the_image_in_place():
@@ -1487,52 +1492,75 @@ def test_split_axis_y_puts_the_first_image_on_the_top_half():
 # --------------------------------------------------- every binding's defaults ----
 
 
-def test_alpha_over_defaults_build_and_render():
-    assert_uniform(composite_render(comp.alpha_over()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_bright_contrast_defaults_build_and_render():
-    assert_uniform(composite_render(comp.bright_contrast()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_blur_defaults_build_and_render():
-    assert_uniform(composite_render(comp.blur()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_exposure_defaults_build_and_render():
-    assert_uniform(composite_render(comp.exposure()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_gamma_defaults_build_and_render():
-    assert_uniform(composite_render(comp.gamma()), (1.0, 1.0, 1.0, 1.0))
+@pytest.mark.parametrize(
+    ("binding_name", "expected", "tolerance"),
+    [
+        pytest.param(name, (1.0, 1.0, 1.0, 1.0), 1e-4, id=name)
+        for name in (
+            "alpha_over",
+            "anti_aliasing",
+            "bilateral_blur",
+            "blur",
+            "bokeh_image",
+            "bright_contrast",
+            "color_correction",
+            "color_spill",
+            "defocus",
+            "despeckle",
+            "directional_blur",
+            "exposure",
+            "filter",
+            "gamma",
+            "glare_bloom",
+            "glare_fog_glow",
+            "glare_ghosts",
+            "glare_simple_star",
+            "glare_streaks",
+            "hue_correct",
+            "inpaint",
+            "kuwahara",
+            "map_value",
+            "mix_rgb",
+            "posterize",
+            "premultiply_key",
+        )
+    ]
+    + [
+        pytest.param(name, (0.8, 0.8, 0.8, 1.0), 1e-4, id=name)
+        for name in (
+            "bokeh_blur",
+            "pixelate",
+            "rgb_to_bw",
+            "switch",
+        )
+    ]
+    + [
+        pytest.param(name, (0.0, 0.0, 0.0, 1.0), 1e-4, id=name)
+        for name in (
+            "box_mask",
+            "combine_yuv",
+            "dilate_erode",
+            "ellipse_mask",
+            "id_mask",
+            "switch_view",
+            "time",
+        )
+    ]
+    + [pytest.param("color_balance", (1.0, 1.0, 1.0, 1.0), 1e-3, id="color_balance")],
+)
+def test_binding_defaults_render_expected_uniform_pixels(
+    binding_name: str, expected: tuple[float, float, float, float], tolerance: float
+) -> None:
+    result = getattr(comp, binding_name)()
+    assert_uniform(composite_render(result), expected, tol=tolerance)
 
 
 def test_invert_defaults_invert_the_white_default_to_black():
     assert_uniform(composite_render(comp.invert()), (0.0, 0.0, 0.0, 1.0))
 
 
-def test_mix_rgb_defaults_build_and_render():
-    assert_uniform(composite_render(comp.mix_rgb()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_rgb_to_bw_defaults_build_and_render():
-    assert_uniform(composite_render(comp.rgb_to_bw()), (0.8, 0.8, 0.8, 1.0))
-
-
-def test_pixelate_defaults_build_and_render():
-    assert_uniform(composite_render(comp.pixelate()), (0.8, 0.8, 0.8, 1.0))
-
-
-def test_switch_defaults_build_and_render():
-    assert_uniform(composite_render(comp.switch()), (0.8, 0.8, 0.8, 1.0))
-
-
 def test_normal_defaults_build_and_render():
     assert_uniform(composite_render(comp.normal().normal), (0.0, 0.0, 1.0, 1.0))
-
-
-def test_map_value_defaults_build_and_render():
-    assert_uniform(composite_render(comp.map_value()), (1.0, 1.0, 1.0, 1.0))
 
 
 def test_levels_defaults_build_and_render():
@@ -1548,68 +1576,8 @@ def test_scene_time_frame_output_is_the_current_frame():
     assert_uniform(composite_render(comp.scene_time().frame), (1.0, 1.0, 1.0, 1.0))
 
 
-def test_bokeh_image_defaults_build_and_render():
-    assert_uniform(composite_render(comp.bokeh_image()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_ellipse_mask_defaults_build_and_render():
-    assert_uniform(composite_render(comp.ellipse_mask()), (0.0, 0.0, 0.0, 1.0))
-
-
-def test_box_mask_defaults_build_and_render():
-    assert_uniform(composite_render(comp.box_mask()), (0.0, 0.0, 0.0, 1.0))
-
-
-def test_id_mask_defaults_build_and_render():
-    assert_uniform(composite_render(comp.id_mask()), (0.0, 0.0, 0.0, 1.0))
-
-
-def test_filter_defaults_build_and_render():
-    assert_uniform(composite_render(comp.filter()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_despeckle_defaults_build_and_render():
-    assert_uniform(composite_render(comp.despeckle()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_inpaint_defaults_build_and_render():
-    assert_uniform(composite_render(comp.inpaint()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_directional_blur_defaults_build_and_render():
-    assert_uniform(composite_render(comp.directional_blur()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_bilateral_blur_defaults_build_and_render():
-    assert_uniform(composite_render(comp.bilateral_blur()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_defocus_defaults_build_and_render():
-    assert_uniform(composite_render(comp.defocus()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_anti_aliasing_defaults_build_and_render():
-    assert_uniform(composite_render(comp.anti_aliasing()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_hue_correct_defaults_build_and_render():
-    assert_uniform(composite_render(comp.hue_correct()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_color_correction_defaults_build_and_render():
-    assert_uniform(composite_render(comp.color_correction()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_color_spill_defaults_build_and_render():
-    assert_uniform(composite_render(comp.color_spill()), (1.0, 1.0, 1.0, 1.0))
-
-
 def test_channel_matte_defaults_build_and_render():
     assert_uniform(composite_render(comp.channel_matte().image), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_combine_yuv_defaults_build_and_render():
-    assert_uniform(composite_render(comp.combine_yuv()), (0.0, 0.0, 0.0, 1.0))
 
 
 def test_separate_yuv_defaults_build_and_render():
@@ -1618,65 +1586,8 @@ def test_separate_yuv_defaults_build_and_render():
     assert_uniform(out, (expected, expected, expected, 1.0))
 
 
-def test_switch_view_defaults_build_and_render():
-    assert_uniform(composite_render(comp.switch_view()), (0.0, 0.0, 0.0, 1.0))
-
-
-def test_time_defaults_build_and_render():
-    assert_uniform(composite_render(comp.time()), (0.0, 0.0, 0.0, 1.0))
-
-
-def test_glare_bloom_defaults_build_and_render():
-    assert_uniform(composite_render(comp.glare_bloom()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_glare_fog_glow_defaults_build_and_render():
-    assert_uniform(composite_render(comp.glare_fog_glow()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_glare_ghosts_defaults_build_and_render():
-    assert_uniform(composite_render(comp.glare_ghosts()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_glare_simple_star_defaults_build_and_render():
-    assert_uniform(composite_render(comp.glare_simple_star()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_glare_streaks_defaults_build_and_render():
-    assert_uniform(composite_render(comp.glare_streaks()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_luma_matte_defaults_build_and_render():
-    assert_uniform(composite_render(comp.luma_matte().image), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_posterize_defaults_build_and_render():
-    assert_uniform(composite_render(comp.posterize()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_premultiply_key_defaults_build_and_render():
-    assert_uniform(composite_render(comp.premultiply_key()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_bokeh_blur_defaults_build_and_render():
-    assert_uniform(composite_render(comp.bokeh_blur()), (0.8, 0.8, 0.8, 1.0))
-
-
-def test_dilate_erode_defaults_build_and_render():
-    assert_uniform(composite_render(comp.dilate_erode()), (0.0, 0.0, 0.0, 1.0))
-
-
 def test_z_combine_defaults_build_and_render():
     assert_uniform(composite_render(comp.z_combine().image), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_kuwahara_defaults_build_and_render():
-    assert_uniform(composite_render(comp.kuwahara()), (1.0, 1.0, 1.0, 1.0))
-
-
-def test_color_balance_defaults_build_and_render():
-    out = composite_render(comp.color_balance())
-    assert_uniform(out, (1.0, 1.0, 1.0, 1.0), tol=1e-3)
 
 
 def test_diff_matte_defaults_build_and_render():

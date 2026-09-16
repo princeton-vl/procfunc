@@ -8,6 +8,11 @@ import procfunc as pf
 from conftest import realize as _realize
 
 
+def _linked_from(socket: bpy.types.NodeSocket) -> bpy.types.NodeSocket:
+    assert len(socket.links) == 1
+    return socket.links[0].from_socket
+
+
 def test_to_material_basic():
     """Test to_material with a simple principled BSDF shader."""
     # Create a simple material shader
@@ -29,19 +34,21 @@ def test_to_material_basic():
 
 
 def test_to_material_with_texture():
-    """Test to_material with texture nodes."""
-    # Create a texture-based material
     coord = pf.nodes.shader.coord()
     noise = pf.nodes.texture.noise(
         vector=coord.generated, scale=5.0, detail=2.0, roughness=0.5
     )
-
     bsdf = pf.nodes.shader.principled_bsdf(base_color=noise.color, roughness=noise.fac)
+    tree = pf.Material(surface=bsdf).item().node_tree
 
-    # Convert to material
-    material = pf.Material(surface=bsdf)
-
-    assert material.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+    bsdf_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled")
+    noise_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeTexNoise")
+    coord_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeTexCoord")
+    assert _linked_from(output.inputs["Surface"]).node == bsdf_node
+    assert _linked_from(bsdf_node.inputs["Base Color"]) == noise_node.outputs["Color"]
+    assert _linked_from(bsdf_node.inputs["Roughness"]) == noise_node.outputs["Fac"]
+    assert _linked_from(noise_node.inputs["Vector"]) == coord_node.outputs["Generated"]
 
 
 def test_to_environment_basic():
@@ -66,17 +73,24 @@ def test_to_environment_basic():
 
 
 def test_to_environment_with_sky():
-    """Test to_environment with sky texture."""
-    # Create sky-based environment
     sky = pf.nodes.texture.sky_texture_nishita(sun_elevation=0.5, sun_rotation=0.0)
-
     background = pf.nodes.shader.background(color=sky, strength=1.0)
+    tree = pf.nodes.to_environment(surface=background).item().node_tree
 
-    # Convert to environment
-    world = pf.nodes.to_environment(surface=background)
-
-    assert world is not None
-    assert world.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputWorld")
+    group = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeGroup")
+    group_output = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "NodeGroupOutput"
+    )
+    background_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeBackground"
+    )
+    sky_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeTexSky"
+    )
+    assert _linked_from(output.inputs["Surface"]) == group.outputs["surface"]
+    assert _linked_from(group_output.inputs["surface"]).node == background_node
+    assert _linked_from(background_node.inputs["Color"]) == sky_node.outputs["Color"]
 
 
 def test_to_compositor_basic():
@@ -104,20 +118,22 @@ def test_to_compositor_basic():
 
 
 def test_material_with_displacement():
-    """Test material creation with displacement."""
-    # Create material with displacement
-    coord = pf.nodes.shader.coord()
-    noise = pf.nodes.texture.noise(vector=coord.generated, scale=2.0)
-
+    noise = pf.nodes.texture.noise(vector=(0.0, 0.0, 0.0), scale=2.0)
     bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.8, 0.8, 1.0))
-
     displacement = pf.nodes.shader.displacement(
         height=noise.fac, midlevel=0.5, scale=0.1
     )
+    tree = pf.Material(surface=bsdf, displacement=displacement).item().node_tree
 
-    material = pf.Material(surface=bsdf, displacement=displacement)
-
-    assert material.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+    bsdf_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled")
+    displacement_node = next(
+        n for n in tree.nodes if n.bl_idname == "ShaderNodeDisplacement"
+    )
+    noise_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeTexNoise")
+    assert _linked_from(output.inputs["Surface"]).node == bsdf_node
+    assert _linked_from(output.inputs["Displacement"]).node == displacement_node
+    assert _linked_from(displacement_node.inputs["Height"]) == noise_node.outputs["Fac"]
 
 
 def test_material_constant_zero_displacement_dropped():
@@ -139,27 +155,39 @@ def test_material_rejects_raw_constant_outputs():
 
 
 def test_material_with_volume():
-    """Test material creation with volume shader."""
-    # Create material with volume
     bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.8, 0.8, 1.0))
-
     volume = pf.nodes.shader.volume_principled(color=(1.0, 1.0, 1.0, 1.0), density=0.1)
+    tree = pf.Material(surface=bsdf, volume=volume).item().node_tree
 
-    material = pf.Material(surface=bsdf, volume=volume)
-
-    assert material.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+    bsdf_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled")
+    volume_node = next(
+        n for n in tree.nodes if n.bl_idname == "ShaderNodeVolumePrincipled"
+    )
+    assert _linked_from(output.inputs["Surface"]).node == bsdf_node
+    assert _linked_from(output.inputs["Volume"]).node == volume_node
 
 
 def test_environment_with_volume():
-    """Test environment creation with volume."""
-
     background = pf.nodes.shader.background(color=(0.1, 0.2, 0.4, 1.0), strength=1.0)
     volume = pf.nodes.shader.volume_principled(color=(0.8, 0.9, 1.0, 1.0), density=0.01)
+    tree = pf.nodes.to_environment(surface=background, volume=volume).item().node_tree
 
-    world = pf.nodes.to_environment(surface=background, volume=volume)
-
-    assert world is not None
-    assert world.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputWorld")
+    group = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeGroup")
+    group_output = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "NodeGroupOutput"
+    )
+    background_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeBackground"
+    )
+    volume_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeVolumePrincipled"
+    )
+    assert _linked_from(output.inputs["Surface"]) == group.outputs["surface"]
+    assert _linked_from(output.inputs["Volume"]) == group.outputs["volume"]
+    assert _linked_from(group_output.inputs["surface"]).node == background_node
+    assert _linked_from(group_output.inputs["volume"]).node == volume_node
 
 
 def test_scene_bound_compositor_repeat_execution():
