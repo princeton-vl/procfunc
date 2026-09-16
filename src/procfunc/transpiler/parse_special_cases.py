@@ -170,6 +170,7 @@ IMPLICIT_TEXTURE_COORDINATES = {
     "ShaderNodeTexGradient": ("coord", "generated"),
     "ShaderNodeTexMagic": ("coord", "generated"),
     "ShaderNodeTexNoise": ("coord", "generated"),
+    "ShaderNodeTexSky": ("coord", "generated"),
     "ShaderNodeTexVoronoi": ("coord", "generated"),
     "ShaderNodeTexWave": ("coord", "generated"),
     "ShaderNodeTexImage": ("coord", "uv"),
@@ -338,20 +339,23 @@ def handle_specialcase_sky(
     inputs: dict[str, Any],
     attrs: dict[str, Any],
 ) -> cg.Node:
-    changed = changed_mapping_fields(
-        node.texture_mapping, TEXTURE_MAPPING_DEFAULTS
-    ) + changed_mapping_fields(node.texture_mapping, TEXTURE_MAPPING_CLAMP_DEFAULTS)
-    if changed and node_tree.bl_idname == "ShaderNodeTree":
-        report_dropped_attrs(
-            f"{node.name!r} ({node.bl_idname}) has a non-identity texture_mapping "
-            f"({', '.join(changed)}), and unlike every other texture node the sky "
-            "has no Vector input for procfunc to put an equivalent Mapping node "
-            "in front of, so the transpiled graph will render differently. Set "
-            "context.globals.warn_mode_transpile_dropped_attrs to 'warn' to "
-            "transpile it anyway."
-        )
     attrs = {k: v for k, v in attrs.items() if k not in TEXTURE_MAPPING_ATTRS}
     kwargs = {**generic_attrs(node_tree, node, attrs, func, func_spec), **inputs}
+    vector = node.inputs.get("Vector")
+    if vector is not None and vector.enabled:
+        kwargs["vector"] = texture_mapping_vector(node_tree, node, kwargs.get("vector"))
+    else:
+        changed = changed_mapping_fields(
+            node.texture_mapping, TEXTURE_MAPPING_DEFAULTS
+        ) + changed_mapping_fields(node.texture_mapping, TEXTURE_MAPPING_CLAMP_DEFAULTS)
+        if changed and node_tree.bl_idname == "ShaderNodeTree":
+            report_dropped_attrs(
+                f"{node.name!r} ({node.bl_idname}) has a non-identity "
+                f"texture_mapping ({', '.join(changed)}) but no enabled Vector "
+                "input for an equivalent Mapping node. Set context.globals."
+                "warn_mode_transpile_dropped_attrs to 'warn' to transpile it "
+                "anyway."
+            )
     if node.sky_type == "NISHITA" and not node.sun_disc:
         for name in ("sun_intensity", "sun_size"):
             kwargs.pop(name, None)

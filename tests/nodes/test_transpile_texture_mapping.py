@@ -12,6 +12,7 @@ from procfunc.transpiler.parse_special_cases import (
     SPECIAL_CASE_NODES,
     handle_specialcase_1d_texture,
     handle_specialcase_image_texture,
+    handle_specialcase_sky,
     handle_specialcase_texture_mapping,
 )
 
@@ -264,8 +265,24 @@ def test_higher_dimensional_textures_keep_the_mapping(
     assert "pf.nodes.shader.mapping(" in transpile(tree)
 
 
-def test_sky_texture_throws_because_it_has_no_vector_input() -> None:
+@pytest.mark.parametrize(
+    ("sky_type", "sun_disc"),
+    [("PREETHAM", True), ("HOSEK_WILKIE", True), ("NISHITA", False)],
+)
+def test_sky_texture_maps_enabled_vector(sky_type: str, sun_disc: bool) -> None:
     tree, node = shader_tree("ShaderNodeTexSky", scale=(2.0, 2.0, 2.0))
+    node.sky_type = sky_type
+    node.sun_disc = sun_disc
+    source = transpile(tree)
+    assert "coord = pf.nodes.shader.coord()" in source
+    assert "pf.nodes.shader.mapping(" in source
+    assert "vector=coord.generated" in source
+
+
+def test_sky_texture_without_vector_rejects_mapping() -> None:
+    tree, node = shader_tree("ShaderNodeTexSky", scale=(2.0, 2.0, 2.0))
+    node.sky_type = "NISHITA"
+    node.sun_disc = True
     assert "Vector" not in node.inputs
     with pytest.raises(ValueError, match="non-identity texture_mapping"):
         transpile(tree)
@@ -316,6 +333,7 @@ def test_every_mapped_node_knows_its_implicit_coordinate() -> None:
             handle_specialcase_texture_mapping,
             handle_specialcase_1d_texture,
             handle_specialcase_image_texture,
+            handle_specialcase_sky,
         )
     }
     assert mapped - {"ShaderNodeTexWhiteNoise"} == set(IMPLICIT_TEXTURE_COORDINATES)
