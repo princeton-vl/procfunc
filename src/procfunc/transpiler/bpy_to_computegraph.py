@@ -105,7 +105,7 @@ def _target_attrs(node: bpy.types.Node) -> dict[str, Any]:
         if k.startswith("_"):
             continue
         elif k in bpy_node_info.SPECIAL_CASE_ATTR_NAMES:
-            attr_vals[k] = None
+            continue
         elif k not in bpy_node_info.UNIVERSAL_ATTR_NAMES:
             v = getattr(node, k)
             # Skip bound methods exposed alongside data properties
@@ -633,18 +633,10 @@ def parse_standard_node(
             f"Node {node.bl_idname} had keys {overlap=} between {attrs.keys()=} and {inputs.keys()=}, which is invalid"
         )
 
-    # SPECIAL_CASE_ATTR_NAMES enter attrs as None placeholders. Handlers that
-    # need them read from the bpy node directly, so the placeholder is never
-    # useful to the function call — drop before constructing the cg_node.
-    placeholder_attrs = {**attrs, **inputs}
-    for k in bpy_node_info.SPECIAL_CASE_ATTR_NAMES:
-        if placeholder_attrs.get(k, ...) is None:
-            placeholder_attrs.pop(k, None)
-
     cg_node = cg.FunctionCallNode(
         func=func,
         args=(),
-        kwargs=placeholder_attrs,
+        kwargs={**attrs, **inputs},
     )
 
     cg_node_orig = cg_node
