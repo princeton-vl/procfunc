@@ -33,6 +33,7 @@ def choice_idx(rng: np.random.Generator, weights: list[float]) -> int:
 def _peekthrough_execute_all_choices(
     choice_options: list[tuple[Callable[..., T], float]],
     chosen_idx: int,
+    choice_rng: cg.Node,
     args: tuple,
     kwargs: dict,
 ) -> cg.Proxy:
@@ -43,6 +44,7 @@ def _peekthrough_execute_all_choices(
         evald.append((res, weight))
 
     new_kwargs = dict(
+        choice_rng=choice_rng,
         choice_options=evald,
         chosen_idx=chosen_idx,
     )
@@ -67,6 +69,7 @@ class ChoiceResultProxy(cg.Proxy):
             return _peekthrough_execute_all_choices(
                 self.node.kwargs["choice_options"],
                 self.node.kwargs["chosen_idx"],
+                self.node.kwargs["choice_rng"],
                 args,
                 kwargs,
             )
@@ -98,6 +101,9 @@ def _choice_create_custom_tracer_wrapper(
         choice_values, choice_weights = zip(*choice_options)
         if chosen_idx is None:
             chosen_idx = choice_idx(choice_rng.rng, choice_weights)
+
+        if patcher.trace_level < TraceLevel.RANDOM_CONTROL:
+            return choice_values[chosen_idx]
 
         unwrapped_options = [
             (pytree.PyTree(v).map(_unwrap_proxy).obj(), w) for v, w in choice_options
