@@ -23,9 +23,11 @@ Interface changes:
 - `math.map_range` takes `steps` for STEPPED interpolation and rejects it in the other modes, where Blender disables that socket (the argument was missing entirely, so no STEPPED node could transpile)
 - `texture.voronoi` and `texture.voronoi_smooth_f1` return `position=None` in 1D, which has no Position socket, and expose `w` in 1D as well as 4D (its 1D W output was unreachable)
 - `math.float_curve` gains a per-point `handle_types` list alongside its broadcast `handle_type`, and `math.vector_curve`, `color.rgb_curve`, and `compositor.rgb_curve` gain a per-curve `handle_types`
+- `compositor.hue_correct` takes `curves` and per-point `handle_types` for its hue, saturation and value curves, and transpile emits them (they were dropped entirely, so every transpiled node rebuilt with default curves)
 
 Fixed behavior:
 
+- curve nodes remove points beyond the ones given rather than leaving the node's remaining defaults in place
 - `func.axes_to_rotation` retains its public X/Y defaults while the transpiler emits Blender's native Z/X defaults explicitly, so native nodes rebuild with the same axes
 - `geo.string_to_curves` exposes the `remainder` string output for TRUNCATE overflow and returns `None` for modes where Blender has no such socket
 - transpiling a `ShaderNodeTex*` node in a shader tree whose `texture_mapping` is not the identity transform now rebuilds it as the Combine XYZ and Mapping nodes it is equivalent to, in front of the texture, instead of silently dropping it and changing how the graph renders

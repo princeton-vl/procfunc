@@ -1132,17 +1132,22 @@ def glare_streaks(
 
 
 def hue_correct(
-    fac: nt.SocketOrVal[float] = 1.0, image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1)
+    fac: nt.SocketOrVal[float] = 1.0,
+    image: nt.SocketOrVal[pt.Color] = (1, 1, 1, 1),
+    curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[str]] | None = None,
 ) -> nt.ProcNode:
     """
     Uses a HueCorrect Compositor Node.
+
+    Takes three curves (hue, saturation, value), each plotted against hue.
 
     See: https://docs.blender.org/manual/en/4.2/compositing/types/color/adjust/hue_correct.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="CompositorNodeHueCorrect",
         inputs={"Fac": fac, "Image": image},
-        attrs={},
+        attrs={"curves": curves, "handle_types": handle_types},
     )
 
 

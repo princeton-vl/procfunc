@@ -401,6 +401,7 @@ SPECIAL_CASE_NODES: dict[str, SpecialCaseHandler] = {
     "CompositorNodeCurveRGB": handle_specialcase_curve,
     "ShaderNodeVectorCurve": handle_specialcase_curve,
     "CompositorNodeCurveVec": handle_specialcase_curve,
+    "CompositorNodeHueCorrect": handle_specialcase_curve,
     # values with .outputs[0].default_value can share handler
     "ShaderNodeValue": handle_specialcase_value,
     "ShaderNodeRGB": handle_specialcase_value,

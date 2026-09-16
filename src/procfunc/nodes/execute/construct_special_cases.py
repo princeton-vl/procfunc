@@ -107,6 +107,8 @@ def _apply_curves(
     ):
         while len(bl_curve.points) < len(curve_np):
             bl_curve.points.new(0, 0)
+        while len(bl_curve.points) > len(curve_np):
+            bl_curve.points.remove(bl_curve.points[-1])
         for i, (x, y) in enumerate(curve_np):
             bl_curve.points[i].location = (x, y)
             bl_curve.points[i].handle_type = curve_handles[i]
@@ -134,6 +136,16 @@ def special_case_vector_curves(
 ):
     """Handle vector curve nodes with points attribute."""
 
+    curves = attrs.pop("curves", None)
+    handle_types = attrs.pop("handle_types", None)
+    _apply_curves(bl_node, curves, handle_types)
+
+
+def special_case_hue_correct(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    **_kwargs,
+):
     curves = attrs.pop("curves", None)
     handle_types = attrs.pop("handle_types", None)
     _apply_curves(bl_node, curves, handle_types)
@@ -362,6 +374,7 @@ NODE_SPECIAL_CASES = {
     "CompositorNodeCurveRGB": special_case_rgb_curves,
     "ShaderNodeVectorCurve": special_case_vector_curves,
     "CompositorNodeCurveVec": special_case_compositor_vector_curves,
+    "CompositorNodeHueCorrect": special_case_hue_correct,
     "TextureNodeMixRGB": special_case_texture_mix_rgb,
     "CompositorNodeOutputFile": special_case_file_output,
     nt.INPUT_NODE_TYPE: special_case_input,

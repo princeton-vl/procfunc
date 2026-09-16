@@ -5,6 +5,8 @@ property rather than a socket; transpile must emit it as `clamp_result`.
 CompositorNodeCurveVec has no Fac socket; transpile must rely on the
 `fac=1.0` wrapper default rather than emitting bogus kwargs, mirroring the
 forward no-op-input handling in bindings_util.
+CompositorNodeHueCorrect keeps its three hue/saturation/value curves on a
+`mapping` property; transpile must emit them as `curves`.
 """
 
 import ast
@@ -223,3 +225,41 @@ def test_rgb_curve_mixed_handles_round_trip():
         for curve in rebuilt.mapping.curves
     ]
     assert actual == expected
+
+
+def test_compositor_hue_correct_curves_round_trip():
+    tree = _make_tree("CompositorNodeTree")
+    node = tree.nodes.new("CompositorNodeHueCorrect")
+    node.mapping.curves[1].points.remove(node.mapping.curves[1].points[-1])
+    expected_points = []
+    expected_handles = []
+    for i, curve in enumerate(node.mapping.curves):
+        handles = ["AUTO"] * len(curve.points)
+        handles[i + 1] = "VECTOR"
+        expected_handles.append(handles)
+        for j, point in enumerate(curve.points):
+            point.location = (j / 8, 0.1 * i + 0.05 * j)
+            point.handle_type = handles[j]
+        expected_points.append([tuple(p.location) for p in curve.points])
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketColor")
+
+    src = _transpile(tree)
+    assert "hue_correct" in src
+    assert "curves=" in src
+    assert "handle_types=" in src
+    assert "mapping" not in src
+
+    realized = _realize(src, NodeGroupType.COMPOSITOR)
+    rebuilt = _single_node(realized, "CompositorNodeHueCorrect")
+    rebuilt_points = [
+        [tuple(p.location) for p in curve.points] for curve in rebuilt.mapping.curves
+    ]
+    rebuilt_handles = [
+        [point.handle_type for point in curve.points]
+        for curve in rebuilt.mapping.curves
+    ]
+    assert [len(c) for c in rebuilt_points] == [len(c) for c in expected_points]
+    for got, want in zip(rebuilt_points, expected_points, strict=True):
+        np.testing.assert_allclose(got, want, atol=1e-4)
+    assert rebuilt_handles == expected_handles
