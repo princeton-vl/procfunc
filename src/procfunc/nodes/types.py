@@ -2,7 +2,16 @@ import copy
 import inspect
 import logging
 from pathlib import Path
-from typing import Any, Generic, Literal, TypeAlias, TypeVar, Union
+from typing import (
+    Any,
+    Generic,
+    Literal,
+    TypeAlias,
+    TypeVar,
+    Union,
+    get_args,
+    get_origin,
+)
 
 from procfunc import compute_graph as cg
 from procfunc import context
@@ -84,6 +93,12 @@ class ProcNode(Generic[T]):
             self._node.metadata["definition"] = _node_definition_metadata()
 
     def astype(self, dtype: type) -> "ProcNode":
+        if get_origin(dtype) is ProcNode:
+            args = get_args(dtype)
+            if len(args) != 1:
+                raise TypeError(f"Expected ProcNode[T], got {dtype}")
+            dtype = args[0]
+
         node = copy.copy(self._node)
         node.metadata = copy.copy(self._node.metadata)
         node.metadata["known_value_type"] = dtype

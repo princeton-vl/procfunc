@@ -240,9 +240,12 @@ def _operator_call_operands(
 
     operands = [bound.arguments[name] for name in operand_names]
 
-    # a default epsilon stays tolerant unlike exact ==/!=, so require exact operands
-    if template in _EPSILON_EQUALITY_TEMPLATES and not all(
-        _is_exact_compare_operand(v) for v in operands
+    operator_type = FUNCTIONS_TO_OPERATORS.get(node.func)
+    native_equality = operator_type in (OperatorType.EQUAL, OperatorType.NOT_EQUAL)
+    if (
+        template in _EPSILON_EQUALITY_TEMPLATES
+        and not native_equality
+        and not all(_is_exact_compare_operand(v) for v in operands)
     ):
         return None
 
@@ -713,6 +716,8 @@ def _resolve_func(func: Any) -> tuple[str | None, str]:
         raise NotImplementedError(f"Unsupported function: {func}")
     elif module == "builtins":
         return None, func.__name__
+    elif module == "_operator":
+        return "import operator", f"operator.{func.__name__}"
     elif module.startswith("procfunc."):
         callsite = "pf." + module[len("procfunc.") :] + "." + func.__name__
         importstring = "import procfunc as pf"

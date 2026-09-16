@@ -7,6 +7,7 @@ class OperatorType(Enum):
     SUB = "sub"
     MUL = "mul"
     DIV = "div"
+    FLOOR_DIV = "floordiv"
     TRUEDIV = "truediv"
     POW = "pow"
     MOD = "mod"
@@ -17,6 +18,8 @@ class OperatorType(Enum):
     EQUAL = "eq"
     NOT_EQUAL = "ne"
     NOT = "invert"
+    NEG = "neg"
+    POS = "pos"
     LSHIFT = "lshift"
     RSHIFT = "rshift"
     BIT_AND = "and"
@@ -34,6 +37,7 @@ OPERATOR_TEMPLATES = {
     OperatorType.SUB: "{} - {}",
     OperatorType.MUL: "{} * {}",
     OperatorType.DIV: "{} / {}",
+    OperatorType.FLOOR_DIV: "{} // {}",
     OperatorType.POW: "{} ** {}",
     OperatorType.MOD: "{} % {}",
     OperatorType.LESS_THAN: "{} < {}",
@@ -42,6 +46,9 @@ OPERATOR_TEMPLATES = {
     OperatorType.GREATER_THAN_EQUAL: "{} >= {}",
     OperatorType.EQUAL: "{} == {}",
     OperatorType.NOT_EQUAL: "{} != {}",
+    OperatorType.NOT: "~{}",
+    OperatorType.NEG: "-{}",
+    OperatorType.POS: "+{}",
     OperatorType.VECTOR_PACK: "({}, {}, {})",
     OperatorType.NOOP: "{}",
     OperatorType.LSHIFT: "{} << {}",
@@ -57,6 +64,7 @@ OPERATORS_TO_FUNCTIONS = {
     OperatorType.SUB: operator.sub,
     OperatorType.MUL: operator.mul,
     OperatorType.DIV: operator.truediv,
+    OperatorType.FLOOR_DIV: operator.floordiv,
     OperatorType.MOD: operator.mod,
     OperatorType.POW: operator.pow,
     OperatorType.LESS_THAN: operator.lt,
@@ -65,6 +73,9 @@ OPERATORS_TO_FUNCTIONS = {
     OperatorType.GREATER_THAN_EQUAL: operator.ge,
     OperatorType.EQUAL: operator.eq,
     OperatorType.NOT_EQUAL: operator.ne,
+    OperatorType.NOT: operator.invert,
+    OperatorType.NEG: operator.neg,
+    OperatorType.POS: operator.pos,
     OperatorType.LSHIFT: operator.lshift,
     OperatorType.RSHIFT: operator.rshift,
     OperatorType.BIT_AND: operator.and_,
@@ -80,6 +91,7 @@ REFLECTABLE_OPERATORS = {
     OperatorType.SUB,
     OperatorType.MUL,
     OperatorType.DIV,
+    OperatorType.FLOOR_DIV,
     OperatorType.MOD,
     OperatorType.POW,
     OperatorType.LSHIFT,

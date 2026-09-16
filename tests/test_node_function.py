@@ -104,6 +104,25 @@ def default_cube_object() -> pf.MeshObject:
     return pf.nodes.to_mesh_object(default_cube())
 
 
+def generic_typed_index_object() -> pf.MeshObject:
+    index = pf.nodes.geo.input_index()
+    index = pf.nodes.util.node_function.node_input(index, nt.ProcNode[float])
+    cube = pf.nodes.geo.mesh_cube()
+    mesh = pf.nodes.geo.set_position(cube.mesh, selection=index > 0.0)
+    return pf.nodes.to_mesh_object(mesh)
+
+
+def test_primitive_codegen_normalizes_procnode_value_type():
+    graph = pf.trace(
+        generic_typed_index_object, trace_level=pf.tracer.TraceLevel.PRIMITIVES
+    )
+    source = codegen.to_python(graph, toplevel_as_maincall=False)
+    namespace = {}
+    exec(source, namespace)  # noqa: S102
+    result = namespace["generic_typed_index_object"]()
+    assert len(result.item().data.vertices) == 8
+
+
 def test_primitive_trace_preserves_socket_default():
     graph = pf.trace(default_cube_object, trace_level=pf.tracer.TraceLevel.PRIMITIVES)
     namespace = {}
