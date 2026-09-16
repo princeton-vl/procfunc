@@ -42,6 +42,14 @@ def test_noise_1d():
         pf.nodes.texture.noise(noise_dimensions="1D", w=0.5, vector=(1.0, 2.0, 3.0))
 
 
+@pytest.mark.parametrize("function_name", ["voronoi", "voronoi_smooth_f1"])
+def test_voronoi_wired_exponent_accepted(function_name: str):
+    exponent = pf.nodes.math.add(1.0, 1.0)
+    function = getattr(pf.nodes.texture, function_name)
+    result = function(None, exponent=exponent, distance="MINKOWSKI")
+    assert _proc_node(result.distance).kwargs["Exponent"] is exponent.item()
+
+
 def test_principled_bsdf_defaults_omit_normal():
     node = pf.nodes.shader.principled_bsdf(base_color=(1, 0, 0, 1)).item()
     assert "Normal" not in node.kwargs

@@ -151,8 +151,8 @@ def blur(
     filter_type: Literal[
         "FLAT", "TENT", "QUAD", "CUBIC", "GAUSS", "FAST_GAUSS", "CATROM", "MITCH"
     ] = "GAUSS",
-    size_x: int = 1,
-    size_y: int = 1,
+    size_x: int = 0,
+    size_y: int = 0,
     use_bokeh: bool = False,
     use_extended_bounds: bool = False,
     use_gamma_correction: bool = False,

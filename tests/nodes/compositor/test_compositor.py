@@ -1043,8 +1043,8 @@ def test_blur_leaves_a_uniform_image_unchanged():
     assert_uniform(out, (0.25, 0.5, 0.75, 1.0))
 
 
-def test_blur_size_zero_leaves_a_step_edge_sharp():
-    out = composite_render(comp.blur(image=image_node("src", STEP_X).image, size=0.0))
+def test_blur_defaults_leave_a_step_edge_sharp():
+    out = composite_render(comp.blur(image=image_node("src", STEP_X).image))
     assert set(np.unique(out[..., 0].round(4)).tolist()) == {0.0, 1.0}
 
 
@@ -1061,7 +1061,9 @@ def test_blur_explicit_zero_radii_leave_a_step_edge_sharp():
 
 
 def test_blur_smooths_a_step_edge_into_intermediate_values():
-    out = composite_render(comp.blur(image=image_node("src", STEP_X).image, size=3.0))
+    out = composite_render(
+        comp.blur(image=image_node("src", STEP_X).image, size_x=3, size_y=3)
+    )
     row = out[0, :, 0]
     assert np.all(np.diff(row) >= -1e-6)
     assert ((row > 0.01) & (row < 0.99)).sum() >= 2

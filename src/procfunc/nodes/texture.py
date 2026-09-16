@@ -311,8 +311,8 @@ def noise(
     detail: nt.SocketOrVal[float] = 2.0,
     roughness: nt.SocketOrVal[float] = 0.5,
     lacunarity: nt.SocketOrVal[float] = 2.0,
-    offset: float | None = None,
-    gain: float | None = None,
+    offset: nt.SocketOrVal[float] | None = None,
+    gain: nt.SocketOrVal[float] | None = None,
     distortion: nt.SocketOrVal[float] = 0.0,
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
@@ -551,7 +551,7 @@ def voronoi(
     roughness: nt.SocketOrVal[float] = 0.5,
     lacunarity: nt.SocketOrVal[float] = 2.0,
     randomness: nt.SocketOrVal[float] = 1.0,
-    exponent: nt.SocketOrVal[float] = 0.0,
+    exponent: nt.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     feature: Literal["F1", "F2"] = "F1",
     normalize: bool = False,
@@ -588,7 +588,7 @@ def voronoi(
     elif vector is not None:
         inputs["Vector"] = vector
 
-    if exponent != 0.0:
+    if exponent is not None:
         assert distance == "MINKOWSKI", (
             f"exponent is only supported for Minkowski distance, got {distance=}"
         )
@@ -671,7 +671,7 @@ def voronoi_smooth_f1(
     lacunarity: nt.SocketOrVal[float] = 2.0,
     smoothness: nt.SocketOrVal[float] = 0.5,
     randomness: nt.SocketOrVal[float] = 1.0,
-    exponent: nt.SocketOrVal[float] = 0.0,
+    exponent: nt.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
@@ -696,7 +696,7 @@ def voronoi_smooth_f1(
     elif vector is not None:
         inputs["Vector"] = vector
 
-    if exponent != 0.0:
+    if exponent is not None:
         assert distance == "MINKOWSKI", (
             f"exponent is only supported for Minkowski distance, got {distance=}"
         )

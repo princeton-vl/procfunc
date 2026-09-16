@@ -187,12 +187,12 @@ def vector_faceforward(
 def vector_dot_product(
     a: pf.SocketOrVal[pf.Vector],
     b: pf.SocketOrVal[pf.Vector],
-) -> pf.ProcNode[pf.Vector]:
+) -> pf.ProcNode[float]:
     pass
 def vector_distance(
     a: pf.SocketOrVal[pf.Vector],
     b: pf.SocketOrVal[pf.Vector],
-) -> pf.ProcNode[pf.Vector]:
+) -> pf.ProcNode[float]:
     pass
 def vector_length(vector: pf.SocketOrVal[pf.Vector]) -> pf.ProcNode[float]:
     pass
@@ -287,17 +287,6 @@ def vector_transform(
 
 TConstant = TypeVar("TConstant", int, float, bool, str, pf.Vector, pf.Euler, pf.Color)
 
-_CONSTANT_CONTEXTUAL_BY_TYPE = [
-    # bool before int: bool is a subclass of int
-    (bool, ContextualNode.BOOLEAN),
-    (int, ContextualNode.INT),
-    (float, ContextualNode.VALUE),
-    (pf.Euler, ContextualNode.ROTATION),
-    (pf.Vector, ContextualNode.VECTOR),
-    (tuple, ContextualNode.VECTOR),
-    (pf.Color, ContextualNode.RGB),
-    (str, ContextualNode.STRING),
-]
 
 
 def constant(
@@ -330,14 +319,16 @@ def float_curve(
     factor: pf.SocketOrVal[float],
     value: pf.SocketOrVal[float],
     curve: np.ndarray | None = None,
-    handle_type: str = "AUTO",
+    handle_type: pf.HandleType = "AUTO",
     use_clip: bool = True,
+    handle_types: list[pf.HandleType] | None = None,
 ) -> pf.ProcNode[float]:
     pass
 def vector_curve(
     vector: pf.SocketOrVal[pf.Vector],
     fac: pf.SocketOrVal[float] = 1.0,
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[pf.HandleType]] | None = None,
 ) -> pf.ProcNode[pf.Vector]:
     pass
 # ---- Combine / Separate ------------------------------------
@@ -360,17 +351,18 @@ def separate_xyz(vector: pf.SocketOrVal[pf.Vector]) -> SeparateXyzResult:
 # ---- MapRange --------------------------------------------------------------
 
 
-TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
+TInterpolationType = Literal["LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"]
 
 
 def map_range(
-    value: pf.SocketOrVal[float],
-    from_max: pf.SocketOrVal[float] = 1.0,
-    from_min: pf.SocketOrVal[float] = 0.0,
-    to_max: pf.SocketOrVal[float] = 1.0,
-    to_min: pf.SocketOrVal[float] = 0.0,
+    value: pf.SocketOrVal[float | pf.Vector],
+    from_max: pf.SocketOrVal[float | pf.Vector] = 1.0,
+    from_min: pf.SocketOrVal[float | pf.Vector] = 0.0,
+    to_max: pf.SocketOrVal[float | pf.Vector] = 1.0,
+    to_min: pf.SocketOrVal[float | pf.Vector] = 0.0,
     clamp: bool = True,
     interpolation_type: TInterpolationType = "LINEAR",
+    steps: pf.SocketOrVal[float | pf.Vector] | None = None,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> pf.ProcNode:
     pass
@@ -391,6 +383,7 @@ def rgb_curve(
     fac: pf.SocketOrVal[float],
     color: pf.SocketOrVal[pf.Color],
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[pf.HandleType]] | None = None,
 ) -> pf.ProcNode:
     pass
 def combine_rgb(
@@ -570,8 +563,16 @@ def hair_bsdf(
     component: Literal["Reflection", "Transmission"] = "Reflection",
 ) -> pf.ProcNode[pf.Shader]:
     pass
-def principled_hair_bsdf(
-    color: pf.SocketOrVal[pf.Color] = (0.017513, 0.005763, 0.002059, 1),
+THairParametrization = Literal["ABSORPTION", "COLOR", "MELANIN"]
+
+
+def principled_hair_bsdf_chiang(
+    color: pf.SocketOrVal[pf.Color] | None = None,
+    absorption_coefficient: pf.SocketOrVal[pf.Vector] | None = None,
+    melanin: pf.SocketOrVal[float] | None = None,
+    melanin_redness: pf.SocketOrVal[float] | None = None,
+    tint: pf.SocketOrVal[pf.Color] | None = None,
+    random_color: pf.SocketOrVal[float] | None = None,
     roughness: pf.SocketOrVal[float] = 0.3,
     radial_roughness: pf.SocketOrVal[float] = 0.3,
     coat: pf.SocketOrVal[float] = 0.0,
@@ -579,8 +580,24 @@ def principled_hair_bsdf(
     offset: pf.SocketOrVal[float] = 0.034907,
     random_roughness: pf.SocketOrVal[float] = 0.0,
     random: pf.SocketOrVal[float] = 0.0,
-    model: Literal["CHIANG", "HUANG"] = "CHIANG",
-    parametrization: Literal["ABSORPTION", "MELANIN", "COLOR"] = "COLOR",
+) -> pf.ProcNode[pf.Shader]:
+    pass
+def principled_hair_bsdf_huang(
+    color: pf.SocketOrVal[pf.Color] | None = None,
+    absorption_coefficient: pf.SocketOrVal[pf.Vector] | None = None,
+    melanin: pf.SocketOrVal[float] | None = None,
+    melanin_redness: pf.SocketOrVal[float] | None = None,
+    tint: pf.SocketOrVal[pf.Color] | None = None,
+    random_color: pf.SocketOrVal[float] | None = None,
+    aspect_ratio: pf.SocketOrVal[float] = 0.85,
+    roughness: pf.SocketOrVal[float] = 0.3,
+    ior: pf.SocketOrVal[float] = 1.55,
+    offset: pf.SocketOrVal[float] = 0.034907,
+    random_roughness: pf.SocketOrVal[float] = 0.0,
+    random: pf.SocketOrVal[float] = 0.0,
+    reflection: pf.SocketOrVal[float] = 1.0,
+    transmission: pf.SocketOrVal[float] = 1.0,
+    secondary_reflection: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.Shader]:
     pass
 TSubsurfaceMethod = Literal["BURLEY", "RANDOM_WALK", "RANDOM_WALK_SKIN"]
@@ -765,7 +782,25 @@ def mapping(
     location: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
-    vector_type: Literal["POINT", "TEXTURE", "VECTOR", "NORMAL"] = "POINT",
+) -> pf.ProcNode[pf.Vector]:
+    pass
+def mapping_texture(
+    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    location: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+) -> pf.ProcNode[pf.Vector]:
+    pass
+def mapping_vector(
+    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+) -> pf.ProcNode[pf.Vector]:
+    pass
+def mapping_normal(
+    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def mix_shader(
@@ -850,7 +885,14 @@ def squeeze(
     center: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
-def subsurface_scattering(
+def subsurface_scattering_burley(
+    color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
+    scale: pf.SocketOrVal[float] = 0.05,
+    radius: pf.SocketOrVal[pf.Vector] = (1, 0.2, 0.1),
+    normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+) -> pf.ProcNode[pf.Shader]:
+    pass
+def subsurface_scattering_random_walk(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     scale: pf.SocketOrVal[float] = 0.05,
     radius: pf.SocketOrVal[pf.Vector] = (1, 0.2, 0.1),
@@ -858,7 +900,15 @@ def subsurface_scattering(
     roughness: pf.SocketOrVal[float] = 1.0,
     anisotropy: pf.SocketOrVal[float] = 0.0,
     normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
-    falloff: Literal["BURLEY", "RANDOM_WALK", "RANDOM_WALK_SKIN"] = "RANDOM_WALK",
+) -> pf.ProcNode[pf.Shader]:
+    pass
+def subsurface_scattering_random_walk_skin(
+    color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
+    scale: pf.SocketOrVal[float] = 0.05,
+    radius: pf.SocketOrVal[pf.Vector] = (1, 0.2, 0.1),
+    ior: pf.SocketOrVal[float] = 1.4,
+    anisotropy: pf.SocketOrVal[float] = 0.0,
+    normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
 ) -> pf.ProcNode[pf.Shader]:
     pass
 def tangent(
@@ -968,6 +1018,7 @@ TDistanceMetric = Literal["EUCLIDEAN", "MANHATTAN", "CHEBYCHEV", "MINKOWSKI"]
 TTextureInterpolationType = Literal["Linear", "Closest", "Cubic", "Smart"]  # TODO
 
 
+
 class TextureResult(NamedTuple):
     fac: pf.ProcNode[float]
     color: pf.ProcNode[pf.Color]
@@ -976,7 +1027,7 @@ class TextureResult(NamedTuple):
 class VoronoiResult(NamedTuple):
     color: pf.ProcNode[pf.Color]
     distance: pf.ProcNode[float]
-    position: pf.ProcNode[pf.Vector]
+    position: pf.ProcNode[pf.Vector] | None
     w: pf.ProcNode[float] | None
 
 
@@ -986,7 +1037,7 @@ class PointDensityResult(NamedTuple):
 
 
 def brick(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     color1: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     color2: pf.SocketOrVal[pf.Color] = (0.2, 0.2, 0.2, 1),
     mortar: pf.SocketOrVal[pf.Color] = (0, 0, 0, 1),
@@ -1003,21 +1054,28 @@ def brick(
 ) -> TextureResult:
     pass
 def checker(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     color1: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     color2: pf.SocketOrVal[pf.Color] = (0.2, 0.2, 0.2, 1),
     scale: pf.SocketOrVal[float] = 5.0,
 ) -> TextureResult:
     pass
 def environment(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["EQUIRECTANGULAR", "MIRROR_BALL"] = "EQUIRECTANGULAR",
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> pf.ProcNode[pf.Color]:
     pass
 def gradient(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     gradient_type: Literal[
         "LINEAR",
         "QUADRATIC",
@@ -1030,7 +1088,7 @@ def gradient(
 ) -> TextureResult:
     pass
 def ies(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     strength: pf.SocketOrVal[float] = 1.0,
     filepath: str = "",
     ies: Any = None,
@@ -1038,17 +1096,24 @@ def ies(
 ) -> pf.ProcNode[float]:
     pass
 def image(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     # None mirrors a bare ShaderNodeTexImage; attr not socket, strict-None doesnt apply
     image: pf.Image | None = None,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["FLAT", "BOX", "SPHERE", "TUBE"] = "FLAT",
     projection_blend: float = 0.0,
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> TextureResult:
     pass
 def magic(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     distortion: pf.SocketOrVal[float] = 1.0,
     turbulence_depth: int = 2,
@@ -1060,8 +1125,8 @@ def noise(
     detail: pf.SocketOrVal[float] = 2.0,
     roughness: pf.SocketOrVal[float] = 0.5,
     lacunarity: pf.SocketOrVal[float] = 2.0,
-    offset: pf.SocketOrVal[float] = 0.0,
-    gain: pf.SocketOrVal[float] = 1.0,
+    offset: pf.SocketOrVal[float] | None = None,
+    gain: pf.SocketOrVal[float] | None = None,
     distortion: pf.SocketOrVal[float] = 0.0,
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
@@ -1070,7 +1135,7 @@ def noise(
 ) -> TextureResult:
     pass
 def point_density(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     interpolation: Literal["Closest", "Linear", "Cubic"] = "Linear",
     object: Any = None,
     particle_color_source: Literal[
@@ -1120,7 +1185,7 @@ def voronoi(
     roughness: pf.SocketOrVal[float] = 0.5,
     lacunarity: pf.SocketOrVal[float] = 2.0,
     randomness: pf.SocketOrVal[float] = 1.0,
-    exponent: pf.SocketOrVal[float] = 0.0,
+    exponent: pf.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     feature: Literal["F1", "F2"] = "F1",
     normalize: bool = False,
@@ -1148,6 +1213,7 @@ def voronoi_smooth_f1(
     lacunarity: pf.SocketOrVal[float] = 2.0,
     smoothness: pf.SocketOrVal[float] = 0.5,
     randomness: pf.SocketOrVal[float] = 1.0,
+    exponent: pf.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
@@ -1155,21 +1221,21 @@ def voronoi_smooth_f1(
 ) -> VoronoiResult:
     pass
 def voronoi_n_spheres_distance(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     randomness: pf.SocketOrVal[float] = 1.0,
     normalize: bool = False,
 ) -> pf.ProcNode[float]:
     pass
 def wave(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     distortion: pf.SocketOrVal[float] = 0.0,
     detail: pf.SocketOrVal[float] = 2.0,
     detail_scale: pf.SocketOrVal[float] = 1.0,
     detail_roughness: pf.SocketOrVal[float] = 0.5,
     phase_offset: pf.SocketOrVal[float] = 0.0,
-    bands_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
+    bands_direction: Literal["X", "Y", "Z", "DIAGONAL"] = "X",
     rings_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
     wave_profile: Literal["SIN", "SAW", "TRI"] = "SIN",
     wave_type: Literal["BANDS", "RINGS"] = "BANDS",
