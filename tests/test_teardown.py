@@ -26,7 +26,7 @@ def run(cmd: list[str], tmp_path: Path) -> subprocess.CompletedProcess:
     )
 
 
-def test_coverage_data_saved_before_exit(tmp_path):
+def test_coverage_data_saved_before_exit(tmp_path: Path) -> None:
     pytest.importorskip("coverage")
     script = write_entrypoint(
         tmp_path, "with skip_teardown_on_exit():\n    print('ran')\n"
@@ -41,7 +41,7 @@ def test_coverage_data_saved_before_exit(tmp_path):
     assert sorted(tmp_path.glob("data.*")), proc.stderr
 
 
-def test_exit_code_preserved_without_coverage(tmp_path):
+def test_exit_code_preserved_without_coverage(tmp_path: Path) -> None:
     script = write_entrypoint(
         tmp_path, "with skip_teardown_on_exit():\n    raise SystemExit(3)\n"
     )
@@ -49,3 +49,51 @@ def test_exit_code_preserved_without_coverage(tmp_path):
     proc = run([sys.executable, str(script)], tmp_path)
 
     assert proc.returncode == 3, proc.stderr
+
+
+def test_missing_optional_coverage_is_silent(tmp_path: Path) -> None:
+    script = write_entrypoint(
+        tmp_path,
+        'import sys\nsys.modules["coverage"] = None\n\n'
+        "with skip_teardown_on_exit():\n    print('ran')\n",
+    )
+
+    proc = run([sys.executable, str(script)], tmp_path)
+
+    assert proc.returncode == 0, proc.stderr
+    assert "Traceback" not in proc.stderr
+    assert "ModuleNotFoundError" not in proc.stderr
+
+
+@pytest.mark.parametrize("error_type", ["ImportError", "RuntimeError"])
+def test_coverage_import_failure_preserves_exit_code(
+    tmp_path: Path, error_type: str
+) -> None:
+    (tmp_path / "coverage.py").write_text(
+        f"raise {error_type}('coverage import failed')\n"
+    )
+    script = write_entrypoint(
+        tmp_path, "with skip_teardown_on_exit():\n    raise SystemExit(3)\n"
+    )
+
+    proc = run([sys.executable, str(script)], tmp_path)
+
+    assert proc.returncode == 3, proc.stderr
+    assert f"{error_type}: coverage import failed" in proc.stderr
+
+
+def test_coverage_save_failure_is_reported(tmp_path: Path) -> None:
+    script = write_entrypoint(
+        tmp_path,
+        "import sys\nimport types\n\n"
+        "def fail():\n    raise RuntimeError('coverage save failed')\n\n"
+        "current = types.SimpleNamespace(save=fail)\n"
+        "coverage_type = types.SimpleNamespace(current=lambda: current)\n"
+        'sys.modules["coverage"] = types.SimpleNamespace(Coverage=coverage_type)\n\n'
+        "with skip_teardown_on_exit():\n    print('ran')\n",
+    )
+
+    proc = run([sys.executable, str(script)], tmp_path)
+
+    assert proc.returncode == 0
+    assert "RuntimeError: coverage save failed" in proc.stderr

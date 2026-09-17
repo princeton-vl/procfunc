@@ -5,6 +5,7 @@ import numpy as np
 from mathutils import Euler, Vector
 
 from procfunc import types as t
+from procfunc.ops._util import execute_op
 
 
 def mesh_single_vertex() -> t.MeshObject:
@@ -85,7 +86,8 @@ def mesh_uv_sphere(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a UV sphere primitive with specified parameters."""
-    bpy.ops.mesh.primitive_uv_sphere_add(
+    execute_op(
+        bpy.ops.mesh.primitive_uv_sphere_add,
         segments=segments,
         ring_count=ring_count,
         radius=radius,
@@ -112,7 +114,8 @@ def mesh_plane(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a plane primitive with specified parameters."""
-    bpy.ops.mesh.primitive_plane_add(
+    execute_op(
+        bpy.ops.mesh.primitive_plane_add,
         size=size,
         calc_uvs=calc_uvs,
         enter_editmode=enter_editmode,
@@ -137,7 +140,8 @@ def mesh_cube(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a cube primitive with specified parameters."""
-    bpy.ops.mesh.primitive_cube_add(
+    execute_op(
+        bpy.ops.mesh.primitive_cube_add,
         size=size,
         calc_uvs=calc_uvs,
         enter_editmode=enter_editmode,
@@ -163,7 +167,8 @@ def mesh_icosphere(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate an icosphere primitive with specified parameters."""
-    bpy.ops.mesh.primitive_ico_sphere_add(
+    execute_op(
+        bpy.ops.mesh.primitive_ico_sphere_add,
         subdivisions=subdivisions,
         radius=radius,
         calc_uvs=calc_uvs,
@@ -192,7 +197,8 @@ def mesh_cylinder(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a cylinder primitive with specified parameters."""
-    bpy.ops.mesh.primitive_cylinder_add(
+    execute_op(
+        bpy.ops.mesh.primitive_cylinder_add,
         vertices=vertices,
         radius=radius,
         depth=depth,
@@ -224,7 +230,8 @@ def mesh_cone(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a cone primitive with specified parameters."""
-    bpy.ops.mesh.primitive_cone_add(
+    execute_op(
+        bpy.ops.mesh.primitive_cone_add,
         vertices=vertices,
         radius1=radius1,
         radius2=radius2,
@@ -257,7 +264,8 @@ def mesh_torus(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a torus primitive with specified parameters."""
-    bpy.ops.mesh.primitive_torus_add(
+    execute_op(
+        bpy.ops.mesh.primitive_torus_add,
         align=align,
         location=location,
         rotation=rotation,
@@ -288,7 +296,8 @@ def mesh_circle(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a circle primitive with specified parameters."""
-    bpy.ops.mesh.primitive_circle_add(
+    execute_op(
+        bpy.ops.mesh.primitive_circle_add,
         vertices=vertices,
         radius=radius,
         fill_type=fill_type,
@@ -317,7 +326,8 @@ def mesh_grid(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a grid primitive with specified parameters."""
-    bpy.ops.mesh.primitive_grid_add(
+    execute_op(
+        bpy.ops.mesh.primitive_grid_add,
         x_subdivisions=x_subdivisions,
         y_subdivisions=y_subdivisions,
         size=size,
@@ -344,7 +354,8 @@ def mesh_monkey(
     **kwargs: Any,
 ) -> t.MeshObject:
     """Generate a monkey (Suzanne) primitive with specified parameters."""
-    bpy.ops.mesh.primitive_monkey_add(
+    execute_op(
+        bpy.ops.mesh.primitive_monkey_add,
         size=size,
         calc_uvs=calc_uvs,
         enter_editmode=enter_editmode,

@@ -27,7 +27,8 @@ def repr_type(x: Any) -> str:
     if origin is Union or origin is types.UnionType:
         first_args = get_args(args[0])
         if (
-            get_origin(args[0]) is nt.ProcNode
+            len(args) == 2
+            and get_origin(args[0]) is nt.ProcNode
             and first_args
             and first_args[0] is args[1]
         ):
@@ -82,6 +83,8 @@ def repr_value(value: Any) -> str:
 
     if isinstance(value, np.random.Generator):
         return "np.random.default_rng()"
+    elif get_origin(value) in (Union, types.UnionType, nt.ProcNode):
+        return repr_type(value)
     elif isinstance(value, type):
         return repr_type(value)
     elif isinstance(value, np.ndarray):

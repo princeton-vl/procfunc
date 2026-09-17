@@ -2,6 +2,7 @@ import bpy
 
 import procfunc as pf
 from procfunc import types as t
+from procfunc.ops._util import execute_op
 
 
 @pf.tracer.primitive(mutates=["mutates_obj"])
@@ -15,4 +16,4 @@ def subdivide(
     Based on bpy.ops.curve.subdivide
     """
     bpy.context.view_layer.objects.active = mutates_obj.item()
-    bpy.ops.curve.subdivide(number_cuts=number_cuts)
+    execute_op(bpy.ops.curve.subdivide, number_cuts=number_cuts)

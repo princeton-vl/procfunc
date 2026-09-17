@@ -5,6 +5,8 @@ property rather than a socket; transpile must emit it as `clamp_result`.
 CompositorNodeCurveVec has no Fac socket; transpile must rely on the
 `fac=1.0` wrapper default rather than emitting bogus kwargs, mirroring the
 forward no-op-input handling in bindings_util.
+CompositorNodeHueCorrect keeps its three hue/saturation/value curves on a
+`mapping` property; transpile must emit them as `curves`.
 """
 
 import ast
@@ -156,3 +158,191 @@ def test_compositor_curve_vec_round_trips_without_fac():
     rebuilt = _single_node(realized, "CompositorNodeCurveVec")
     rebuilt_x = [tuple(p.location) for p in rebuilt.mapping.curves[0].points]
     np.testing.assert_allclose(rebuilt_x, [(0.0, 0.25), (1.0, 0.75)], atol=1e-4)
+
+
+@pytest.mark.parametrize(
+    ("tree_type", "group_type", "bl_idname", "socket_type"),
+    [
+        (
+            "ShaderNodeTree",
+            NodeGroupType.SHADER,
+            "ShaderNodeFloatCurve",
+            "NodeSocketFloat",
+        ),
+        (
+            "ShaderNodeTree",
+            NodeGroupType.SHADER,
+            "ShaderNodeRGBCurve",
+            "NodeSocketColor",
+        ),
+        (
+            "ShaderNodeTree",
+            NodeGroupType.SHADER,
+            "ShaderNodeVectorCurve",
+            "NodeSocketVector",
+        ),
+        (
+            "CompositorNodeTree",
+            NodeGroupType.COMPOSITOR,
+            "CompositorNodeCurveRGB",
+            "NodeSocketColor",
+        ),
+        (
+            "CompositorNodeTree",
+            NodeGroupType.COMPOSITOR,
+            "CompositorNodeCurveVec",
+            "NodeSocketVector",
+        ),
+    ],
+)
+def test_curve_mapping_settings_round_trip(
+    tree_type: str,
+    group_type: NodeGroupType,
+    bl_idname: str,
+    socket_type: str,
+) -> None:
+    tree = _make_tree(tree_type)
+    node = tree.nodes.new(bl_idname)
+    vector_curve = bl_idname in {"ShaderNodeVectorCurve", "CompositorNodeCurveVec"}
+    clip_min = (-0.75, -0.5) if vector_curve else (0.1, 0.2)
+    clip_max = (0.75, 0.5) if vector_curve else (0.8, 0.9)
+    node.mapping.use_clip = False
+    node.mapping.extend = "HORIZONTAL"
+    node.mapping.clip_min_x, node.mapping.clip_min_y = clip_min
+    node.mapping.clip_max_x, node.mapping.clip_max_y = clip_max
+    if bl_idname == "CompositorNodeCurveRGB":
+        node.mapping.tone = "FILMLIKE"
+    node.mapping.update()
+    _wire_output(tree, node, socket_type)
+
+    rebuilt = _single_node(_realize(_transpile(tree), group_type), bl_idname)
+
+    assert rebuilt.mapping.use_clip is False
+    assert rebuilt.mapping.extend == "HORIZONTAL"
+    np.testing.assert_allclose(
+        (rebuilt.mapping.clip_min_x, rebuilt.mapping.clip_min_y), clip_min
+    )
+    np.testing.assert_allclose(
+        (rebuilt.mapping.clip_max_x, rebuilt.mapping.clip_max_y), clip_max
+    )
+    if bl_idname == "CompositorNodeCurveRGB":
+        assert rebuilt.mapping.tone == "FILMLIKE"
+
+
+def test_curve_point_precision_round_trips() -> None:
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeFloatCurve")
+    node.mapping.curves[0].points[0].location = (0.123456, 0.234567)
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketFloat")
+
+    rebuilt = _single_node(
+        _realize(_transpile(tree), NodeGroupType.SHADER), "ShaderNodeFloatCurve"
+    )
+    actual = tuple(rebuilt.mapping.curves[0].points[0].location)
+    np.testing.assert_allclose(actual, (0.123456, 0.234567), atol=1e-6)
+
+
+def test_float_curve_mixed_handles_round_trip():
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeFloatCurve")
+    node.mapping.curves[0].points[0].handle_type = "VECTOR"
+    node.mapping.curves[0].points[1].handle_type = "AUTO"
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketFloat")
+
+    src = _transpile(tree)
+    assert "handle_types=['VECTOR', 'AUTO']" in src
+
+    realized = _realize(src, NodeGroupType.SHADER)
+    rebuilt = _single_node(realized, "ShaderNodeFloatCurve")
+    assert [point.handle_type for point in rebuilt.mapping.curves[0].points] == [
+        "VECTOR",
+        "AUTO",
+    ]
+
+
+def test_vector_curve_mixed_handles_round_trip():
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeVectorCurve")
+    expected = []
+    for index, curve in enumerate(node.mapping.curves):
+        handles = ["VECTOR", "AUTO"] if index == 1 else ["AUTO", "AUTO"]
+        expected.append(handles)
+        for point, handle in zip(curve.points, handles, strict=True):
+            point.handle_type = handle
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketVector")
+
+    src = _transpile(tree)
+    assert "handle_types=" in src
+
+    realized = _realize(src, NodeGroupType.SHADER)
+    rebuilt = _single_node(realized, "ShaderNodeVectorCurve")
+    actual = [
+        [point.handle_type for point in curve.points]
+        for curve in rebuilt.mapping.curves
+    ]
+    assert actual == expected
+
+
+def test_rgb_curve_mixed_handles_round_trip():
+    tree = _make_tree("ShaderNodeTree")
+    node = tree.nodes.new("ShaderNodeRGBCurve")
+    expected = []
+    for index, curve in enumerate(node.mapping.curves):
+        handles = ["VECTOR", "AUTO"] if index == 3 else ["AUTO", "AUTO"]
+        expected.append(handles)
+        for point, handle in zip(curve.points, handles, strict=True):
+            point.handle_type = handle
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketColor")
+
+    src = _transpile(tree)
+    assert "handle_types=" in src
+
+    realized = _realize(src, NodeGroupType.SHADER)
+    rebuilt = _single_node(realized, "ShaderNodeRGBCurve")
+    actual = [
+        [point.handle_type for point in curve.points]
+        for curve in rebuilt.mapping.curves
+    ]
+    assert actual == expected
+
+
+def test_compositor_hue_correct_curves_round_trip():
+    tree = _make_tree("CompositorNodeTree")
+    node = tree.nodes.new("CompositorNodeHueCorrect")
+    node.mapping.curves[1].points.remove(node.mapping.curves[1].points[-1])
+    expected_points = []
+    expected_handles = []
+    for i, curve in enumerate(node.mapping.curves):
+        handles = ["AUTO"] * len(curve.points)
+        handles[i + 1] = "VECTOR"
+        expected_handles.append(handles)
+        for j, point in enumerate(curve.points):
+            point.location = (j / 8, 0.1 * i + 0.05 * j)
+            point.handle_type = handles[j]
+        expected_points.append([tuple(p.location) for p in curve.points])
+    node.mapping.update()
+    _wire_output(tree, node, "NodeSocketColor")
+
+    src = _transpile(tree)
+    assert "hue_correct" in src
+    assert "curves=" in src
+    assert "handle_types=" in src
+    assert "mapping" not in src
+
+    realized = _realize(src, NodeGroupType.COMPOSITOR)
+    rebuilt = _single_node(realized, "CompositorNodeHueCorrect")
+    rebuilt_points = [
+        [tuple(p.location) for p in curve.points] for curve in rebuilt.mapping.curves
+    ]
+    rebuilt_handles = [
+        [point.handle_type for point in curve.points]
+        for curve in rebuilt.mapping.curves
+    ]
+    assert [len(c) for c in rebuilt_points] == [len(c) for c in expected_points]
+    for got, want in zip(rebuilt_points, expected_points, strict=True):
+        np.testing.assert_allclose(got, want, atol=1e-4)
+    assert rebuilt_handles == expected_handles

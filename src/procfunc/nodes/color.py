@@ -61,16 +61,31 @@ def rgb_curve(
     fac: nt.SocketOrVal[float],
     color: nt.SocketOrVal[pt.Color],
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[nt.HandleType]] | None = None,
+    use_clip: bool = True,
+    extend: Literal["HORIZONTAL", "EXTRAPOLATED"] = "EXTRAPOLATED",
+    clip_min: tuple[float, float] | None = None,
+    clip_max: tuple[float, float] | None = None,
 ) -> nt.ProcNode:
     """
     Uses a RGBCurve Shader Node.
+
+    `handle_types[i]` contains the handles for the i-th curve, and
+    `handle_types[i][j]` is the handle type for `curves[i][j]`.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/color/rgb_curves.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeRGBCurve",
         inputs={"Fac": fac, "Color": color},
-        attrs={"curves": curves},
+        attrs={
+            "curves": curves,
+            "handle_types": handle_types,
+            "use_clip": use_clip,
+            "extend": extend,
+            "clip_min": clip_min,
+            "clip_max": clip_max,
+        },
     )
 
 

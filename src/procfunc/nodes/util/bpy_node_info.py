@@ -339,20 +339,6 @@ UNIVERSAL_ATTR_NAMES = set(
     ]
 )
 
-SPECIAL_CASE_ATTR_NAMES = set(
-    [
-        "color_ramp",
-        "mapping",
-        "texture_mapping",
-        "color_mapping",
-        "image_user",
-        "interface",
-        "node_tree",
-        "tag_need_exec",
-        "index_switch_items",
-    ]
-)
-
 CONSTANT_NODES = {
     "FunctionNodeInputBool": "boolean",
     "FunctionNodeInputVector": "vector",

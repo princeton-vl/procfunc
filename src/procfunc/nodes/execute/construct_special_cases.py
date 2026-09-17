@@ -1,9 +1,12 @@
 import logging
+from numbers import Real
 from typing import Any
 
 import bpy
+import numpy as np
 
 from procfunc import compute_graph as cg
+from procfunc import types as pt
 from procfunc.nodes import func as pf_func
 from procfunc.nodes import types as nt
 from procfunc.nodes.util import bpy_node_info as bni
@@ -47,36 +50,38 @@ def special_case_float_curve(
 ):
     """Handle float curve nodes with points attribute."""
     points = attrs.pop("mapping", None)
-
     handle_type = attrs.pop("handle_type", "AUTO")
-    if handle_type != "AUTO":
-        raise NotImplementedError(
-            f"handle_type={handle_type!r} is not yet supported, only 'AUTO' is implemented"
+    handle_types = attrs.pop("handle_types", None)
+    _apply_curve_mapping_settings(bl_node, attrs)
+
+    if handle_types is not None and handle_type != "AUTO":
+        raise ValueError(
+            "handle_types cannot be combined with a non-default handle_type"
         )
-    use_clip = attrs.pop("use_clip", True)
-    bl_node.mapping.use_clip = use_clip
+    if handle_types is None and handle_type != "AUTO":
+        point_count = (
+            len(points) if points is not None else len(bl_node.mapping.curves[0].points)
+        )
+        handle_types = [handle_type] * point_count
 
-    if points is None:
+    curves = None if points is None else [points]
+    nested_handles = None if handle_types is None else [handle_types]
+    _apply_curves(bl_node, curves, nested_handles)
+
+
+def _apply_curves(
+    bl_node: bpy.types.Node,
+    curves: list[np.ndarray] | np.ndarray | None,
+    handle_types: list[list[nt.HandleType]] | None = None,
+) -> None:
+    if curves is None and handle_types is None:
         return
+    if curves is None:
+        curves = [
+            np.array([tuple(point.location) for point in curve.points])
+            for curve in bl_node.mapping.curves
+        ]
 
-    curve = bl_node.mapping.curves[0]
-
-    # Add new points if needed (starts with 2 by default)
-    if len(points) > 2:
-        for _ in range(len(points) - 2):
-            curve.points.new(0, 0)
-
-    # Set positions for all points
-    for i, (x, y) in enumerate(points):
-        if i < len(curve.points):
-            curve.points[i].location = (x, y)
-
-    # Without update(), Blender keeps the default identity LUT and ignores
-    # the points we just assigned during geo/shader node evaluation.
-    bl_node.mapping.update()
-
-
-def _apply_curves(bl_node: bpy.types.Node, curves):
     # Accept either list[np.ndarray] or a single stacked ndarray of shape
     # (n_curves, n_points, 2); both iterate per-curve on the outer dim.
     if len(curves) != len(bl_node.mapping.curves):
@@ -84,12 +89,52 @@ def _apply_curves(bl_node: bpy.types.Node, curves):
             f"{bl_node.bl_idname} expects {len(bl_node.mapping.curves)} curves, "
             f"got {len(curves)}"
         )
-    for bl_curve, curve_np in zip(bl_node.mapping.curves, curves, strict=True):
+    if handle_types is None:
+        handle_types = [["AUTO"] * len(curve_np) for curve_np in curves]
+    if len(handle_types) != len(curves):
+        raise ValueError(
+            f"{bl_node.bl_idname} expects handles for {len(curves)} curves, "
+            f"got {len(handle_types)}"
+        )
+    point_counts = [len(curve_np) for curve_np in curves]
+    handle_counts = [len(curve_handles) for curve_handles in handle_types]
+    if handle_counts != point_counts:
+        raise ValueError(
+            f"{bl_node.bl_idname} has {point_counts} points per curve "
+            f"but {handle_counts} handles per curve"
+        )
+    for bl_curve, curve_np, curve_handles in zip(
+        bl_node.mapping.curves, curves, handle_types, strict=True
+    ):
         while len(bl_curve.points) < len(curve_np):
             bl_curve.points.new(0, 0)
+        while len(bl_curve.points) > len(curve_np):
+            bl_curve.points.remove(bl_curve.points[-1])
         for i, (x, y) in enumerate(curve_np):
             bl_curve.points[i].location = (x, y)
+            bl_curve.points[i].handle_type = curve_handles[i]
+    # Without update(), Blender keeps the default identity LUT and ignores
+    # the points we just assigned during geo/shader node evaluation.
     bl_node.mapping.update()
+
+
+def _apply_curve_mapping_settings(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+) -> None:
+    mapping = bl_node.mapping
+    mapping.use_clip = attrs.pop("use_clip", True)
+    mapping.extend = attrs.pop("extend", "EXTRAPOLATED")
+    clip_min = attrs.pop("clip_min", None)
+    clip_max = attrs.pop("clip_max", None)
+    tone = attrs.pop("tone", None)
+    if clip_min is not None:
+        mapping.clip_min_x, mapping.clip_min_y = clip_min
+    if clip_max is not None:
+        mapping.clip_max_x, mapping.clip_max_y = clip_max
+    if tone is not None:
+        mapping.tone = tone
+    mapping.update()
 
 
 def special_case_rgb_curves(
@@ -99,10 +144,10 @@ def special_case_rgb_curves(
 ):
     """Handle RGB curve nodes with points attribute."""
 
+    _apply_curve_mapping_settings(bl_node, attrs)
     curves = attrs.pop("curves", None)
-    if curves is None:
-        return
-    _apply_curves(bl_node, curves)
+    handle_types = attrs.pop("handle_types", None)
+    _apply_curves(bl_node, curves, handle_types)
 
 
 def special_case_vector_curves(
@@ -112,10 +157,49 @@ def special_case_vector_curves(
 ):
     """Handle vector curve nodes with points attribute."""
 
+    _apply_curve_mapping_settings(bl_node, attrs)
     curves = attrs.pop("curves", None)
-    if curves is None:
-        return
-    _apply_curves(bl_node, curves)
+    handle_types = attrs.pop("handle_types", None)
+    _apply_curves(bl_node, curves, handle_types)
+
+
+def special_case_hue_correct(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    **_kwargs,
+):
+    curves = attrs.pop("curves", None)
+    handle_types = attrs.pop("handle_types", None)
+    _apply_curves(bl_node, curves, handle_types)
+
+
+IMAGE_USER_ATTRS = (
+    "frame_duration",
+    "frame_offset",
+    "frame_start",
+    "tile",
+    "use_auto_refresh",
+    "use_cyclic",
+    "frame_current",
+)
+
+
+def special_case_image_user(
+    bl_node: bpy.types.Node,
+    attrs: dict[str, Any],
+    **_kwargs,
+):
+    """ShaderNodeTexImage and ShaderNodeTexEnvironment keep their sequence and UDIM
+    settings on an ImageUser sub-struct rather than on the node itself."""
+
+    image = attrs.pop("image", None)
+    if image is not None:
+        bl_node.image = image.item() if isinstance(image, pt.BlenderAsset) else image
+
+    for name in IMAGE_USER_ATTRS:
+        value = attrs.pop(name, None)
+        if value is not None:
+            setattr(bl_node.image_user, name, value)
 
 
 def special_case_compositor_vector_curves(
@@ -229,6 +313,9 @@ def special_case_map_range(
         assert "Value" in inputs, inputs
         inputs["Vector"] = inputs.pop("Value")
         kwargs["Vector"] = kwargs.pop("Value")
+        for name, value in inputs.items():
+            if isinstance(value, Real):
+                inputs[name] = (value, value, value)
 
 
 def special_case_capture_attribute(
@@ -341,6 +428,9 @@ NODE_SPECIAL_CASES = {
     "CompositorNodeCurveRGB": special_case_rgb_curves,
     "ShaderNodeVectorCurve": special_case_vector_curves,
     "CompositorNodeCurveVec": special_case_compositor_vector_curves,
+    "CompositorNodeHueCorrect": special_case_hue_correct,
+    "ShaderNodeTexImage": special_case_image_user,
+    "ShaderNodeTexEnvironment": special_case_image_user,
     "TextureNodeMixRGB": special_case_texture_mix_rgb,
     "CompositorNodeOutputFile": special_case_file_output,
     nt.INPUT_NODE_TYPE: special_case_input,

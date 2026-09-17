@@ -1,9 +1,13 @@
+import operator
+
 import bpy
 import numpy as np
+import pytest
 
 import procfunc as pf
 from procfunc.codegen import codegen
 from procfunc.codegen.identifiers import dedup_names_with_suffix
+from procfunc.nodes import types as nt
 
 
 def _codegen_and_call(func, **inputs):
@@ -32,6 +36,61 @@ def test_negative_constant_pow_base_keeps_parens():
     src, result = _codegen_and_call(pow_negative_base, x=2.0)
     assert "(-2.0) ** x" in src, src
     assert result == 4.0
+
+
+def test_native_equality_codegen_executes_as_exact_operator():
+    def is_zero(x):
+        return x == 0
+
+    src, result = _codegen_and_call(is_zero, x=np.float64(0.0))
+    assert "_operator" not in src, src
+    assert "x == 0" in src, src
+    assert result is np.True_
+
+
+@pytest.mark.parametrize(
+    "operation,value,expected",
+    [
+        (operator.neg, 3, -3),
+        (operator.pos, -3, -3),
+        (operator.abs, -3, 3),
+        (operator.invert, 3, -4),
+    ],
+)
+def test_native_unary_operator_codegen_executes_without_private_module(
+    operation, value, expected
+):
+    def apply_op(x):
+        return operation(x)
+
+    src, result = _codegen_and_call(apply_op, x=value)
+    assert "_operator" not in src, src
+    assert result == expected
+
+
+def test_native_floor_division_codegen_executes_without_private_module():
+    def halve(x):
+        return x // 2
+
+    src, result = _codegen_and_call(halve, x=5)
+    assert "_operator" not in src, src
+    assert result == 2
+
+
+@pytest.mark.parametrize(
+    "value_type",
+    [
+        pf.MeshObject | pf.CurveObject | nt.Instances | pf.VolumeObject,
+        nt.ProcNode[float],
+        nt.ProcNode[float] | float | None,
+    ],
+)
+def test_type_value_survives_codegen(value_type):
+    def type_value():
+        return value_type
+
+    _, result = _codegen_and_call(type_value)
+    assert result == value_type
 
 
 def _lamp_with_blackbody_emission():

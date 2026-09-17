@@ -10,7 +10,15 @@ from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
 
-TDomain = Literal["POINT", "EDGE", "FACE", "CORNER", "CURVE", "INSTANCE", "LAYER"]
+TDomain = Literal[
+    "POINT",
+    "EDGE",
+    "FACE",
+    "CORNER",
+    "CURVE",
+    "INSTANCE",
+    # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+]
 
 TAttribute = TypeVar("TAttribute", int, float, bool)
 
@@ -993,7 +1001,14 @@ TDeleteGeometry = TypeVar(
 def delete_geometry(
     geometry: nt.ProcNode[TDeleteGeometry] | None,
     selection: nt.SocketOrVal[bool] = True,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
     mode: Literal["ALL", "EDGE_FACE", "ONLY_FACE"] = "ALL",
 ) -> nt.ProcNode[TDeleteGeometry]:
     """
@@ -1010,36 +1025,84 @@ def delete_geometry(
 
 def distribute_points_in_grid(
     grid: nt.SocketOrVal[float] = 0.0,
-    density: nt.SocketOrVal[float] = 1.0,
-    seed: nt.SocketOrVal[int] = 0,
-    mode: Literal["DENSITY_RANDOM", "DENSITY_GRID"] = "DENSITY_RANDOM",
+    seed: nt.SocketOrVal[int] | None = None,
+    density: nt.SocketOrVal[float] | None = None,
+    spacing: nt.SocketOrVal[nt.pt.Vector] | None = None,
+    threshold: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a DistributePointsInGrid Geometry Node.
 
+    Provide density/seed for random distribution or spacing/threshold for grid
+    distribution, not both; neither distributes randomly at the default density.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/point/distribute_points_in_volume.html
     """
+    random_args = density is not None or seed is not None
+    grid_args = spacing is not None or threshold is not None
+    if random_args and grid_args:
+        raise ValueError(
+            "distribute_points_in_grid got both density/seed and spacing/threshold"
+        )
+    elif grid_args:
+        inputs = {
+            "Grid": grid,
+            "Spacing": (0.3, 0.3, 0.3) if spacing is None else spacing,
+            "Threshold": 0.1 if threshold is None else threshold,
+        }
+        mode = "DENSITY_GRID"
+    else:
+        inputs = {
+            "Grid": grid,
+            "Density": 1.0 if density is None else density,
+            "Seed": 0 if seed is None else seed,
+        }
+        mode = "DENSITY_RANDOM"
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeDistributePointsInGrid",
-        inputs={"Grid": grid, "Density": density, "Seed": seed},
+        inputs=inputs,
         attrs={"mode": mode},
     )
 
 
 def distribute_points_in_volume(
     volume: nt.ProcNode[pt.VolumeObject] | None,
-    density: nt.SocketOrVal[float] = 1.0,
-    seed: nt.SocketOrVal[int] = 0,
-    mode: Literal["DENSITY_RANDOM", "DENSITY_GRID"] = "DENSITY_RANDOM",
+    seed: nt.SocketOrVal[int] | None = None,
+    density: nt.SocketOrVal[float] | None = None,
+    spacing: nt.SocketOrVal[nt.pt.Vector] | None = None,
+    threshold: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[pt.VolumeObject]:
     """
     Uses a DistributePointsInVolume Geometry Node.
 
+    Provide density/seed for random distribution or spacing/threshold for grid
+    distribution, not both; neither distributes randomly at the default density.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/point/distribute_points_in_volume.html
     """
+    random_args = density is not None or seed is not None
+    grid_args = spacing is not None or threshold is not None
+    if random_args and grid_args:
+        raise ValueError(
+            "distribute_points_in_volume got both density/seed and spacing/threshold"
+        )
+    elif grid_args:
+        inputs = {
+            "Volume": volume,
+            "Spacing": (0.3, 0.3, 0.3) if spacing is None else spacing,
+            "Threshold": 0.1 if threshold is None else threshold,
+        }
+        mode = "DENSITY_GRID"
+    else:
+        inputs = {
+            "Volume": volume,
+            "Density": 1.0 if density is None else density,
+            "Seed": 0 if seed is None else seed,
+        }
+        mode = "DENSITY_RANDOM"
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeDistributePointsInVolume",
-        inputs={"Volume": volume, "Density": density, "Seed": seed},
+        inputs=inputs,
         attrs={"mode": mode},
     )
 
@@ -2427,7 +2490,7 @@ class MeshConeResult(NamedTuple):
 def mesh_cone(
     vertices: nt.SocketOrVal[int] = 32,
     side_segments: nt.SocketOrVal[int] = 1,
-    fill_segments: nt.SocketOrVal[int] = 1,
+    fill_segments: nt.SocketOrVal[int] | None = None,
     radius_top: nt.SocketOrVal[float] = 0.0,
     radius_bottom: nt.SocketOrVal[float] = 1.0,
     depth: nt.SocketOrVal[float] = 2.0,
@@ -2436,18 +2499,21 @@ def mesh_cone(
     """
     Uses a MeshCone Geometry Node.
 
+    fill_type='NONE' leaves the caps open, which has no fill_segments.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/primitives/cone.html
     """
+    inputs = {"Vertices": vertices, "Side Segments": side_segments}
+    if fill_type == "NONE" and fill_segments is not None:
+        raise ValueError("mesh_cone got fill_segments but fill_type='NONE' has no fill")
+    elif fill_type != "NONE":
+        inputs["Fill Segments"] = 1 if fill_segments is None else fill_segments
+    inputs["Radius Top"] = radius_top
+    inputs["Radius Bottom"] = radius_bottom
+    inputs["Depth"] = depth
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshCone",
-        inputs={
-            "Vertices": vertices,
-            "Side Segments": side_segments,
-            "Fill Segments": fill_segments,
-            "Radius Top": radius_top,
-            "Radius Bottom": radius_bottom,
-            "Depth": depth,
-        },
+        inputs=inputs,
         attrs={"fill_type": fill_type},
     )
     return MeshConeResult(
@@ -2497,7 +2563,7 @@ class MeshCylinderResult(NamedTuple):
 def mesh_cylinder(
     vertices: nt.SocketOrVal[int] = 32,
     side_segments: nt.SocketOrVal[int] = 1,
-    fill_segments: nt.SocketOrVal[int] = 1,
+    fill_segments: nt.SocketOrVal[int] | None = None,
     radius: nt.SocketOrVal[float] = 1.0,
     depth: nt.SocketOrVal[float] = 2.0,
     fill_type: Literal["NONE", "NGON", "TRIANGLE_FAN"] = "NGON",
@@ -2505,17 +2571,22 @@ def mesh_cylinder(
     """
     Uses a MeshCylinder Geometry Node.
 
+    fill_type='NONE' leaves the caps open, which has no fill_segments.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/primitives/cylinder.html
     """
+    inputs = {"Vertices": vertices, "Side Segments": side_segments}
+    if fill_type == "NONE" and fill_segments is not None:
+        raise ValueError(
+            "mesh_cylinder got fill_segments but fill_type='NONE' has no fill"
+        )
+    elif fill_type != "NONE":
+        inputs["Fill Segments"] = 1 if fill_segments is None else fill_segments
+    inputs["Radius"] = radius
+    inputs["Depth"] = depth
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshCylinder",
-        inputs={
-            "Vertices": vertices,
-            "Side Segments": side_segments,
-            "Fill Segments": fill_segments,
-            "Radius": radius,
-            "Depth": depth,
-        },
+        inputs=inputs,
         attrs={"fill_type": fill_type},
     )
     return MeshCylinderResult(
@@ -2592,7 +2663,6 @@ def mesh_line(
     start_location: nt.SocketOrVal[nt.pt.Vector],
     offset: nt.SocketOrVal[nt.pt.Vector],
     count: nt.SocketOrVal[int] = 10,
-    count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a MeshLine Geometry Node.
@@ -2602,24 +2672,34 @@ def mesh_line(
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshLine",
         inputs={"Count": count, "Start Location": start_location, "Offset": offset},
-        attrs={"count_mode": count_mode, "mode": "OFFSET"},
+        attrs={"count_mode": "TOTAL", "mode": "OFFSET"},
     )
 
 
 def mesh_line_from_endpoints(
     start_location: nt.SocketOrVal[nt.pt.Vector],
     end_location: nt.SocketOrVal[nt.pt.Vector],
-    count: nt.SocketOrVal[int] = 10,
-    count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
+    count: nt.SocketOrVal[int] | None = None,
+    resolution: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[pt.MeshObject]:
-    """Uses a MeshLine Geometry Node with mode='END_POINTS'."""
+    """Uses a MeshLine Geometry Node with mode='END_POINTS'.
+
+    Provide count or resolution, not both; neither uses the default count.
+    """
+    if count is not None and resolution is not None:
+        raise ValueError("mesh_line_from_endpoints got both count and resolution")
+    elif resolution is not None:
+        inputs = {"Resolution": resolution}
+        count_mode = "RESOLUTION"
+    else:
+        inputs = {"Count": 10 if count is None else count}
+        count_mode = "TOTAL"
+    inputs["Start Location"] = start_location
+    # 4.2 uses "Offset" key in both cases
+    inputs["Offset"] = end_location
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshLine",
-        inputs={
-            "Count": count,
-            "Start Location": start_location,
-            "Offset": end_location,  # 4.2 uses "Offset" key in both cases
-        },
+        inputs=inputs,
         attrs={"count_mode": count_mode, "mode": "END_POINTS"},
     )
 
@@ -2706,23 +2786,30 @@ def mesh_to_sdf_grid(
 def mesh_to_volume(
     mesh: nt.ProcNode[pt.MeshObject] | None,
     density: nt.SocketOrVal[float] = 1.0,
-    voxel_amount: nt.SocketOrVal[float] = 64.0,
+    voxel_amount: nt.SocketOrVal[float] | None = None,
+    voxel_size: nt.SocketOrVal[float] | None = None,
     interior_band_width: nt.SocketOrVal[float] = 0.2,
-    resolution_mode: Literal["VOXEL_AMOUNT", "VOXEL_SIZE"] = "VOXEL_AMOUNT",
 ) -> nt.ProcNode[pt.VolumeObject]:
     """
     Uses a MeshToVolume Geometry Node.
 
+    Provide voxel_amount or voxel_size, not both; neither uses the default voxel_amount.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/mesh/operations/mesh_to_volume.html
     """
+    inputs = {"Mesh": mesh, "Density": density}
+    if voxel_amount is not None and voxel_size is not None:
+        raise ValueError("mesh_to_volume got both voxel_amount and voxel_size")
+    elif voxel_size is not None:
+        inputs["Voxel Size"] = voxel_size
+        resolution_mode = "VOXEL_SIZE"
+    else:
+        inputs["Voxel Amount"] = 64.0 if voxel_amount is None else voxel_amount
+        resolution_mode = "VOXEL_AMOUNT"
+    inputs["Interior Band Width"] = interior_band_width
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeMeshToVolume",
-        inputs={
-            "Mesh": mesh,
-            "Density": density,
-            "Voxel Amount": voxel_amount,
-            "Interior Band Width": interior_band_width,
-        },
+        inputs=inputs,
         attrs={"resolution_mode": resolution_mode},
     )
 
@@ -2921,23 +3008,30 @@ def points_to_vertices(
 def points_to_volume(
     points: nt.ProcNode[nt.Points] | None,
     density: nt.SocketOrVal[float] = 1.0,
-    voxel_amount: nt.SocketOrVal[float] = 64.0,
+    voxel_amount: nt.SocketOrVal[float] | None = None,
+    voxel_size: nt.SocketOrVal[float] | None = None,
     radius: nt.SocketOrVal[float] = 0.5,
-    resolution_mode: Literal["VOXEL_AMOUNT", "VOXEL_SIZE"] = "VOXEL_AMOUNT",
 ) -> nt.ProcNode[pt.VolumeObject]:
     """
     Uses a PointsToVolume Geometry Node.
 
+    Provide voxel_amount or voxel_size, not both; neither uses the default voxel_amount.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/point/points_to_volume.html
     """
+    inputs = {"Points": points, "Density": density}
+    if voxel_amount is not None and voxel_size is not None:
+        raise ValueError("points_to_volume got both voxel_amount and voxel_size")
+    elif voxel_size is not None:
+        inputs["Voxel Size"] = voxel_size
+        resolution_mode = "VOXEL_SIZE"
+    else:
+        inputs["Voxel Amount"] = 64.0 if voxel_amount is None else voxel_amount
+        resolution_mode = "VOXEL_AMOUNT"
+    inputs["Radius"] = radius
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodePointsToVolume",
-        inputs={
-            "Points": points,
-            "Density": density,
-            "Voxel Amount": voxel_amount,
-            "Radius": radius,
-        },
+        inputs=inputs,
         attrs={"resolution_mode": resolution_mode},
     )
 
@@ -3202,7 +3296,6 @@ def sample_curve(
     factor: nt.SocketOrVal[float],
     curve_index: nt.SocketOrVal[int] = 0,
     value: nt.SocketOrVal[TAttribute] | None = None,
-    mode: Literal["FACTOR", "LENGTH"] = "FACTOR",
     use_all_curves: bool = False,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleCurveResult:
@@ -3224,7 +3317,7 @@ def sample_curve(
         node_type="GeometryNodeSampleCurve",
         inputs=inputs,
         attrs={
-            "mode": mode,
+            "mode": "FACTOR",
             "use_all_curves": use_all_curves,
             "data_type": data_type,
         },
@@ -3561,7 +3654,14 @@ class SeparateGeometryResult(NamedTuple, Generic[TMeshOrCurve]):
 def separate_geometry(
     geometry: nt.ProcNode[TMeshOrCurve],
     selection: nt.SocketOrVal[bool] = True,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
 ) -> SeparateGeometryResult[TMeshOrCurve]:
     """
     Uses a SeparateGeometry Geometry Node.
@@ -3931,7 +4031,14 @@ def split_to_instances(
     geometry: nt.ProcNode[pt.MeshObject] | None,
     selection: nt.SocketOrVal[bool] = True,
     group_id: nt.SocketOrVal[int] = 0,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
 ) -> SplitToInstancesResult:
     """
     Uses a SplitToInstances Geometry Node.
@@ -4015,6 +4122,7 @@ def string_join(
 
 class StringToCurvesResult(NamedTuple):
     curve_instances: nt.ProcNode[nt.Instances]
+    remainder: nt.ProcNode[str] | None
     line: nt.ProcNode[pt.CurveObject]
     pivot_point: nt.ProcNode[nt.pt.Vector]
 
@@ -4040,22 +4148,32 @@ def string_to_curves(
         "BOTTOM_CENTER",
         "BOTTOM_RIGHT",
     ] = "BOTTOM_LEFT",
+    text_box_height: nt.SocketOrVal[float] | None = None,
 ) -> StringToCurvesResult:
     """
     Uses a StringToCurves Geometry Node.
 
+    Text box height is available only when overflow scales or truncates the text.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/utilities/text/string_to_curves.html
     """
+    inputs = {
+        "String": string,
+        "Size": size,
+        "Character Spacing": character_spacing,
+        "Word Spacing": word_spacing,
+        "Line Spacing": line_spacing,
+        "Text Box Width": text_box_width,
+    }
+    if overflow == "OVERFLOW" and text_box_height is not None:
+        raise ValueError(
+            "string_to_curves got text_box_height with overflow='OVERFLOW'"
+        )
+    elif overflow != "OVERFLOW":
+        inputs["Text Box Height"] = 0.0 if text_box_height is None else text_box_height
     res = nt.ProcNode.from_nodetype(
         node_type="GeometryNodeStringToCurves",
-        inputs={
-            "String": string,
-            "Size": size,
-            "Character Spacing": character_spacing,
-            "Word Spacing": word_spacing,
-            "Line Spacing": line_spacing,
-            "Text Box Width": text_box_width,
-        },
+        inputs=inputs,
         attrs={
             "align_x": align_x,
             "align_y": align_y,
@@ -4066,6 +4184,7 @@ def string_to_curves(
 
     return StringToCurvesResult(
         curve_instances=res._output_socket("curve_instances"),
+        remainder=res._output_socket("remainder") if overflow == "TRUNCATE" else None,
         line=res._output_socket("line"),
         pivot_point=res._output_socket("pivot_point"),
     )
@@ -4501,15 +4620,29 @@ def volume_to_mesh(
     volume: nt.ProcNode[pt.VolumeObject] | None,
     threshold: nt.SocketOrVal[float] = 0.1,
     adaptivity: nt.SocketOrVal[float] = 0.0,
-    resolution_mode: Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"] = "GRID",
+    voxel_amount: nt.SocketOrVal[float] | None = None,
+    voxel_size: nt.SocketOrVal[float] | None = None,
 ) -> nt.ProcNode[pt.MeshObject]:
     """
     Uses a VolumeToMesh Geometry Node.
 
+    Provide voxel_amount or voxel_size, not both; neither uses the grid default.
+
     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/volume/operations/volume_to_mesh.html
     """
+    inputs = {"Volume": volume, "Threshold": threshold, "Adaptivity": adaptivity}
+    if voxel_amount is not None and voxel_size is not None:
+        raise ValueError("volume_to_mesh got both voxel_amount and voxel_size")
+    elif voxel_amount is not None:
+        inputs["Voxel Amount"] = voxel_amount
+        resolution_mode = "VOXEL_AMOUNT"
+    elif voxel_size is not None:
+        inputs["Voxel Size"] = voxel_size
+        resolution_mode = "VOXEL_SIZE"
+    else:
+        resolution_mode = "GRID"
     return nt.ProcNode.from_nodetype(
         node_type="GeometryNodeVolumeToMesh",
-        inputs={"Volume": volume, "Threshold": threshold, "Adaptivity": adaptivity},
+        inputs=inputs,
         attrs={"resolution_mode": resolution_mode},
     )

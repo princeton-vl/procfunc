@@ -2,7 +2,7 @@
 # ensure this gets imported first so that mathutils etc is available even if later modules dont import bpy
 import bpy
 
-__version__ = "0.35.1"
+__version__ = "0.36.0"
 
 from numpy.random import Generator as RNG
 
@@ -54,6 +54,7 @@ from .nodes import ProcNode, Shader, NodeDataType
 from .tracer import trace, autowrap_module, add_search_scope
 from .util.manifest import module_path
 
+bpy.context.preferences.edit.use_global_undo = False
 autowrap_module(random)
 autowrap_module(color)
 add_search_scope(nodes)

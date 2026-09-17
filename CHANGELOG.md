@@ -1,8 +1,59 @@
+# 0.36.0
+
+Interface changes:
+
+- importing ProcFunc disables Blender's global undo; `procfunc.ops` disables it again before every operator call in case loading factory settings restores it
+- `texture.image` and `texture.environment` gain the seven ImageUser arguments listed below; all default to Blender's own values, so existing calls are unaffected
+- `pf.nodes.func.rotate_euler` no longer takes `rotation_type`; the AXIS_ANGLE form is the new `rotate_euler_axis_angle(rotation, axis, angle, space)`, with `rotation_type` pinned via the manifest (was one function whose AXIS_ANGLE mode was unusable — it had no axis/angle kwargs and fed the Rotate By default into a socket that mode disables)
+- `shader.subsurface_scattering` split into `subsurface_scattering_burley` / `subsurface_scattering_random_walk` / `subsurface_scattering_random_walk_skin`, each exposing only the sockets its falloff supports (the combined binding fed defaults into disabled sockets)
+- `shader.principled_hair_bsdf` split by model into `principled_hair_bsdf_chiang` / `principled_hair_bsdf_huang`, adding the previously-missing melanin, absorption, and Huang-model sockets; each function derives COLOR / ABSORPTION / MELANIN parametrization from the provided color arguments and rejects mixed parametrizations
+- `shader.mapping` now pins POINT; TEXTURE, VECTOR, and NORMAL are `mapping_texture`, `mapping_vector`, and `mapping_normal`, with directional functions omitting the disabled Location socket
+- `texture.sky` is replaced by `sky_texture_nishita`, `sky_texture_hosek_wilkie`, and `sky_texture_preetham`; each exposes only its model's controls, and Nishita accepts `vector` only with `sun_disc=False`
+- `compositor.color_balance` now pins LIFT_GAMMA_GAIN and exposes only lift, gamma, and gain; OFFSET_POWER_SLOPE is the separate `color_balance_slope_offset_power`
+- `sky_texture_nishita` uses `None` sentinels for sun elevation, intensity, rotation, and size; only explicit intensity and size require `sun_disc=True`, while elevation and rotation are preserved with either disc setting and omitted values resolve to Blender's defaults
+- `geo.mesh_to_volume` and `geo.points_to_volume` take `voxel_amount` or `voxel_size` and derive `resolution_mode` from whichever is given (was a `resolution_mode` enum with no `voxel_size` argument at all, so VOXEL_SIZE fed the voxel amount into a socket that mode disables)
+- `geo.distribute_points_in_grid` and `geo.distribute_points_in_volume` take `density`/`seed` or `spacing`/`threshold` and derive `mode` from whichever group is given (was a `mode` enum with no `spacing`/`threshold` arguments, so DENSITY_GRID fed density and seed into disabled sockets)
+- `geo.mesh_line_from_endpoints` takes `count` or `resolution` and derives `count_mode` from whichever is given (was a `count_mode` enum with no `resolution` argument, so RESOLUTION fed the count into a disabled socket)
+- passing arguments from both modes to any of the above raises `ValueError`, and passing neither keeps the Blender default mode and its default values
+- `geo.mesh_cone` and `geo.mesh_cylinder` default `fill_segments` to None and reject it when `fill_type='NONE'`, which has no fill segments to set (was fed into a disabled socket)
+- `geo.sample_curve` no longer takes `mode`; length-based sampling is the existing `geo.sample_curve_length` (was a mode argument that fed Factor into the socket LENGTH disables)
+- `geo.mesh_line` no longer takes `count_mode`, which its OFFSET mode ignores
+- `texture.wave` accepts `bands_direction` 'DIAGONAL' instead of 'SPHERICAL', which Blender only accepts on `rings_direction`
+- `compositor.image` types `layer` and `view` as `str`, since their valid values come from the assigned image datablock at runtime rather than a fixed set
+- `geo.volume_to_mesh` takes `voxel_amount` or `voxel_size` and derives `resolution_mode` from whichever is given; passing neither keeps the GRID default
+- `geo.string_to_curves` takes `text_box_height` for SCALE_TO_FIT and TRUNCATE overflow and rejects it for OVERFLOW, where Blender disables that socket
+- `math.map_range` spells its stepped interpolation `STEPPED` instead of `STEPPED_LINEAR`, which Blender rejects
+- `math.map_range` takes `steps` for STEPPED interpolation and rejects it in the other modes, where Blender disables that socket (the argument was missing entirely, so no STEPPED node could transpile)
+- `texture.voronoi` and `texture.voronoi_smooth_f1` return `position=None` in 1D, which has no Position socket, and expose `w` in 1D as well as 4D (its 1D W output was unreachable)
+- `math.float_curve` gains a per-point `handle_types` list alongside its broadcast `handle_type`, and `math.vector_curve`, `color.rgb_curve`, and `compositor.rgb_curve` gain a per-curve `handle_types`
+- `compositor.hue_correct` takes `curves` and per-point `handle_types` for its hue, saturation and value curves, and transpile emits them (they were dropped entirely, so every transpiled node rebuilt with default curves)
+
+Fixed behavior:
+
+- `control.choice` resolves the selected branch below `RANDOM_CONTROL` and retains its RNG while tracing callable alternatives, so generated code preserves the requested random-control granularity
+- `@node_function` calls expand into their underlying primitives at `PRIMITIVES` without constructing `ProcNode` values inside the trace graph
+- primitive code generation emits integer addition and subtraction, floor division, unary operators, native equality, and `ProcNode` / union type values correctly
+- curve nodes remove points beyond the ones given rather than leaving the node's remaining defaults in place
+- `func.axes_to_rotation` retains its public X/Y defaults while the transpiler emits Blender's native Z/X defaults explicitly, so native nodes rebuild with the same axes
+- `geo.string_to_curves` exposes the `remainder` string output for TRUNCATE overflow and returns `None` for modes where Blender has no such socket
+- transpiling a `ShaderNodeTex*` node in a shader tree whose `texture_mapping` is not the identity transform now rebuilds it as the Combine XYZ and Mapping nodes it is equivalent to, in front of the texture, instead of silently dropping it and changing how the graph renders
+- the `use_min`/`use_max` clamp, which EEVEE applies and Cycles ignores, and any `texture_mapping` on `ShaderNodeTexSky`, which has no Vector input to map, have no such equivalent and now raise; set `context.globals.warn_mode_transpile_dropped_attrs` (or `PROCFUNC_WARN_MODE_TRANSPILE_DROPPED_ATTRS`) to `warn` or `ignore` to transpile anyway
+- `color_mapping`, the legacy `mapping` projection of `texture_mapping`, and any `texture_mapping` in a geometry node tree are dropped silently, since nothing evaluates them
+- float, vector, and RGB curve nodes keep each point's handle type through transpile (non-AUTO handles were logged as a warning and dropped, so the rebuilt curve had a different shape)
+- `GeometryNodeIndexSwitch` gets a transpiler handler that drops its `index_switch_items` collection, which restates the numbered input sockets
+- `GeometryNodeRaycast` and `CompositorNodePremulKey` transpile their `mapping` enum, which a global skip list had been pinning to `INTERPOLATED` and `STRAIGHT_TO_PREMUL` regardless of the source node
+- `texture.image` and `texture.environment` take the node's ImageUser settings as plain `frame_current` / `frame_duration` / `frame_offset` / `frame_start` / `tile` / `use_auto_refresh` / `use_cyclic` arguments, matching `compositor.image`, instead of dropping them on transpile
+
+Fixed crashes:
+
+- the manifest splits attr renames into their own `attr_names_map` column, applied to bpy attrs only while `arg_names_map` applies to sockets only, so a node whose attr and socket share a name transpiles instead of crashing (`FunctionNodeAxesToRotation` raised `keys overlap` for every non-default primary/secondary axis)
+
 # 0.35.1
 
 Interface changes:
 
 - per-node definition metadata is recorded only when the context's `record_node_definitions` is set (or `PROCFUNC_RECORD_NODE_DEFINITIONS=1`), so node-instantiation errors carry file/line context only when it is enabled (was always, and the stack walk dominated build time in node-heavy callers)
+- `texture.sky` accepts an optional `vector` input for PREETHAM and HOSEK_WILKIE skies; omitting it preserves Blender's implicit direction
 
 Fixed crashes:
 

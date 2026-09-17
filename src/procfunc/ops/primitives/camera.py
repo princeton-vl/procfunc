@@ -1,6 +1,7 @@
 import bpy
 
 from procfunc import types as t
+from procfunc.ops._util import execute_op
 
 
 def perspective_camera(
@@ -10,7 +11,7 @@ def perspective_camera(
     sensor_width_mm: float = 36.0,
     sensor_height_mm: float | None = None,
 ) -> t.CameraObject:
-    bpy.ops.object.camera_add()
+    execute_op(bpy.ops.object.camera_add)
     camera = bpy.context.object
 
     camera.data.lens = focal_length_mm
@@ -34,7 +35,7 @@ def orthographic_camera(
     clip_start: float = 0.1,
     clip_end: float = 1000.0,
 ) -> t.CameraObject:
-    bpy.ops.object.camera_add()
+    execute_op(bpy.ops.object.camera_add)
     camera = bpy.context.object
 
     camera.data.type = "ORTHO"

@@ -13,7 +13,7 @@ from ._util import execute_object_op
 
 @pf.tracer.primitive(mutates=["mutates_obj"])
 def set_transform(
-    mutates_obj: t.MeshObject,
+    mutates_obj: t.Object,
     location: t.Vector | tuple[float, float, float] | None = None,
     rotation_euler: t.Vector | tuple[float, float, float] | None = None,
     scale: t.Vector | tuple[float, float, float] | None = None,

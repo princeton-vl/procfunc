@@ -770,18 +770,33 @@ def float_curve(
     factor: nt.SocketOrVal[float],
     value: nt.SocketOrVal[float],
     curve: np.ndarray | None = None,
-    handle_type: str = "AUTO",
+    handle_type: nt.HandleType = "AUTO",
     use_clip: bool = True,
+    handle_types: list[nt.HandleType] | None = None,
+    extend: Literal["HORIZONTAL", "EXTRAPOLATED"] = "EXTRAPOLATED",
+    clip_min: tuple[float, float] | None = None,
+    clip_max: tuple[float, float] | None = None,
 ) -> nt.ProcNode[float]:
     """
     Uses a FloatCurve Shader Node.
+
+    `handle_type` sets every point's interpolation handle. `handle_types` sets
+    them individually and cannot be combined with a non-default `handle_type`.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/float_curve.html
     """
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeFloatCurve",
         inputs={"Factor": factor, "Value": value},
-        attrs={"mapping": curve, "handle_type": handle_type, "use_clip": use_clip},
+        attrs={
+            "mapping": curve,
+            "handle_type": handle_type,
+            "handle_types": handle_types,
+            "use_clip": use_clip,
+            "extend": extend,
+            "clip_min": clip_min,
+            "clip_max": clip_max,
+        },
     )
 
 
@@ -789,9 +804,17 @@ def vector_curve(
     vector: nt.SocketOrVal[pt.Vector],
     fac: nt.SocketOrVal[float] = 1.0,
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[nt.HandleType]] | None = None,
+    use_clip: bool = True,
+    extend: Literal["HORIZONTAL", "EXTRAPOLATED"] = "EXTRAPOLATED",
+    clip_min: tuple[float, float] | None = None,
+    clip_max: tuple[float, float] | None = None,
 ) -> nt.ProcNode[pt.Vector]:
     """
     Uses a VectorCurve Shader Node.
+
+    `handle_types[i]` contains the handles for the i-th curve, and
+    `handle_types[i][j]` is the handle type for `curves[i][j]`.
 
     `fac` blends between the input and curve-mapped vector; the compositor
     variant (CompositorNodeCurveVec) has no Fac socket and always applies the
@@ -802,7 +825,14 @@ def vector_curve(
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.VECTOR_CURVE.value,
         inputs={"Fac": fac, "Vector": vector},
-        attrs={"curves": curves},
+        attrs={
+            "curves": curves,
+            "handle_types": handle_types,
+            "use_clip": use_clip,
+            "extend": extend,
+            "clip_min": clip_min,
+            "clip_max": clip_max,
+        },
     )
 
 
@@ -851,17 +881,18 @@ def separate_xyz(vector: nt.SocketOrVal[pt.Vector]) -> SeparateXyzResult:
 # ---- MapRange --------------------------------------------------------------
 
 
-TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
+TInterpolationType = Literal["LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"]
 
 
 def map_range(
-    value: nt.SocketOrVal[float],
-    from_max: nt.SocketOrVal[float] = 1.0,
-    from_min: nt.SocketOrVal[float] = 0.0,
-    to_max: nt.SocketOrVal[float] = 1.0,
-    to_min: nt.SocketOrVal[float] = 0.0,
+    value: nt.SocketOrVal[float | pt.Vector],
+    from_max: nt.SocketOrVal[float | pt.Vector] = 1.0,
+    from_min: nt.SocketOrVal[float | pt.Vector] = 0.0,
+    to_max: nt.SocketOrVal[float | pt.Vector] = 1.0,
+    to_min: nt.SocketOrVal[float | pt.Vector] = 0.0,
     clamp: bool = True,
     interpolation_type: TInterpolationType = "LINEAR",
+    steps: nt.SocketOrVal[float | pt.Vector] | None = None,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> nt.ProcNode:
     """
@@ -870,15 +901,22 @@ def map_range(
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/converter/map_range.html
     """
 
+    if steps is not None and interpolation_type != "STEPPED":
+        raise ValueError(f"map_range got {steps=} with {interpolation_type=}")
+
     if data_type is None:
         data_type = RuntimeResolveDataType(
-            [NodeDataType.FLOAT, NodeDataType.FLOAT_VECTOR],
-            ["From Max", "From Min", "To Max", "To Min", "Value"],
+            [
+                NodeDataType.FLOAT,
+                NodeDataType.FLOAT_VECTOR,
+            ],
+            ["From Max", "From Min", "To Max", "To Min", "Value", "Steps"],
+            broadcast_scalars=True,
         )
 
     # interpolation_type / data_type only exist on ShaderNodeMapRange. The
     # wrapper omits interpolation_type at default so a compositor call with
-    # all defaults doesn't trip _set_node_attribute. RuntimeResolveDataType
+    # all defaults doesn't trip set_node_attribute. RuntimeResolveDataType
     # is dropped at construct time when the target lacks the attr; an
     # explicit NodeDataType in compositor context will reach setattr and
     # raise naturally.
@@ -886,14 +924,20 @@ def map_range(
     if interpolation_type != "LINEAR":
         attrs["interpolation_type"] = interpolation_type
 
+    # Blender enables the Steps socket only for STEPPED; it is not even
+    # reachable by name in the other interpolation modes.
+    inputs: dict[str, object] = {
+        "From Max": from_max,
+        "From Min": from_min,
+        "To Max": to_max,
+        "To Min": to_min,
+        "Value": value,
+    }
+    if interpolation_type == "STEPPED":
+        inputs["Steps"] = 4.0 if steps is None else steps
+
     return nt.ProcNode.from_nodetype(
         node_type=ContextualNode.MAP_RANGE.value,
-        inputs={
-            "From Max": from_max,
-            "From Min": from_min,
-            "To Max": to_max,
-            "To Min": to_min,
-            "Value": value,
-        },
+        inputs=inputs,
         attrs=attrs,
     )

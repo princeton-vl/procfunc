@@ -19,6 +19,14 @@ class ProcfuncContext:
     'ignore' silently returns an empty mesh, 'warn' logs a warning, 'throw' raises an error.
     """
 
+    warn_mode_transpile_dropped_attrs: Literal["ignore", "warn", "throw"]
+    """
+    Controls behavior when transpiling a bpy node whose attributes carry render-affecting
+    state procfunc has no binding for, so the transpiled result would render differently
+    (e.g. a non-identity texture_mapping on a ShaderNodeTex* node).
+    'ignore' drops it silently, 'warn' logs a warning, 'throw' raises an error.
+    """
+
     record_node_definitions: bool = False
     """
     Record the user-space file/line/function that constructed each ProcNode, used only to
@@ -34,10 +42,12 @@ class ProcfuncContext:
     def set_strict(self):
         """Set all warning modes to 'throw'"""
         self.warn_mode_empty_geonodes = "throw"
+        self.warn_mode_transpile_dropped_attrs = "throw"
 
     def set_warn(self):
         """Set all warning modes to 'warn'"""
         self.warn_mode_empty_geonodes = "warn"
+        self.warn_mode_transpile_dropped_attrs = "warn"
 
 
 # Global context instance
@@ -47,9 +57,15 @@ warn_modes = ["ignore", "warn", "throw"]
 _warn_mode_empty_geonodes = os.environ.get("PROCFUNC_WARN_MODE_EMPTY_GEONODES", "warn")
 assert _warn_mode_empty_geonodes in warn_modes
 
+_warn_mode_transpile_dropped_attrs = os.environ.get(
+    "PROCFUNC_WARN_MODE_TRANSPILE_DROPPED_ATTRS", "throw"
+)
+assert _warn_mode_transpile_dropped_attrs in warn_modes
+
 globals = ProcfuncContext(
     num_cpu_cores=int(os.environ.get("PROCFUNC_NUM_CPU_CORES", 0)),
     warn_mode_empty_geonodes=_warn_mode_empty_geonodes,  # type: ignore[invalid-assignment]
+    warn_mode_transpile_dropped_attrs=_warn_mode_transpile_dropped_attrs,  # type: ignore[invalid-assignment]
     current_trace_level=None,
     record_node_definitions=os.environ.get("PROCFUNC_RECORD_NODE_DEFINITIONS", "0")
     == "1",

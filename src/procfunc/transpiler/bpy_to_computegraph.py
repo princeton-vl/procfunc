@@ -26,11 +26,12 @@ from procfunc.nodes.execute.util import get_active_sockets, normalize_socket_typ
 from procfunc.nodes.util import bpy_node_info
 from procfunc.nodes.util import bpy_node_info as bni
 from procfunc.ops import OPS_MANIFEST
+from procfunc.transpiler import parse_attrs
 from procfunc.transpiler.parse_default_values import (
     SUBCOMPONENT_TYPES,
     normalize_default_value,
 )
-from procfunc.transpiler.parse_special_cases import SPECIAL_CASE_NODES
+from procfunc.transpiler.parse_special_cases import SPECIAL_CASE_NODES, build_call
 from procfunc.util import bpy_info, log, manifest, pytree
 
 logger = logging.getLogger(__name__)
@@ -40,13 +41,20 @@ _OPS_MANIFEST_INDEXED = OPS_MANIFEST.set_index("bpy_name")
 
 MODE_ATTRS = [
     "mode",
+    "sky_type",
+    "correction_method",
     "data_type",
     "operation",
     "rotation_type",
+    "vector_type",
     "feature",
     "distribute_method",
+    "glare_type",
+    "space",
+    "falloff",
+    "model",
+    "parametrization",
 ]
-IGNORE_ATTRS = ["color_mapping", "texture_mapping", "active_item", "capture_items"]
 
 
 class InvalidNodeGraph(Exception):
@@ -97,8 +105,6 @@ def _target_attrs(node: bpy.types.Node) -> dict[str, Any]:
     for k in dir(node):
         if k.startswith("_"):
             continue
-        elif k in bpy_node_info.SPECIAL_CASE_ATTR_NAMES:
-            attr_vals[k] = None
         elif k not in bpy_node_info.UNIVERSAL_ATTR_NAMES:
             v = getattr(node, k)
             # Skip bound methods exposed alongside data properties
@@ -108,59 +114,6 @@ def _target_attrs(node: bpy.types.Node) -> dict[str, Any]:
             attr_vals[k] = v
 
     return attr_vals
-
-
-def _is_empty_enum(node: bpy.types.Node, attr: str) -> bool:
-    prop = node.bl_rna.properties.get(attr)
-    return prop is not None and prop.type == "ENUM"
-
-
-def _bpy_node_defaults(
-    node_tree: bpy.types.NodeTree,
-    node: bpy.types.Node,
-    attr_keys: list[str],
-) -> dict[str, Any]:
-    temp_default_node = node_tree.nodes.new(node.bl_idname)
-    if node.bl_idname.endswith("NodeGroup"):
-        temp_default_node.node_tree = node.node_tree
-    # data_type must precede operation: FunctionNodeCompare.operation enum
-    # values (e.g. BRIGHTER/DARKER) are only valid for certain data_types.
-    if hasattr(node, "data_type"):
-        temp_default_node.data_type = node.data_type
-    if hasattr(node, "operation"):
-        # assert "operation" not in attr_keys, (node, attr_keys)
-        temp_default_node.operation = node.operation
-
-    attr_defaults = {}
-    for k in attr_keys:
-        if hasattr(temp_default_node, k):
-            val = getattr(temp_default_node, k)
-            # copy mathutils types before removing the node to avoid dangling pointer segfaults.
-            # ID datablocks (Scene/Object/Material/...) are persistent — copying them duplicates
-            # the asset and breaks equality comparison against the source node's attr.
-            if hasattr(val, "copy") and not isinstance(val, bpy.types.ID):
-                val = val.copy()
-            attr_defaults[k] = val
-
-    node_tree.nodes.remove(temp_default_node)
-
-    return attr_defaults
-
-
-def _remove_banned_attrs(
-    attrs: dict[str, Any],
-    blender_attr_vals: dict[str, Any],
-):
-    for k in IGNORE_ATTRS:
-        res = attrs.pop(k, None)
-        if (
-            res is not None
-            and k not in ["capture_items", "active_item"]
-            and res != blender_attr_vals[k]
-        ):
-            logger.warning(
-                f"Ignoring {k}={res} which had been changed from its default value {blender_attr_vals[k]!r}"
-            )
 
 
 def _returns_named_tuple(func: Any) -> bool:
@@ -532,33 +485,6 @@ def _map_inputs_with_arg_map(
     return mapped_inputs
 
 
-def _keep_attr(
-    node: bpy.types.Node,
-    k: str,
-    v: Any,
-    param: str | None,
-    func_defaults: dict[str, Any],
-    attr_defaults: dict[str, Any],
-) -> bool:
-    """Whether to emit attr `k`, or drop it because the binding already reproduces
-    its value: compared against the procfunc default when `k` binds to a parameter
-    that has one (these intentionally diverge from bpy's), else the bpy default.
-    """
-    if k == "data_type" and node.bl_idname == "GeometryNodeInputNamedAttribute":
-        return True
-    if v == "" and _is_empty_enum(node, k):
-        return False  # state-gated enum with no valid member: nothing to set
-    if param in func_defaults:
-        if v == func_defaults[param] and v != attr_defaults.get(k, v):
-            logger.debug(
-                f"Stripping attr {k!r} ({param!r}) on {node.bl_idname}: source "
-                f"value {v!r} equals procfunc default but differs from bpy "
-                f"default {attr_defaults[k]!r}"
-            )
-        return v != func_defaults[param]
-    return v != attr_defaults[k]
-
-
 def parse_standard_node(
     node_tree: bpy.types.NodeTree,
     node: bpy.types.Node,
@@ -584,37 +510,7 @@ def parse_standard_node(
         if param.default is not param.empty
     }
 
-    attr_defaults = _bpy_node_defaults(node_tree, node, list(attrs.keys()))
-    attrs = {
-        k: v
-        for k, v in attrs.items()
-        if _keep_attr(
-            node, k, v, (arg_names_map or {}).get(k, k), func_defaults, attr_defaults
-        )
-    }
-
-    if arg_names_map is not None:
-        attrs = {
-            arg_names_map.get(k, k): v
-            for k, v in attrs.items()
-            if arg_names_map.get(k, k) is not None
-        }
-
-    # we only want to remove MODE_ATTRS which were actually used to resolve the function
-    #   (since presumably the restriction implied by these is already enforced by the new function signature)
-    resolve_mode_args = func_spec.get("bpy_mode_args")
-    if resolve_mode_args is not None:
-        for k, v in resolve_mode_args.items():
-            if k in attrs and k not in func_sig.parameters.keys():
-                attrs.pop(k)
-
-    # normalize the data_type spelling to the canonical NodeDataType
-    for dtype_attr in ("data_type", "input_type"):
-        if dtype_attr in attrs and isinstance(attrs[dtype_attr], str):
-            attrs[dtype_attr] = bpy_node_info.datatype_from_bpy_str(attrs[dtype_attr])
-
     inputs = _create_inputs(node_tree, node, memo, func_defaults=func_defaults)
-    arg_names_map = func_spec["arg_names_map"]
     if arg_names_map is not None:
         inputs = _map_inputs_with_arg_map(inputs, arg_names_map)
 
@@ -627,52 +523,17 @@ def parse_standard_node(
                 f"{node.bl_idname=}, {node.inputs.keys()=}"
             )
 
-    if overlap := set(attrs.keys()).intersection(set(inputs.keys())):
+    handler = SPECIAL_CASE_NODES.get(node.bl_idname)
+    if handler is not None:
+        return handler(node_tree, node, func, func_spec, inputs, attrs)
+
+    resolved = parse_attrs.generic_attrs(node_tree, node, attrs, func, func_spec)
+    if overlap := set(resolved.keys()).intersection(set(inputs.keys())):
         raise ValueError(
-            f"Node {node.bl_idname} had keys {overlap=} between {attrs.keys()=} and {inputs.keys()=}, which is invalid"
+            f"Node {node.bl_idname} had keys {overlap=} between {resolved.keys()=} and {inputs.keys()=}, which is invalid"
         )
 
-    # SPECIAL_CASE_ATTR_NAMES enter attrs as None placeholders. Handlers that
-    # need them read from the bpy node directly, so the placeholder is never
-    # useful to the function call — drop before constructing the cg_node.
-    placeholder_attrs = {**attrs, **inputs}
-    for k in bpy_node_info.SPECIAL_CASE_ATTR_NAMES:
-        if placeholder_attrs.get(k, ...) is None:
-            placeholder_attrs.pop(k, None)
-
-    cg_node = cg.FunctionCallNode(
-        func=func,
-        args=(),
-        kwargs=placeholder_attrs,
-    )
-
-    cg_node_orig = cg_node
-    if handler := SPECIAL_CASE_NODES.get(node.bl_idname):
-        cg_node = handler(node, cg_node)
-
-    _remove_banned_attrs(cg_node.kwargs, attr_defaults)
-
-    signature = inspect.signature(func)
-
-    # Check if the function accepts **kwargs (VAR_KEYWORD)
-    has_var_keyword = any(
-        p.kind == inspect.Parameter.VAR_KEYWORD for p in signature.parameters.values()
-    )
-
-    # Only check for missing parameters if the function doesn't accept **kwargs
-    excess_kwargs = set(cg_node_orig.kwargs.keys()) - set(signature.parameters.keys())
-    if not has_var_keyword and excess_kwargs:
-        node_mode = getattr(node, "mode", None)
-        node_operation = getattr(node, "operation", None)
-        node_data_type = getattr(node, "data_type", None)
-        raise ValueError(
-            f"Codegen would attempt to call {func.__name__=} with {excess_kwargs} "
-            f"but these attributes do not exist in the procfunc signature, which had {list(signature.parameters.keys())} "
-            f"source node had {node.bl_idname} {node.inputs.keys()=} {node_mode=} {node_operation=} {node_data_type=} "
-            "Please contact the developers."
-        )
-
-    return cg_node
+    return build_call(node, func, {**resolved, **inputs})
 
 
 def parse_nodegroup_call(
@@ -1197,10 +1058,16 @@ def parse_geo_modifier(
             )
         case 1, _:
             (geometry_getattr,) = geo_output_getattrs.values()
-            return cg.FunctionCallNode(
+            mesh_with_attributes = cg.FunctionCallNode(
                 pf.nodes.to_mesh_object_with_attributes,
                 args=(geometry_getattr,),
                 kwargs={"attributes": attribute_output_getattrs},
+            )
+            return cg.MethodCallNode(
+                mesh_with_attributes,
+                "__getitem__",
+                args=(0,),
+                kwargs={},
             )
         case _, _:
             return cg.FunctionCallNode(
@@ -1219,7 +1086,11 @@ def parse_modifier(
     if mod.type == "NODES":
         return parse_geo_modifier(obj, node_curr, mod, memo)
 
-    mode_vals = {"type": mod.type, "operation": getattr(mod, "operation", None)}
+    mode_vals = {
+        "type": mod.type,
+        "operation": getattr(mod, "operation", None),
+        "offset_type": getattr(mod, "offset_type", None),
+    }
     func_row = _find_manifest_func(
         "bpy.ops.object.modifier_add", mode_vals, _OPS_MANIFEST_INDEXED
     )

@@ -187,12 +187,12 @@ def vector_faceforward(
 def vector_dot_product(
     a: pf.SocketOrVal[pf.Vector],
     b: pf.SocketOrVal[pf.Vector],
-) -> pf.ProcNode[pf.Vector]:
+) -> pf.ProcNode[float]:
     pass
 def vector_distance(
     a: pf.SocketOrVal[pf.Vector],
     b: pf.SocketOrVal[pf.Vector],
-) -> pf.ProcNode[pf.Vector]:
+) -> pf.ProcNode[float]:
     pass
 def vector_length(vector: pf.SocketOrVal[pf.Vector]) -> pf.ProcNode[float]:
     pass
@@ -287,17 +287,6 @@ def vector_transform(
 
 TConstant = TypeVar("TConstant", int, float, bool, str, pf.Vector, pf.Euler, pf.Color)
 
-_CONSTANT_CONTEXTUAL_BY_TYPE = [
-    # bool before int: bool is a subclass of int
-    (bool, ContextualNode.BOOLEAN),
-    (int, ContextualNode.INT),
-    (float, ContextualNode.VALUE),
-    (pf.Euler, ContextualNode.ROTATION),
-    (pf.Vector, ContextualNode.VECTOR),
-    (tuple, ContextualNode.VECTOR),
-    (pf.Color, ContextualNode.RGB),
-    (str, ContextualNode.STRING),
-]
 
 
 def constant(
@@ -330,14 +319,16 @@ def float_curve(
     factor: pf.SocketOrVal[float],
     value: pf.SocketOrVal[float],
     curve: np.ndarray | None = None,
-    handle_type: str = "AUTO",
+    handle_type: pf.HandleType = "AUTO",
     use_clip: bool = True,
+    handle_types: list[pf.HandleType] | None = None,
 ) -> pf.ProcNode[float]:
     pass
 def vector_curve(
     vector: pf.SocketOrVal[pf.Vector],
     fac: pf.SocketOrVal[float] = 1.0,
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[pf.HandleType]] | None = None,
 ) -> pf.ProcNode[pf.Vector]:
     pass
 # ---- Combine / Separate ------------------------------------
@@ -360,17 +351,18 @@ def separate_xyz(vector: pf.SocketOrVal[pf.Vector]) -> SeparateXyzResult:
 # ---- MapRange --------------------------------------------------------------
 
 
-TInterpolationType = Literal["LINEAR", "STEPPED_LINEAR", "SMOOTHSTEP", "SMOOTHERSTEP"]
+TInterpolationType = Literal["LINEAR", "STEPPED", "SMOOTHSTEP", "SMOOTHERSTEP"]
 
 
 def map_range(
-    value: pf.SocketOrVal[float],
-    from_max: pf.SocketOrVal[float] = 1.0,
-    from_min: pf.SocketOrVal[float] = 0.0,
-    to_max: pf.SocketOrVal[float] = 1.0,
-    to_min: pf.SocketOrVal[float] = 0.0,
+    value: pf.SocketOrVal[float | pf.Vector],
+    from_max: pf.SocketOrVal[float | pf.Vector] = 1.0,
+    from_min: pf.SocketOrVal[float | pf.Vector] = 0.0,
+    to_max: pf.SocketOrVal[float | pf.Vector] = 1.0,
+    to_min: pf.SocketOrVal[float | pf.Vector] = 0.0,
     clamp: bool = True,
     interpolation_type: TInterpolationType = "LINEAR",
+    steps: pf.SocketOrVal[float | pf.Vector] | None = None,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> pf.ProcNode:
     pass
@@ -391,6 +383,7 @@ def rgb_curve(
     fac: pf.SocketOrVal[float],
     color: pf.SocketOrVal[pf.Color],
     curves: list[np.ndarray] | np.ndarray | None = None,
+    handle_types: list[list[pf.HandleType]] | None = None,
 ) -> pf.ProcNode:
     pass
 def combine_rgb(
@@ -759,7 +752,13 @@ def replace_string(
 def rotate_euler(
     rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     rotate_by: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
-    rotation_type: Literal["EULER", "AXIS_ANGLE"] = "EULER",
+    space: Literal["OBJECT", "LOCAL"] = "OBJECT",
+) -> pf.ProcNode[pf.Vector]:
+    pass
+def rotate_euler_axis_angle(
+    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    axis: pf.SocketOrVal[pf.Vector] = (0, 0, 1),
+    angle: pf.SocketOrVal[float] = 0.0,
     space: Literal["OBJECT", "LOCAL"] = "OBJECT",
 ) -> pf.ProcNode[pf.Vector]:
     pass
@@ -864,7 +863,7 @@ TIndexSwitch = TypeVar(
     pf.SocketOrVal[pf.Color],
     pf.SocketOrVal[str],
     pf.SocketOrVal[float],
-    pf.SocketOrVal[pf.pf.Vector],
+    pf.SocketOrVal[pf.Vector],
 )
 
 
@@ -888,21 +887,6 @@ TSwitchArgType = TypeVar(
     pf.Geometry,
 )
 
-_SWITCH_DATA_TYPES = [
-    NodeDataType.BOOLEAN,
-    NodeDataType.INT,
-    NodeDataType.FLOAT,
-    NodeDataType.FLOAT_VECTOR,
-    NodeDataType.ROTATION,
-    NodeDataType.FLOAT_MATRIX,
-    NodeDataType.STRING,
-    NodeDataType.RGBA,
-    NodeDataType.OBJECT,
-    NodeDataType.IMAGE,
-    NodeDataType.GEOMETRY,
-    NodeDataType.COLLECTION,
-    NodeDataType.MATERIAL,
-]
 
 
 def switch(
@@ -995,8 +979,16 @@ def hair_bsdf(
     component: Literal["Reflection", "Transmission"] = "Reflection",
 ) -> pf.ProcNode[pf.Shader]:
     pass
-def principled_hair_bsdf(
-    color: pf.SocketOrVal[pf.Color] = (0.017513, 0.005763, 0.002059, 1),
+THairParametrization = Literal["ABSORPTION", "COLOR", "MELANIN"]
+
+
+def principled_hair_bsdf_chiang(
+    color: pf.SocketOrVal[pf.Color] | None = None,
+    absorption_coefficient: pf.SocketOrVal[pf.Vector] | None = None,
+    melanin: pf.SocketOrVal[float] | None = None,
+    melanin_redness: pf.SocketOrVal[float] | None = None,
+    tint: pf.SocketOrVal[pf.Color] | None = None,
+    random_color: pf.SocketOrVal[float] | None = None,
     roughness: pf.SocketOrVal[float] = 0.3,
     radial_roughness: pf.SocketOrVal[float] = 0.3,
     coat: pf.SocketOrVal[float] = 0.0,
@@ -1004,8 +996,24 @@ def principled_hair_bsdf(
     offset: pf.SocketOrVal[float] = 0.034907,
     random_roughness: pf.SocketOrVal[float] = 0.0,
     random: pf.SocketOrVal[float] = 0.0,
-    model: Literal["CHIANG", "HUANG"] = "CHIANG",
-    parametrization: Literal["ABSORPTION", "MELANIN", "COLOR"] = "COLOR",
+) -> pf.ProcNode[pf.Shader]:
+    pass
+def principled_hair_bsdf_huang(
+    color: pf.SocketOrVal[pf.Color] | None = None,
+    absorption_coefficient: pf.SocketOrVal[pf.Vector] | None = None,
+    melanin: pf.SocketOrVal[float] | None = None,
+    melanin_redness: pf.SocketOrVal[float] | None = None,
+    tint: pf.SocketOrVal[pf.Color] | None = None,
+    random_color: pf.SocketOrVal[float] | None = None,
+    aspect_ratio: pf.SocketOrVal[float] = 0.85,
+    roughness: pf.SocketOrVal[float] = 0.3,
+    ior: pf.SocketOrVal[float] = 1.55,
+    offset: pf.SocketOrVal[float] = 0.034907,
+    random_roughness: pf.SocketOrVal[float] = 0.0,
+    random: pf.SocketOrVal[float] = 0.0,
+    reflection: pf.SocketOrVal[float] = 1.0,
+    transmission: pf.SocketOrVal[float] = 1.0,
+    secondary_reflection: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.Shader]:
     pass
 TSubsurfaceMethod = Literal["BURLEY", "RANDOM_WALK", "RANDOM_WALK_SKIN"]
@@ -1190,7 +1198,25 @@ def mapping(
     location: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
     scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
-    vector_type: Literal["POINT", "TEXTURE", "VECTOR", "NORMAL"] = "POINT",
+) -> pf.ProcNode[pf.Vector]:
+    pass
+def mapping_texture(
+    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    location: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+) -> pf.ProcNode[pf.Vector]:
+    pass
+def mapping_vector(
+    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
+) -> pf.ProcNode[pf.Vector]:
+    pass
+def mapping_normal(
+    vector: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    rotation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
+    scale: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
 ) -> pf.ProcNode[pf.Vector]:
     pass
 def mix_shader(
@@ -1275,7 +1301,14 @@ def squeeze(
     center: pf.SocketOrVal[float] = 0.0,
 ) -> pf.ProcNode[float]:
     pass
-def subsurface_scattering(
+def subsurface_scattering_burley(
+    color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
+    scale: pf.SocketOrVal[float] = 0.05,
+    radius: pf.SocketOrVal[pf.Vector] = (1, 0.2, 0.1),
+    normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
+) -> pf.ProcNode[pf.Shader]:
+    pass
+def subsurface_scattering_random_walk(
     color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     scale: pf.SocketOrVal[float] = 0.05,
     radius: pf.SocketOrVal[pf.Vector] = (1, 0.2, 0.1),
@@ -1283,7 +1316,15 @@ def subsurface_scattering(
     roughness: pf.SocketOrVal[float] = 1.0,
     anisotropy: pf.SocketOrVal[float] = 0.0,
     normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
-    falloff: Literal["BURLEY", "RANDOM_WALK", "RANDOM_WALK_SKIN"] = "RANDOM_WALK",
+) -> pf.ProcNode[pf.Shader]:
+    pass
+def subsurface_scattering_random_walk_skin(
+    color: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
+    scale: pf.SocketOrVal[float] = 0.05,
+    radius: pf.SocketOrVal[pf.Vector] = (1, 0.2, 0.1),
+    ior: pf.SocketOrVal[float] = 1.4,
+    anisotropy: pf.SocketOrVal[float] = 0.0,
+    normal: pf.SocketOrVal[pf.Vector] = (0.0, 0.0, 0.0),
 ) -> pf.ProcNode[pf.Shader]:
     pass
 def tangent(
@@ -1538,22 +1579,6 @@ def curve_endpoint_selection(
     start_size: pf.SocketOrVal[int] = 1, end_size: pf.SocketOrVal[int] = 1
 ) -> pf.ProcNode[bool]:
     pass
-# def curve_handle_type_selection(
-#    handle_type: Literal["FREE", "AUTO", "VECTOR", "ALIGN"] = "AUTO",
-#    mode: Literal["LEFT", "RIGHT"] = "RIGHT",
-# ) -> t.ProcNode:
-#    """
-#    Uses a CurveHandleTypeSelection Geometry Node.
-#
-#    See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/curve/read/handle_type_selection.html
-#    """
-#    return t.ProcNode.from_nodetype(
-#        node_type="GeometryNodeCurveHandleTypeSelection",
-#        inputs={},
-#        attrs={"handle_type": handle_type, "mode": mode},
-#    )
-
-
 def curve_length(curve: pf.ProcNode[pf.CurveObject] | None) -> pf.ProcNode[float]:
     pass
 class CurveOfPointResult(NamedTuple):
@@ -1564,10 +1589,10 @@ class CurveOfPointResult(NamedTuple):
 def curve_of_point(point_index: pf.SocketOrVal[int] = 0) -> CurveOfPointResult:
     pass
 def curve_bezier_segment(
-    start: pf.SocketOrVal[pf.pf.Vector],
-    start_handle: pf.SocketOrVal[pf.pf.Vector],
-    end_handle: pf.SocketOrVal[pf.pf.Vector],
-    end: pf.SocketOrVal[pf.pf.Vector],
+    start: pf.SocketOrVal[pf.Vector],
+    start_handle: pf.SocketOrVal[pf.Vector],
+    end_handle: pf.SocketOrVal[pf.Vector],
+    end: pf.SocketOrVal[pf.Vector],
     resolution: pf.SocketOrVal[int] = 16,
     mode: Literal["POSITION", "OFFSET"] = "POSITION",
 ) -> pf.ProcNode[pf.CurveObject]:
@@ -1590,13 +1615,13 @@ def curve_circle_from_points(
 ) -> CurveCircleFromPointsResult:
     pass
 def curve_line(
-    start: pf.SocketOrVal[pf.pf.Vector],
-    end: pf.SocketOrVal[pf.pf.Vector],
+    start: pf.SocketOrVal[pf.Vector],
+    end: pf.SocketOrVal[pf.Vector],
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_line_from_direction(
-    start: pf.SocketOrVal[pf.pf.Vector],
-    direction: pf.SocketOrVal[pf.pf.Vector],
+    start: pf.SocketOrVal[pf.Vector],
+    direction: pf.SocketOrVal[pf.Vector],
     length: pf.SocketOrVal[float] = 1.0,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
@@ -1632,9 +1657,9 @@ def curve_quadrilateral_points(
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
 def curve_bezier(
-    start: pf.SocketOrVal[pf.pf.Vector],
-    middle: pf.SocketOrVal[pf.pf.Vector],
-    end: pf.SocketOrVal[pf.pf.Vector],
+    start: pf.SocketOrVal[pf.Vector],
+    middle: pf.SocketOrVal[pf.Vector],
+    end: pf.SocketOrVal[pf.Vector],
     resolution: pf.SocketOrVal[int] = 16,
 ) -> pf.ProcNode[pf.CurveObject]:
     pass
@@ -1720,22 +1745,31 @@ TDeleteGeometry = TypeVar(
 def delete_geometry(
     geometry: pf.ProcNode[TDeleteGeometry] | None,
     selection: pf.SocketOrVal[bool] = True,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
     mode: Literal["ALL", "EDGE_FACE", "ONLY_FACE"] = "ALL",
 ) -> pf.ProcNode[TDeleteGeometry]:
     pass
 def distribute_points_in_grid(
     grid: pf.SocketOrVal[float] = 0.0,
-    density: pf.SocketOrVal[float] = 1.0,
-    seed: pf.SocketOrVal[int] = 0,
-    mode: Literal["DENSITY_RANDOM", "DENSITY_GRID"] = "DENSITY_RANDOM",
+    seed: pf.SocketOrVal[int] | None = None,
+    density: pf.SocketOrVal[float] | None = None,
+    spacing: pf.SocketOrVal[pf.Vector] | None = None,
+    threshold: pf.SocketOrVal[float] | None = None,
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def distribute_points_in_volume(
     volume: pf.ProcNode[pf.VolumeObject] | None,
-    density: pf.SocketOrVal[float] = 1.0,
-    seed: pf.SocketOrVal[int] = 0,
-    mode: Literal["DENSITY_RANDOM", "DENSITY_GRID"] = "DENSITY_RANDOM",
+    seed: pf.SocketOrVal[int] | None = None,
+    density: pf.SocketOrVal[float] | None = None,
+    spacing: pf.SocketOrVal[pf.Vector] | None = None,
+    threshold: pf.SocketOrVal[float] | None = None,
 ) -> pf.ProcNode[pf.VolumeObject]:
     pass
 class DistributePointsOnFacesResult(NamedTuple):
@@ -1820,7 +1854,7 @@ class ExtrudeMeshResult(NamedTuple):
 
 def extrude_mesh(
     mesh: pf.ProcNode[pf.MeshObject] | None,
-    offset: pf.SocketOrVal[pf.pf.Vector] | None = None,
+    offset: pf.SocketOrVal[pf.Vector] | None = None,
     selection: pf.SocketOrVal[bool] = True,
     offset_scale: pf.SocketOrVal[float] = 1.0,
     individual: pf.SocketOrVal[bool] = True,
@@ -1915,7 +1949,7 @@ class ImageTextureResult(NamedTuple):
 
 def image_texture(
     image: pf.SocketOrVal[pf.Image],
-    vector: pf.SocketOrVal[pf.pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector],
     frame: pf.SocketOrVal[int] = 0,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
     interpolation: Literal["Linear", "Closest", "Cubic"] = "Linear",
@@ -1927,7 +1961,7 @@ class IndexOfNearestResult(NamedTuple):
 
 
 def index_of_nearest(
-    position: pf.SocketOrVal[pf.pf.Vector],
+    position: pf.SocketOrVal[pf.Vector],
     group_id: pf.SocketOrVal[int] = 0,
 ) -> IndexOfNearestResult:
     pass
@@ -2060,7 +2094,7 @@ def instance_on_points(
 def instance_transform() -> pf.ProcNode:
     pass
 def instances_to_points(
-    position: pf.SocketOrVal[pf.pf.Vector],
+    position: pf.SocketOrVal[pf.Vector] | None,
     instances: pf.ProcNode[pf.Instances] | None,
     selection: pf.SocketOrVal[bool] = True,
     radius: pf.SocketOrVal[float] = 0.05,
@@ -2075,8 +2109,8 @@ class InterpolateCurvesResult(NamedTuple):
 def interpolate_curves(
     guide_curves: pf.ProcNode[pf.HairObject] | None,
     points: pf.ProcNode[pf.Geometry] | None,
-    guide_up: pf.SocketOrVal[pf.pf.Vector],
-    point_up: pf.SocketOrVal[pf.pf.Vector],
+    guide_up: pf.SocketOrVal[pf.Vector],
+    point_up: pf.SocketOrVal[pf.Vector],
     guide_group_id: pf.SocketOrVal[int] = 0,
     point_group_id: pf.SocketOrVal[int] = 0,
     max_neighbors: pf.SocketOrVal[int] = 4,
@@ -2150,7 +2184,7 @@ class MeshConeResult(NamedTuple):
 def mesh_cone(
     vertices: pf.SocketOrVal[int] = 32,
     side_segments: pf.SocketOrVal[int] = 1,
-    fill_segments: pf.SocketOrVal[int] = 1,
+    fill_segments: pf.SocketOrVal[int] | None = None,
     radius_top: pf.SocketOrVal[float] = 0.0,
     radius_bottom: pf.SocketOrVal[float] = 1.0,
     depth: pf.SocketOrVal[float] = 2.0,
@@ -2158,7 +2192,7 @@ def mesh_cone(
 ) -> MeshConeResult:
     pass
 def mesh_cube(
-    size: pf.SocketOrVal[pf.pf.Vector] = (1, 1, 1),
+    size: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
     vertices_x: pf.SocketOrVal[int] = 2,
     vertices_y: pf.SocketOrVal[int] = 2,
     vertices_z: pf.SocketOrVal[int] = 2,
@@ -2175,7 +2209,7 @@ class MeshCylinderResult(NamedTuple):
 def mesh_cylinder(
     vertices: pf.SocketOrVal[int] = 32,
     side_segments: pf.SocketOrVal[int] = 1,
-    fill_segments: pf.SocketOrVal[int] = 1,
+    fill_segments: pf.SocketOrVal[int] | None = None,
     radius: pf.SocketOrVal[float] = 1.0,
     depth: pf.SocketOrVal[float] = 2.0,
     fill_type: Literal["NONE", "NGON", "TRIANGLE_FAN"] = "NGON",
@@ -2197,17 +2231,16 @@ def mesh_icosphere(
 ) -> MeshResult:
     pass
 def mesh_line(
-    start_location: pf.SocketOrVal[pf.pf.Vector],
-    offset: pf.SocketOrVal[pf.pf.Vector],
+    start_location: pf.SocketOrVal[pf.Vector],
+    offset: pf.SocketOrVal[pf.Vector],
     count: pf.SocketOrVal[int] = 10,
-    count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def mesh_line_from_endpoints(
-    start_location: pf.SocketOrVal[pf.pf.Vector],
-    end_location: pf.SocketOrVal[pf.pf.Vector],
-    count: pf.SocketOrVal[int] = 10,
-    count_mode: Literal["TOTAL", "RESOLUTION"] = "TOTAL",
+    start_location: pf.SocketOrVal[pf.Vector],
+    end_location: pf.SocketOrVal[pf.Vector],
+    count: pf.SocketOrVal[int] | None = None,
+    resolution: pf.SocketOrVal[float] | None = None,
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 def mesh_to_curve(
@@ -2223,7 +2256,7 @@ def mesh_to_density_grid(
     pass
 def mesh_to_points(
     mesh: pf.ProcNode[pf.MeshObject] | None,
-    position: pf.SocketOrVal[pf.pf.Vector],
+    position: pf.SocketOrVal[pf.Vector] | None = None,
     selection: pf.SocketOrVal[bool] = True,
     radius: pf.SocketOrVal[float] = 0.05,
     mode: Literal["VERTICES", "EDGES", "FACES", "CORNERS"] = "VERTICES",
@@ -2238,9 +2271,9 @@ def mesh_to_sdf_grid(
 def mesh_to_volume(
     mesh: pf.ProcNode[pf.MeshObject] | None,
     density: pf.SocketOrVal[float] = 1.0,
-    voxel_amount: pf.SocketOrVal[float] = 64.0,
+    voxel_amount: pf.SocketOrVal[float] | None = None,
+    voxel_size: pf.SocketOrVal[float] | None = None,
     interior_band_width: pf.SocketOrVal[float] = 0.2,
-    resolution_mode: Literal["VOXEL_AMOUNT", "VOXEL_SIZE"] = "VOXEL_AMOUNT",
 ) -> pf.ProcNode[pf.VolumeObject]:
     pass
 def mesh_uv_sphere(
@@ -2280,7 +2313,7 @@ def offset_point_in_curve(
 ) -> OffsetPointInCurveResult:
     pass
 def points(
-    position: pf.SocketOrVal[pf.pf.Vector],
+    position: pf.SocketOrVal[pf.Vector],
     count: pf.SocketOrVal[int] = 1,
     radius: pf.SocketOrVal[float] = 0.1,
 ) -> pf.ProcNode[pf.Points]:
@@ -2315,20 +2348,20 @@ def points_to_vertices(
 def points_to_volume(
     points: pf.ProcNode[pf.Points] | None,
     density: pf.SocketOrVal[float] = 1.0,
-    voxel_amount: pf.SocketOrVal[float] = 64.0,
+    voxel_amount: pf.SocketOrVal[float] | None = None,
+    voxel_size: pf.SocketOrVal[float] | None = None,
     radius: pf.SocketOrVal[float] = 0.5,
-    resolution_mode: Literal["VOXEL_AMOUNT", "VOXEL_SIZE"] = "VOXEL_AMOUNT",
 ) -> pf.ProcNode[pf.VolumeObject]:
     pass
 class ProximityResult(NamedTuple):
-    position: pf.ProcNode[pf.pf.Vector]
+    position: pf.ProcNode[pf.Vector]
     distance: pf.ProcNode[float]
     is_valid: pf.ProcNode[bool]
 
 
 def proximity(
     geometry: pf.ProcNode[pf.MeshObject] | None,
-    sample_position: pf.SocketOrVal[pf.pf.Vector],
+    sample_position: pf.SocketOrVal[pf.Vector],
     group_id: pf.SocketOrVal[int] = 0,
     sample_group_id: pf.SocketOrVal[int] = 0,
     target_element: Literal["POINTS", "EDGES", "FACES"] = "FACES",
@@ -2340,17 +2373,17 @@ TRaycast = TypeVar(
 
 
 class RaycastResult(NamedTuple):
-    attribute: pf.ProcNode[pf.pf.Vector]
+    attribute: pf.ProcNode[pf.Vector]
     hit_distance: pf.ProcNode[float]
-    hit_normal: pf.ProcNode[pf.pf.Vector]
-    hit_position: pf.ProcNode[pf.pf.Vector]
+    hit_normal: pf.ProcNode[pf.Vector]
+    hit_position: pf.ProcNode[pf.Vector]
     is_hit: pf.ProcNode[bool]
 
 
 def raycast(
     geometry: pf.ProcNode[pf.MeshObject] | None,
-    source_position: pf.SocketOrVal[pf.pf.Vector],
-    ray_direction: pf.SocketOrVal[pf.pf.Vector],
+    source_position: pf.SocketOrVal[pf.Vector],
+    ray_direction: pf.SocketOrVal[pf.Vector],
     attribute: TRaycast = 0,
     ray_length: pf.SocketOrVal[float] = 100.0,
     mapping: Literal["INTERPOLATED", "NEAREST"] = "INTERPOLATED",
@@ -2410,9 +2443,9 @@ def sdf_grid_boolean(
 ) -> pf.ProcNode[pf.Geometry]:
     pass
 class SampleCurveResult(NamedTuple):
-    normal: pf.ProcNode[pf.pf.Vector]
-    position: pf.ProcNode[pf.pf.Vector]
-    tangent: pf.ProcNode[pf.pf.Vector]
+    normal: pf.ProcNode[pf.Vector]
+    position: pf.ProcNode[pf.Vector]
+    tangent: pf.ProcNode[pf.Vector]
     value: pf.ProcNode[TAttribute]
 
 
@@ -2421,7 +2454,6 @@ def sample_curve(
     factor: pf.SocketOrVal[float],
     curve_index: pf.SocketOrVal[int] = 0,
     value: pf.SocketOrVal[TAttribute] | None = None,
-    mode: Literal["FACTOR", "LENGTH"] = "FACTOR",
     use_all_curves: bool = False,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleCurveResult:
@@ -2446,7 +2478,7 @@ def sample_index(
     pass
 def sample_nearest(
     geometry: pf.ProcNode[pf.Points] | None,
-    sample_position: pf.SocketOrVal[pf.pf.Vector],
+    sample_position: pf.SocketOrVal[pf.Vector],
     domain: Literal["POINT", "EDGE", "FACE", "CORNER"] = "POINT",
 ) -> pf.ProcNode[int]:
     pass
@@ -2457,7 +2489,7 @@ class SampleResult(NamedTuple, Generic[TAttribute]):
 
 def sample_nearest_surface(
     mesh: pf.ProcNode[pf.MeshObject] | None,
-    sample_position: pf.SocketOrVal[pf.pf.Vector],
+    sample_position: pf.SocketOrVal[pf.Vector],
     value: pf.ProcNode[TAttribute] | None = None,
     group_id: pf.SocketOrVal[int] = 0,
     sample_group_id: pf.SocketOrVal[int] = 0,
@@ -2466,8 +2498,8 @@ def sample_nearest_surface(
     pass
 def sample_uv_surface(
     mesh: pf.ProcNode[pf.MeshObject] | None,
-    sample_uv: pf.SocketOrVal[pf.pf.Vector],
-    uv_map: pf.SocketOrVal[pf.pf.Vector],
+    sample_uv: pf.SocketOrVal[pf.Vector],
+    uv_map: pf.SocketOrVal[pf.Vector],
     value: pf.ProcNode[TAttribute] | None = None,
     data_type: NodeDataType | RuntimeResolveDataType | None = None,
 ) -> SampleResult[TAttribute]:
@@ -2475,9 +2507,9 @@ def sample_uv_surface(
 def scale_elements(
     geometry: pf.ProcNode[pf.Geometry] | None,
     scale: pf.SocketOrVal[float],
-    center: pf.SocketOrVal[pf.pf.Vector],
+    center: pf.SocketOrVal[pf.Vector] | None = None,
     selection: pf.SocketOrVal[bool] = True,
-    axis: pf.SocketOrVal[pf.pf.Vector] | None = None,
+    axis: pf.SocketOrVal[pf.Vector] | None = None,
     domain: Literal["FACE", "EDGE"] = "FACE",
     scale_mode: Literal["UNIFORM", "SINGLE_AXIS"] = "UNIFORM",
 ) -> pf.ProcNode[pf.Geometry]:
@@ -2512,13 +2544,20 @@ class SeparateGeometryResult(NamedTuple, Generic[TMeshOrCurve]):
 def separate_geometry(
     geometry: pf.ProcNode[TMeshOrCurve],
     selection: pf.SocketOrVal[bool] = True,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
 ) -> SeparateGeometryResult[TMeshOrCurve]:
     pass
 def set_curve_handle_positions(
     curve: pf.ProcNode[pf.CurveObject] | None,
-    position: pf.SocketOrVal[pf.pf.Vector],
-    offset: pf.SocketOrVal[pf.pf.Vector],
+    position: pf.SocketOrVal[pf.Vector],
+    offset: pf.SocketOrVal[pf.Vector],
     selection: pf.SocketOrVal[bool] = True,
     mode: Literal["LEFT", "RIGHT"] = "LEFT",
 ) -> pf.ProcNode[pf.CurveObject]:
@@ -2634,7 +2673,14 @@ def split_to_instances(
     geometry: pf.ProcNode[pf.MeshObject] | None,
     selection: pf.SocketOrVal[bool] = True,
     group_id: pf.SocketOrVal[int] = 0,
-    domain: Literal["POINT", "EDGE", "FACE", "CURVE", "INSTANCE", "LAYER"] = "POINT",
+    domain: Literal[
+        "POINT",
+        "EDGE",
+        "FACE",
+        "CURVE",
+        "INSTANCE",
+        # "LAYER",  # bpy 4.5+; the public mode surface remains bpy 4.2.
+    ] = "POINT",
 ) -> SplitToInstancesResult:
     pass
 def store_named_attribute(
@@ -2659,8 +2705,9 @@ def string_join(
     pass
 class StringToCurvesResult(NamedTuple):
     curve_instances: pf.ProcNode[pf.Instances]
+    remainder: pf.ProcNode[str] | None
     line: pf.ProcNode[pf.CurveObject]
-    pivot_point: pf.ProcNode[pf.pf.Vector]
+    pivot_point: pf.ProcNode[pf.Vector]
 
 
 def string_to_curves(
@@ -2684,6 +2731,7 @@ def string_to_curves(
         "BOTTOM_CENTER",
         "BOTTOM_RIGHT",
     ] = "BOTTOM_LEFT",
+    text_box_height: pf.SocketOrVal[float] | None = None,
 ) -> StringToCurvesResult:
     pass
 def subdivide_curve(
@@ -2710,25 +2758,6 @@ def subdivision_surface(
     ] = "PRESERVE_BOUNDARIES",
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
-_SWITCH_DATA_TYPES = [
-    NodeDataType.BOOLEAN,
-    NodeDataType.INT,
-    NodeDataType.FLOAT,
-    NodeDataType.FLOAT_VECTOR,
-    NodeDataType.ROTATION,
-    NodeDataType.FLOAT_MATRIX,
-    NodeDataType.STRING,
-    NodeDataType.RGBA,
-    NodeDataType.OBJECT,
-    # NodeDataType.IMAGE, # TODO verify support
-    NodeDataType.GEOMETRY,
-    NodeDataType.COLLECTION,
-    # NodeDataType.TEXTURE, # TODO verify support
-    NodeDataType.MATERIAL,
-]
-
-
-
 def transform(
     geometry: pf.ProcNode[TMeshOrCurve],
     translation: pf.SocketOrVal[pf.Vector] = (0, 0, 0),
@@ -2788,32 +2817,6 @@ TViewer = TypeVar(
 )
 
 
-# def viewer(
-#     geometry: t.ProcNode[t.Geometry],
-#     value: TViewer = 0,
-#     domain: TDomain = "AUTO",
-#     data_type: NodeDataType | RuntimeResolveDataType | None = None,
-# ) -> t.ProcNode:
-#     """
-#     Uses a Viewer Geometry Node.
-#
-#     See: https://docs.blender.org/manual/en/4.2/modeling/geometry_nodes/output/viewer.html
-#     """
-#     if data_type is None:
-#         data_type = RuntimeResolveDataType(
-#             [NodeDataType.BOOLEAN, NodeDataType.INT, NodeDataType.FLOAT],
-#             ["Value"],
-#         )
-#     return t.ProcNode.from_nodetype(
-#         node_type="GeometryNodeViewer",
-#         inputs={"Geometry": geometry, "Value": value},
-#         attrs={
-#             "domain": domain,
-#             "data_type": data_type,
-#         },
-#     )
-
-
 class ViewportTransformResult(NamedTuple):
     projection: pf.ProcNode
     view: pf.ProcNode
@@ -2825,8 +2828,8 @@ def viewport_transform() -> ViewportTransformResult:
 def volume_cube(
     density: pf.SocketOrVal[float] = 1.0,
     background: pf.SocketOrVal[float] = 0.0,
-    min: pf.SocketOrVal[pf.pf.Vector] = (-1, -1, -1),
-    max: pf.SocketOrVal[pf.pf.Vector] = (1, 1, 1),
+    min: pf.SocketOrVal[pf.Vector] = (-1, -1, -1),
+    max: pf.SocketOrVal[pf.Vector] = (1, 1, 1),
     resolution_x: pf.SocketOrVal[int] = 32,
     resolution_y: pf.SocketOrVal[int] = 32,
     resolution_z: pf.SocketOrVal[int] = 32,
@@ -2836,7 +2839,8 @@ def volume_to_mesh(
     volume: pf.ProcNode[pf.VolumeObject] | None,
     threshold: pf.SocketOrVal[float] = 0.1,
     adaptivity: pf.SocketOrVal[float] = 0.0,
-    resolution_mode: Literal["GRID", "VOXEL_AMOUNT", "VOXEL_SIZE"] = "GRID",
+    voxel_amount: pf.SocketOrVal[float] | None = None,
+    voxel_size: pf.SocketOrVal[float] | None = None,
 ) -> pf.ProcNode[pf.MeshObject]:
     pass
 
@@ -2855,6 +2859,7 @@ TDistanceMetric = Literal["EUCLIDEAN", "MANHATTAN", "CHEBYCHEV", "MINKOWSKI"]
 TTextureInterpolationType = Literal["Linear", "Closest", "Cubic", "Smart"]  # TODO
 
 
+
 class TextureResult(NamedTuple):
     fac: pf.ProcNode[float]
     color: pf.ProcNode[pf.Color]
@@ -2863,7 +2868,7 @@ class TextureResult(NamedTuple):
 class VoronoiResult(NamedTuple):
     color: pf.ProcNode[pf.Color]
     distance: pf.ProcNode[float]
-    position: pf.ProcNode[pf.Vector]
+    position: pf.ProcNode[pf.Vector] | None
     w: pf.ProcNode[float] | None
 
 
@@ -2873,7 +2878,7 @@ class PointDensityResult(NamedTuple):
 
 
 def brick(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     color1: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     color2: pf.SocketOrVal[pf.Color] = (0.2, 0.2, 0.2, 1),
     mortar: pf.SocketOrVal[pf.Color] = (0, 0, 0, 1),
@@ -2890,21 +2895,28 @@ def brick(
 ) -> TextureResult:
     pass
 def checker(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     color1: pf.SocketOrVal[pf.Color] = (0.8, 0.8, 0.8, 1),
     color2: pf.SocketOrVal[pf.Color] = (0.2, 0.2, 0.2, 1),
     scale: pf.SocketOrVal[float] = 5.0,
 ) -> TextureResult:
     pass
 def environment(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["EQUIRECTANGULAR", "MIRROR_BALL"] = "EQUIRECTANGULAR",
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> pf.ProcNode[pf.Color]:
     pass
 def gradient(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     gradient_type: Literal[
         "LINEAR",
         "QUADRATIC",
@@ -2917,7 +2929,7 @@ def gradient(
 ) -> TextureResult:
     pass
 def ies(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     strength: pf.SocketOrVal[float] = 1.0,
     filepath: str = "",
     ies: Any = None,
@@ -2925,17 +2937,24 @@ def ies(
 ) -> pf.ProcNode[float]:
     pass
 def image(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     # None mirrors a bare ShaderNodeTexImage; attr not socket, strict-None doesnt apply
     image: pf.Image | None = None,
     extension: Literal["REPEAT", "EXTEND", "CLIP", "MIRROR"] = "REPEAT",
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["FLAT", "BOX", "SPHERE", "TUBE"] = "FLAT",
     projection_blend: float = 0.0,
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> TextureResult:
     pass
 def magic(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     distortion: pf.SocketOrVal[float] = 1.0,
     turbulence_depth: int = 2,
@@ -2947,8 +2966,8 @@ def noise(
     detail: pf.SocketOrVal[float] = 2.0,
     roughness: pf.SocketOrVal[float] = 0.5,
     lacunarity: pf.SocketOrVal[float] = 2.0,
-    offset: pf.SocketOrVal[float] = 0.0,
-    gain: pf.SocketOrVal[float] = 1.0,
+    offset: pf.SocketOrVal[float] | None = None,
+    gain: pf.SocketOrVal[float] | None = None,
     distortion: pf.SocketOrVal[float] = 0.0,
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
@@ -2957,7 +2976,7 @@ def noise(
 ) -> TextureResult:
     pass
 def point_density(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     interpolation: Literal["Closest", "Linear", "Cubic"] = "Linear",
     object: Any = None,
     particle_color_source: Literal[
@@ -2974,20 +2993,30 @@ def point_density(
     ] = "VERTEX_COLOR",
 ) -> PointDensityResult:
     pass
-def sky(
+def sky_texture_preetham(
+    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    sun_direction: tuple = (0.0, 0.0, 1.0),
+    turbidity: float = 2.2,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def sky_texture_hosek_wilkie(
+    vector: pf.SocketOrVal[pf.Vector] | None = None,
+    ground_albedo: float = 0.3,
+    sun_direction: tuple = (0.0, 0.0, 1.0),
+    turbidity: float = 2.2,
+) -> pf.ProcNode[pf.Color]:
+    pass
+def sky_texture_nishita(
+    vector: pf.SocketOrVal[pf.Vector] | None = None,
     air_density: float = 1.0,
     altitude: float = 0.0,
     dust_density: float = 1.0,
-    ground_albedo: float = 0.3,
     ozone_density: float = 1.0,
-    sky_type: Literal["NISHITA", "HOSEK_WILKIE", "PREETHAM"] = "NISHITA",
-    sun_direction: tuple = (0.0, 0.0, 1.0),
     sun_disc: bool = True,
-    sun_elevation: float = 0.261799,
-    sun_intensity: float = 1.0,
-    sun_rotation: float = 0.0,
-    sun_size: float = 0.009512,
-    turbidity: float = 2.2,
+    sun_elevation: float | None = None,
+    sun_intensity: float | None = None,
+    sun_rotation: float | None = None,
+    sun_size: float | None = None,
 ) -> pf.ProcNode[pf.Color]:
     pass
 def voronoi(
@@ -2997,7 +3026,7 @@ def voronoi(
     roughness: pf.SocketOrVal[float] = 0.5,
     lacunarity: pf.SocketOrVal[float] = 2.0,
     randomness: pf.SocketOrVal[float] = 1.0,
-    exponent: pf.SocketOrVal[float] = 0.0,
+    exponent: pf.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     feature: Literal["F1", "F2"] = "F1",
     normalize: bool = False,
@@ -3025,6 +3054,7 @@ def voronoi_smooth_f1(
     lacunarity: pf.SocketOrVal[float] = 2.0,
     smoothness: pf.SocketOrVal[float] = 0.5,
     randomness: pf.SocketOrVal[float] = 1.0,
+    exponent: pf.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
@@ -3032,21 +3062,21 @@ def voronoi_smooth_f1(
 ) -> VoronoiResult:
     pass
 def voronoi_n_spheres_distance(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     randomness: pf.SocketOrVal[float] = 1.0,
     normalize: bool = False,
 ) -> pf.ProcNode[float]:
     pass
 def wave(
-    vector: pf.SocketOrVal[pf.Vector],
+    vector: pf.SocketOrVal[pf.Vector] | None,
     scale: pf.SocketOrVal[float] = 5.0,
     distortion: pf.SocketOrVal[float] = 0.0,
     detail: pf.SocketOrVal[float] = 2.0,
     detail_scale: pf.SocketOrVal[float] = 1.0,
     detail_roughness: pf.SocketOrVal[float] = 0.5,
     phase_offset: pf.SocketOrVal[float] = 0.0,
-    bands_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
+    bands_direction: Literal["X", "Y", "Z", "DIAGONAL"] = "X",
     rings_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
     wave_profile: Literal["SIN", "SAW", "TRI"] = "SIN",
     wave_type: Literal["BANDS", "RINGS"] = "BANDS",

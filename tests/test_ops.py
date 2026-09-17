@@ -5,6 +5,8 @@ import numpy as np
 import pytest
 
 import procfunc as pf
+from procfunc.codegen import codegen
+from procfunc.transpiler import bpy_to_computegraph as b2c
 from procfunc.util.manifest import import_item_iterative
 
 _PRIMITIVE_FUNCS = pf.util.manifest.filter_manifest(
@@ -68,6 +70,8 @@ def test_ops_modifier(func_name: str, arguments: str):
     if "target" in arguments:
         inputs["target"] = pf.ops.primitives.mesh_icosphere()
         target_before = inputs["target"].clone()
+    if "object_offset" in arguments:
+        inputs["object_offset"] = pf.ops.primitives.empty()
 
     obj = func(**inputs)
 
@@ -77,6 +81,131 @@ def test_ops_modifier(func_name: str, arguments: str):
 
     if "target" in arguments_list:
         assert _mesh_equal(target_before, inputs["target"])
+
+
+def test_modifier_bevel_percentage_width() -> None:
+    obj = pf.ops.primitives.mesh_cube(size=2.0)
+
+    pf.ops.modifier.bevel_pct(
+        obj,
+        width_pct=10.0,
+        segments=1,
+    )
+
+    coordinates = np.abs(pf.ops.attr.vertex_positions(obj))
+    assert len(coordinates) == 24
+    np.testing.assert_allclose(np.unique(coordinates), [0.8, 1.0])
+
+
+def test_percentage_bevel_reverse_transpiles_to_percentage_binding() -> None:
+    obj = bpy.data.objects.new("percentage_bevel", bpy.data.meshes.new("source"))
+    bpy.context.scene.collection.objects.link(obj)
+    modifier = obj.modifiers.new("bevel", "BEVEL")
+    modifier.offset_type = "PERCENT"
+    modifier.width_pct = 37.0
+
+    graph = b2c.parse_object(obj, b2c.ParseMemo())
+    source = codegen.to_python(graph, toplevel_as_maincall=False)
+
+    assert "pf.ops.modifier.bevel_pct(" in source
+    assert "width_pct=37.0" in source
+
+
+def test_modifier_array_object_offset() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[1.0, 0.0, 0.0]]),
+    )
+    offset = pf.ops.primitives.empty()
+    pf.ops.object.set_transform(offset, scale=(0.5, 0.5, 0.5))
+
+    pf.ops.modifier.array_object_offset(obj, offset, count=3)
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates[:, 0], [1.0, 0.5, 0.25])
+    np.testing.assert_allclose(coordinates[:, 1:], 0.0)
+
+
+def test_modifier_array_constant_offset() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[0.0, 0.0, 0.0]]),
+    )
+
+    pf.ops.modifier.array(
+        obj,
+        count=3,
+        constant_offset_displace=(0.0, 0.0, 2.0),
+    )
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates[:, :2], 0.0)
+    np.testing.assert_allclose(coordinates[:, 2], [0.0, 2.0, 4.0])
+
+
+def test_modifier_array_relative_offset() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[0.0, 0.0, 0.0], [2.0, 0.0, 0.0]]),
+        edges=np.array([[0, 1]]),
+    )
+
+    pf.ops.modifier.array_relative_offset(
+        obj,
+        count=2,
+        relative_offset_displace=(1.0, 0.0, 0.0),
+    )
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates[:, 0], [0.0, 2.0, 2.0, 4.0])
+    np.testing.assert_allclose(coordinates[:, 1:], 0.0)
+
+
+def _split_modifier_ops() -> pf.MeshObject:
+    obj = pf.ops.primitives.mesh_cube()
+    offset = pf.ops.primitives.empty()
+    pf.ops.modifier.bevel_pct(obj, width_pct=10.0)
+    pf.ops.modifier.array(obj, constant_offset_displace=(2.0, 0.0, 0.0))
+    pf.ops.modifier.array_relative_offset(obj)
+    pf.ops.modifier.array_object_offset(obj, offset)
+    return obj
+
+
+def test_split_modifier_ops_codegen() -> None:
+    graph = pf.trace(_split_modifier_ops)
+    source = codegen.to_python(graph, toplevel_as_maincall=False)
+
+    expected_calls = (
+        "pf.ops.modifier.bevel_pct(",
+        "pf.ops.modifier.array(",
+        "pf.ops.modifier.array_relative_offset(",
+        "pf.ops.modifier.array_object_offset(",
+    )
+    for call in expected_calls:
+        assert call in source
+
+
+def test_modifier_shrinkwrap_project_negative() -> None:
+    obj = pf.ops.primitives.mesh_from_numpy(
+        vertices=np.array([[0.0, 0.0, 1.0], [2.0, 0.0, 1.0]]),
+    )
+    target = pf.ops.primitives.mesh_plane(size=2.0)
+
+    pf.ops.modifier.shrinkwrap(
+        obj,
+        target,
+        wrap_method="PROJECT",
+        use_negative_direction=True,
+    )
+
+    coordinates = pf.ops.attr.vertex_positions(obj)
+    np.testing.assert_allclose(coordinates, 0.0)
+
+
+def test_mesh_fill_grid_infers_span() -> None:
+    obj = pf.ops.primitives.mesh_circle(vertices=512)
+
+    pf.ops.mesh.fill_grid(obj)
+
+    assert len(obj.item().data.vertices) == 16641
+    assert len(obj.item().data.polygons) == 16384
 
 
 _MESH_FUNCS_MASKARGS = pf.util.manifest.filter_manifest(
@@ -293,88 +422,58 @@ CUBE_COUNTS = {
     "POINT": 8,
     "EDGE": 12,
     "FACE": 6,
+    "CORNER": 24,
 }
-ATTR_CASES = [
-    ("FLOAT", "POINT"),  # vertices
-    ("FLOAT", "EDGE"),  # edges
-    ("FLOAT", "FACE"),  # faces
-    ("INT", "POINT"),
-    ("INT", "EDGE"),
-    ("INT", "FACE"),
-    ("BOOLEAN", "POINT"),
-    ("BOOLEAN", "EDGE"),
-    ("BOOLEAN", "FACE"),
-    ("FLOAT_VECTOR", "POINT"),
-    ("FLOAT_VECTOR", "EDGE"),
-    ("FLOAT_VECTOR", "FACE"),
-]
+ATTR_TYPES = ["FLOAT", "INT", "BOOLEAN", "FLOAT2", "INT32_2D", "FLOAT_VECTOR"]
 
 
-@pytest.mark.parametrize("attr_type,domain", ATTR_CASES)
-def test_write_read_cube_attrs(
+def _deterministic_attribute_data(attr_type: str, count: int) -> np.ndarray:
+    if attr_type == "FLOAT":
+        return np.linspace(-1.0, 1.0, count, dtype=np.float32)
+    if attr_type == "INT":
+        return np.arange(count, dtype=np.int32) * 3 - 7
+    if attr_type == "BOOLEAN":
+        return np.arange(count) % 2 == 0
+    if attr_type == "FLOAT2":
+        return np.arange(count * 2, dtype=np.float32).reshape(count, 2) / 10
+    if attr_type == "INT32_2D":
+        return np.arange(count * 2, dtype=np.int32).reshape(count, 2) - 5
+    if attr_type == "FLOAT_VECTOR":
+        return np.linspace(-1.0, 1.0, count * 3).reshape(count, 3)
+    raise ValueError(f"Unknown attribute type: {attr_type}")
+
+
+@pytest.mark.parametrize("attr_type", ATTR_TYPES)
+@pytest.mark.parametrize("domain", CUBE_COUNTS)
+def test_attribute_roundtrip(
     attr_type: str,
-    domain: Literal["POINT", "EDGE", "FACE"],
+    domain: Literal["POINT", "EDGE", "FACE", "CORNER"],
 ):
     obj = pf.ops.primitives.mesh_cube()
-
-    expected_count = CUBE_COUNTS[domain]
-
-    # Generate appropriate test data based on type
-    if attr_type == "FLOAT":
-        data = np.random.uniform(-1, 1, expected_count).astype(np.float32)
-    elif attr_type == "INT":
-        data = np.random.randint(0, 10, expected_count).astype(np.int32)
-    elif attr_type == "BOOLEAN":
-        data = np.random.uniform(0, 1, expected_count) > 0.5
-    elif attr_type == "FLOAT_VECTOR":
-        data = np.random.uniform(-1, 1, (expected_count, 3)).astype(np.float32)
-    else:
-        raise ValueError(f"Unknown attribute type: {attr_type}")
-
-    # Write and read back
+    data = _deterministic_attribute_data(attr_type, CUBE_COUNTS[domain])
     name = f"test_{attr_type.lower()}_{domain.lower()}"
-    pf.ops.attr.write_attribute(
-        data=data,
-        obj=obj,
-        key=name,
-        domain=domain,
-    )
-    result = pf.ops.attr.get_attribute(obj, name)
+    pf.ops.attr.write_attribute(data=data, obj=obj, key=name, domain=domain)
+    result = pf.ops.attr.read_attribute(obj, name)
 
-    # Verify data matches
     np.testing.assert_array_almost_equal(data, result)
 
 
-def test_nonexistent_attr():
+def test_get_attribute_present():
+    obj = pf.ops.primitives.mesh_cube()
+    data = np.arange(CUBE_COUNTS["POINT"], dtype=np.float32)
+    pf.ops.attr.write_attribute(data=data, obj=obj, key="present", domain="POINT")
+
+    result = pf.ops.attr.get_attribute(obj, "present", "POINT")
+
+    np.testing.assert_array_equal(result, data)
+
+
+def test_get_attribute_missing():
     obj = pf.ops.primitives.mesh_cube()
 
-    # Should return None for non-existent attribute
     result = pf.ops.attr.get_attribute(obj, "nonexistent", "POINT")
+
     assert result is None
-
-
-def test_all_attr_types_and_domains():
-    obj = pf.ops.primitives.mesh_cube()
-    counts = {"POINT": 8, "EDGE": 12, "FACE": 6, "CORNER": 24}
-
-    cases = {
-        "FLOAT": lambda n: np.random.uniform(0, 1, n).astype(np.float32),
-        "INT": lambda n: np.random.randint(0, 10, n).astype(np.int32),
-        "BOOLEAN": lambda n: np.random.uniform(0, 1, n) > 0.5,
-        "FLOAT2": lambda n: np.random.uniform(0, 1, (n, 2)).astype(np.float32),
-        "INT32_2D": lambda n: np.random.randint(0, 10, (n, 2)).astype(np.int32),
-        "FLOAT_VECTOR": lambda n: np.random.uniform(0, 1, (n, 3)).astype(np.float64),
-    }
-
-    for domain, n in counts.items():
-        for dtype, make_data in cases.items():
-            data = make_data(n)
-            key = f"test_{dtype}_{domain}".lower()
-            pf.ops.attr.write_attribute(obj=obj, data=data, key=key, domain=domain)
-            result = pf.ops.attr.read_attribute(obj, key)
-            np.testing.assert_array_almost_equal(
-                result, data, err_msg=f"{dtype} {domain}"
-            )
 
 
 def test_write_int32_roundtrip_exact():

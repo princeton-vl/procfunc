@@ -10,6 +10,10 @@ jobs:
     runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Validate history
+        run: bash scripts/validate_history.sh
       - uses: astral-sh/setup-uv@v8.2.0
         with:
           python-version: "3.11"

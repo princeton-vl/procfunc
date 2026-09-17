@@ -1,9 +1,16 @@
+import collections.abc
+
 import bpy
 import numpy as np
 import pytest
 
 import procfunc as pf
 from conftest import realize as _realize
+
+
+def _linked_from(socket: bpy.types.NodeSocket) -> bpy.types.NodeSocket:
+    assert len(socket.links) == 1
+    return socket.links[0].from_socket
 
 
 def test_to_material_basic():
@@ -27,19 +34,21 @@ def test_to_material_basic():
 
 
 def test_to_material_with_texture():
-    """Test to_material with texture nodes."""
-    # Create a texture-based material
     coord = pf.nodes.shader.coord()
     noise = pf.nodes.texture.noise(
         vector=coord.generated, scale=5.0, detail=2.0, roughness=0.5
     )
-
     bsdf = pf.nodes.shader.principled_bsdf(base_color=noise.color, roughness=noise.fac)
+    tree = pf.Material(surface=bsdf).item().node_tree
 
-    # Convert to material
-    material = pf.Material(surface=bsdf)
-
-    assert material.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+    bsdf_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled")
+    noise_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeTexNoise")
+    coord_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeTexCoord")
+    assert _linked_from(output.inputs["Surface"]).node == bsdf_node
+    assert _linked_from(bsdf_node.inputs["Base Color"]) == noise_node.outputs["Color"]
+    assert _linked_from(bsdf_node.inputs["Roughness"]) == noise_node.outputs["Fac"]
+    assert _linked_from(noise_node.inputs["Vector"]) == coord_node.outputs["Generated"]
 
 
 def test_to_environment_basic():
@@ -64,17 +73,24 @@ def test_to_environment_basic():
 
 
 def test_to_environment_with_sky():
-    """Test to_environment with sky texture."""
-    # Create sky-based environment
-    sky = pf.nodes.texture.sky(sky_type="NISHITA", sun_elevation=0.5, sun_rotation=0.0)
-
+    sky = pf.nodes.texture.sky_texture_nishita(sun_elevation=0.5, sun_rotation=0.0)
     background = pf.nodes.shader.background(color=sky, strength=1.0)
+    tree = pf.nodes.to_environment(surface=background).item().node_tree
 
-    # Convert to environment
-    world = pf.nodes.to_environment(surface=background)
-
-    assert world is not None
-    assert world.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputWorld")
+    group = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeGroup")
+    group_output = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "NodeGroupOutput"
+    )
+    background_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeBackground"
+    )
+    sky_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeTexSky"
+    )
+    assert _linked_from(output.inputs["Surface"]) == group.outputs["surface"]
+    assert _linked_from(group_output.inputs["surface"]).node == background_node
+    assert _linked_from(background_node.inputs["Color"]) == sky_node.outputs["Color"]
 
 
 def test_to_compositor_basic():
@@ -102,20 +118,22 @@ def test_to_compositor_basic():
 
 
 def test_material_with_displacement():
-    """Test material creation with displacement."""
-    # Create material with displacement
-    coord = pf.nodes.shader.coord()
-    noise = pf.nodes.texture.noise(vector=coord.generated, scale=2.0)
-
+    noise = pf.nodes.texture.noise(vector=(0.0, 0.0, 0.0), scale=2.0)
     bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.8, 0.8, 1.0))
-
     displacement = pf.nodes.shader.displacement(
         height=noise.fac, midlevel=0.5, scale=0.1
     )
+    tree = pf.Material(surface=bsdf, displacement=displacement).item().node_tree
 
-    material = pf.Material(surface=bsdf, displacement=displacement)
-
-    assert material.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+    bsdf_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled")
+    displacement_node = next(
+        n for n in tree.nodes if n.bl_idname == "ShaderNodeDisplacement"
+    )
+    noise_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeTexNoise")
+    assert _linked_from(output.inputs["Surface"]).node == bsdf_node
+    assert _linked_from(output.inputs["Displacement"]).node == displacement_node
+    assert _linked_from(displacement_node.inputs["Height"]) == noise_node.outputs["Fac"]
 
 
 def test_material_constant_zero_displacement_dropped():
@@ -137,27 +155,39 @@ def test_material_rejects_raw_constant_outputs():
 
 
 def test_material_with_volume():
-    """Test material creation with volume shader."""
-    # Create material with volume
     bsdf = pf.nodes.shader.principled_bsdf(base_color=(0.8, 0.8, 0.8, 1.0))
-
     volume = pf.nodes.shader.volume_principled(color=(1.0, 1.0, 1.0, 1.0), density=0.1)
+    tree = pf.Material(surface=bsdf, volume=volume).item().node_tree
 
-    material = pf.Material(surface=bsdf, volume=volume)
-
-    assert material.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputMaterial")
+    bsdf_node = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeBsdfPrincipled")
+    volume_node = next(
+        n for n in tree.nodes if n.bl_idname == "ShaderNodeVolumePrincipled"
+    )
+    assert _linked_from(output.inputs["Surface"]).node == bsdf_node
+    assert _linked_from(output.inputs["Volume"]).node == volume_node
 
 
 def test_environment_with_volume():
-    """Test environment creation with volume."""
-
     background = pf.nodes.shader.background(color=(0.1, 0.2, 0.4, 1.0), strength=1.0)
     volume = pf.nodes.shader.volume_principled(color=(0.8, 0.9, 1.0, 1.0), density=0.01)
+    tree = pf.nodes.to_environment(surface=background, volume=volume).item().node_tree
 
-    world = pf.nodes.to_environment(surface=background, volume=volume)
-
-    assert world is not None
-    assert world.item().use_nodes is True
+    output = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeOutputWorld")
+    group = next(n for n in tree.nodes if n.bl_idname == "ShaderNodeGroup")
+    group_output = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "NodeGroupOutput"
+    )
+    background_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeBackground"
+    )
+    volume_node = next(
+        n for n in group.node_tree.nodes if n.bl_idname == "ShaderNodeVolumePrincipled"
+    )
+    assert _linked_from(output.inputs["Surface"]) == group.outputs["surface"]
+    assert _linked_from(output.inputs["Volume"]) == group.outputs["volume"]
+    assert _linked_from(group_output.inputs["surface"]).node == background_node
+    assert _linked_from(group_output.inputs["volume"]).node == volume_node
 
 
 def test_scene_bound_compositor_repeat_execution():
@@ -263,6 +293,123 @@ def test_vector_curve_nondefault_fac_raises_in_compositor():
 
     with pytest.raises(ValueError, match="Fac"):
         _realize(fn, pf.nodes.NodeGroupType.COMPOSITOR)
+
+
+@pytest.mark.parametrize("handle_type", ["AUTO_CLAMPED", "VECTOR"])
+def test_float_curve_handles_and_unclipped_realize(
+    handle_type: pf.nodes.HandleType,
+) -> None:
+    curve = np.array([[0.0, 0.0], [0.5, 1.0], [1.0, 0.0]])
+
+    def fn():
+        return pf.nodes.math.float_curve(
+            factor=1.0,
+            value=0.5,
+            curve=curve,
+            handle_type=handle_type,
+            use_clip=False,
+        )
+
+    ng = _realize(fn, pf.nodes.NodeGroupType.SHADER)
+    node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeFloatCurve")
+    assert node.mapping.use_clip is False
+    assert [point.handle_type for point in node.mapping.curves[0].points] == [
+        handle_type
+    ] * 3
+
+
+def test_float_curve_handle_types_apply_to_default_curve() -> None:
+    def fn() -> pf.ProcNode:
+        return pf.nodes.math.float_curve(
+            factor=1.0,
+            value=0.5,
+            handle_types=["VECTOR", "AUTO"],
+        )
+
+    ng = _realize(fn, pf.nodes.NodeGroupType.SHADER)
+    node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeFloatCurve")
+    actual = [point.handle_type for point in node.mapping.curves[0].points]
+    assert actual == ["VECTOR", "AUTO"]
+
+
+def test_float_curve_rejects_broadcast_and_per_point_handles() -> None:
+    def fn() -> pf.ProcNode:
+        return pf.nodes.math.float_curve(
+            factor=1.0,
+            value=0.5,
+            handle_type="VECTOR",
+            handle_types=["VECTOR", "AUTO"],
+        )
+
+    with pytest.raises(ValueError, match="handle_types.*handle_type"):
+        _realize(fn, pf.nodes.NodeGroupType.SHADER)
+
+
+def _vector_curve_with_handles(
+    handle_types: list[list[pf.nodes.HandleType]],
+) -> pf.ProcNode:
+    return pf.nodes.math.vector_curve(vector=(0.5, 0.5, 0.5), handle_types=handle_types)
+
+
+def _shader_rgb_curve_with_handles(
+    handle_types: list[list[pf.nodes.HandleType]],
+) -> pf.ProcNode:
+    return pf.nodes.color.rgb_curve(
+        fac=1.0, color=(0.5, 0.5, 0.5, 1.0), handle_types=handle_types
+    )
+
+
+def _compositor_rgb_curve_with_handles(
+    handle_types: list[list[pf.nodes.HandleType]],
+) -> pf.ProcNode:
+    return pf.nodes.compositor.rgb_curve(
+        fac=1.0, image=(0.5, 0.5, 0.5, 1.0), handle_types=handle_types
+    )
+
+
+@pytest.mark.parametrize(
+    ("make_curve", "group_type", "bl_idname", "curve_count"),
+    [
+        (
+            _vector_curve_with_handles,
+            pf.nodes.NodeGroupType.SHADER,
+            "ShaderNodeVectorCurve",
+            3,
+        ),
+        (
+            _shader_rgb_curve_with_handles,
+            pf.nodes.NodeGroupType.SHADER,
+            "ShaderNodeRGBCurve",
+            4,
+        ),
+        (
+            _compositor_rgb_curve_with_handles,
+            pf.nodes.NodeGroupType.COMPOSITOR,
+            "CompositorNodeCurveRGB",
+            4,
+        ),
+    ],
+)
+def test_curve_handle_types_apply_to_default_curves(
+    make_curve: collections.abc.Callable[
+        [list[list[pf.nodes.HandleType]]], pf.ProcNode
+    ],
+    group_type: pf.nodes.NodeGroupType,
+    bl_idname: str,
+    curve_count: int,
+) -> None:
+    expected = [["VECTOR", "AUTO"]]
+    expected += [["AUTO", "AUTO"] for _ in range(curve_count - 1)]
+
+    def fn() -> pf.ProcNode:
+        return make_curve(expected)
+
+    ng = _realize(fn, group_type)
+    node = next(n for n in ng.nodes if n.bl_idname == bl_idname)
+    actual = [
+        [point.handle_type for point in curve.points] for curve in node.mapping.curves
+    ]
+    assert actual == expected
 
 
 def test_multiple_outputs_compositor():
@@ -439,6 +586,39 @@ def test_image_texture_unwraps_image_wrapper():
 
     assert obj is not None
     assert obj.item().type == "MESH"
+
+
+@pytest.mark.parametrize("kind", ["image", "environment"])
+@pytest.mark.parametrize("with_datablock", [False, True])
+def test_image_user_settings_survive_datablock_assignment(
+    kind: str, with_datablock: bool
+) -> None:
+    raw = bpy.data.images.new("test_image_user", 2, 2)
+    image = pf.Image(raw) if with_datablock else None
+    value = getattr(pf.nodes.texture, kind)(
+        vector=None,
+        image=image,
+        frame_current=4,
+        frame_duration=42,
+        frame_offset=7,
+        frame_start=2,
+        tile=3,
+        use_auto_refresh=True,
+        use_cyclic=True,
+    )
+    if kind == "image":
+        value = value.color
+    ng = _realize(lambda: value, pf.nodes.NodeGroupType.SHADER)
+    tex = next(n for n in ng.nodes if n.bl_idname == f"ShaderNodeTex{kind.title()}")
+
+    assert tex.image == (raw if with_datablock else None)
+    assert tex.image_user.frame_current == 4
+    assert tex.image_user.frame_duration == 42
+    assert tex.image_user.frame_offset == 7
+    assert tex.image_user.frame_start == 2
+    assert tex.image_user.tile == 3
+    assert tex.image_user.use_auto_refresh
+    assert tex.image_user.use_cyclic
 
 
 def test_to_object_basic():

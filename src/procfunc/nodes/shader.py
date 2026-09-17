@@ -272,8 +272,48 @@ def hair_bsdf(
     )
 
 
-def principled_hair_bsdf(
-    color: nt.SocketOrVal[pt.Color] = (0.017513, 0.005763, 0.002059, 1),
+THairParametrization = Literal["ABSORPTION", "COLOR", "MELANIN"]
+
+
+def _principled_hair_color_inputs(
+    *,
+    color: nt.SocketOrVal[pt.Color] | None,
+    absorption_coefficient: nt.SocketOrVal[pt.Vector] | None,
+    melanin: nt.SocketOrVal[float] | None,
+    melanin_redness: nt.SocketOrVal[float] | None,
+    tint: nt.SocketOrVal[pt.Color] | None,
+    random_color: nt.SocketOrVal[float] | None,
+) -> tuple[THairParametrization, dict[str, Any]]:
+    absorption_given = absorption_coefficient is not None
+    color_given = color is not None
+    melanin_given = any(
+        value is not None for value in (melanin, melanin_redness, tint, random_color)
+    )
+    if sum((absorption_given, color_given, melanin_given)) > 1:
+        raise ValueError(
+            "principled hair BSDF got inputs for multiple color parametrizations"
+        )
+    if absorption_given:
+        return "ABSORPTION", {"Absorption Coefficient": absorption_coefficient}
+    if melanin_given:
+        return "MELANIN", {
+            "Melanin": 0.8 if melanin is None else melanin,
+            "Melanin Redness": 1.0 if melanin_redness is None else melanin_redness,
+            "Tint": (1, 1, 1, 1) if tint is None else tint,
+            "Random Color": 0.0 if random_color is None else random_color,
+        }
+    return "COLOR", {
+        "Color": (0.017513, 0.005763, 0.002059, 1) if color is None else color
+    }
+
+
+def principled_hair_bsdf_chiang(
+    color: nt.SocketOrVal[pt.Color] | None = None,
+    absorption_coefficient: nt.SocketOrVal[pt.Vector] | None = None,
+    melanin: nt.SocketOrVal[float] | None = None,
+    melanin_redness: nt.SocketOrVal[float] | None = None,
+    tint: nt.SocketOrVal[pt.Color] | None = None,
+    random_color: nt.SocketOrVal[float] | None = None,
     roughness: nt.SocketOrVal[float] = 0.3,
     radial_roughness: nt.SocketOrVal[float] = 0.3,
     coat: nt.SocketOrVal[float] = 0.0,
@@ -281,18 +321,25 @@ def principled_hair_bsdf(
     offset: nt.SocketOrVal[float] = 0.034907,
     random_roughness: nt.SocketOrVal[float] = 0.0,
     random: nt.SocketOrVal[float] = 0.0,
-    model: Literal["CHIANG", "HUANG"] = "CHIANG",
-    parametrization: Literal["ABSORPTION", "MELANIN", "COLOR"] = "COLOR",
 ) -> nt.ProcNode[nt.Shader]:
     """
-    Uses a BsdfHairPrincipled Shader Node.
+    Uses a BsdfHairPrincipled Shader Node with model='CHIANG'.
+
+    Provide color, absorption_coefficient, or any melanin input to select the
+    color parametrization. Providing none uses COLOR with Blender's default.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/hair_principled.html
     """
-    return nt.ProcNode.from_nodetype(
-        node_type="ShaderNodeBsdfHairPrincipled",
-        inputs={
-            "Color": color,
+    parametrization, inputs = _principled_hair_color_inputs(
+        color=color,
+        absorption_coefficient=absorption_coefficient,
+        melanin=melanin,
+        melanin_redness=melanin_redness,
+        tint=tint,
+        random_color=random_color,
+    )
+    inputs.update(
+        {
             "Roughness": roughness,
             "Radial Roughness": radial_roughness,
             "Coat": coat,
@@ -300,8 +347,65 @@ def principled_hair_bsdf(
             "Offset": offset,
             "Random Roughness": random_roughness,
             "Random": random,
-        },
-        attrs={"model": model, "parametrization": parametrization},
+        }
+    )
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeBsdfHairPrincipled",
+        inputs=inputs,
+        attrs={"model": "CHIANG", "parametrization": parametrization},
+    )
+
+
+def principled_hair_bsdf_huang(
+    color: nt.SocketOrVal[pt.Color] | None = None,
+    absorption_coefficient: nt.SocketOrVal[pt.Vector] | None = None,
+    melanin: nt.SocketOrVal[float] | None = None,
+    melanin_redness: nt.SocketOrVal[float] | None = None,
+    tint: nt.SocketOrVal[pt.Color] | None = None,
+    random_color: nt.SocketOrVal[float] | None = None,
+    aspect_ratio: nt.SocketOrVal[float] = 0.85,
+    roughness: nt.SocketOrVal[float] = 0.3,
+    ior: nt.SocketOrVal[float] = 1.55,
+    offset: nt.SocketOrVal[float] = 0.034907,
+    random_roughness: nt.SocketOrVal[float] = 0.0,
+    random: nt.SocketOrVal[float] = 0.0,
+    reflection: nt.SocketOrVal[float] = 1.0,
+    transmission: nt.SocketOrVal[float] = 1.0,
+    secondary_reflection: nt.SocketOrVal[float] = 1.0,
+) -> nt.ProcNode[nt.Shader]:
+    """
+    Uses a BsdfHairPrincipled Shader Node with model='HUANG'.
+
+    Provide color, absorption_coefficient, or any melanin input to select the
+    color parametrization. Providing none uses COLOR with Blender's default.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/hair_principled.html
+    """
+    parametrization, inputs = _principled_hair_color_inputs(
+        color=color,
+        absorption_coefficient=absorption_coefficient,
+        melanin=melanin,
+        melanin_redness=melanin_redness,
+        tint=tint,
+        random_color=random_color,
+    )
+    inputs.update(
+        {
+            "Aspect Ratio": aspect_ratio,
+            "Roughness": roughness,
+            "IOR": ior,
+            "Offset": offset,
+            "Random Roughness": random_roughness,
+            "Random": random,
+            "Reflection": reflection,
+            "Transmission": transmission,
+            "Secondary Reflection": secondary_reflection,
+        }
+    )
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeBsdfHairPrincipled",
+        inputs=inputs,
+        attrs={"model": "HUANG", "parametrization": parametrization},
     )
 
 
@@ -843,10 +947,9 @@ def mapping(
     location: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
-    vector_type: Literal["POINT", "TEXTURE", "VECTOR", "NORMAL"] = "POINT",
 ) -> nt.ProcNode[pt.Vector]:
     """
-    Uses a Mapping Shader Node.
+    Uses a Mapping Shader Node with vector_type='POINT'.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
     """
@@ -858,7 +961,64 @@ def mapping(
             "Rotation": rotation,
             "Scale": scale,
         },
-        attrs={"vector_type": vector_type},
+        attrs={"vector_type": "POINT"},
+    )
+
+
+def mapping_texture(
+    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    location: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+) -> nt.ProcNode[pt.Vector]:
+    """
+    Uses a Mapping Shader Node with vector_type='TEXTURE'.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeMapping",
+        inputs={
+            "Vector": vector,
+            "Location": location,
+            "Rotation": rotation,
+            "Scale": scale,
+        },
+        attrs={"vector_type": "TEXTURE"},
+    )
+
+
+def mapping_vector(
+    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+) -> nt.ProcNode[pt.Vector]:
+    """
+    Uses a Mapping Shader Node with vector_type='VECTOR'.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeMapping",
+        inputs={"Vector": vector, "Rotation": rotation, "Scale": scale},
+        attrs={"vector_type": "VECTOR"},
+    )
+
+
+def mapping_normal(
+    vector: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    scale: nt.SocketOrVal[pt.Vector] = (1, 1, 1),
+) -> nt.ProcNode[pt.Vector]:
+    """
+    Uses a Mapping Shader Node with vector_type='NORMAL'.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/vector/mapping.html
+    """
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeMapping",
+        inputs={"Vector": vector, "Rotation": rotation, "Scale": scale},
+        attrs={"vector_type": "NORMAL"},
     )
 
 
@@ -1194,7 +1354,34 @@ def squeeze(
     )
 
 
-def subsurface_scattering(
+def subsurface_scattering_burley(
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    scale: nt.SocketOrVal[float] = 0.05,
+    radius: nt.SocketOrVal[pt.Vector] = (1, 0.2, 0.1),
+    normal: nt.SocketOrVal[pt.Vector] = (0.0, 0.0, 0.0),
+) -> nt.ProcNode[nt.Shader]:
+    """
+    Uses a SubsurfaceScattering Shader Node with falloff='BURLEY'.
+
+    Args:
+        normal: Avoid using this input. We recommend using the shader's Displacement output instead, which supports bumpmapping OR real mesh render/export.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/volume_scatter.html
+    """
+
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeSubsurfaceScattering",
+        inputs={
+            "Color": color,
+            "Scale": scale,
+            "Radius": radius,
+            "Normal": normal,
+        },
+        attrs={"falloff": "BURLEY"},
+    )
+
+
+def subsurface_scattering_random_walk(
     color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
     scale: nt.SocketOrVal[float] = 0.05,
     radius: nt.SocketOrVal[pt.Vector] = (1, 0.2, 0.1),
@@ -1202,10 +1389,9 @@ def subsurface_scattering(
     roughness: nt.SocketOrVal[float] = 1.0,
     anisotropy: nt.SocketOrVal[float] = 0.0,
     normal: nt.SocketOrVal[pt.Vector] = (0.0, 0.0, 0.0),
-    falloff: Literal["BURLEY", "RANDOM_WALK", "RANDOM_WALK_SKIN"] = "RANDOM_WALK",
 ) -> nt.ProcNode[nt.Shader]:
     """
-    Uses a SubsurfaceScattering Shader Node.
+    Uses a SubsurfaceScattering Shader Node with falloff='RANDOM_WALK'.
 
     Args:
         normal: Avoid using this input. We recommend using the shader's Displacement output instead, which supports bumpmapping OR real mesh render/export.
@@ -1224,7 +1410,38 @@ def subsurface_scattering(
             "Anisotropy": anisotropy,
             "Normal": normal,
         },
-        attrs={"falloff": falloff},
+        attrs={"falloff": "RANDOM_WALK"},
+    )
+
+
+def subsurface_scattering_random_walk_skin(
+    color: nt.SocketOrVal[pt.Color] = (0.8, 0.8, 0.8, 1),
+    scale: nt.SocketOrVal[float] = 0.05,
+    radius: nt.SocketOrVal[pt.Vector] = (1, 0.2, 0.1),
+    ior: nt.SocketOrVal[float] = 1.4,
+    anisotropy: nt.SocketOrVal[float] = 0.0,
+    normal: nt.SocketOrVal[pt.Vector] = (0.0, 0.0, 0.0),
+) -> nt.ProcNode[nt.Shader]:
+    """
+    Uses a SubsurfaceScattering Shader Node with falloff='RANDOM_WALK_SKIN'.
+
+    Args:
+        normal: Avoid using this input. We recommend using the shader's Displacement output instead, which supports bumpmapping OR real mesh render/export.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/shader/volume_scatter.html
+    """
+
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeSubsurfaceScattering",
+        inputs={
+            "Color": color,
+            "Scale": scale,
+            "Radius": radius,
+            "IOR": ior,
+            "Anisotropy": anisotropy,
+            "Normal": normal,
+        },
+        attrs={"falloff": "RANDOM_WALK_SKIN"},
     )
 
 

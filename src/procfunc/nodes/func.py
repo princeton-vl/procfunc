@@ -726,7 +726,6 @@ def replace_string(
 def rotate_euler(
     rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
     rotate_by: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
-    rotation_type: Literal["EULER", "AXIS_ANGLE"] = "EULER",
     space: Literal["OBJECT", "LOCAL"] = "OBJECT",
 ) -> nt.ProcNode[pt.Vector]:
     """
@@ -737,7 +736,21 @@ def rotate_euler(
     return nt.ProcNode.from_nodetype(
         node_type="FunctionNodeRotateEuler",
         inputs={"Rotation": rotation, "Rotate By": rotate_by},
-        attrs={"rotation_type": rotation_type, "space": space},
+        attrs={"rotation_type": "EULER", "space": space},
+    )
+
+
+def rotate_euler_axis_angle(
+    rotation: nt.SocketOrVal[pt.Vector] = (0, 0, 0),
+    axis: nt.SocketOrVal[pt.Vector] = (0, 0, 1),
+    angle: nt.SocketOrVal[float] = 0.0,
+    space: Literal["OBJECT", "LOCAL"] = "OBJECT",
+) -> nt.ProcNode[pt.Vector]:
+    """Uses a RotateEuler Function Node with rotation_type='AXIS_ANGLE'."""
+    return nt.ProcNode.from_nodetype(
+        node_type="FunctionNodeRotateEuler",
+        inputs={"Rotation": rotation, "Axis": axis, "Angle": angle},
+        attrs={"rotation_type": "AXIS_ANGLE", "space": space},
     )
 
 

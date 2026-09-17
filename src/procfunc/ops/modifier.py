@@ -86,10 +86,33 @@ def solidify(
 def bevel(
     mutates_obj: t.MeshObject,
     width: float = 0.01,
+    offset_type: Literal["OFFSET", "WIDTH", "DEPTH", "ABSOLUTE"] = "OFFSET",
     segments: int = 1,
 ):
     """Apply bevel modifier."""
-    return modify(mutates_obj, "BEVEL", width=width, segments=segments)
+    return modify(
+        mutates_obj,
+        "BEVEL",
+        width=width,
+        offset_type=offset_type,
+        segments=segments,
+    )
+
+
+@primitive(mutates=["mutates_obj"])
+def bevel_pct(
+    mutates_obj: t.MeshObject,
+    width_pct: float = 10.0,
+    segments: int = 1,
+):
+    """Apply a percentage-width bevel modifier."""
+    return modify(
+        mutates_obj,
+        "BEVEL",
+        width_pct=width_pct,
+        offset_type="PERCENT",
+        segments=segments,
+    )
 
 
 @primitive(mutates=["mutates_obj"])
@@ -218,27 +241,17 @@ def mirror(
 def array(
     mutates_obj: t.MeshObject,
     count: int = 2,
-    relative_offset_displace: Tuple[float, float, float] | None = None,
     constant_offset_displace: Tuple[float, float, float] | None = None,
     merge_threshold: float = 0.0,
 ):
     """Apply array modifier."""
-    if relative_offset_displace is not None and constant_offset_displace is not None:
-        raise ValueError(
-            "Cannot specify both relative_offset_displace and constant_offset_displace"
-        )
     kwargs = {}
-    if relative_offset_displace is not None:
-        kwargs = {
-            "relative_offset_displace": relative_offset_displace,
-            "use_relative_offset": True,
-            "use_constant_offset": False,
-        }
     if constant_offset_displace is not None:
         kwargs = {
             "constant_offset_displace": constant_offset_displace,
             "use_constant_offset": True,
             "use_relative_offset": False,
+            "use_object_offset": False,
         }
     return modify(
         mutates_obj,
@@ -247,6 +260,48 @@ def array(
         merge_threshold=merge_threshold,
         use_merge_vertices=merge_threshold > 0,
         **kwargs,
+    )
+
+
+@primitive(mutates=["mutates_obj"])
+def array_relative_offset(
+    mutates_obj: t.MeshObject,
+    count: int = 2,
+    relative_offset_displace: Tuple[float, float, float] = (1.0, 0.0, 0.0),
+    merge_threshold: float = 0.0,
+):
+    """Apply an array modifier with a relative offset."""
+    return modify(
+        mutates_obj,
+        "ARRAY",
+        count=count,
+        relative_offset_displace=relative_offset_displace,
+        use_constant_offset=False,
+        use_object_offset=False,
+        use_relative_offset=True,
+        merge_threshold=merge_threshold,
+        use_merge_vertices=merge_threshold > 0,
+    )
+
+
+@primitive(mutates=["mutates_obj"])
+def array_object_offset(
+    mutates_obj: t.MeshObject,
+    object_offset: t.Object,
+    count: int = 2,
+    merge_threshold: float = 0.0,
+):
+    """Apply an array modifier with an object offset."""
+    return modify(
+        mutates_obj,
+        "ARRAY",
+        count=count,
+        offset_object=object_offset,
+        use_constant_offset=False,
+        use_object_offset=True,
+        use_relative_offset=False,
+        merge_threshold=merge_threshold,
+        use_merge_vertices=merge_threshold > 0,
     )
 
 
@@ -498,18 +553,28 @@ def curve_deform(
     )
 
 
+TShrinkWrapMode = Literal[
+    "NEAREST_SURFACEPOINT",
+    "NEAREST_VERTEX",
+    "PROJECT",
+    "TARGET_PROJECT",
+]
+
+
 @primitive(mutates=["mutates_obj"])
 def shrinkwrap(
     mutates_obj: t.MeshObject,
     target: t.MeshObject,
-    # wrap_method: Literal["NEAREST_SURFACEPOINT", "NEAREST_VERTEX", "PROJECT", "TARGET_PROJECT"] = "NEAREST_SURFACEPOINT",
+    wrap_method: TShrinkWrapMode = "NEAREST_SURFACEPOINT",
+    use_negative_direction: bool = False,
 ):
     """Apply shrinkwrap modifier."""
     return modify(
         mutates_obj,
         "SHRINKWRAP",
         target=target,
-        wrap_method="NEAREST_SURFACEPOINT",
+        use_negative_direction=use_negative_direction,
+        wrap_method=wrap_method,
     )
 
 
@@ -579,8 +644,12 @@ def collision(
 '''
 
 __all__ = [
+    "TShrinkWrapMode",
     "array",
+    "array_object_offset",
+    "array_relative_offset",
     "bevel",
+    "bevel_pct",
     "boolean_difference",
     "curve_deform",
     "boolean_intersect",

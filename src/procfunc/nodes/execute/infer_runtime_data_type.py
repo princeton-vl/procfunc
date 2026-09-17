@@ -84,6 +84,7 @@ def infer_operation_type(
     coerce_integers: bool,
     filter_keys: list[str] | None = None,
     vectorlike_options: list[bni.NodeDataType] | None = None,
+    broadcast_scalars: bool = False,
 ) -> bni.NodeDataType:
     # kwargs keys may be tuple socket ids like ("A", 0); match on the name part
     def _key_name(k):
@@ -109,6 +110,14 @@ def infer_operation_type(
     specific_types = [
         v for v in input_data_types if not isinstance(v, VectorLike) and v is not None
     ]
+    if broadcast_scalars and any(
+        isinstance(v, VectorLike) or v in _vectorlike_types for v in input_data_types
+    ):
+        specific_types = [
+            v
+            for v in specific_types
+            if v not in (bni.NodeDataType.FLOAT, bni.NodeDataType.INT)
+        ]
 
     # A 4-component tuple/list is an RGBA color, so prefer RGBA when the node
     # offers it; otherwise fall back to its first vector-like type.
@@ -182,6 +191,7 @@ def resolve_operation_data_type(
         coerce_integers,
         filter_keys=resolve_options.dependent_input_names,
         vectorlike_options=vectorlike_options,
+        broadcast_scalars=resolve_options.broadcast_scalars,
     )
 
     if logger.isEnabledFor(logging.DEBUG):

@@ -28,6 +28,7 @@ from .execute.execute import (
 )
 from .execute.util import NODE_OPERATOR_TABLE
 from .types import (
+    HandleType,
     ProcNode,
     Shader,
     SocketOrVal,
@@ -51,6 +52,7 @@ __all__ = [
     "ProcNode",
     "Shader",
     "SocketOrVal",
+    "HandleType",
     "NodeDataType",
     "NodeGroupType",
     "SocketType",

@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 class RuntimeResolveDataType:
     data_types: list[NodeDataType]
     dependent_input_names: list[str]
+    broadcast_scalars: bool = False
 
 
 class ContextualNode(Enum):

@@ -38,7 +38,7 @@ class TextureResult(NamedTuple):
 class VoronoiResult(NamedTuple):
     color: nt.ProcNode[pt.Color]
     distance: nt.ProcNode[float]
-    position: nt.ProcNode[pt.Vector]
+    position: nt.ProcNode[pt.Vector] | None
     w: nt.ProcNode[float] | None
 
 
@@ -131,11 +131,20 @@ def environment(
     image: Any = None,
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["EQUIRECTANGULAR", "MIRROR_BALL"] = "EQUIRECTANGULAR",
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> nt.ProcNode[pt.Color]:
     """
     Uses a TexEnvironment Shader Node.
 
     procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
+
+    Sequence and UDIM settings live on the node's ImageUser and are taken as plain arguments.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/environment.html
     """
@@ -149,6 +158,13 @@ def environment(
             "image": image,
             "interpolation": interpolation,
             "projection": projection,
+            "frame_current": frame_current,
+            "frame_duration": frame_duration,
+            "frame_offset": frame_offset,
+            "frame_start": frame_start,
+            "tile": tile,
+            "use_auto_refresh": use_auto_refresh,
+            "use_cyclic": use_cyclic,
         },
     )
 
@@ -218,11 +234,20 @@ def image(
     interpolation: TTextureInterpolationType = "Linear",
     projection: Literal["FLAT", "BOX", "SPHERE", "TUBE"] = "FLAT",
     projection_blend: float = 0.0,
+    frame_current: int = 0,
+    frame_duration: int = 100,
+    frame_offset: int = 0,
+    frame_start: int = 1,
+    tile: int = 0,
+    use_auto_refresh: bool = False,
+    use_cyclic: bool = False,
 ) -> TextureResult:
     """
     Uses a TexImage Shader Node.
 
     procfunc requires an explicit `vector` input - the node will not default to using texture coordinates or world coordinates the way Blender does
+
+    Sequence and UDIM settings live on the node's ImageUser and are taken as plain arguments.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/image.html
     """
@@ -238,6 +263,13 @@ def image(
             "interpolation": interpolation,
             "projection": projection,
             "projection_blend": projection_blend,
+            "frame_current": frame_current,
+            "frame_duration": frame_duration,
+            "frame_offset": frame_offset,
+            "frame_start": frame_start,
+            "tile": tile,
+            "use_auto_refresh": use_auto_refresh,
+            "use_cyclic": use_cyclic,
         },
     )
     return TextureResult(
@@ -279,8 +311,8 @@ def noise(
     detail: nt.SocketOrVal[float] = 2.0,
     roughness: nt.SocketOrVal[float] = 0.5,
     lacunarity: nt.SocketOrVal[float] = 2.0,
-    offset: float | None = None,
-    gain: float | None = None,
+    offset: nt.SocketOrVal[float] | None = None,
+    gain: nt.SocketOrVal[float] | None = None,
     distortion: nt.SocketOrVal[float] = 0.0,
     noise_dimensions: TNoiseDimensions = "3D",
     noise_type: TNoiseType = "FBM",
@@ -402,43 +434,112 @@ def point_density(
     )
 
 
-def sky(
-    air_density: float = 1.0,
-    altitude: float = 0.0,
-    dust_density: float = 1.0,
-    ground_albedo: float = 0.3,
-    ozone_density: float = 1.0,
-    sky_type: Literal["NISHITA", "HOSEK_WILKIE", "PREETHAM"] = "NISHITA",
+def sky_texture_preetham(
+    vector: nt.SocketOrVal[pt.Vector] | None = None,
     sun_direction: tuple = (0.0, 0.0, 1.0),
-    sun_disc: bool = True,
-    sun_elevation: float = 0.261799,
-    sun_intensity: float = 1.0,
-    sun_rotation: float = 0.0,
-    sun_size: float = 0.009512,
     turbidity: float = 2.2,
 ) -> nt.ProcNode[pt.Color]:
     """
-    Uses a TexSky Shader Node.
+    Uses a TexSky Shader Node with sky_type='PREETHAM'.
 
     See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/sky.html
     """
+    inputs = {}
+    if vector is not None:
+        inputs["Vector"] = vector
     return nt.ProcNode.from_nodetype(
         node_type="ShaderNodeTexSky",
-        inputs={},
+        inputs=inputs,
         attrs={
+            "sky_type": "PREETHAM",
+            "sun_direction": sun_direction,
+            "turbidity": turbidity,
+        },
+    )
+
+
+def sky_texture_hosek_wilkie(
+    vector: nt.SocketOrVal[pt.Vector] | None = None,
+    ground_albedo: float = 0.3,
+    sun_direction: tuple = (0.0, 0.0, 1.0),
+    turbidity: float = 2.2,
+) -> nt.ProcNode[pt.Color]:
+    """
+    Uses a TexSky Shader Node with sky_type='HOSEK_WILKIE'.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/sky.html
+    """
+    inputs = {}
+    if vector is not None:
+        inputs["Vector"] = vector
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeTexSky",
+        inputs=inputs,
+        attrs={
+            "sky_type": "HOSEK_WILKIE",
+            "ground_albedo": ground_albedo,
+            "sun_direction": sun_direction,
+            "turbidity": turbidity,
+        },
+    )
+
+
+def sky_texture_nishita(
+    vector: nt.SocketOrVal[pt.Vector] | None = None,
+    air_density: float = 1.0,
+    altitude: float = 0.0,
+    dust_density: float = 1.0,
+    ozone_density: float = 1.0,
+    sun_disc: bool = True,
+    sun_elevation: float | None = None,
+    sun_intensity: float | None = None,
+    sun_rotation: float | None = None,
+    sun_size: float | None = None,
+) -> nt.ProcNode[pt.Color]:
+    """
+    Uses a TexSky Shader Node with sky_type='NISHITA'.
+
+    Vector is only available when sun_disc=False.
+
+    See: https://docs.blender.org/manual/en/4.2/render/shader_nodes/textures/sky.html
+    """
+    if sun_disc and vector is not None:
+        raise ValueError("Nishita Vector is only available with sun_disc=False")
+    sun_parameters = {
+        "sun_intensity": sun_intensity,
+        "sun_size": sun_size,
+    }
+    specified_sun_parameters = [
+        name for name, value in sun_parameters.items() if value is not None
+    ]
+    if not sun_disc and specified_sun_parameters:
+        names = ", ".join(specified_sun_parameters)
+        raise ValueError(f"Nishita {names} require sun_disc=True")
+    if sun_elevation is None:
+        sun_elevation = 0.261799
+    if sun_intensity is None:
+        sun_intensity = 1.0
+    if sun_rotation is None:
+        sun_rotation = 0.0
+    if sun_size is None:
+        sun_size = 0.009512
+    inputs = {}
+    if vector is not None:
+        inputs["Vector"] = vector
+    return nt.ProcNode.from_nodetype(
+        node_type="ShaderNodeTexSky",
+        inputs=inputs,
+        attrs={
+            "sky_type": "NISHITA",
+            "sun_disc": sun_disc,
             "air_density": air_density,
             "altitude": altitude,
             "dust_density": dust_density,
-            "ground_albedo": ground_albedo,
             "ozone_density": ozone_density,
-            "sky_type": sky_type,
-            "sun_direction": sun_direction,
-            "sun_disc": sun_disc,
             "sun_elevation": sun_elevation,
             "sun_intensity": sun_intensity,
             "sun_rotation": sun_rotation,
             "sun_size": sun_size,
-            "turbidity": turbidity,
         },
     )
 
@@ -450,7 +551,7 @@ def voronoi(
     roughness: nt.SocketOrVal[float] = 0.5,
     lacunarity: nt.SocketOrVal[float] = 2.0,
     randomness: nt.SocketOrVal[float] = 1.0,
-    exponent: nt.SocketOrVal[float] = 0.0,
+    exponent: nt.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     feature: Literal["F1", "F2"] = "F1",
     normalize: bool = False,
@@ -487,7 +588,7 @@ def voronoi(
     elif vector is not None:
         inputs["Vector"] = vector
 
-    if exponent != 0.0:
+    if exponent is not None:
         assert distance == "MINKOWSKI", (
             f"exponent is only supported for Minkowski distance, got {distance=}"
         )
@@ -507,12 +608,13 @@ def voronoi(
         },
     )
 
-    w = res._output_socket("w") if voronoi_dimensions == "4D" else None
+    position = res._output_socket("position") if voronoi_dimensions != "1D" else None
+    w = res._output_socket("w") if voronoi_dimensions in {"1D", "4D"} else None
 
     return VoronoiResult(
         distance=res._output_socket("distance"),
         color=res._output_socket("color"),
-        position=res._output_socket("position"),
+        position=position,
         w=w,
     )
 
@@ -569,7 +671,7 @@ def voronoi_smooth_f1(
     lacunarity: nt.SocketOrVal[float] = 2.0,
     smoothness: nt.SocketOrVal[float] = 0.5,
     randomness: nt.SocketOrVal[float] = 1.0,
-    exponent: nt.SocketOrVal[float] = 0.0,
+    exponent: nt.SocketOrVal[float] | None = None,
     distance: TDistanceMetric = "EUCLIDEAN",
     normalize: bool = False,
     voronoi_dimensions: TNoiseDimensions = "3D",
@@ -594,7 +696,7 @@ def voronoi_smooth_f1(
     elif vector is not None:
         inputs["Vector"] = vector
 
-    if exponent != 0.0:
+    if exponent is not None:
         assert distance == "MINKOWSKI", (
             f"exponent is only supported for Minkowski distance, got {distance=}"
         )
@@ -615,12 +717,13 @@ def voronoi_smooth_f1(
         },
     )
 
-    w = res._output_socket("w") if voronoi_dimensions == "4D" else None
+    position = res._output_socket("position") if voronoi_dimensions != "1D" else None
+    w = res._output_socket("w") if voronoi_dimensions in {"1D", "4D"} else None
 
     return VoronoiResult(
         distance=res._output_socket("distance"),
         color=res._output_socket("color"),
-        position=res._output_socket("position"),
+        position=position,
         w=w,
     )
 
@@ -653,7 +756,7 @@ def wave(
     detail_scale: nt.SocketOrVal[float] = 1.0,
     detail_roughness: nt.SocketOrVal[float] = 0.5,
     phase_offset: nt.SocketOrVal[float] = 0.0,
-    bands_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
+    bands_direction: Literal["X", "Y", "Z", "DIAGONAL"] = "X",
     rings_direction: Literal["X", "Y", "Z", "SPHERICAL"] = "X",
     wave_profile: Literal["SIN", "SAW", "TRI"] = "SIN",
     wave_type: Literal["BANDS", "RINGS"] = "BANDS",

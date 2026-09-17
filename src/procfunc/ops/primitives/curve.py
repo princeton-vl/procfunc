@@ -4,17 +4,18 @@ import bpy
 import numpy as np
 
 from procfunc import types as t
+from procfunc.ops._util import execute_op
 
 SplineType = Literal["POLY", "BEZIER", "NURBS"]
 
 
 def curve_circle(radius: float = 1.0):
-    bpy.ops.curve.primitive_bezier_circle_add(radius=radius)
+    execute_op(bpy.ops.curve.primitive_bezier_circle_add, radius=radius)
     return t.CurveObject(bpy.context.active_object)
 
 
 def curve_bezier():
-    bpy.ops.curve.primitive_bezier_curve_add()
+    execute_op(bpy.ops.curve.primitive_bezier_curve_add)
     return t.CurveObject(bpy.context.active_object)
 
 
