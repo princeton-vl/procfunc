@@ -52,6 +52,7 @@ procfunc = ["nodes/manifest.json", "ops/manifest.json"]
 
 [tool.pytest.ini_options]
 testpaths = "tests"
+markers = ["render: requires a render-capable Blender environment"]
 
 [tool.ruff]
 exclude = ["examples", "experiments"]

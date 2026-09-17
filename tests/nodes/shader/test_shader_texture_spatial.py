@@ -9,6 +9,7 @@ import procfunc as pf
 
 texture = pf.nodes.texture
 shader = pf.nodes.shader
+pytestmark = pytest.mark.render
 UV = shader.coord().uv
 
 IES_PROFILE = """IESNA:LM-63-1995

@@ -13,6 +13,7 @@ from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import ParseMemo
 
 ATOL = 2e-3
+pytestmark = pytest.mark.render
 
 IMAGE_TEXTURE_NODES = ("ShaderNodeTexImage", "ShaderNodeTexEnvironment")
 

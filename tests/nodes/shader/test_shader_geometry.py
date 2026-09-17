@@ -5,11 +5,13 @@ import math
 
 import bpy
 import numpy as np
+import pytest
 import shader_eval
 
 import procfunc as pf
 
 shader = pf.nodes.shader
+pytestmark = pytest.mark.render
 
 UV = shader.coord().uv
 
