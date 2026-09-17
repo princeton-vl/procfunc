@@ -13,6 +13,7 @@ from procfunc.transpiler import parse_node_tree
 from procfunc.transpiler.bpy_to_computegraph import ParseMemo
 
 texture = pf.nodes.texture
+pytestmark = pytest.mark.render
 
 
 def test_checker_fac() -> None:

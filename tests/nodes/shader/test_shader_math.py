@@ -6,6 +6,7 @@ import shader_eval
 import procfunc as pf
 
 node_math = pf.nodes.math
+pytestmark = pytest.mark.render
 
 
 def test_clamp() -> None:

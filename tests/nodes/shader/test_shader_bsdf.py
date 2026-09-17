@@ -8,6 +8,7 @@ import shader_eval
 import procfunc as pf
 
 shader = pf.nodes.shader
+pytestmark = pytest.mark.render
 ALBEDO = pf.Color((0.8, 0.2, 0.1))
 LAMBERT = tuple(c / np.pi for c in (0.8, 0.2, 0.1))
 

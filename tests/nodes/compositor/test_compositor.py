@@ -22,6 +22,7 @@ import procfunc as pf
 from procfunc.transpiler import bpy_to_computegraph
 
 comp = pf.nodes.compositor
+pytestmark = pytest.mark.render
 
 N = 8
 COLOR = solid(N, N, (0.25, 0.5, 0.75, 1.0))

@@ -24,4 +24,6 @@ jobs:
           uv venv --python 3.11
           uv pip install --resolution lowest-direct -e ".[test]"
       - name: Run unit tests
+        env:
+          PYTEST_ADDOPTS: ${{ runner.environment != 'self-hosted' && '-m "not render"' || '' }}
         run: uv run --no-sync pytest

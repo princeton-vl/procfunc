@@ -1,8 +1,10 @@
+import pytest
 import shader_eval
 
 import procfunc as pf
 
 color = pf.nodes.color
+pytestmark = pytest.mark.render
 
 
 def test_mix_rgb() -> None:

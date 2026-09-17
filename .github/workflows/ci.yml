@@ -30,6 +30,8 @@ jobs:
           python-version: "3.11"
       - run: uv sync --extra dev
       - name: Run tests
+        env:
+          PYTEST_ADDOPTS: ${{ runner.environment != 'self-hosted' && '-m "not render"' || '' }}
         run: uv run pytest
 
   docs:

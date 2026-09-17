@@ -4,6 +4,7 @@ import shader_eval
 import procfunc as pf
 
 shader = pf.nodes.shader
+pytestmark = pytest.mark.render
 
 
 def test_render_color_passthrough() -> None:
