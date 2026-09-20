@@ -181,6 +181,11 @@ def trace(
         name = func.__name__
 
     proxy_args = _map_args(func, **inputs)
+    input_nodes = {
+        k: v.node
+        for k, v in proxy_args.items()
+        if isinstance(v, cg.Proxy) and isinstance(v.node, cg.InputPlaceholderNode)
+    }
 
     if pf.context.globals.current_trace_level is not None:
         # TODO we can lift this restriction fairly(?) easily by having a global patcher & saving/restoring this state
@@ -221,12 +226,6 @@ def trace(
 
     outputs = pytree.PyTree(func_result)
     outputs = outputs.map(extract_node)
-
-    input_nodes = {
-        k: v.node
-        for k, v in proxy_args.items()
-        if isinstance(v, cg.Proxy) and isinstance(v.node, cg.InputPlaceholderNode)
-    }
 
     compgraph = cg.ComputeGraph(
         inputs=pytree.PyTree(input_nodes),
