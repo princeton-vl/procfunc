@@ -10,7 +10,7 @@ T = TypeVar("T")
 logger = logging.getLogger(__name__)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def uniform(
     rng: np.random.Generator,
     low: float,
@@ -19,7 +19,7 @@ def uniform(
     return rng.uniform(low, high)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def normal(
     rng: np.random.Generator,
     mean: float,
@@ -28,7 +28,7 @@ def normal(
     return rng.normal(mean, std)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def randint(
     rng: np.random.Generator,
     low: int,
@@ -37,7 +37,7 @@ def randint(
     return rng.integers(low, high)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def uniform_tails(
     rng: np.random.Generator,
     low: float,
@@ -50,7 +50,7 @@ def uniform_tails(
         return rng.uniform(high - (high - low) * tail_pct, high)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def clip_gaussian(
     rng: np.random.Generator,
     mean: float,
@@ -75,7 +75,7 @@ def clip_gaussian(
     )
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def wrap_gaussian(
     rng: np.random.Generator,
     mean: float,
@@ -93,7 +93,7 @@ def wrap_gaussian(
     return x
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def exponential(
     rng: np.random.Generator,
     scale: float,
@@ -101,7 +101,7 @@ def exponential(
     return rng.exponential(scale)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def log_uniform(
     rng: np.random.Generator,
     low: float,
@@ -111,7 +111,7 @@ def log_uniform(
     return np.exp(rng.uniform(np.log(low), np.log(high), size=size))
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def log_normal(
     rng: np.random.Generator,
     mean: float,
@@ -121,7 +121,7 @@ def log_normal(
     return np.exp(rng.normal(np.log(mean), std, size=size))
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def spherical_sample(
     rng: np.random.Generator,
     min_elevation: float | None = None,
@@ -142,7 +142,7 @@ def spherical_sample(
     )
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def mixture_of_gaussian(
     rng: np.random.Generator,
     means: np.ndarray,
@@ -167,7 +167,7 @@ def mixture_of_gaussian(
     return res
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def beta(
     rng: np.random.Generator,
     a: float,
@@ -176,7 +176,7 @@ def beta(
     return rng.beta(a, b)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def poisson(
     rng: np.random.Generator,
     lam: float,
@@ -184,7 +184,7 @@ def poisson(
     return rng.poisson(lam)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def triangular(
     rng: np.random.Generator,
     low: float,
@@ -194,7 +194,7 @@ def triangular(
     return rng.triangular(low, mode, high)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def gamma(
     rng: np.random.Generator,
     shape: float,
@@ -203,7 +203,7 @@ def gamma(
     return rng.gamma(shape, scale)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def binomial(
     rng: np.random.Generator,
     n: int,
@@ -212,7 +212,7 @@ def binomial(
     return rng.binomial(n, p)
 
 
-@pf.tracer.primitive(allow_exec=True)
+@pf.tracer.primitive(allow_exec=True, mutates=["rng"])
 def geometric(
     rng: np.random.Generator,
     p: float,
