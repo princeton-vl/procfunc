@@ -24,13 +24,13 @@ $METHOD $BGYM_FROMSCRATCH --model gemini-2.5-pro   --output_dir outputs/exp_ifg_
 $METHOD $BGYM_FROMSCRATCH --model gpt-5.2          --output_dir outputs/exp_ifg_fromscratch_gpt-5.2/0 $BGYM_DOCS
 
 ## EVAL COMMANDS
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_pf_fromscratch_gemini-2.5-pro_nodocs/* --bench_data outputs/bench_data_pf
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gemini-2.5-pro_nodocs/* --bench_data outputs/bench_data
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_pf_fromscratch_gemini-2.5-pro/* --bench_data outputs/bench_data_pf
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gemini-2.5-pro/* --bench_data outputs/bench_data
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gpt-5-mini/0 --bench_data outputs/bench_data
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_pf_fromscratch_gpt-5-mini/0 --bench_data outputs/bench_data_pf
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gpt-5.2/0 --bench_data outputs/bench_data
-uv run python /home/araistrick/projects/procfunc/experiments/scripts/evaluate_results.py outputs/exp_pf_fromscratch_gpt-5.2/0 --bench_data outputs/bench_data_pf
+uv run python scripts/evaluate_results.py outputs/exp_pf_fromscratch_gemini-2.5-pro_nodocs/* --bench_data outputs/bench_data_pf
+uv run python scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gemini-2.5-pro_nodocs/* --bench_data outputs/bench_data
+uv run python scripts/evaluate_results.py outputs/exp_pf_fromscratch_gemini-2.5-pro/* --bench_data outputs/bench_data_pf
+uv run python scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gemini-2.5-pro/* --bench_data outputs/bench_data
+uv run python scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gpt-5-mini/0 --bench_data outputs/bench_data
+uv run python scripts/evaluate_results.py outputs/exp_pf_fromscratch_gpt-5-mini/0 --bench_data outputs/bench_data_pf
+uv run python scripts/evaluate_results.py outputs/exp_ifg_fromscratch_gpt-5.2/0 --bench_data outputs/bench_data
+uv run python scripts/evaluate_results.py outputs/exp_pf_fromscratch_gpt-5.2/0 --bench_data outputs/bench_data_pf
 
 for f in outputs/*fromscratch*/0/overall_scores.tsv; do echo "$f"; cat "$f"; echo; echo; done > outputs/tab2_fromscratch.tsv
