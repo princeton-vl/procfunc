@@ -1,3 +1,9 @@
+# 0.36.2
+
+Other:
+
+- `@node_function` builds its graph and nodegroup once and reuses them (was rebuilt on every call, leaving `name.0NN` copies). May result in up to 3× speed increase for complex scenes
+
 # 0.36.0
 
 Interface changes:

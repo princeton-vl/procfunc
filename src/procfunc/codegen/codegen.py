@@ -796,17 +796,9 @@ def graphs_to_python_functions(
     try:
         targets = _topo_sort_subgraphs(graph)
 
-        def _clean_graph_name(name: str) -> str:
-            for suffix in identifiers.NONDESCRIPTIVE_NODE_NAME_PARTS:
-                if name.endswith("_" + suffix):
-                    name = name[: -(len(suffix) + 1)]
-            return name
-
-        for subgraph in cg.traverse_nested_graphs(graph):
-            subgraph.name = _clean_graph_name(subgraph.name)
-
         subgraph_names = {
-            id(subgraph): subgraph.name for subgraph in cg.traverse_nested_graphs(graph)
+            id(subgraph): identifiers.clean_graph_name(subgraph.name)
+            for subgraph in cg.traverse_nested_graphs(graph)
         }
         subgraph_names = identifiers.dedup_names_with_suffix(
             subgraph_names, separator="_"

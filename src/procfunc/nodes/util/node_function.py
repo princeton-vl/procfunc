@@ -201,17 +201,24 @@ def _node_function_trace_wrapper(
     return wrapper
 
 
+def _node_function_subgraph(func: Callable) -> cg.ComputeGraph:
+    subgraph = _execute_procnode_func_to_computegraph(func)
+    subgraph.metadata["operations"] = [(node_function, {"func": func})]
+    subgraph.metadata["bpy_cached_impls"] = {}
+    return subgraph
+
+
 def node_function(func: Callable):
+    subgraph: cg.ComputeGraph | None = None
+
     @functools.wraps(func)
     def node_function_wrapper(*args, **kwargs):
+        nonlocal subgraph
         if pf.context.globals.current_trace_level is not None:
             return node_function_wrapper._trace_wrapper(*args, **kwargs)
 
-        subgraph = _execute_procnode_func_to_computegraph(func)
-        subgraph.metadata["operations"] = [
-            (node_function, {"func": func}),
-        ]
-        subgraph.metadata["bpy_cached_impls"] = {}
+        if subgraph is None or pf.context.globals.record_node_definitions:
+            subgraph = _node_function_subgraph(func)
 
         return _subgraph_call_procnode(func, subgraph, *args, **kwargs)
 

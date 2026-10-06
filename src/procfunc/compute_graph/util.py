@@ -356,6 +356,7 @@ def transform_compute_graph(
     new_inputs = compute_graph.inputs.map(lambda v: id_map.get(id(v), v))
 
     new_metadata = copy.copy(compute_graph.metadata)
+    new_metadata.pop("bpy_cached_impls", None)
     op = (transform_compute_graph, {"transform_fn": transform_fn, "id_map": id_map})
     new_metadata["operations"] = new_metadata.get("operations", []) + [op]
 

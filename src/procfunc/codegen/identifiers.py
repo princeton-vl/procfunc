@@ -515,7 +515,7 @@ def _fixed_name_for_node(
         case cg.Node(metadata={"varname": varname}):
             return varname
         case cg.SubgraphCallNode(subgraph=subgraph):
-            return subgraph.name + "_result"
+            return clean_graph_name(subgraph.name) + "_result"
         case cg.FunctionCallNode(func=func):
             func_resolve = scope_expressions.get(id(func), None)
             module = getattr(func, "__module__", "") or ""
@@ -546,6 +546,13 @@ NONDESCRIPTIVE_NODE_NAME_PARTS = [
     "result",
     "distribution",
 ]
+
+
+def clean_graph_name(name: str) -> str:
+    for suffix in NONDESCRIPTIVE_NODE_NAME_PARTS:
+        if name.endswith("_" + suffix):
+            name = name[: -(len(suffix) + 1)]
+    return name
 
 
 def nodenames_from_fixed_and_infill(
