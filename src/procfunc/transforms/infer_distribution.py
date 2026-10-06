@@ -1,4 +1,3 @@
-import copy
 import logging
 from collections import defaultdict
 from typing import Any
@@ -153,10 +152,7 @@ def infer_hypercube_differing_node(
         for k in nodes[0].kwargs.keys()
     }
 
-    res = copy.copy(nodes[0])
-    res.args = tuple(args)
-    res.kwargs = kwargs
-    res.metadata = copy.copy(nodes[0].metadata)
+    res = nodes[0]._replace(args=tuple(args), kwargs=kwargs)
     memo[id(nodes[0])] = res
 
     return res
@@ -169,7 +165,8 @@ def infer_distribution_hypercube(
     memo = {}
 
     rng_node = cg.InputPlaceholderNode(
-        name="rng",
+        input_name="rng",
+        args=(),
         default_value=None,
         metadata={
             "varname": "rng",
@@ -267,7 +264,8 @@ def _infer_distribution_from_callnodes(
 ) -> cg.ComputeGraph:
     new_inputs = {}
     rng_node = cg.InputPlaceholderNode(
-        name="rng",
+        input_name="rng",
+        args=(),
         default_value=None,
         metadata={
             "known_value_type": "pf.RNG",  # TODO use actual type and resolve to string
@@ -284,7 +282,8 @@ def _infer_distribution_from_callnodes(
             # argument had dynamic values connected up, make it a functionar gument
             orig_input_type = base_inputs[k].metadata.get("known_value_type", None)
             new_inputs[k] = cg.InputPlaceholderNode(
-                name=k,
+                input_name=k,
+                args=(),
                 default_value=None,
                 metadata={
                     "known_value_type": orig_input_type,

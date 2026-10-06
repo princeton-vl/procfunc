@@ -174,6 +174,28 @@ def _graph_requires_scene_tree(graph: cg.ComputeGraph) -> bool:
     )
 
 
+def _is_scene_bound(graph: cg.ComputeGraph, node_tree_type: bni.NodeGroupType) -> bool:
+    if node_tree_type is not bni.NodeGroupType.COMPOSITOR:
+        return False
+    return _graph_requires_scene_tree(graph)
+
+
+def _lookup_cached_nodegroup(
+    graph: cg.ComputeGraph,
+    cached_names: dict[bni.NodeGroupType, str],
+    node_tree_type: bni.NodeGroupType,
+) -> bpy.types.NodeTree | None:
+    name = cached_names.get(node_tree_type)
+    if name is None:
+        return None
+    nodegroup = bpy.data.node_groups.get(name)
+    if nodegroup is None or nodegroup.bl_idname != node_tree_type.value:
+        return None
+    if nodegroup.get("procfunc_graph_id") != str(id(graph)):
+        return None
+    return nodegroup
+
+
 def _construct_nodegroup(
     graph: cg.ComputeGraph,
     node_tree_type: bni.NodeGroupType,
@@ -182,7 +204,7 @@ def _construct_nodegroup(
     # standalone node group, so build on the active scene's compositing tree
     # instead, replacing its contents. That tree still accepts group IO nodes
     # and an interface, so the rest of the scaffold below is unchanged.
-    if _graph_requires_scene_tree(graph):
+    if _is_scene_bound(graph, node_tree_type):
         scene = bpy.context.scene
         scene.use_nodes = True
         nodegroup = scene.node_tree
@@ -249,11 +271,12 @@ def as_nodegroup(
 ) -> bpy.types.NodeTree:
     # Scene-bound graphs (e.g. Render Layers) are built on the active scene's
     # compositing tree, replacing its contents.
-    ops = graph.metadata.get("operations", [])
-    use_cache = len(ops) > 0 and ops[0][0].__name__ == "node_function"
+    cached_names = graph.metadata.get("bpy_cached_impls")
+    use_cache = cached_names is not None
+    use_cache = use_cache and not _is_scene_bound(graph, node_tree_type)
 
     if use_cache:
-        cached = graph.metadata["bpy_cached_impls"].get(node_tree_type, None)
+        cached = _lookup_cached_nodegroup(graph, cached_names, node_tree_type)
         if cached is not None:
             return cached
 
@@ -263,6 +286,7 @@ def as_nodegroup(
         nodegroup = _construct_nodegroup(graph, node_tree_type)
 
     if use_cache:
-        graph.metadata["bpy_cached_impls"][node_tree_type] = nodegroup
+        nodegroup["procfunc_graph_id"] = str(id(graph))
+        cached_names[node_tree_type] = nodegroup.name
 
     return nodegroup

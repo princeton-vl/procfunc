@@ -1,4 +1,5 @@
 import inspect
+from dataclasses import is_dataclass
 from typing import Callable
 
 import pytest
@@ -7,6 +8,7 @@ import procfunc as pf
 from procfunc import codegen
 from procfunc import compute_graph as cg
 from procfunc.nodes import types as nt
+from procfunc.util.pytree import PyTree
 
 
 def test_missing_annotation_error_message():
@@ -31,6 +33,87 @@ def test_procnode_annotation_accepted():
 
     graph = pf.nodes.function_to_compute_graph(ok)
     assert "x" in graph.inputs.obj()
+
+
+def test_nodes_expose_and_freeze_input_mappings() -> None:
+    node = cg.ProceduralNode(
+        node_type="ShaderNodeValue",
+        attrs={"data_type": "FLOAT"},
+        args=(),
+        kwargs={"Value": 1.0},
+    )
+
+    assert is_dataclass(node)
+    assert node.args == ()
+    assert dict(node.kwargs) == {"Value": 1.0}
+    with pytest.raises(AttributeError):
+        node.args = (1.0,)
+    with pytest.raises(TypeError):
+        node.kwargs["Value"] = 2.0
+    with pytest.raises(TypeError):
+        node.attrs["data_type"] = "INT"
+
+    replacement = node._replace(kwargs={"Value": 2.0})
+    assert replacement.kwargs["Value"] == 2.0
+    assert node.kwargs["Value"] == 1.0
+
+
+def test_replace_in_graph_updates_replaced_node_children() -> None:
+    inp = cg.InputPlaceholderNode(input_name="value", default_value=1.0, args=())
+    call = cg.FunctionCallNode(func=pf.nodes.math.add, args=(inp, 2.0), kwargs={})
+    graph = cg.ComputeGraph(
+        inputs=PyTree({"value": inp}),
+        outputs=PyTree(call),
+        name="example",
+        metadata={},
+    )
+
+    updated_input = inp._replace(default_value=None)
+    updated_call = call._replace(metadata={"known_value_type": pf.ProcNode[float]})
+    updated = cg.replace_in_graph(
+        graph,
+        {id(inp): updated_input, id(call): updated_call},
+    )
+
+    assert updated.inputs.obj()["value"] is updated.outputs.obj().args[0]
+
+
+def test_node_mappings_reject_every_dict_bypass() -> None:
+    node = cg.ProceduralNode("ShaderNodeValue", {"data_type": "FLOAT"}, {"Value": 1.0})
+
+    with pytest.raises(TypeError):
+        dict.__setitem__(node.kwargs, "Value", 2.0)
+    with pytest.raises(TypeError):
+        dict.update(node.kwargs, {"Value": 2.0})
+    with pytest.raises(TypeError):
+        dict.pop(node.attrs, "data_type")
+
+    node.kwargs.__init__({"Value": 2.0})
+
+    assert dict(node.kwargs) == {"Value": 1.0}
+    assert dict(node.attrs) == {"data_type": "FLOAT"}
+
+
+@pf.nodes.node_function
+def _definition_inner(x: pf.ProcNode[float]) -> pf.ProcNode[float]:
+    return x + 1.0
+
+
+@pf.nodes.node_function
+def _definition_outer(x: pf.ProcNode[float]) -> pf.ProcNode[float]:
+    return _definition_inner(x=x)
+
+
+def test_procnode_records_definition_metadata() -> None:
+    with pf.context.override_globals(record_node_definitions=True):
+        graph = pf.nodes.function_to_compute_graph(_definition_outer)
+    calls = [
+        node
+        for node in cg.traverse_depth_first(graph)
+        if isinstance(node, cg.SubgraphCallNode)
+    ]
+    assert calls
+    assert all(node.metadata.get("definition") is not None for node in calls)
 
 
 @pf.nodes.node_function

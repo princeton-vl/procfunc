@@ -55,7 +55,10 @@ def _procnode_value_type(func: Callable, k: str, v: inspect.Parameter) -> type:
 def _procnode_placeholder(func: Callable, k: str, v: inspect.Parameter):
     value_type = _procnode_value_type(func, k, v)
     node = cg.InputPlaceholderNode(
-        name=k, default_value=v.default, metadata={"known_value_type": value_type}
+        input_name=k,
+        default_value=v.default,
+        args=(),
+        metadata={"known_value_type": value_type},
     )
     logger.debug(
         f"Using known_value_type={value_type} for {node=} for {k=} {v.default=}"
@@ -64,7 +67,9 @@ def _procnode_placeholder(func: Callable, k: str, v: inspect.Parameter):
     return node
 
 
-def _execute_procnode_func_to_computegraph(func: Callable):
+def _execute_procnode_func_to_computegraph(
+    func: Callable, metadata: dict[str, Any] | None = None
+) -> cg.ComputeGraph:
     sig = inspect.signature(func)
     input_placeholders = {
         k: _procnode_placeholder(func, k, v) for k, v in sig.parameters.items()
@@ -78,23 +83,21 @@ def _execute_procnode_func_to_computegraph(func: Callable):
 
     inp_pt = pytree.PyTree(input_placeholders).map(_unwrap)
     out_pt = pytree.PyTree(result).map(_unwrap)
-    graph = cg.ComputeGraph(
-        inputs=inp_pt,
-        outputs=out_pt,
-        name=func.__name__,
-        metadata={},
-    )
 
     value_types = {
-        k: v.metadata.get("known_value_type", None) for k, v in graph.inputs.items()
+        k: v.metadata.get("known_value_type", None) for k, v in inp_pt.items()
     }
     if any(v is None for v in value_types.values()):
         raise ValueError(
             f"Subgraph {func.__name__} has inputs with no known value type: {value_types}"
         )
-    graph.metadata["known_value_types"] = value_types
 
-    return graph
+    return cg.ComputeGraph(
+        inputs=inp_pt,
+        outputs=out_pt,
+        name=func.__name__,
+        metadata={**(metadata or {}), "known_value_types": value_types},
+    )
 
 
 def function_to_compute_graph(func: Callable) -> cg.ComputeGraph:
@@ -201,17 +204,25 @@ def _node_function_trace_wrapper(
     return wrapper
 
 
+def _node_function_subgraph(func: Callable) -> cg.ComputeGraph:
+    metadata = {
+        "operations": [(node_function, {"func": func})],
+        "bpy_cached_impls": {},
+    }
+    return _execute_procnode_func_to_computegraph(func, metadata)
+
+
 def node_function(func: Callable):
+    subgraph: cg.ComputeGraph | None = None
+
     @functools.wraps(func)
     def node_function_wrapper(*args, **kwargs):
+        nonlocal subgraph
         if pf.context.globals.current_trace_level is not None:
             return node_function_wrapper._trace_wrapper(*args, **kwargs)
 
-        subgraph = _execute_procnode_func_to_computegraph(func)
-        subgraph.metadata["operations"] = [
-            (node_function, {"func": func}),
-        ]
-        subgraph.metadata["bpy_cached_impls"] = {}
+        if subgraph is None or pf.context.globals.record_node_definitions:
+            subgraph = _node_function_subgraph(func)
 
         return _subgraph_call_procnode(func, subgraph, *args, **kwargs)
 

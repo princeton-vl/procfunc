@@ -27,9 +27,15 @@ class RngProxy(cg.Proxy):
         rng: np.random.Generator,
         dirty: bool = False,
     ):
-        super().__init__(node)
-        node.metadata["known_value_type"] = np.random.Generator
-        node.metadata["varname"] = "rng"
+        super().__init__(
+            node._replace(
+                metadata={
+                    **node.metadata,
+                    "known_value_type": np.random.Generator,
+                    "varname": "rng",
+                }
+            )
+        )
         self.rng = rng
         self.dirty = dirty
 
@@ -85,8 +91,7 @@ class RngSpawnResultProxy(cg.Proxy):
         child_rngs: list[np.random.Generator],
         dirty: bool = False,
     ):
-        super().__init__(node)
-        node.metadata["varname"] = "rngs"
+        super().__init__(node._replace(metadata={**node.metadata, "varname": "rngs"}))
         self.from_rng_proxy = from_rng_proxy
         self.child_rngs = child_rngs
         self.dirty = dirty

@@ -1,3 +1,5 @@
+import dataclasses
+
 import numpy as np
 import pytest
 
@@ -106,17 +108,20 @@ def test_eliminate_duplicate_subgraphs():
         name="top",
         metadata={},
     )
-    tr.eliminate_duplicate_subgraphs([top])
-    assert call_a.subgraph is call_b.subgraph
+    (result,) = tr.eliminate_duplicate_subgraphs([top])
+    calls = result.outputs.dict()
+    assert calls["a"].subgraph is calls["b"].subgraph
+    assert calls["a"].subgraph.name == "dup_a"
+    assert call_b.subgraph.name == "dup_b_longer"
 
 
 def test_eliminate_duplicate_result_types():
     graphs = [_toy_shader_graph()]
-    assert tr.eliminate_duplicate_result_types(graphs) is graphs
+    assert tr.eliminate_duplicate_result_types(graphs) == graphs
 
 
 def test_fill_graph_defaults_with_call_node():
-    inp = cg.InputPlaceholderNode(name="x", default_value=None)
+    inp = cg.InputPlaceholderNode(input_name="x", default_value=None, args=())
     graph = cg.ComputeGraph(
         inputs=pytree.PyTree({"x": inp}),
         outputs=pytree.PyTree({"result": inp}),
@@ -124,8 +129,9 @@ def test_fill_graph_defaults_with_call_node():
         metadata={},
     )
     call = cg.SubgraphCallNode(subgraph=graph, args=(), kwargs={"x": 2.0})
-    tr.fill_graph_defaults_with_call_node(call, graph)
-    assert inp.kwargs["default_value"] == 2.0
+    filled = tr.fill_graph_defaults_with_call_node(call, graph)
+    assert filled.inputs.dict()["x"].kwargs["default_value"] == 2.0
+    assert "default_value" not in graph.inputs.dict()["x"].kwargs
 
 
 def test_replace_ids():
@@ -137,8 +143,9 @@ def test_replace_ids():
         name="replace",
         metadata={},
     )
-    tr.replace_ids(graph, {id(const)}, 5.0)
-    assert parent.kwargs["a"] == 5.0
+    replaced = tr.replace_ids(graph, {id(const)}, 5.0)
+    assert replaced.outputs.dict()["result"].kwargs["a"] == 5.0
+    assert graph.outputs.dict()["result"] is parent
 
 
 def test_colors_to_hsv_definition():
@@ -266,9 +273,8 @@ def test_extract_parameter_distributions_rng_method():
 
 def test_extract_materials():
     graph = _toy_shader_graph()
-    assert tr.extract_materials_from_graph(graph) == {}
-    graphs = [graph]
-    assert tr.extract_materials_from_graphs(graphs) is graphs
+    assert tr.extract_materials_from_graph(graph) == (graph, {})
+    assert tr.extract_materials_from_graphs([graph]) == [graph]
 
 
 def test_map_graph_list():
@@ -300,8 +306,12 @@ def test_infer_nodegroup_distributions():
 
 def _toy_subgraph_calls(a_values, dynamic_b: bool):
     sub_inputs = {
-        "a": cg.InputPlaceholderNode(name="a", default_value=None, metadata={}),
-        "b": cg.InputPlaceholderNode(name="b", default_value=None, metadata={}),
+        "a": cg.InputPlaceholderNode(
+            input_name="a", default_value=None, args=(), metadata={}
+        ),
+        "b": cg.InputPlaceholderNode(
+            input_name="b", default_value=None, args=(), metadata={}
+        ),
     }
     sub = cg.ComputeGraph(
         inputs=pytree.PyTree(sub_inputs),
@@ -338,7 +348,9 @@ def test_infer_nodegroup_distributions_drops_all_dynamic():
     """A subgraph where every input is dynamic has nothing inferred and is
     dropped."""
     sub_inputs = {
-        "a": cg.InputPlaceholderNode(name="a", default_value=None, metadata={}),
+        "a": cg.InputPlaceholderNode(
+            input_name="a", default_value=None, args=(), metadata={}
+        ),
     }
     sub = cg.ComputeGraph(
         inputs=pytree.PyTree(sub_inputs),
@@ -387,3 +399,112 @@ def test_infer_distribution_hypercube():
     assert scale.args[0] is res.inputs.obj()["rng"]
     assert float(scale.args[1]) == 2.0
     assert float(scale.args[2]) == 5.0
+
+
+def test_map_subgraphs_transforms_once_per_toplevel_graph():
+    def leaf(name):
+        return cg.ComputeGraph(
+            inputs=pytree.PyTree({}),
+            outputs=pytree.PyTree({"r": cg.ConstantNode(1.0)}),
+            name=name,
+            metadata={},
+        )
+
+    leafg = leaf("leaf")
+    mid = cg.ComputeGraph(
+        inputs=pytree.PyTree({}),
+        outputs=pytree.PyTree(
+            {
+                f"c{i}": cg.SubgraphCallNode(subgraph=leafg, args=(), kwargs={})
+                for i in range(3)
+            }
+        ),
+        name="mid",
+        metadata={},
+    )
+    top = cg.ComputeGraph(
+        inputs=pytree.PyTree({}),
+        outputs=pytree.PyTree(
+            {
+                f"m{i}": cg.SubgraphCallNode(subgraph=mid, args=(), kwargs={})
+                for i in range(3)
+            }
+        ),
+        name="top",
+        metadata={},
+    )
+
+    seen = []
+
+    def record(node, subgraph):
+        seen.append(subgraph.name)
+        return subgraph
+
+    tr.map_subgraphs(record)([top])
+    assert seen == ["mid", "leaf"]
+
+    seen.clear()
+    tr.map_subgraphs(record)([top, top])
+    assert seen == ["mid", "leaf", "mid", "leaf"]
+
+
+def _material_graph() -> cg.ComputeGraph:
+    shader = _toy_shader_graph().outputs.dict()["surface"]
+    return cg.ComputeGraph(
+        inputs=pytree.PyTree({}),
+        outputs=pytree.PyTree(pf.Material(surface=shader)),
+        name="wood",
+        metadata={},
+    )
+
+
+def _node_function_graph(name: str, outputs: dict) -> cg.ComputeGraph:
+    return cg.ComputeGraph(
+        inputs=pytree.PyTree({}),
+        outputs=pytree.PyTree(outputs),
+        name=name,
+        metadata={"is_node_function": True},
+    )
+
+
+def test_extract_materials_plumbs_through_node_functions():
+    mat_call = cg.SubgraphCallNode(subgraph=_material_graph(), args=(), kwargs={})
+    inner = _node_function_graph("inner", {"mat": mat_call})
+    outer = _node_function_graph(
+        "outer", {"r": cg.SubgraphCallNode(subgraph=inner, args=(), kwargs={})}
+    )
+    first = cg.SubgraphCallNode(subgraph=outer, args=(), kwargs={})
+    second = cg.SubgraphCallNode(subgraph=outer, args=(first,), kwargs={})
+    top = cg.ComputeGraph(
+        inputs=pytree.PyTree({}),
+        outputs=pytree.PyTree({"o": second}),
+        name="top",
+        metadata={},
+    )
+
+    result, extracted = tr.extract_materials_from_graph(top)
+
+    assert extracted == {"material_wood": mat_call}
+    new_second = result.outputs.dict()["o"]
+    new_first = new_second.args[0]
+    for call in (new_first, new_second):
+        assert call.kwargs["material_wood"].args[0] is mat_call
+    new_outer = new_second.subgraph
+    assert new_first.subgraph is new_outer
+    outer_input = new_outer.inputs.dict()["material_wood"]
+    inner_call = new_outer.outputs.dict()["r"]
+    assert inner_call.kwargs["material_wood"] is outer_input
+    new_inner = inner_call.subgraph
+    assert new_inner.outputs.dict()["mat"] is new_inner.inputs.dict()["material_wood"]
+    assert inner.outputs.dict()["mat"] is mat_call
+    assert len(outer.inputs) == 0
+
+
+def test_graphs_are_frozen():
+    graph = _toy_shader_graph()
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        graph.name = "renamed"
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        graph.outputs.children = ()
+    with pytest.raises(TypeError):
+        graph.metadata["x"] = 1
