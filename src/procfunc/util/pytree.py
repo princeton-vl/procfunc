@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any, Callable, Generic, Iterator, TypeVar
 
 logger = logging.getLogger(__name__)
@@ -9,10 +10,10 @@ A minimal pytree pack/unpack implementation inspired by JAX's docs.
 """
 
 
-@dataclass
+@dataclass(frozen=True)
 class PyTreeDef:
     container: type | None
-    items: list["PyTreeDef"]
+    items: tuple["PyTreeDef", ...]
     aux: Any
 
 
@@ -96,6 +97,12 @@ register_pytree_container(
     unflatten_func=_tuple_unflatten,
     names_func=lambda x: [str(i) for i in range(len(x))],
 )
+register_pytree_container(
+    MappingProxyType,
+    flatten_func=_dict_flatten,
+    unflatten_func=_dict_unflatten,
+    names_func=lambda x: list(x.keys()),
+)
 
 NAMEDTUPLE_CONTAINER = RegisteredPyTreeContainer(
     flatten_func=_namedtuple_flatten,
@@ -122,7 +129,7 @@ def flatten(obj: Any) -> tuple[list[Any], PyTreeDef]:
     elif is_obj_namedtuple(obj):
         flatten_func = _namedtuple_flatten
     else:
-        return [obj], PyTreeDef(None, [], None)
+        return [obj], PyTreeDef(None, (), None)
 
     children, aux = flatten_func(obj)
 
@@ -133,7 +140,7 @@ def flatten(obj: Any) -> tuple[list[Any], PyTreeDef]:
         child_items.extend(child_objs)
         spec_items.append(child_spec)
 
-    return child_items, PyTreeDef(type(obj), spec_items, aux)
+    return child_items, PyTreeDef(type(obj), tuple(spec_items), aux)
 
 
 def _get_container_funcs(container_type: type) -> RegisteredPyTreeContainer:
@@ -197,6 +204,7 @@ TChildren = TypeVar("TChildren")
 TChildrenNew = TypeVar("TChildrenNew")
 
 
+@dataclass(frozen=True, init=False, eq=False)
 class PyTree(Generic[TItem, TChildren]):
     """
     Data-structure for trees of python objects.Any
@@ -206,10 +214,13 @@ class PyTree(Generic[TItem, TChildren]):
     However, we additionally require that every registered pytree container provides names for each child.
     """
 
+    children: tuple[TChildren, ...]
+    spec: PyTreeDef
+
     def __init__(self, obj: TItem):
-        flat = flatten(obj)
-        self.children: list[TChildren] = flat[0]
-        self.spec: PyTreeDef = flat[1]
+        children, spec = flatten(obj)
+        object.__setattr__(self, "children", tuple(children))
+        object.__setattr__(self, "spec", spec)
 
     def __repr__(self):
         return f"PyTree({self.spec!r}, len(children)={len(self.children)})"
@@ -255,9 +266,9 @@ class PyTree(Generic[TItem, TChildren]):
     def from_children_spec(
         cls, children: list[TChildren], spec: PyTreeDef
     ) -> "PyTree[TItem, TChildren]":
-        res = PyTree(None)
-        res.children = children
-        res.spec = spec
+        res = object.__new__(cls)
+        object.__setattr__(res, "children", tuple(children))
+        object.__setattr__(res, "spec", spec)
         return res
 
     def map(

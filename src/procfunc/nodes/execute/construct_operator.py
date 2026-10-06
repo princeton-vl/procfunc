@@ -179,7 +179,7 @@ def _construct_operator_call(
 
     # pin resolved data_type so construction doesn't re-infer it and lose .astype hints
     if "data_type" in spec.attrs:
-        spec.attrs["data_type"] = data_type
+        spec = spec._replace(attrs={**spec.attrs, "data_type": data_type})
 
     if (
         lowered := _lower_compare_outside_geometry(

@@ -1,4 +1,5 @@
 import argparse
+import dataclasses
 import itertools
 import logging
 from pathlib import Path
@@ -201,8 +202,8 @@ def transpile_targets(
         return_type = next(
             (rt for cls, rt in RETURN_TYPES.items() if isinstance(target, cls)), None
         )
-        graph.metadata.setdefault("known_value_type", return_type)
-        result_graphs.append(graph)
+        metadata = {"known_value_type": return_type, **graph.metadata}
+        result_graphs.append(dataclasses.replace(graph, metadata=metadata))
 
     for tfunc in transforms:
         if logger.isEnabledFor(logging.DEBUG):

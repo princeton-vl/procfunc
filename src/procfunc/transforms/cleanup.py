@@ -1,3 +1,4 @@
+import dataclasses
 import logging
 from collections import defaultdict
 from typing import Any, Callable
@@ -6,6 +7,7 @@ from procfunc import compute_graph as cg
 from procfunc import types as t
 from procfunc.nodes import types as nt
 from procfunc.nodes.shader import coord, geometry
+from procfunc.transforms.util import map_subgraphs
 from procfunc.util import pytree
 
 logger = logging.getLogger(__name__)
@@ -14,48 +16,76 @@ logger = logging.getLogger(__name__)
 def remove_v1_name_from_graph(
     _call_node: cg.Node, graph: cg.ComputeGraph
 ) -> cg.ComputeGraph:
-    if graph.name.startswith("nodegroup_"):
-        graph.name = graph.name.replace("nodegroup_", "")
-    if graph.name.startswith("shader_"):
-        graph.name = graph.name.replace("shader_", "")
-    return graph
+    name = graph.name.removeprefix("nodegroup_").removeprefix("shader_")
+    if name == graph.name:
+        return graph
+    return dataclasses.replace(graph, name=name)
+
+
+def _nested_subgraphs(
+    graphs: list[cg.ComputeGraph], reverse: bool
+) -> list[cg.ComputeGraph]:
+    unique = {}
+    for topgraph in graphs:
+        nested = list(cg.traverse_nested_graphs(topgraph))
+        unique.update({id(g): g for g in (reversed(nested) if reverse else nested)})
+    return list(unique.values())
+
+
+def _group_equal_subgraphs(
+    graphs: list[cg.ComputeGraph],
+) -> list[list[cg.ComputeGraph]]:
+    groups: list[list[cg.ComputeGraph]] = []
+    for subgraph in _nested_subgraphs(graphs, reverse=True):
+        match = next((m for m in groups if cg.graph_nodes_equal(subgraph, m[0])), None)
+        if match is None:
+            groups.append([subgraph])
+        else:
+            match.append(subgraph)
+    return groups
+
+
+def _apply_subgraph_replacements(
+    graphs: list[cg.ComputeGraph],
+    replacements: dict[int, cg.ComputeGraph],
+    top_replacements: dict[int, cg.ComputeGraph],
+) -> list[cg.ComputeGraph]:
+    def replace_subgraph(_node: cg.Node, subgraph: cg.ComputeGraph) -> cg.ComputeGraph:
+        return replacements.get(id(subgraph), subgraph)
+
+    graphs = [top_replacements.get(id(graph), graph) for graph in graphs]
+    return map_subgraphs(replace_subgraph)(graphs)
 
 
 def eliminate_duplicate_subgraphs(
     graphs: list[cg.ComputeGraph],
 ) -> list[cg.ComputeGraph]:
-    unique: list[cg.ComputeGraph] = []
-    removed: list[cg.ComputeGraph] = []
-    # maps id(duplicate_subgraph) -> canonical subgraph to replace it with
     replacements: dict[int, cg.ComputeGraph] = {}
-
-    for topgraph in graphs:
-        subgraphs = reversed(
-            list(cg.traverse_nested_graphs(topgraph, yield_call_nodes=True))
-        )
-        for _call_node, subgraph in subgraphs:
-            match = next((g for g in unique if cg.graph_nodes_equal(subgraph, g)), None)
-            if match is not None:
-                if len(subgraph.name) < len(match.name):
-                    match.name = subgraph.name
-                replacements[id(subgraph)] = match
-                removed.append(subgraph)
-            else:
-                unique.append(subgraph)
-
-    # second pass: update ALL call nodes (in all nested subgraphs) that reference a replaced subgraph
-    for topgraph in graphs:
-        for subgraph in cg.traverse_nested_graphs(topgraph):
-            for node in cg.traverse_depth_first(subgraph):
-                if (
-                    isinstance(node, cg.SubgraphCallNode)
-                    and id(node.subgraph) in replacements
-                ):
-                    node.subgraph = replacements[id(node.subgraph)]
+    renamed: dict[int, cg.ComputeGraph] = {}
+    removed: list[cg.ComputeGraph] = []
+    for members in _group_equal_subgraphs(graphs):
+        shortest = min((g.name for g in members), key=len)
+        canonical = members[0]
+        if shortest != canonical.name:
+            canonical = dataclasses.replace(canonical, name=shortest)
+        replacements.update({id(g): canonical for g in members})
+        renamed[id(members[0])] = canonical
+        removed.extend(members[1:])
 
     logger.debug(f"Eliminated duplicated subgraphs {[g.name for g in removed]}")
 
-    return graphs
+    return _apply_subgraph_replacements(graphs, replacements, renamed)
+
+
+def _with_result_type(graph: cg.ComputeGraph, result_type: type) -> cg.ComputeGraph:
+    spec = dataclasses.replace(graph.outputs.spec, container=result_type)
+    outputs = pytree.PyTree.from_children_spec(graph.outputs.children, spec)
+    return dataclasses.replace(graph, outputs=outputs)
+
+
+def _matching_result_type(result_type: type, known: list[type]) -> type:
+    fields = list(result_type._fields)
+    return next((rt for rt in known if list(rt._fields) == fields), result_type)
 
 
 def eliminate_duplicate_result_types(
@@ -64,27 +94,26 @@ def eliminate_duplicate_result_types(
 ) -> list[cg.ComputeGraph]:
     rettype_uses: dict[type, list[cg.ComputeGraph]] = defaultdict(list)
 
-    for graph in graphs:
-        for subgraph in cg.traverse_nested_graphs(graph):
-            result_type = subgraph.outputs.toplevel_type()
-            if result_type is None or not pytree.is_type_namedtuple(result_type):
-                continue
+    # counted once per top-level graph that reaches it, so shared subgraphs weigh more
+    nested = [g for graph in graphs for g in cg.traverse_nested_graphs(graph)]
+    for subgraph in nested:
+        result_type = subgraph.outputs.toplevel_type()
+        if result_type is None or not pytree.is_type_namedtuple(result_type):
+            continue
+        result_type = _matching_result_type(result_type, list(rettype_uses))
+        rettype_uses[result_type].append(subgraph)
 
-            for rt in rettype_uses.keys():
-                if list(rt._fields) == list(result_type._fields):
-                    result_type = rt
-                    break
-
-            rettype_uses[result_type].append(subgraph)
-
-    for rettype, uses in rettype_uses.items():
+    replacements: dict[int, cg.ComputeGraph] = {}
+    for uses in rettype_uses.values():
         if len(uses) <= uses_threshold:
             continue
         first_rettype = uses[0].outputs.toplevel_type()
         for subgraph in uses[1:]:
-            subgraph.outputs.spec.container = first_rettype
+            if subgraph.outputs.toplevel_type() is first_rettype:
+                continue
+            replacements[id(subgraph)] = _with_result_type(subgraph, first_rettype)
 
-    return graphs
+    return _apply_subgraph_replacements(graphs, replacements, replacements)
 
 
 def fill_graph_defaults_with_call_node(
@@ -103,12 +132,15 @@ def fill_graph_defaults_with_call_node(
         )
         return graph
 
+    replacements = {}
     for name, inpnode in graph.inputs.items():
         fillval = call_node.kwargs.get(name, None)
         if fillval is not None and not isinstance(fillval, cg.Node):
-            inpnode.kwargs["default_value"] = fillval
+            replacements[id(inpnode)] = inpnode._replace(
+                kwargs={**inpnode.kwargs, "default_value": fillval}
+            )
 
-    return graph
+    return cg.replace_in_graph(graph, replacements)
 
 
 def coerce_shaders_to_materialresult(
@@ -134,9 +166,9 @@ def coerce_shaders_to_materialresult(
     logger.debug(
         f"{coerce_shaders_to_materialresult.__name__} converted {subgraph.name} output"
     )
-    subgraph.outputs = pytree.PyTree(t.Material(**shader_outputs))
-
-    return subgraph
+    return dataclasses.replace(
+        subgraph, outputs=pytree.PyTree(t.Material(**shader_outputs))
+    )
 
 
 def replace_ids(
@@ -154,19 +186,7 @@ def replace_ids(
 
     assert isinstance(graph, cg.ComputeGraph)
 
-    for name, parent, child in cg.traverse_depth_first(
-        graph, yield_consts=True, yield_name=True, yield_parent=True
-    ):
-        if id(child) not in ids:
-            continue
-        if isinstance(name, int):
-            args = list(parent.args)
-            args[name] = val
-            parent.args = tuple(args)
-        else:
-            parent.kwargs[name] = val
-
-    return graph
+    return cg.replace_in_graph(graph, {node_id: val for node_id in ids})
 
 
 def extract_as_input(
@@ -176,15 +196,15 @@ def extract_as_input(
     arg_type: type,
 ):
     inp = cg.InputPlaceholderNode(
-        name=name,
+        input_name=name,
+        args=(),
         default_value=None,
         metadata={"known_value_type": arg_type, "varname": name},
     )
 
     inputs = graph.inputs.obj()
     assert isinstance(inputs, dict), inputs
-    inputs[name] = inp
-    graph.inputs = pytree.PyTree(inputs)
+    graph = dataclasses.replace(graph, inputs=pytree.PyTree({**inputs, name: inp}))
 
     return replace_ids(graph, nodes, inp)
 
@@ -213,5 +233,4 @@ def extract_shader_vectors_as_inputs(
     if len(vector_nodes) == 0:
         return graph
 
-    extract_as_input(graph, vector_nodes, "vector", nt.ProcNode[t.Vector])
-    return graph
+    return extract_as_input(graph, vector_nodes, "vector", nt.ProcNode[t.Vector])

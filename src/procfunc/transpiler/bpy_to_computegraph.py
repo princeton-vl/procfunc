@@ -87,6 +87,30 @@ class ParseMemo:
     str key is asset.name
     """
 
+    metadata_patches: dict[int, tuple[cg.Node, dict[str, Any]]] = field(
+        default_factory=dict
+    )
+    """
+    int key is id(node), applied when the graph containing the node is built
+    """
+
+
+def _patch_metadata(memo: ParseMemo, node: cg.Node, updates: dict[str, Any]) -> None:
+    _, patch = memo.metadata_patches.get(id(node), (node, {}))
+    memo.metadata_patches[id(node)] = (node, {**patch, **updates})
+
+
+def _patched_metadata(memo: ParseMemo, node: cg.Node) -> dict[str, Any]:
+    _, patch = memo.metadata_patches.get(id(node), (node, {}))
+    return {**node.metadata, **patch}
+
+
+def _metadata_patch_replacements(memo: ParseMemo) -> dict[int, cg.Node]:
+    return {
+        node_id: node._replace(metadata={**node.metadata, **patch})
+        for node_id, (node, patch) in memo.metadata_patches.items()
+    }
+
 
 def _find_node_blidname(
     node_tree: bpy.types.NodeTree, bl_idname: str
@@ -604,7 +628,8 @@ def parse_node(
         res = parse_standard_node(node_tree, node, memo)
 
     if node.label != "":
-        res.metadata["varname"] = identifiers.bpy_name_to_pythonid(node.label)
+        varname = identifiers.bpy_name_to_pythonid(node.label)
+        _patch_metadata(memo, res, {"varname": varname})
 
     memo.nodes[memo_key] = res
     return res
@@ -795,17 +820,16 @@ def _placeholder_for_graph_input(
         raise ValueError(f"{socket.name=} has no default_value and is a {norm_soc=}")
 
     node = cg.InputPlaceholderNode(
-        name=varname,
+        input_name=varname,
+        args=(),
         default_value=default_value,
         metadata=dict(
             known_value_type=inner_type,
             varname=varname,
         ),
     )
-    # Record the default unconditionally, even when it is None: a socket with no
-    # synthesizable value (geometry/object/collection) should still become an
-    # optional param (= None), matching v1 where every input had a default.
-    node.kwargs["default_value"] = default_value
+    # Preserve every interface default, including None for non-value sockets.
+    node = node._replace(kwargs={"default_value": default_value})
 
     return node
 
@@ -896,6 +920,7 @@ def parse_node_tree(
     )
 
     outputs = {}
+    cleared_defaults = {}
     for output_name, output_result_socket in output_node.inputs.items():
         if output_name == "":
             continue  # nodegroups seem to have an empty socket with identifier __extend__, skip it
@@ -912,7 +937,7 @@ def parse_node_tree(
         # )
         output_name = identifiers.bpy_name_to_pythonid(output_name)
         proc_node = parse_link(node_tree, output_result_socket.links[0], memo)
-        if proc_node.metadata.get("known_value_type") is None:
+        if _patched_metadata(memo, proc_node).get("known_value_type") is None:
             inferred = _infer_geometry_type(proc_node)
             if inferred is not None:
                 vt = nt.ProcNode[inferred]
@@ -927,9 +952,9 @@ def parse_node_tree(
                 logger.debug(
                     f"Setting known_value_type={vt} for {proc_node=} for {output_result_socket=}"
                 )
-            proc_node.metadata["known_value_type"] = vt
+            _patch_metadata(memo, proc_node, {"known_value_type": vt})
         if isinstance(proc_node, cg.InputPlaceholderNode):
-            proc_node.default_value = None
+            cleared_defaults[id(proc_node)] = proc_node
         outputs[output_name] = proc_node
 
     if len(outputs) == 0:
@@ -955,6 +980,11 @@ def parse_node_tree(
             "is_node_function": True,  # causes codegen to apply decorator
         },
     )
+    replacements = _metadata_patch_replacements(memo)
+    for node_id, node in cleared_defaults.items():
+        patched = replacements.get(node_id, node)
+        replacements[node_id] = patched._replace(default_value=None)
+    compute_graph = cg.replace_in_graph(compute_graph, replacements)
     logger.debug(
         f"Parsed node_tree {cg_name} with {len(inputs.keys())} inputs, {len(outputs.keys())} outputs "
         f"and {len(list(cg.traverse_depth_first(compute_graph)))} nodes"
@@ -1124,7 +1154,8 @@ def _replace_vector_inpnodes_as_arg(
     ]
 
     vector_placeholder = cg.InputPlaceholderNode(
-        name="vector",
+        input_name="vector",
+        args=(),
         default_value=None,
         metadata={"known_value_type": pf.ProcNode[pf.Vector], "varname": "vector"},
     )
@@ -1164,16 +1195,20 @@ def parse_material(
         expect_type = pf.Vector if key == "Displacement" else pf.Shader
         if output_node.inputs[key].is_linked:
             res = parse_link(node_tree, output_node.inputs[key].links[0], memo)
-            res.metadata["known_value_type"] = pf.ProcNode[expect_type]
+            _patch_metadata(memo, res, {"known_value_type": pf.ProcNode[expect_type]})
         elif key == "Displacement":
             # unconnected displacement is a zero ProcNode, composable arithmetically
             res = cg.FunctionCallNode(
-                func=pf.nodes.math.constant, args=((0.0, 0.0, 0.0),), kwargs={}
+                func=pf.nodes.math.constant,
+                args=((0.0, 0.0, 0.0),),
+                kwargs={},
+                metadata={"known_value_type": pf.ProcNode[pf.Vector]},
             )
-            res.metadata["known_value_type"] = pf.ProcNode[pf.Vector]
         else:
-            res = cg.ConstantNode(value=None)
-            res.metadata["known_value_type"] = Union[pf.ProcNode[expect_type], None]
+            res = cg.ConstantNode(
+                value=None,
+                metadata={"known_value_type": Union[pf.ProcNode[expect_type], None]},
+            )
         outputs_dict[key.lower()] = res
 
     func_name = identifiers.bpy_name_to_pythonid(mat.name)
@@ -1183,6 +1218,7 @@ def parse_material(
         name=func_name,
         metadata={},  # TODO
     )
+    graph = cg.replace_in_graph(graph, _metadata_patch_replacements(memo))
 
     memo.assets[memo_key] = graph
     return graph

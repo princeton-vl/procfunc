@@ -1,3 +1,10 @@
+# 0.37.0
+
+Interface changes:
+
+- `cg.Node` subclasses, `ComputeGraph` and `PyTree` are frozen, and their `kwargs`, `attrs` and `metadata` are read-only mappings; use `node._replace(...)` and the new `cg.replace_in_graph` (was mutated in place)
+- `procfunc.transforms` and the transpiler return new graphs and leave their inputs unchanged (was mutated in place)
+
 # 0.36.2
 
 Other:

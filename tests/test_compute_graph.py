@@ -16,7 +16,7 @@ def test_traverse():
     def func_c(a, b):
         pass
 
-    pholder = cg.InputPlaceholderNode(default_value=None, name="input")
+    pholder = cg.InputPlaceholderNode(default_value=None, input_name="input", args=())
 
     a = cg.FunctionCallNode(func_a, args=(pholder,), kwargs={})
     b = cg.FunctionCallNode(func_b, args=(pholder,), kwargs={})

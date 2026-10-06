@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from types import MappingProxyType
 from typing import Any
 
 from procfunc.util.pytree import PyTree
@@ -9,12 +10,15 @@ from .node import Node
 logger = logging.getLogger(__name__)
 
 
-@dataclass
+@dataclass(frozen=True, eq=False)
 class ComputeGraph:
     inputs: PyTree[Any, Node]
     outputs: PyTree[Any, Node]
     name: str
-    metadata: dict[str, Any]
+    metadata: MappingProxyType
+
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "metadata", MappingProxyType(dict(self.metadata)))
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.name!r})"

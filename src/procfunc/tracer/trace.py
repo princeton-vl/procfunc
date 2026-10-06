@@ -132,7 +132,7 @@ def _map_args(
             continue
 
         node = cg.InputPlaceholderNode(
-            name=name, default_value=None, metadata={"varname": name}
+            input_name=name, default_value=None, args=(), metadata={"varname": name}
         )
         res[name] = cg.Proxy(node)
 
