@@ -1,6 +1,6 @@
 import ast
 from dataclasses import dataclass
-from typing import Unpack
+from typing import NamedTuple, Unpack
 
 import procfunc as pf
 from procfunc import compute_graph as cg
@@ -140,3 +140,35 @@ def test_trace_cube_with_args_codegen():
 
     # Check the function definition is present
     assert "def cube_with_read_attr" in code
+
+
+class CubeResult(NamedTuple):
+    mesh: pf.MeshObject
+
+
+@pf.tracer.generator
+def cube_result(size: float) -> CubeResult:
+    return CubeResult(mesh=pf.ops.primitives.mesh_cube(size=size))
+
+
+def moved_cube_reread(size: float):
+    res = cube_result(size=size)
+    pf.ops.object.set_transform(res.mesh, location=(1.0, 2.0, 3.0))
+    pf.ops.object.set_transform(res.mesh, rotation_euler=(0.0, 0.0, 0.5))
+    return res.mesh
+
+
+def test_trace_mutation_through_attribute_reread():
+    graph = pf.trace(moved_cube_reread)
+    calls = [
+        n
+        for n in cg.traverse_depth_first(graph)
+        if isinstance(n, cg.FunctionCallNode) and n.func is pf.ops.object.set_transform
+    ]
+    assert len(calls) == 2, calls
+    code = codegen.to_python(graph, toplevel_as_maincall=False)
+    namespace = {}
+    exec(code, namespace)  # noqa: S102
+    obj = namespace["moved_cube_reread"](size=1.0).item()
+    assert tuple(obj.location) == (1.0, 2.0, 3.0), code
+    assert abs(obj.rotation_euler.z - 0.5) < 1e-6, code

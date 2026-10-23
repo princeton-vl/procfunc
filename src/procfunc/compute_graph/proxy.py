@@ -23,8 +23,14 @@ class Proxy(Generic[T]):
         return f"Proxy({self.node!r})"
 
     def __getattr__(self, attr: str) -> "AttributeProxy":
-        node = GetAttributeNode(source=self.node, attribute_name=attr)
-        return AttributeProxy(node)
+        # Re-reads alias, so traceable code must not read properties that return fresh values
+        cache = self.__dict__.setdefault("_attr_proxies", {})
+        cached = cache.get(attr)
+        if cached is not None and cached[0] is self.node:
+            return cached[1]
+        proxy = AttributeProxy(GetAttributeNode(source=self.node, attribute_name=attr))
+        cache[attr] = (self.node, proxy)
+        return proxy
 
     def __call__(self, *args, **kwargs) -> "Proxy":
         raise NotImplementedError("Proxy.__call__ is not implemented")
