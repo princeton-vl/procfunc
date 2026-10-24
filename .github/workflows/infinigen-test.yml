@@ -1,0 +1,53 @@
+name: Infinigen Unit Tests
+
+# INFINIGEN_DEPLOY_KEY: read-only deploy key on infinigen_internal
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      infinigen_ref:
+        description: infinigen_internal branch, tag or commit
+        default: develop
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  INFINIGEN_INSTALL_TERRAIN: False
+  INFINIGEN_INSTALL_CUSTOMGT: False
+
+jobs:
+  infinigen-unit-tests:
+    if: github.repository == 'princeton-vl/procfunc_internal'
+    runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: procfunc
+      - uses: actions/checkout@v6
+        with:
+          repository: princeton-vl/infinigen_internal
+          ref: ${{ inputs.infinigen_ref || 'develop' }}
+          ssh-key: ${{ secrets.INFINIGEN_DEPLOY_KEY }}
+          path: infinigen
+          submodules: false
+      - uses: astral-sh/setup-uv@v8.2.0
+        with:
+          python-version: "3.11"
+      - name: Install infinigen with the procfunc under test
+        working-directory: infinigen
+        run: |
+          echo "procfunc @ file://$GITHUB_WORKSPACE/procfunc" > "$RUNNER_TEMP/overrides.txt"
+          uv venv
+          uv pip install -e ".[dev]" --override "$RUNNER_TEMP/overrides.txt"
+          uv run --no-sync python -c "import procfunc as pf; print(pf.__version__, pf.__file__)"
+          git log -1 --format='infinigen_internal %H %s'
+      - name: Unit tests (pytest)
+        working-directory: infinigen
+        run: |
+          uv run --no-sync pytest tests/infinigen2 -k 'not skip_for_ci and not render_gpu' \
+            -n 4 --durations=20
