@@ -11,6 +11,11 @@ from procfunc.nodes.util import bpy_node_info as bni
 from procfunc.util.log import add_exception_context_msg
 
 
+# multi-input links consume in reverse of connection order
+def multi_input_values(values: list[Any]) -> Any:
+    return reversed(values)
+
+
 @dataclass
 class NodeOperatorResolution:
     pf_func: Callable[..., Any]

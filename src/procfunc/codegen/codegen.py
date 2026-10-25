@@ -798,7 +798,7 @@ def graphs_to_python_functions(
 
         subgraph_names = {
             id(subgraph): identifiers.clean_graph_name(subgraph.name)
-            for subgraph in cg.traverse_nested_graphs(graph)
+            for subgraph in targets
         }
         subgraph_names = identifiers.dedup_names_with_suffix(
             subgraph_names, separator="_"

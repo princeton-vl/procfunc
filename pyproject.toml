@@ -13,6 +13,7 @@ dependencies = [
     "bpy==4.2.0",
     "numpy>=1.23.5,<2",
     "pandas>=1.5",
+    "typing-extensions>=4.4",
 ]
 
 [project.urls]

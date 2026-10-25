@@ -15,6 +15,25 @@ def module_path():
     return Path(__file__).parent.parent
 
 
+def _includes_bpy_version(bounds: Any, version: tuple[int, int]) -> bool:
+    if not isinstance(bounds, list):
+        return True
+    min_version, max_version = bounds
+    return tuple(min_version) <= version <= tuple(max_version)
+
+
+def filter_manifest_by_bpy_version(
+    manifest: pd.DataFrame,
+    version: tuple[int, int],
+) -> pd.DataFrame:
+    column = "bpy_version_min_max"
+    if column not in manifest.columns:
+        return manifest
+
+    mask = [_includes_bpy_version(bounds, version) for bounds in manifest[column]]
+    return manifest[mask]
+
+
 def filter_manifest(
     manifest: pd.DataFrame,
     filter: dict[str, str] | None = None,

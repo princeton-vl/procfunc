@@ -8,7 +8,7 @@ from procfunc import types as pt
 from procfunc.nodes import types as nt
 from procfunc.nodes.util import bpy_node_info as bni
 from procfunc.util import pytree
-from procfunc.util.bpy_info import bpy_nocollide_data_name
+from procfunc.util.bpy_info import bpy_nocollide_data_name, scene_compositor_node_tree
 from procfunc.util.log import add_exception_context_msg
 
 from . import construct_operator, construct_standard
@@ -206,8 +206,7 @@ def _construct_nodegroup(
     # and an interface, so the rest of the scaffold below is unchanged.
     if _is_scene_bound(graph, node_tree_type):
         scene = bpy.context.scene
-        scene.use_nodes = True
-        nodegroup = scene.node_tree
+        nodegroup = scene_compositor_node_tree(scene)
     else:
         name = (
             graph.name
@@ -216,7 +215,7 @@ def _construct_nodegroup(
         )
         nodegroup = bpy.data.node_groups.new(name, node_tree_type.value)
 
-    nodegroup.interface.clear()
+    bni.clear_interface(nodegroup)
     nodegroup.nodes.clear()
 
     input_node = nodegroup.nodes.new("NodeGroupInput")
@@ -229,7 +228,8 @@ def _construct_nodegroup(
         if v_type is None:
             raise ValueError(f"Got {v=} with no known value type")
         socket_type = bni.PYTHON_TYPE_TO_SOCKET_TYPE[v_type]
-        nodegroup.interface.new_socket(
+        bni.new_interface_socket(
+            nodegroup,
             name=k,
             in_out="INPUT",
             socket_type=socket_type.value,
@@ -253,7 +253,8 @@ def _construct_nodegroup(
             res = construct_standard._get_primary_output_socket(v, res)
         assert isinstance(res, bpy.types.NodeSocket), res
 
-        nodegroup.interface.new_socket(
+        bni.new_interface_socket(
+            nodegroup,
             name=k,
             in_out="OUTPUT",
             socket_type=normalize_socket_type(res.bl_idname),

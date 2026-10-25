@@ -552,7 +552,7 @@ def clean_graph_name(name: str) -> str:
     for suffix in NONDESCRIPTIVE_NODE_NAME_PARTS:
         if name.endswith("_" + suffix):
             name = name[: -(len(suffix) + 1)]
-    return name
+    return name + "_" if keyword.iskeyword(name) else name
 
 
 def nodenames_from_fixed_and_infill(

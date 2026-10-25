@@ -28,6 +28,7 @@ from .util import (
     assign_default_value,
     get_active_sockets,
     get_input_socket_to_connect_to,
+    multi_input_values,
     normalize_socket_type,
 )
 
@@ -89,8 +90,7 @@ def connect_multisocket_input(
 
     assert isinstance(input_result, list)
 
-    # connect reversed: multi-input links consume in reverse of connection order
-    for input_val in reversed(input_result):
+    for input_val in multi_input_values(input_result):
         if input_val is None:
             continue
         connect_single_input(node_tree, to_socket, input_val)
@@ -281,7 +281,7 @@ def _construct_procnode_standard(
         node.node_type,
         bl_node_tree,
         node.kwargs.copy(),
-        input_results,
+        dict(input_results),
         node.attrs.copy(),
     )
 
