@@ -6,7 +6,7 @@ import itertools
 import logging
 from collections import OrderedDict, defaultdict
 from pathlib import Path
-from typing import Any, Callable, Generator, get_type_hints
+from typing import Any, Callable, Generator, Literal, get_type_hints
 
 import numpy as np
 
@@ -24,6 +24,13 @@ from procfunc.util import pytree
 logger = logging.getLogger(__name__)
 
 INDENT = "    "
+
+VarNaming = Literal["explicit_keyword_or_producer", "keyword_path"]
+
+NAMING_FUNCS = {
+    "explicit_keyword_or_producer": identifiers.nodenames_from_explicit_keyword_or_producer,
+    "keyword_path": identifiers.nodenames_from_fixed_and_infill,
+}
 
 # UnaryOp included since ** binds tighter than unary minus: -2.0 ** x == -(2.0 ** x)
 _PAREN_SENSITIVE_NODES = (ast.BinOp, ast.UnaryOp, ast.Compare, ast.BoolOp, ast.IfExp)
@@ -607,6 +614,7 @@ def _expressions_scope_for_graph(
     graph: cg.ComputeGraph,
     scope_expressions: dict[int, str | list[str]],
     fold_map: dict[int, bool],
+    naming: VarNaming,
 ) -> dict[int, str | list[str]]:
     expressions: dict[int, str | list[str]] = {
         **scope_expressions.copy(),
@@ -616,7 +624,8 @@ def _expressions_scope_for_graph(
     # when we want to refer to a value, what string should we insert?
     # - for most nodes: refer to a variable name
     # - for inlined expressions: emplace a expression string
-    node_names = identifiers.nodenames_from_fixed_and_infill(
+    naming_func = NAMING_FUNCS[naming]
+    node_names = naming_func(
         graph,
         fold_map=fold_map,
         scope_expressions=expressions,
@@ -638,6 +647,7 @@ def _codegen_for_graph(
     add_version_comment: bool = True,
     add_line_comments: bool = False,
     func_name: str | None = None,
+    naming: VarNaming = "explicit_keyword_or_producer",
 ) -> list[str]:
     code_lines: list[str] = []
 
@@ -646,7 +656,9 @@ def _codegen_for_graph(
 
     usages = cg.usages_per_node(graph)
     fold_map = _expression_fold_map(graph, scope_expressions, usages)
-    expressions = _expressions_scope_for_graph(graph, scope_expressions, fold_map)
+    expressions = _expressions_scope_for_graph(
+        graph, scope_expressions, fold_map, naming
+    )
     _input_ids = set(id(node) for node in graph.inputs.values())  # noqa: F841
     output_ids = {id(node) for node in graph.outputs.values()}
     last_varname: str = ""
@@ -685,6 +697,8 @@ def _codegen_for_graph(
         node_code = _codegen_for_assignment(varname, node_code, node, add_line_comments)
         code_lines.extend(node_code)
 
+        if naming != "keyword_path":
+            continue
         if last_varname.split("_")[0] != varname.split("_")[0]:
             code_lines.append("")
         last_varname = varname
@@ -789,6 +803,7 @@ def graphs_to_python_functions(
     toplevel_as_maincall: bool = True,
     add_version_comment: bool = True,
     add_line_comments: bool = False,
+    naming: VarNaming = "explicit_keyword_or_producer",
 ) -> OrderedDict[str, list[str]]:
     np_linewidth = np.get_printoptions()["linewidth"]
     np.set_printoptions(linewidth=100000)
@@ -821,6 +836,7 @@ def graphs_to_python_functions(
                 add_version_comment=add_version_comment,
                 add_line_comments=add_line_comments,
                 func_name=func_name,
+                naming=naming,
             )
             lines_for_modules.append((subgraph_names[id(subgraph)], result))
     finally:
@@ -902,6 +918,7 @@ def to_python(
     toplevel_as_maincall: bool = True,
     add_version_comment: bool = True,
     add_line_comments: bool = False,
+    naming: VarNaming = "explicit_keyword_or_producer",
 ) -> str:
     code_lines = []
     code_lines.append("from typing import Any, NamedTuple, Annotated")
@@ -928,6 +945,7 @@ def to_python(
         add_version_comment=add_version_comment,
         add_line_comments=add_line_comments,
         toplevel_as_maincall=toplevel_as_maincall,
+        naming=naming,
     )
     for module_name, module_lines in lines_for_modules.items():
         code_lines.extend(module_lines)

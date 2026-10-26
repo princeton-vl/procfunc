@@ -212,8 +212,8 @@ def test_linked_vector_is_mapped_instead_of_a_coordinate_node() -> None:
     tree.links.new(combine.outputs[0], node.inputs["Vector"])
     source = transpile(tree)
     assert "pf.nodes.shader.coord()" not in source
-    assert "mapping_vector = pf.nodes.math.combine_xyz(0.25)" in source
-    assert "pf.nodes.shader.mapping(vector=mapping_vector" in source
+    assert "combine_xyz = pf.nodes.math.combine_xyz(0.25)" in source
+    assert "pf.nodes.shader.mapping(vector=combine_xyz" in source
     assert "vector=mapping," in source
 
 
