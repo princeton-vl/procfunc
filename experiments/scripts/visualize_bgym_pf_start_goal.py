@@ -91,30 +91,35 @@ def main():
     for task_name, start_diff, goal_diff in results:
         logger.info(f"{task_name:40s} start_diff {start_diff:.4f}  goal_diff {goal_diff:.4f}")
 
-    if args.thresh is not None:
-        regressions = []
-        improvements = []
-        for task_name, start_diff, goal_diff in results:
-            base = baselines.get(task_name)
-            for which, diff in (("start", start_diff), ("goal", goal_diff)):
-                if base is None:
-                    if diff > args.thresh:
-                        regressions.append((task_name, which, diff, args.thresh))
-                    continue
-                if diff > base[which] + HEADROOM_PX:
-                    regressions.append((task_name, which, diff, base[which] + HEADROOM_PX))
-                elif diff < base[which] - HEADROOM_PX:
-                    improvements.append((task_name, which, diff, base[which]))
+    if args.thresh is None:
+        return
 
-        if improvements:
-            logger.warning("=== diffs IMPROVED below baseline — inspect the render, then lower tasks.json ===")
-        for task_name, which, diff, base_val in improvements:
-            logger.warning(f"{task_name:40s} {which}_diff {diff:.4f} GOT BETTER (baseline {base_val:.4f})")
+    regressions = []
+    improvements = []
+    diffs = []
+    for task_name, start_diff, goal_diff in results:
+        diffs.append((task_name, "start", start_diff))
+        diffs.append((task_name, "goal", goal_diff))
 
-        for task_name, which, diff, ceiling in regressions:
-            logger.error(f"{task_name:40s} {which}_diff {diff:.4f} exceeds ceiling {ceiling:.4f}")
-        if regressions:
-            sys.exit(f"{len(regressions)} render diffs exceed their ceilings")
+    for task_name, which, diff in diffs:
+        base = baselines.get(task_name)
+        ceiling = args.thresh
+        if base is not None:
+            ceiling = base[which] + HEADROOM_PX
+        if diff > ceiling:
+            regressions.append((task_name, which, diff, ceiling))
+        elif base is not None and diff < base[which] - HEADROOM_PX:
+            improvements.append((task_name, which, diff, base[which]))
+
+    if improvements:
+        logger.warning("=== diffs IMPROVED below baseline — inspect the render, then lower tasks.json ===")
+    for task_name, which, diff, base_val in improvements:
+        logger.warning(f"{task_name:40s} {which}_diff {diff:.4f} GOT BETTER (baseline {base_val:.4f})")
+
+    for task_name, which, diff, ceiling in regressions:
+        logger.error(f"{task_name:40s} {which}_diff {diff:.4f} exceeds ceiling {ceiling:.4f}")
+    if regressions:
+        sys.exit(f"{len(regressions)} render diffs exceed their ceilings")
 
 
 if __name__ == "__main__":

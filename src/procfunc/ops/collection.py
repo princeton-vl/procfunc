@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional
+from typing import List, Optional
 
 import bpy
 
@@ -45,16 +45,6 @@ def _link_to_collection(
     return collection
 
 
-def _traverse_children(
-    obj: bpy.types.Object,
-    fn: Callable[[bpy.types.Object], None],
-):
-    """Recursively traverse object children."""
-    fn(obj)
-    for child in obj.children:
-        _traverse_children(child, fn)
-
-
 @pf.tracer.primitive
 def group_objects(
     *args: t.Object | t.Object | List[t.Object | t.Object],
@@ -75,16 +65,20 @@ def group_objects(
     col = bpy.data.collections.new(name)
     bpy.context.scene.collection.children.link(col)
 
+    objects = []
     for obj in args:
+        if isinstance(obj, list):
+            objects.extend(obj)
+        else:
+            objects.append(obj)
+
+    for obj in objects:
         if obj is None:
             continue
-        if isinstance(obj, list):
-            for o in obj:
-                if o is not None:
-                    _traverse_children(o.item(), lambda o: _link_to_collection(o, col))
-        elif isinstance(obj, t.Object):
-            _traverse_children(obj.item(), lambda o: _link_to_collection(o, col))
-        else:
+        if not isinstance(obj, t.Object):
             raise ValueError(f"Invalid object type: {type(obj)}")
+        root = obj.item()
+        for o in [root, *root.children_recursive]:
+            _link_to_collection(o, col)
 
     return t.Collection(col)

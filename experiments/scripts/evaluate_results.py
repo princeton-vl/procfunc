@@ -4,6 +4,7 @@ import argparse
 import json
 import logging
 import re
+import sys
 from pathlib import Path
 
 import bpy
@@ -337,34 +338,30 @@ def count_renders(exp_folder: Path) -> tuple[int, int]:
     return successful, total
 
 
+def _count_lines(content: str) -> int:
+    lines = content.count("\n")
+    if content and not content.endswith("\n"):
+        lines += 1
+    return lines
+
+
 def count_code_stats(exp_folder: Path) -> dict:
     """Count code chars/lines: total across all rounds, and final round only."""
-    total_chars = 0
-    total_lines = 0
-    final_chars = 0
-    final_lines = 0
-
+    all_code = []
+    final_code = []
     for task_folder in exp_folder.iterdir():
         if not task_folder.is_dir() or task_folder.name == "vis":
             continue
-        round_folders = sorted(task_folder.glob("round_*"))
-        for i, round_folder in enumerate(round_folders):
-            code_path = round_folder / "code.py"
-            if code_path.exists():
-                content = code_path.read_text()
-                chars = len(content)
-                lines = content.count("\n") + (1 if content and not content.endswith("\n") else 0)
-                total_chars += chars
-                total_lines += lines
-                if i == len(round_folders) - 1:  # final round
-                    final_chars += chars
-                    final_lines += lines
+        code_paths = [r / "code.py" for r in sorted(task_folder.glob("round_*"))]
+        all_code.extend(p.read_text() for p in code_paths if p.exists())
+        if code_paths and code_paths[-1].exists():
+            final_code.append(code_paths[-1].read_text())
 
     return {
-        "total_chars": total_chars,
-        "total_lines": total_lines,
-        "final_chars": final_chars,
-        "final_lines": final_lines,
+        "total_chars": sum(len(c) for c in all_code),
+        "total_lines": sum(_count_lines(c) for c in all_code),
+        "final_chars": sum(len(c) for c in final_code),
+        "final_lines": sum(_count_lines(c) for c in final_code),
     }
 
 
@@ -485,8 +482,6 @@ def evaluate_experiment(exp_folder: Path, bench_data: Path, model, processor, de
 
 
 def main():
-    import sys
-
     parser = argparse.ArgumentParser()
     parser.add_argument("experiment_folders", type=Path, nargs="+", help="Path(s) to experiment output folder(s)")
     parser.add_argument("--bench_data", type=Path, required=True, help="Path to benchmark data with goal renders")

@@ -34,6 +34,18 @@ def filter_manifest_by_bpy_version(
     return manifest[mask]
 
 
+def _exclude_mask(column: pd.Series, patterns: list[Any]) -> pd.Series:
+    if not is_string_dtype(column.dtype):
+        return column.isin(patterns)
+    mask = pd.Series(False, index=column.index)
+    for pattern in patterns:
+        if isinstance(pattern, str):
+            mask |= column.str.contains(pattern, na=False)
+        else:
+            mask |= column == pattern
+    return mask
+
+
 def filter_manifest(
     manifest: pd.DataFrame,
     filter: dict[str, str] | None = None,
@@ -66,15 +78,7 @@ def filter_manifest(
             patterns = [patterns]
 
         before_count = len(manifest)
-        if is_string_dtype(manifest[column].dtype):
-            mask = pd.Series([False] * len(manifest), index=manifest.index)
-            for pattern in patterns:
-                if isinstance(pattern, str):
-                    mask |= manifest[column].str.contains(pattern, na=False)
-                else:
-                    mask |= manifest[column] == pattern
-        else:
-            mask = manifest[column].isin(patterns)
+        mask = _exclude_mask(manifest[column], patterns)
         manifest = manifest[~mask]
         after_count = len(manifest)
         logger.debug(

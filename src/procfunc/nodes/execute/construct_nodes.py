@@ -87,6 +87,28 @@ def _dispatch_construct_procnode_by_type(
             raise ValueError(f"Got misconfigured {node=}")
 
 
+def _construct_get_attribute(
+    node: cg.GetAttributeNode,
+    bl_node_tree: bpy.types.NodeTree,
+    cache: dict[cg.Node, bpy.types.Node],
+) -> bpy.types.NodeSocket | Any:
+    assert len(node.args) == 1, node.args
+    assert len(node.kwargs) == 0, node.kwargs
+    source = node.args[0]
+    if isinstance(source, cg.SubgraphCallNode):
+        # absent output leaves (e.g. Material with no displacement) have no socket
+        outputs = dict(source.subgraph.outputs.items(nocontainer_name="result"))
+        value = outputs.get(node.attribute_name)
+        if node.attribute_name in outputs and not isinstance(value, cg.Node):
+            return value
+    base_node = construct_procnode_to_bpy(source, bl_node_tree, cache)
+    assert isinstance(base_node, bpy.types.Node), base_node
+    socket_name = construct_standard._resolve_output_socket_name(
+        source, node.attribute_name, bl_node_tree
+    )
+    return get_nth_socket(base_node.outputs, socket_name, 0, base_node.type)
+
+
 def construct_procnode_to_bpy(
     node: cg.Node,
     bl_node_tree: bpy.types.NodeTree,
@@ -101,21 +123,7 @@ def construct_procnode_to_bpy(
         return cached
 
     if isinstance(node, cg.GetAttributeNode):
-        assert len(node.args) == 1, node.args
-        assert len(node.kwargs) == 0, node.kwargs
-        source = node.args[0]
-        if isinstance(source, cg.SubgraphCallNode):
-            # an absent subgraph output leaf (None, e.g. a Material with no
-            # displacement) has no output socket; resolve to it directly
-            for k, v in source.subgraph.outputs.items(nocontainer_name="result"):
-                if k == node.attribute_name and not isinstance(v, cg.Node):
-                    return v
-        base_node = construct_procnode_to_bpy(source, bl_node_tree, cache)
-        assert isinstance(base_node, bpy.types.Node), base_node
-        socket_name = construct_standard._resolve_output_socket_name(
-            source, node.attribute_name, bl_node_tree
-        )
-        return get_nth_socket(base_node.outputs, socket_name, 0, base_node.type)
+        return _construct_get_attribute(node, bl_node_tree, cache)
 
     def _construct_leaf(input_val: cg.Node | Any | None):
         if not isinstance(input_val, cg.Node):
