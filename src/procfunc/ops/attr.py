@@ -3,6 +3,7 @@ from typing import Literal
 import bpy
 import numpy as np
 
+import procfunc as pf
 from procfunc import types as t
 from procfunc.util import bpy_info
 
@@ -92,6 +93,7 @@ def _promote_data_type_for_shape(data_type: str, shape: tuple[int, ...]) -> str:
             )
 
 
+@pf.tracer.primitive(mutates=["obj"])
 def write_attribute(
     obj: t.MeshObject | t.CurveObject,
     data: np.ndarray | bool | int | float,
@@ -198,6 +200,7 @@ def vertex_positions(obj: t.MeshObject, global_coords: bool = False) -> np.ndarr
     return pos
 
 
+@pf.tracer.primitive(mutates=["obj"])
 def write_vertex_positions(
     obj: t.MeshObject, pos: np.ndarray, global_coords: bool = False
 ):
@@ -285,6 +288,7 @@ def uv_coords(obj: t.MeshObject, layer: int | None = None) -> np.ndarray:
     return arr.reshape(-1, 2)
 
 
+@pf.tracer.primitive(mutates=["obj"])
 def write_uv_coords(obj: t.MeshObject, uv: np.ndarray, layer: int | None = None):
     uv_layer = (
         obj.item().data.uv_layers[layer]
@@ -301,6 +305,7 @@ def write_uv_coords(obj: t.MeshObject, uv: np.ndarray, layer: int | None = None)
     uv_layer.data.foreach_set("uv", uv.reshape(-1))
 
 
+@pf.tracer.primitive(mutates=["obj"])
 def uv_coords_new(obj: t.MeshObject, name: str, do_init: bool = True):
     obj.item().data.uv_layers.new(name=name, do_init=do_init)
 
@@ -391,6 +396,7 @@ def material_index(obj: t.MeshObject) -> np.ndarray:
     return arr
 
 
+@pf.tracer.primitive(mutates=["obj"])
 def write_material_index(
     obj: t.MeshObject, index: int, face_mask: np.ndarray | None = None
 ) -> None:

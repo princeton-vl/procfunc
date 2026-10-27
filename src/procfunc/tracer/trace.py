@@ -90,6 +90,16 @@ for _name in WRAP_CONSTRUCTORS:
         )
     )
 
+add_wrap_target(
+    PatchFunctionTarget(
+        frame=pf.__dict__,
+        name="Material",
+        trace_level=TraceLevel.PRIMITIVES,
+        allow_exec=True,
+        source_name="procfunc.types",
+    )
+)
+
 
 _search_scopes: list[dict] = []
 
