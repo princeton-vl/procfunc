@@ -43,7 +43,7 @@ jobs:
         run: |
           echo "procfunc @ file://$GITHUB_WORKSPACE/procfunc" > "$RUNNER_TEMP/overrides.txt"
           uv venv
-          uv pip install -e ".[dev]" --override "$RUNNER_TEMP/overrides.txt"
+          uv pip install -e ".[dev]" --override "$RUNNER_TEMP/overrides.txt" --reinstall-package procfunc
           uv run --no-sync python -c "import procfunc as pf; print(pf.__version__, pf.__file__)"
           git log -1 --format='infinigen_internal %H %s'
       - name: Unit tests (pytest)
