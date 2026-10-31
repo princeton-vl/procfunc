@@ -80,7 +80,7 @@ def test_transpile_color_ramp_default_mode_omitted():
 
 
 def test_float_curve_clipping_round_trips() -> None:
-    tree = bpy.data.node_groups.new(f"curve_{uuid.uuid4().hex[:8]}", "ShaderNodeTree")
+    tree = bpy.data.node_groups.new("curve_test", "ShaderNodeTree")
     output = tree.nodes.new("NodeGroupOutput")
     tree.interface.new_socket("Value", in_out="OUTPUT", socket_type="NodeSocketFloat")
     curve = tree.nodes.new("ShaderNodeFloatCurve")
@@ -90,7 +90,7 @@ def test_float_curve_clipping_round_trips() -> None:
     graph, _ = parse_node_tree(tree, ParseMemo())
     namespace = {}
     exec(to_python(graph, toplevel_as_maincall=False), namespace)  # noqa: S102
-    rebuilt_graph = pf.nodes.function_to_compute_graph(namespace[tree.name])
+    rebuilt_graph = pf.nodes.function_to_compute_graph(namespace["curve_test"])
     rebuilt = as_nodegroup(rebuilt_graph, NodeGroupType.SHADER)
     rebuilt_curve = next(
         node for node in rebuilt.nodes if node.bl_idname == "ShaderNodeFloatCurve"
