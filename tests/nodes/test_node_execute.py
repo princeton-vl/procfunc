@@ -887,3 +887,16 @@ def test_hide_value_texture_vector_none_omitted():
     ng = _realize(_checker_vector_none, pf.nodes.NodeGroupType.SHADER)
     node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeTexChecker")
     assert not node.inputs["Vector"].is_linked
+
+
+@pf.nodes.node_function
+def _noise_constant_vector() -> pf.ProcNode:
+    return pf.nodes.texture.noise(vector=(1.0, 2.0, 3.0), scale=5.0).fac
+
+
+def test_texture_vector_constant_is_linked():
+    ng = _realize(_noise_constant_vector, pf.nodes.NodeGroupType.SHADER)
+    node = next(n for n in ng.nodes if n.bl_idname == "ShaderNodeTexNoise")
+    source = node.inputs["Vector"].links[0].from_node
+    assert isinstance(source, bpy.types.ShaderNodeCombineXYZ)
+    assert [s.default_value for s in source.inputs] == [1.0, 2.0, 3.0]
