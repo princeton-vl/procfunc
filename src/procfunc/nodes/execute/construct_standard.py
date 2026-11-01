@@ -34,6 +34,7 @@ from .util import (
 
 logger = logging.getLogger(__name__)
 
+
 def _default_value_is_ignored(to_socket: bpy.types.NodeSocket) -> bool:
     # unlinked, texture nodes sample generated coordinates, not default_value
     is_texture = to_socket.node.bl_idname.startswith("ShaderNodeTex")
