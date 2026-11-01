@@ -1,0 +1,11 @@
+# Core project setup and public API: one of these must approve changes
+
+pyproject.toml @araistrick @jiadeng
+uv.lock @araistrick @jiadeng
+.python-version @araistrick @jiadeng
+Makefile @araistrick @jiadeng
+conftest.py @araistrick @jiadeng
+.readthedocs.yaml @araistrick @jiadeng
+LICENSE.md @araistrick @jiadeng
+.github/ @araistrick @jiadeng
+src/procfunc/__init__.py @araistrick @jiadeng

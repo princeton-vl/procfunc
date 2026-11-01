@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=80", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -43,8 +43,14 @@ docs = [
     "sphinx-argparse<0.7",
 ]
 
-[tool.setuptools.dynamic]
-version = {attr = "procfunc.__version__"}
+# Version comes from the latest vX.Y.Z release tag
+[tool.setuptools_scm]
+
+[tool.setuptools_scm.scm.git]
+describe_command = ["git", "describe", "--dirty", "--tags", "--long", "--abbrev=40", "--match", "v[0-9]*"]
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true } }]
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -20,6 +20,9 @@ env:
   INFINIGEN_INSTALL_TERRAIN: False
   INFINIGEN_INSTALL_CUSTOMGT: False
 
+permissions:
+  contents: read
+
 jobs:
   infinigen-unit-tests:
     if: github.repository == 'princeton-vl/procfunc_internal'
@@ -27,9 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
+          persist-credentials: false
           path: procfunc
       - uses: actions/checkout@v6
         with:
+          persist-credentials: false
           repository: princeton-vl/infinigen_internal
           ref: ${{ inputs.infinigen_ref || 'develop' }}
           ssh-key: ${{ secrets.INFINIGEN_DEPLOY_KEY }}
@@ -37,6 +42,7 @@ jobs:
           submodules: false
       - uses: astral-sh/setup-uv@v8.2.0
         with:
+          version: "0.12.1"
           python-version: "3.11"
       - name: Install infinigen with the procfunc under test
         working-directory: infinigen

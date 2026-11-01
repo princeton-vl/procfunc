@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   lowest_versions:
     if: github.event_name == 'push' || github.head_ref == 'develop'
@@ -13,6 +16,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@v8.2.0
         with:
           version: "0.12.1"

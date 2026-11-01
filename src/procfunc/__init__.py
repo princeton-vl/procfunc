@@ -2,7 +2,12 @@
 # ensure this gets imported first so that mathutils etc is available even if later modules dont import bpy
 import bpy
 
-__version__ = "0.37.1"
+from importlib.metadata import PackageNotFoundError, version as _version
+
+try:
+    __version__ = _version("procfunc")
+except PackageNotFoundError:
+    __version__ = "0.0.0+unknown"
 
 from numpy.random import Generator as RNG
 

@@ -5,19 +5,24 @@ on:
     branches: [main, develop]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@v6
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Validate history
         run: bash scripts/validate_history.sh
       - uses: astral-sh/setup-uv@v8.2.0
         with:
+          version: "0.12.1"
           python-version: "3.11"
-      - run: uv sync --extra dev
+      - run: uv sync --locked --extra dev
       - run: uv run ruff format --check .
       - run: uv run ruff check .
 
@@ -25,10 +30,13 @@ jobs:
     runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@v8.2.0
         with:
+          version: "0.12.1"
           python-version: "3.11"
-      - run: uv sync --extra dev
+      - run: uv sync --locked --extra dev
       - name: Run tests
         env:
           PYTEST_ADDOPTS: ${{ runner.environment != 'self-hosted' && '-m "not render"' || '' }}
@@ -38,8 +46,11 @@ jobs:
     runs-on: ${{ fromJSON(vars.CI_RUNNER || '"ubuntu-latest"') }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: astral-sh/setup-uv@v8.2.0
         with:
+          version: "0.12.1"
           python-version: "3.11"
       - name: Build docs (warnings are errors)
-        run: uv run --extra docs sphinx-build -b html -W --keep-going docs docs/_build/html
+        run: uv run --locked --extra docs sphinx-build -b html -W --keep-going docs docs/_build/html
