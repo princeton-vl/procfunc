@@ -76,6 +76,7 @@ git clone git@github.com:princeton-vl/procfunc.git
 cd procfunc
 uv venv
 uv pip install -e ".[dev]"
+uv run pre-commit install
 ```
 
 ##### Tools

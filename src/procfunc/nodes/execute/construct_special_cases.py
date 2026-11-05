@@ -289,13 +289,9 @@ def special_case_input(
         raise ValueError(f"{node=} has no output sockets")
 
     for name, socket_type, default in zip(output_sockets, socket_types, defaults):
-        if name in node_tree.interface.items_tree:
+        if bni.interface_socket(node_tree, name, "INPUT") is not None:
             raise ValueError(f"Socket {name} already exists in {node_tree.name}")
-        soc = node_tree.interface.new_socket(
-            name=name,
-            in_out="INPUT",
-            socket_type=socket_type.value,
-        )
+        soc = bni.new_interface_socket(node_tree, name, "INPUT", socket_type.value)
         data_type = nt.SOCKET_CLASS_TO_DATATYPE[socket_type.value]
         assign_default_value(soc, default, data_type)
 

@@ -28,10 +28,26 @@ from .util import (
     assign_default_value,
     get_active_sockets,
     get_input_socket_to_connect_to,
+    multi_input_values,
     normalize_socket_type,
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _default_value_is_ignored(to_socket: bpy.types.NodeSocket) -> bool:
+    # unlinked, texture nodes sample generated coordinates, not default_value
+    is_texture = to_socket.node.bl_idname.startswith("ShaderNodeTex")
+    return is_texture and to_socket.name == "Vector" and to_socket.type == "VECTOR"
+
+
+def _link_constant(
+    node_tree: bpy.types.NodeTree, to_socket: bpy.types.NodeSocket, value: Any
+) -> None:
+    source = node_tree.nodes.new("ShaderNodeCombineXYZ")
+    for socket, component in zip(source.inputs, value, strict=True):
+        socket.default_value = float(component)
+    node_tree.links.new(source.outputs[0], to_socket)
 
 
 def connect_single_input(
@@ -56,6 +72,8 @@ def connect_single_input(
                 f"{input_val=} is a bpy.types.NodeInternal, but this should have been "
                 f"resolved to a specific socket at an earlier stage"
             )
+        case _ if _default_value_is_ignored(to_socket):
+            _link_constant(node_tree, to_socket, input_val)
         case _ if hasattr(to_socket, "default_value"):
             assign_default_value(to_socket, input_val)
         case np.ndarray() | pt.Matrix() if to_socket.type == "MATRIX":
@@ -89,8 +107,7 @@ def connect_multisocket_input(
 
     assert isinstance(input_result, list)
 
-    # connect reversed: multi-input links consume in reverse of connection order
-    for input_val in reversed(input_result):
+    for input_val in multi_input_values(input_result):
         if input_val is None:
             continue
         connect_single_input(node_tree, to_socket, input_val)
@@ -281,7 +298,7 @@ def _construct_procnode_standard(
         node.node_type,
         bl_node_tree,
         node.kwargs.copy(),
-        input_results,
+        dict(input_results),
         node.attrs.copy(),
     )
 

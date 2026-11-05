@@ -1,3 +1,9 @@
+# 0.37.1
+
+Other:
+
+- codegen names each variable by its explicit name, else the keyword it is passed as, else the function that produces it, deduplicated with `_1`, `_2` suffixes (was the full chain of keywords from the output down, e.g. `result_0_choice_options_1_0_displacement_grains_grain_map_knot_settings_distortion_size`) and no longer inserts blank lines between statements; the old keyword-path naming stays available via `to_python(..., naming="keyword_path")`
+
 # 0.37.0
 
 Interface changes:

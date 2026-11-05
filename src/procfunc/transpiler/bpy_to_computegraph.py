@@ -4,6 +4,7 @@ from collections import namedtuple
 from dataclasses import dataclass, field
 from typing import (
     Any,
+    Callable,
     Literal,
     TypeVar,
     Union,
@@ -662,17 +663,18 @@ def _name_from_socket_and_panels(
     panels: list[bpy.types.NodeSocket],
 ) -> str:
     for panel in panels:
-        match = next(
-            (
-                psock
-                for psock in panel.interface_items.values()
-                if psock.identifier == socket.identifier
-            ),
-            None,
-        )
-        if match is not None:
+        items = panel.interface_items.values()
+        if any(p.identifier == socket.identifier for p in items):
             return identifiers.bpy_name_to_pythonid(panel.name + "_" + socket.name)
     return identifiers.bpy_name_to_pythonid(socket.name)
+
+
+def _return_type(func: Callable) -> type | None:
+    try:
+        hints = get_type_hints(func)
+    except Exception:
+        return None
+    return hints.get("return")
 
 
 def _infer_geometry_type(node: cg.Node, _depth: int = 0) -> type | None:
@@ -680,48 +682,38 @@ def _infer_geometry_type(node: cg.Node, _depth: int = 0) -> type | None:
     if _depth > 10:
         return None
 
-    if isinstance(node, cg.FunctionCallNode):
-        try:
-            hints = get_type_hints(node.func)
-        except Exception:
-            return None
-        return_type = hints.get("return")
-        if return_type is None:
-            return None
-        concrete = _extract_procnode_inner_type(return_type)
-        if concrete is not None:
-            return concrete
-        # Return type is generic (TypeVar) — recurse into geometry input args
-        for arg in list(node.args) + list(node.kwargs.values()):
-            if isinstance(arg, list):
-                for item in arg:
-                    if isinstance(item, cg.Node):
-                        result = _infer_geometry_type(item, _depth + 1)
-                        if result is not None:
-                            return result
-            elif isinstance(arg, cg.Node):
-                result = _infer_geometry_type(arg, _depth + 1)
-                if result is not None:
-                    return result
-        return None
-
     if isinstance(node, cg.GetAttributeNode):
         source = node.args[0]
         if not isinstance(source, cg.FunctionCallNode):
             return None
-        try:
-            hints = get_type_hints(source.func)
-        except Exception:
+        annotations = getattr(_return_type(source.func), "__annotations__", {})
+        field_type = annotations.get(node.attribute_name)
+        if field_type is None:
             return None
-        return_type = hints.get("return")
-        if return_type is None:
-            return None
-        if hasattr(return_type, "__annotations__"):
-            field_type = return_type.__annotations__.get(node.attribute_name)
-            if field_type is not None:
-                return _extract_procnode_inner_type(field_type)
-        return None
+        return _extract_procnode_inner_type(field_type)
 
+    if not isinstance(node, cg.FunctionCallNode):
+        return None
+    return_type = _return_type(node.func)
+    if return_type is None:
+        return None
+    concrete = _extract_procnode_inner_type(return_type)
+    if concrete is not None:
+        return concrete
+
+    # Return type is generic (TypeVar) — recurse into geometry input args
+    args = []
+    for arg in [*node.args, *node.kwargs.values()]:
+        if isinstance(arg, list):
+            args.extend(arg)
+        else:
+            args.append(arg)
+    for arg in args:
+        if not isinstance(arg, cg.Node):
+            continue
+        result = _infer_geometry_type(arg, _depth + 1)
+        if result is not None:
+            return result
     return None
 
 

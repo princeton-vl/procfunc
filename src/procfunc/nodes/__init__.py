@@ -1,10 +1,12 @@
 from pandas import read_json as _read_json
 
 from procfunc.tracer import autowrap_module as _autowrap
+from procfunc.util.manifest import filter_manifest_by_bpy_version as _filter_by_version
 from procfunc.util.manifest import module_path
 
 from . import color, compositor, func, geo, math, shader, texture
 from .util.bpy_node_info import NodeDataType, NodeGroupType, SocketType
+from .util.bpy_versioning import bpy_version as _bpy_version
 
 # ruff: noqa: E402
 _autowrap(color, allow_exec=False)
@@ -37,7 +39,7 @@ from .util.node_function import function_to_compute_graph, node_function
 
 NODES_MANIFEST_PATH = module_path() / "nodes" / "manifest.json"
 assert NODES_MANIFEST_PATH.exists(), f"Manifest not found at {NODES_MANIFEST_PATH}"
-NODES_MANIFEST = _read_json(NODES_MANIFEST_PATH)
+NODES_MANIFEST = _filter_by_version(_read_json(NODES_MANIFEST_PATH), _bpy_version())
 
 __all__ = [
     # Node category submodules

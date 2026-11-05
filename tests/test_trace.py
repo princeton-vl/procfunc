@@ -1,10 +1,13 @@
 import ast
 from dataclasses import dataclass
-from typing import Unpack
+from typing import NamedTuple, Unpack
+
+import pytest
 
 import procfunc as pf
 from procfunc import compute_graph as cg
 from procfunc.codegen import codegen
+from procfunc.nodes import types as t
 
 
 def test_normalize_args_to_kwargs():
@@ -140,3 +143,93 @@ def test_trace_cube_with_args_codegen():
 
     # Check the function definition is present
     assert "def cube_with_read_attr" in code
+
+
+class CubeResult(NamedTuple):
+    mesh: pf.MeshObject
+
+
+@pf.tracer.generator
+def cube_result(size: float) -> CubeResult:
+    return CubeResult(mesh=pf.ops.primitives.mesh_cube(size=size))
+
+
+def moved_cube_reread(size: float):
+    res = cube_result(size=size)
+    pf.ops.object.set_transform(res.mesh, location=(1.0, 2.0, 3.0))
+    pf.ops.object.set_transform(res.mesh, rotation_euler=(0.0, 0.0, 0.5))
+    return res.mesh
+
+
+def test_trace_mutation_through_attribute_reread():
+    graph = pf.trace(moved_cube_reread)
+    calls = [
+        n
+        for n in cg.traverse_depth_first(graph)
+        if isinstance(n, cg.FunctionCallNode) and n.func is pf.ops.object.set_transform
+    ]
+    assert len(calls) == 2, calls
+    code = codegen.to_python(graph, toplevel_as_maincall=False)
+    namespace = {}
+    exec(code, namespace)  # noqa: S102
+    obj = namespace["moved_cube_reread"](size=1.0).item()
+    assert tuple(obj.location) == (1.0, 2.0, 3.0), code
+    assert abs(obj.rotation_euler.z - 0.5) < 1e-6, code
+
+
+def cube_with_write_attr(size: float):
+    cube = pf.ops.primitives.mesh_cube(size=size)
+    pf.ops.attr.write_attribute(cube, 1.0, "crease_edge", domain="EDGE")
+    pf.ops.attr.write_material_index(cube, 0)
+    return cube
+
+
+def test_trace_attr_writes_reach_output():
+    graph = pf.trace(cube_with_write_attr)
+    funcs = {
+        n.func
+        for n in cg.traverse_depth_first(graph)
+        if isinstance(n, cg.FunctionCallNode)
+    }
+    assert pf.ops.attr.write_attribute in funcs
+    assert pf.ops.attr.write_material_index in funcs
+    code = codegen.to_python(graph, toplevel_as_maincall=False)
+    assert "write_attribute" in code, code
+
+
+@pf.nodes.node_function
+def _rough_shader(roughness: t.SocketOrVal[float] = 0.5):
+    return pf.nodes.shader.principled_bsdf(roughness=roughness)
+
+
+def cubes_sharing_material(size: float):
+    material = pf.Material(surface=_rough_shader(roughness=0.3))
+    a = pf.ops.primitives.mesh_cube(size=size)
+    b = pf.ops.primitives.mesh_cube(size=size)
+    pf.ops.object.set_material(a, material=material)
+    pf.ops.object.set_material(b, material=material)
+    pf.ops.object.join(a, b)
+    return a
+
+
+def cubes_with_equal_materials(size: float):
+    a = pf.ops.primitives.mesh_cube(size=size)
+    b = pf.ops.primitives.mesh_cube(size=size)
+    pf.ops.object.set_material(a, material=pf.Material(surface=_rough_shader(0.3)))
+    pf.ops.object.set_material(b, material=pf.Material(surface=_rough_shader(0.3)))
+    pf.ops.object.join(a, b)
+    return a
+
+
+@pytest.mark.parametrize(
+    "func, num_slots",
+    [(cubes_sharing_material, 1), (cubes_with_equal_materials, 2)],
+)
+def test_trace_preserves_material_identity(func, num_slots: int):
+    assert len(func(1.0).item().material_slots) == num_slots
+    graph = pf.trace(func)
+    code = codegen.to_python(graph, toplevel_as_maincall=False)
+    namespace = {}
+    exec(code, namespace)  # noqa: S102
+    traced = namespace[graph.name](size=1.0)
+    assert len(traced.item().material_slots) == num_slots, code

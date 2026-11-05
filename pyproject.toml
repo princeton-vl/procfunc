@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=80", "setuptools-scm>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,7 +12,8 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "bpy==4.2.0",
     "numpy>=1.23.5,<2",
-    "pandas>=1.5",
+    "pandas>=1.5,<4",
+    "typing-extensions>=4.4,<5",
 ]
 
 [project.urls]
@@ -28,21 +29,28 @@ test = [
 ]
 dev = [
     "pytest>=7.2,<10",
-    "pytest-xdist",
-    "ruff>=0.15,<0.16",
+    "pytest-xdist<4",
+    "ruff>=0.15,<0.18",
+    "pre-commit<5",
     "ty",
-    "imageio",
-    "matplotlib",
-    "coverage",
+    "imageio<3",
+    "matplotlib<4",
+    "coverage<8",
 ]
 docs = [
-    "sphinx",
-    "sphinx-rtd-theme",
-    "sphinx-argparse",
+    "sphinx<10",
+    "sphinx-rtd-theme<4",
+    "sphinx-argparse<0.7",
 ]
 
-[tool.setuptools.dynamic]
-version = {attr = "procfunc.__version__"}
+# Version comes from the latest vX.Y.Z release tag
+[tool.setuptools_scm]
+
+[tool.setuptools_scm.scm.git]
+describe_command = ["git", "describe", "--dirty", "--tags", "--long", "--abbrev=40", "--match", "v[0-9]*"]
+
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true } }]
 
 [tool.setuptools.packages.find]
 where = ["src"]

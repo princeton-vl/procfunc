@@ -5,7 +5,7 @@ import bpy
 from procfunc import compute_graph as cg
 from procfunc import types as pt
 from procfunc.nodes import types as nt
-from procfunc.nodes.util.bpy_node_info import SocketType
+from procfunc.nodes.util import bpy_node_info as bni
 from procfunc.ops._util import modify
 from procfunc.ops.primitives.mesh import mesh_single_vertex
 from procfunc.util.bpy_info import bpy_nocollide_data_name
@@ -27,24 +27,17 @@ def unwrap_and_drop(x: dict[str, nt.ProcNode | None]):
 def get_interface_by_name(
     nodegroup: pt.NodeGroup, socket_name: str, in_out: str
 ) -> bpy.types.NodeSocket:
-    return next(
-        (
-            item
-            for item in nodegroup.interface.items_tree.values()
-            if item.name == socket_name and item.in_out == in_out
-        ),
-        None,
-    )
+    return bni.interface_socket(nodegroup, socket_name, in_out)
 
 
 def get_interface_by_type(
-    nodegroup: pt.NodeGroup, socket_type: SocketType, in_out: str
+    nodegroup: pt.NodeGroup, socket_type: bni.SocketType, in_out: str
 ) -> bpy.types.NodeSocket:
     return next(
         (
             item
-            for item in nodegroup.interface.items_tree.values()
-            if item.socket_type == socket_type.value and item.in_out == in_out
+            for item in bni.interface_sockets(nodegroup, in_out)
+            if bni.interface_socket_type(item) == socket_type.value
         ),
         None,
     )
@@ -156,9 +149,13 @@ def extract_geometry_singlekey(
     if attribute_keys is None:
         attribute_keys = []
 
-    if get_interface_by_name(nodegroup, output_key, "OUTPUT") is None:
+    output_interfaces = {
+        item.name: item for item in bni.interface_sockets(nodegroup, "OUTPUT")
+    }
+    if output_key not in output_interfaces:
         raise ValueError(
-            f"Node group {nodegroup.name} has no output {output_key}, available are {nodegroup.interface.items_tree.keys()}"
+            f"Node group {nodegroup.name} has no output {output_key}, "
+            f"available are {output_interfaces.keys()}"
         )
 
     outer_nodegroup = bpy.data.node_groups.new("wrapper", "GeometryNodeTree")
@@ -169,29 +166,32 @@ def extract_geometry_singlekey(
         nodegroup.use_fake_user = True
         outer_nodegroup.use_fake_user = True
 
-    outer_nodegroup.interface.new_socket(
-        name="Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+    bni.new_interface_socket(
+        outer_nodegroup,
+        "Geometry",
+        "OUTPUT",
+        "NodeSocketGeometry",
     )
 
     for attr_key in attribute_keys:
-        if attr_key not in nodegroup.interface.items_tree:
+        if attr_key not in output_interfaces:
             raise ValueError(
-                f"Node group {nodegroup.name} has no output {attr_key=}, available are {nodegroup.interface.items_tree.keys()}"
+                f"Node group {nodegroup.name} has no output {attr_key=}, "
+                f"available are {output_interfaces.keys()}"
             )
 
         if attr_key not in nodegroup_instance.outputs:
             raise ValueError(
-                f"Node group {nodegroup.name} has no output {attr_key=}, available are {nodegroup.interface.items_tree.keys()}"
+                f"Node group {nodegroup.name} has no output {attr_key=}, "
+                f"available are {output_interfaces.keys()}"
             )
 
-        item = nodegroup.interface.items_tree.get(attr_key)
-        if item is None or item.in_out != "OUTPUT":
-            raise ValueError(
-                f"Attempted to output {attr_key=} from {nodegroup.interface.items_tree.keys()=}, "
-                f"but it wasnt an output! {item is None or item.in_out=}"
-            )
-        outer_nodegroup.interface.new_socket(
-            name=attr_key, in_out="OUTPUT", socket_type=item.socket_type
+        item = output_interfaces[attr_key]
+        bni.new_interface_socket(
+            outer_nodegroup,
+            attr_key,
+            "OUTPUT",
+            bni.interface_socket_type(item),
         )
 
         if attr_key not in outer_nodegroup_output_node.inputs:

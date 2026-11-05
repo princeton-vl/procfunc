@@ -1,9 +1,11 @@
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Self
+
+from typing_extensions import Self
 
 from procfunc.nodes.util.bpy_node_info import NodeDataType, NodeGroupType
+from procfunc.nodes.util.bpy_versioning import bpy_version
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +57,8 @@ class NodeContextResolution:
     )
     output_keys_map: dict[str, str] = field(default_factory=dict)
     drop_keys: frozenset[str | tuple[str, int]] = frozenset()
+    from_version: tuple[int, int] | None = None
+    before_version: tuple[int, int] | None = None
 
     def __post_init__(self):
         if any(v is None for v in self.input_keys_map.values()):
@@ -376,18 +380,19 @@ CONTEXTUAL_NODE_MAPPING = [
 
 
 def resolve_contextual_node(
-    node: list[NodeContextResolution], group: NodeGroupType
+    node: ContextualNode,
+    group: NodeGroupType,
+    version: tuple[int, ...] | None = None,
 ) -> NodeContextResolution:
-    item = next(
-        (
-            item
-            for item in CONTEXTUAL_NODE_MAPPING
-            if (item.node_group_type == group and item.contextual_node == node)
-        ),
-        None,
+    current_version = bpy_version(version)
+    for item in CONTEXTUAL_NODE_MAPPING:
+        if item.contextual_node != node or item.node_group_type != group:
+            continue
+        if item.from_version is not None and current_version < item.from_version:
+            continue
+        if item.before_version is not None and current_version >= item.before_version:
+            continue
+        return item
+    raise ValueError(
+        f"No contextual node found for {node} in {group} on bpy {current_version}"
     )
-
-    if item is None:
-        raise ValueError(f"No contextual node found for {node} in {group}")
-
-    return item

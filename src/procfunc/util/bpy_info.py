@@ -145,3 +145,8 @@ def bpy_nocollide_data_name(
     while f"{prefix}_{i}" in bpy_data:
         i += 1
     return f"{prefix}_{i}"
+
+
+def scene_compositor_node_tree(scene: bpy.types.Scene) -> bpy.types.NodeTree:
+    scene.use_nodes = True
+    return scene.node_tree

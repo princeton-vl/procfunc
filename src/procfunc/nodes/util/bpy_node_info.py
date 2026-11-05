@@ -11,11 +11,55 @@ We also care about mapping these types to and from real equivelant python types 
 """
 
 from enum import Enum
+from typing import Any
 
 from mathutils import Color, Euler, Quaternion, Vector
 
 from procfunc import types as pt
 from procfunc.nodes import types as nt
+
+
+def interface_sockets(node_tree: Any, in_out: str | None = None) -> list[Any]:
+    sockets = [
+        item
+        for item in node_tree.interface.items_tree.values()
+        if item.item_type == "SOCKET"
+    ]
+    if in_out is None:
+        return sockets
+    return [socket for socket in sockets if socket.in_out == in_out]
+
+
+def interface_socket(node_tree: Any, name: str, in_out: str) -> Any | None:
+    return next(
+        (
+            socket
+            for socket in interface_sockets(node_tree, in_out)
+            if socket.name == name
+        ),
+        None,
+    )
+
+
+def interface_socket_type(socket: Any) -> str:
+    return socket.socket_type
+
+
+def new_interface_socket(
+    node_tree: Any,
+    name: str,
+    in_out: str,
+    socket_type: str,
+) -> Any:
+    return node_tree.interface.new_socket(
+        name=name,
+        in_out=in_out,
+        socket_type=socket_type,
+    )
+
+
+def clear_interface(node_tree: Any) -> None:
+    node_tree.interface.clear()
 
 
 class NodeDataType(Enum):

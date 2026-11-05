@@ -12,13 +12,14 @@ from procfunc.nodes import types as nt
 from procfunc.nodes.geo import store_named_attribute
 from procfunc.nodes.util.bpy_node_info import (
     NodeGroupType,
+    interface_sockets,
 )
 from procfunc.ops._util import modify
 from procfunc.ops.object import mesh_to_curve as ops_mesh_to_curve
 from procfunc.ops.primitives.mesh import mesh_single_vertex
 from procfunc.tracer import primitive as tracer_primitive
 from procfunc.util import pytree
-from procfunc.util.bpy_info import bpy_nocollide_data_name
+from procfunc.util.bpy_info import bpy_nocollide_data_name, scene_compositor_node_tree
 
 from .construct_nodes import (
     as_nodegroup,
@@ -99,13 +100,12 @@ def to_light(
 def to_compositor(
     results: dict[str, nt.ProcNode],
 ):
-    bpy.context.scene.use_nodes = True
-    nt = bpy.context.scene.node_tree
-    nt.nodes.clear()
+    node_tree = scene_compositor_node_tree(bpy.context.scene)
+    node_tree.nodes.clear()
 
     cache = {}
-    for k, v in results.items():
-        construct_procnode_to_bpy(v.item(), nt, cache)
+    for v in results.values():
+        construct_procnode_to_bpy(v.item(), node_tree, cache)
 
     return bpy.context.scene
 
@@ -122,18 +122,13 @@ def to_mesh_object(
         metadata={},
     )
     ng = as_nodegroup(graph, NodeGroupType.GEOMETRY)
-    ng_inouts = ng.interface.items_tree
+    ng_inouts = {item.name: item for item in interface_sockets(ng, "OUTPUT")}
 
     item = ng_inouts.get("geometry")
     if item is None:
         raise ValueError(
             f"Node group {ng.name} has no output geometry, available are {ng_inouts.keys()}"
         )
-    if item.in_out != "OUTPUT":
-        raise ValueError(
-            f"Node group attempted to extract geometry but it wasnt an output! {item.in_out=}"
-        )
-
     try:
         obj_result = extract_geometry_singlekey(
             ng,
@@ -238,7 +233,7 @@ def to_objects_multi(
         graph,
         NodeGroupType.GEOMETRY,
     )
-    ng_inouts = nodegroup.interface.items_tree
+    ng_inouts = {item.name: item for item in interface_sockets(nodegroup, "OUTPUT")}
 
     result_objects = OrderedDict()
 
@@ -248,11 +243,6 @@ def to_objects_multi(
             raise ValueError(
                 f"Node group {nodegroup.name} has no output {k}, available are {ng_inouts.keys()}"
             )
-        if item.in_out != "OUTPUT":
-            raise ValueError(
-                f"Node group attempted to extract {k=} but it wasnt an output! {item.in_out=}"
-            )
-
         result_objects[k] = extract_geometry_singlekey(
             nodegroup,
             k,

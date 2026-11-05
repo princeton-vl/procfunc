@@ -1,3 +1,4 @@
+import builtins
 import keyword
 import logging
 import re
@@ -552,7 +553,7 @@ def clean_graph_name(name: str) -> str:
     for suffix in NONDESCRIPTIVE_NODE_NAME_PARTS:
         if name.endswith("_" + suffix):
             name = name[: -(len(suffix) + 1)]
-    return name
+    return name + "_" if keyword.iskeyword(name) else name
 
 
 def nodenames_from_fixed_and_infill(
@@ -610,3 +611,115 @@ def nodenames_from_fixed_and_infill(
             logger.warning(f"Invalid node name: {name}")
 
     return result
+
+
+GENERIC_USAGE_NAMES = {
+    "a",
+    "b",
+    "x",
+    "y",
+    "z",
+    "w",
+    "value",
+    "vector",
+    "color",
+    "fac",
+    "factor",
+    "geometry",
+    "geometries",
+    "mesh",
+    "curve",
+    "points",
+    "instances",
+    "obj",
+    "input",
+    "rng",
+    "options",
+    "choice_options",
+}
+
+BUILTIN_NAMES = [name for name in dir(builtins) if name.islower()]
+
+
+def _usage_name(argname: str | int) -> str | None:
+    groups = re.split(r"(?:^|_)\d+(?=_|$)", str(argname))
+    name = next((g.strip("_") for g in reversed(groups) if g.strip("_")), "")
+    name = name.removeprefix("mutates_")
+    if name == "" or name in GENERIC_USAGE_NAMES:
+        return None
+    return name
+
+
+def _name_from_producer(node: cg.Node, scope_expressions: dict[int, str]) -> str:
+    match node:
+        case cg.FunctionCallNode(func=func):
+            return getattr(func, "__name__", "call")
+        case cg.MethodCallNode(method_name=method_name):
+            return method_name
+        case cg.SubgraphCallNode(subgraph=subgraph):
+            graph_name = scope_expressions.get(id(subgraph), subgraph.name)
+            return f"{graph_name}_result"
+        case cg.GetAttributeNode(attribute_name=attribute_name):
+            return attribute_name
+        case cg.MutatedArgumentNode():
+            return _name_from_producer(node.args[0], scope_expressions)
+        case cg.ConstantNode():
+            return "const"
+        case cg.InputPlaceholderNode(input_name=name):
+            return name if name else "input"
+        case _:
+            raise NotImplementedError(f"Unsupported node: {node}")
+
+
+def _pick_name(
+    argname: str | int,
+    parent: cg.Node | None,
+    node: cg.Node,
+    names: dict[int, str],
+    explicit: dict[int, str],
+    scope_expressions: dict[int, str],
+) -> str:
+    if varname := node.metadata.get("varname"):
+        return varname
+    if id(node) in explicit:
+        return explicit[id(node)]
+    if isinstance(parent, cg.MutatedArgumentNode) and str(argname) == "0":
+        return names[id(parent)]
+    if parent is not None and (usage := _usage_name(argname)):
+        return usage
+    return _name_from_producer(node, scope_expressions)
+
+
+def nodenames_from_explicit_keyword_or_producer(
+    graph: cg.ComputeGraph,
+    fold_map: dict[int, bool],
+    scope_expressions: dict[int, str],
+) -> dict[int, str]:
+    explicit = {id(node): name for name, node in graph.inputs.items()}
+    for name, node in graph.outputs.items():
+        if name.strip("_0123456789"):
+            explicit[id(node)] = name
+
+    names: dict[int, str] = {}
+    for argname, parent, node in cg.traverse_breadth_first(
+        graph, yield_parent=True, yield_name=True
+    ):
+        if id(node) not in names:
+            names[id(node)] = _pick_name(
+                argname, parent, node, names, explicit, scope_expressions
+            )
+
+    code_order = [
+        node
+        for node in cg.traverse_depth_first(graph)
+        if not fold_map.get(id(node), False)
+        and not isinstance(node, cg.MutatedArgumentNode)
+    ]
+    to_name = {id(node): bpy_name_to_pythonid(names[id(node)]) for node in code_order}
+    order = [id(n) for n in code_order if id(n) in explicit]
+    order += [id(n) for n in code_order if id(n) not in explicit]
+
+    existing = {**scope_expressions, **{id(b): b for b in BUILTIN_NAMES}}
+    return dedup_names_with_suffix(
+        to_name, existing=existing, separator="_", order=order
+    )
